@@ -59,11 +59,11 @@ export default function VariableBestCaseForm({
   return (
     <div className="flex flex-col gap-4 max-w-md">
       <h1 className="font-bold text-lg sticky top-16 bg-white z-50">
-        Variables Base Case
+        Base Case <small className="text-xs">(Readonly)</small>
       </h1>
       {/* {JSON.stringify(variableData)} */}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1">
           {variableData.map((v: any) => {
             if (v.variable_type == "input")
               return (
@@ -73,12 +73,16 @@ export default function VariableBestCaseForm({
                   name={v.variable}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{v.variable}</FormLabel>
+                      {/* <FormLabel>{v.variable}</FormLabel> */}
                       <FormControl>
                         <Input
                           placeholder={`${
                             v.base_case == "NaN" ? "" : v.base_case
                           }`}
+                          className={`justify-between pb-1 border-b-1`}
+                          size="sm"
+                          label={v.variable}
+                          labelPlacement="outside-left"
                           readOnly
                           {...field}
                           endContent={
@@ -88,7 +92,7 @@ export default function VariableBestCaseForm({
                           }
                         />
                       </FormControl>
-                      <FormDescription>{"Read only"}</FormDescription>
+                      {/* <FormDescription>{"Read only"}</FormDescription> */}
                       <FormMessage />
                     </FormItem>
                   )}

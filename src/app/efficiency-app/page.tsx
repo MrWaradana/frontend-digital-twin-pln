@@ -1,7 +1,40 @@
-import { Card, CardHeader, CardBody, Divider, Link } from "@nextui-org/react";
+"use client";
+
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CircularProgress,
+  Divider,
+  Link,
+} from "@nextui-org/react";
+import { GearIcon } from "@radix-ui/react-icons";
+import toast from "react-hot-toast";
+
+type excelGetData = {
+  data: [String];
+};
 
 export default function Page() {
-  const excelList = [
+  const [excelList, setExcelList] = useState<excelGetData>();
+  const [isLoading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // fetch(`https://m20vpzqk-3001.asse.devtunnels.ms/excels/TFELINK.xlsm`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/excels`)
+      .then((res) => res.json())
+      .then((data) => {
+        setExcelList(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        toast.error(error);
+      });
+  }, []);
+
+  const excelListTemplate = [
     {
       name: "Excel 1",
       url: "/efficiency-app/input",
@@ -20,23 +53,65 @@ export default function Page() {
     },
   ];
 
+  if (isLoading)
+    return (
+      <div className="w-full mt-24 flex justify-center items-center">
+        <CircularProgress />
+      </div>
+    );
+  if (!excelList)
+    return (
+      <div className="w-full mt-24 flex justify-center items-center">
+        <p>No Excel Data!</p>
+      </div>
+    );
+
   return (
     <div className="flex flex-col items-center justify-center mt-24">
       <h1>Choose Excel Page</h1>
       <Card>
         <CardBody>
           <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {excelList.map((item, index) => {
+            {/* {excelListTemplate.map((item: any, index: number) => {
               return (
-                <Link
-                  key={`${item}-${index}`}
-                  href={`${item.url}`}
-                  className="h-24 w-48 hover:bg-green-300 transition ease px-6 py-4 rounded-lg border flex justify-center items-center"
+                <div
+                  key={`${item.name}-${index}`}
+                  className="h-24 w-48 relative hover:bg-green-300 transition ease px-6 py-4 rounded-lg border flex justify-center items-center"
                 >
-                  <p className="text-base font-normal leading-tight">
+                  <Link
+                    href="#"
+                    className="hover:scale-105 hover:bg-white rounded-md p-1 absolute top-2 right-2"
+                  >
+                    <GearIcon />
+                  </Link>
+                  <Link
+                    href={item.url}
+                    className="text-base font-normal leading-tight"
+                  >
                     {item.name}
-                  </p>
-                </Link>
+                  </Link>
+                </div>
+              );
+            })} */}
+            {excelList.data.map((item: any, index: number) => {
+              return (
+                <div
+                  key={`${item}-${index}`}
+                  className="h-24 w-48 relative hover:bg-green-300 transition ease px-6 py-4 rounded-lg border flex justify-center items-center"
+                >
+                  <Link
+                    href="#"
+                    className="hover:scale-105 hover:bg-white rounded-md p-1 absolute top-2 right-2"
+                  >
+                    <GearIcon />
+                  </Link>
+                  <Link
+                    href={`/efficiency-app/${item}`}
+                    className="text-base font-normal leading-tight"
+                  >
+                    {item}
+                  </Link>
+                </div>
               );
             })}
           </section>

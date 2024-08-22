@@ -20,6 +20,7 @@ import {
   Selection,
   ChipProps,
   SortDescriptor,
+  Link,
 } from "@nextui-org/react";
 import {
   DotsVerticalIcon,
@@ -29,7 +30,6 @@ import {
 } from "@radix-ui/react-icons";
 import { columns, users, statusOptions } from "@/lib/data";
 import { capitalize } from "@/lib/utils";
-import Link from "next/link";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   active: "success",
@@ -41,7 +41,13 @@ const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
 
 type User = (typeof users)[0];
 
-export default function TableAdmin({ tableData }: { tableData: any }) {
+export default function TableAdmin({
+  tableData,
+  addNewUrl = "#",
+}: {
+  tableData: any;
+  addNewUrl: string;
+}) {
   const { columns, users, statusOptions } = tableData;
 
   const [filterValue, setFilterValue] = React.useState("");
@@ -290,7 +296,12 @@ export default function TableAdmin({ tableData }: { tableData: any }) {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" endContent={<PlusIcon />}>
+            <Button
+              as={Link}
+              href={addNewUrl}
+              color="primary"
+              startContent={<PlusIcon />}
+            >
               Add New
             </Button>
           </div>

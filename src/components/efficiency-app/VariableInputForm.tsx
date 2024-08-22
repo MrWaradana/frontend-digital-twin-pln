@@ -121,7 +121,7 @@ export default function VariableInputForm({
   }
 
   return (
-    <div className="flex flex-col gap-4 max-w-md">
+    <div className="flex flex-col gap-4 max-w-md mx-2">
       <Toaster />
       <h1 className="font-bold text-lg sticky top-16 bg-white z-50">
         Input Variables
@@ -129,7 +129,7 @@ export default function VariableInputForm({
       <Form {...formInput}>
         <form
           onSubmit={formInput.handleSubmit(onSubmit, onError)}
-          className="space-y-8"
+          className="space-y-1"
         >
           {variableData.map((v: any) => {
             if (v.variable_type == "input")
@@ -140,13 +140,18 @@ export default function VariableInputForm({
                     name={v.id}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{v.variable}</FormLabel>
+                        {/* <FormLabel>{v.variable}</FormLabel> */}
                         <FormControl>
                           <Input
                             placeholder={`${
                               v.base_case == "NaN" ? "" : v.base_case
                             }`}
+                            label={v.variable}
+                            size="sm"
+                            className={`justify-between max-w-xs lg:max-w-full  border-b-1 pb-1`}
+                            labelPlacement="outside-left"
                             type="number"
+                            required
                             {...field}
                             value={inputValues[v.id]} // Controlled input
                             onChange={(e) =>
@@ -160,7 +165,7 @@ export default function VariableInputForm({
                             }
                           />
                         </FormControl>
-                        <FormDescription>{v.variable_type}</FormDescription>
+                        {/* <FormDescription>{v.variable_type}</FormDescription> */}
                         <FormMessage />
                       </FormItem>
                     )}
@@ -169,7 +174,13 @@ export default function VariableInputForm({
               );
           })}
 
-          <Button type="submit" color="primary" isLoading={loading}>
+          <Button
+            type="submit"
+            color="primary"
+            size="md"
+            isLoading={loading}
+            className="flex min-w-full translate-y-4"
+          >
             Submit Data
           </Button>
           {/* <Button>
