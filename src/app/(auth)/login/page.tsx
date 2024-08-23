@@ -10,13 +10,15 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import PlnLogo from "../../../../public/Logo_PLN.svg";
+import { useSession } from "next-auth/react";
 
 export default function Component() {
+  const { data: session } = useSession();
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
@@ -46,11 +48,14 @@ export default function Component() {
         password,
         redirect: false,
       });
+
+      if (!result) {
+        return toast.error("Problem with request!");
+      }
       if (result?.error) {
-        return toast.error("Invalid credentials!");
+        return toast.error(`Invalid credentials`);
       }
 
-      toast.error("Problem with request!");
       router.replace("/");
     } catch (error) {
       toast.error(`error: ${error}`);
@@ -61,6 +66,7 @@ export default function Component() {
 
   return (
     <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+      <Toaster />
       <div className="mx-auto w-full max-w-md space-y-6">
         <div className="space-y-2 text-center items-center flex flex-col gap-4">
           <Image src={PlnLogo} alt="Logo PLN" width={124} />

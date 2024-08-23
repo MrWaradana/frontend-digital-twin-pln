@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
+import { Input, Button } from "@nextui-org/react";
 import {
   Form,
   FormControl,
@@ -14,7 +14,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
 const formSchema = z.object({
@@ -49,12 +48,15 @@ export default function VariableOutputForm({
   }
 
   return (
-    <div className="flex flex-col gap-4 max-w-md items-center">
+    <div className="flex flex-col gap-4 items-center">
       <h1 className="font-bold text-lg sticky top-0 bg-white">
         Output Variables
       </h1>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 px-8 gap-x-4"
+        >
           {variableData.map((v: any) => {
             if (v.variable_type == "output")
               return (
@@ -64,16 +66,18 @@ export default function VariableOutputForm({
                   name={v.variable}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{v.variable}</FormLabel>
                       <FormControl>
                         <Input
                           placeholder={`${v.base_case} ${v.units.name}`}
                           {...field}
+                          label={v.variable}
+                          className={`justify-between max-w-xs lg:max-w-full border p-2 rounded-xl`}
+                          labelPlacement="outside-left"
                           type="number"
                           readOnly
+                          size={"sm"}
                         />
                       </FormControl>
-                      <FormDescription>{v.variable_type}</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

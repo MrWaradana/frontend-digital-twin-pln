@@ -8,9 +8,11 @@ import {
   CircularProgress,
   Divider,
   Link,
+  Button,
 } from "@nextui-org/react";
 import { GearIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
 
 type excelGetData = {
   data: [String];
@@ -19,6 +21,10 @@ type excelGetData = {
 export default function Page() {
   const [excelList, setExcelList] = useState<excelGetData>();
   const [isLoading, setLoading] = useState(true);
+
+  const session = useSession();
+
+  console.log(session.data?.user);
 
   useEffect(() => {
     // fetch(`https://m20vpzqk-3001.asse.devtunnels.ms/excels/TFELINK.xlsm`)
@@ -59,9 +65,12 @@ export default function Page() {
         <CircularProgress />
       </div>
     );
-  if (!excelList)
+  if (!excelList || !excelList.data)
     return (
-      <div className="w-full mt-24 flex justify-center items-center">
+      <div className="w-full mt-24 flex flex-col gap-6 justify-center items-center">
+        <Button as={Link} href="/" color="primary">
+          Back to All Apps
+        </Button>
         <p>No Excel Data!</p>
       </div>
     );
@@ -93,7 +102,7 @@ export default function Page() {
                 </div>
               );
             })} */}
-            {excelList.data.map((item: any, index: number) => {
+            {excelList?.data?.map((item: any, index: number) => {
               return (
                 <div
                   key={`${item}-${index}`}
@@ -101,13 +110,13 @@ export default function Page() {
                 >
                   <Link
                     href="#"
-                    className="hover:scale-105 hover:bg-white rounded-md p-1 absolute top-2 right-2"
+                    className="hover:scale-105 hover:bg-white rounded-md p-1 absolute top-2 right-2 text-black"
                   >
                     <GearIcon />
                   </Link>
                   <Link
                     href={`/efficiency-app/${item}`}
-                    className="text-base font-normal leading-tight"
+                    className="text-base font-normal leading-tight text-black hover:scale-105 transition ease"
                   >
                     {item}
                   </Link>

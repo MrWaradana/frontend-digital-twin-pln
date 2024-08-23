@@ -12,13 +12,14 @@ declare module "next-auth" {
   interface User {
     accessToken: string;
     refreshToken: string;
-    user_id: string;
+    user: object;
   }
 
   interface Session {
     user: {
       accessToken: string;
       refreshToken: string;
+      user: any;
     } & DefaultSession["user"];
   }
 }
@@ -26,7 +27,7 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `auth`, when using JWT sessions */
   interface JWT {
-    user_id: string;
+    user: object;
     accessToken: string;
     refreshToken: string;
     accessTokenExpires: number;
@@ -89,7 +90,7 @@ export const {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.user_id = user.user_id;
+        token.user = user.user;
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
         token.accessTokenExpires = Date.now() + 5 * 1000;
@@ -110,7 +111,7 @@ export const {
         // session.user.id = token.id
         session.user.accessToken = token.accessToken;
         session.user.refreshToken = token.refreshToken;
-        session.user.user_id = token.user_id;
+        session.user.user = token.user;
       }
       // Save to local storage
       // console.log(session.user, "=============================");

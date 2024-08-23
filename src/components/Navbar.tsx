@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
+  Avatar,
   Button,
   Navbar as NavbarLinks,
   NavbarBrand,
@@ -52,13 +53,6 @@ export default function Navbar() {
     "Help & Feedback",
     "Log Out",
   ];
-
-  useEffect(() => {
-    if (session?.user) {
-      // localStorage.setItem("user", JSON.stringify(session.user));
-      console.log("User saved to cookie", session.user);
-    }
-  }, [session]);
 
   return (
     <>
@@ -146,13 +140,15 @@ export default function Navbar() {
 
         <NavbarContent justify="end">
           <NavbarItem>
-            <Button
-              as={Link}
-              onPress={onOpen}
-              color="danger"
-              href="#"
-              variant="flat"
-            >
+            <Avatar
+              name={session?.user.user.name}
+              color="primary"
+              isBordered
+              className="uppercase"
+            />
+          </NavbarItem>
+          <NavbarItem>
+            <Button onPress={onOpen} color="danger" variant="flat">
               Log Out
             </Button>
           </NavbarItem>

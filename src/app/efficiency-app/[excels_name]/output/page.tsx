@@ -1,6 +1,9 @@
 import VariableOutputForm from "@/components/efficiency-app/VariableOutputForm";
+import TableOutputs from "@/components/efficiency-app/TableOutputs";
 import { Button, Link } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
+import { stringify } from "querystring";
+import { formatFilename } from "../../../../lib/format-text";
 
 export default async function Page({
   params,
@@ -27,7 +30,11 @@ export default async function Page({
       >
         Back to all
       </Button>
-      <VariableOutputForm variables={variables} units={units} />
+      {/* <VariableOutputForm variables={variables} units={units} /> */}
+      <h2 className="mb-4">Output {formatFilename(params.excels_name)}</h2>
+      <div>
+        <TableOutputs tableData={variables.data} />
+      </div>
     </section>
   );
 }

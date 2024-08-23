@@ -36,7 +36,7 @@ export const CredentialsProvider = Credentials({
             return {
                 accessToken: data.data.access_token,
                 refreshToken: data.data.refresh_token,
-                user_id: data.data.user_id
+                user: data.data.user
             }
 
         }
