@@ -33,6 +33,7 @@ export const CredentialsProvider = Credentials({
       return {
         accessToken: data.data.access_token,
         refreshToken: data.data.refresh_token,
+        token_expires: data.data.token_expires,
         user: data.data.user,
       };
     }

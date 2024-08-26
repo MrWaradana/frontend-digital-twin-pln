@@ -5,7 +5,7 @@ import VariableBestCaseForm from "@/components/efficiency-app/VariableBestCaseFo
 import VariableInputForm from "@/components/efficiency-app/VariableInputForm";
 import MasterDataRadioGroup from "@/components/efficiency-app/MasterDataRadioGroup";
 import SelectMasterData from "@/components/efficiency-app/SelectMasterData";
-import { Link, Button } from "@nextui-org/react";
+import { Link, Button, CircularProgress } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import { formatFilename } from "@/lib/format-text";
 import toast, { Toaster } from "react-hot-toast";
@@ -59,7 +59,12 @@ export default function Page({ params }: { params: { excels_name: string } }) {
     fetchVariables();
   }, [params.excels_name, excels]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="flex justify-center mt-12">
+        <CircularProgress color="primary" />
+      </div>
+    );
   if (error) return <div>{error}</div>;
 
   return (
@@ -79,10 +84,10 @@ export default function Page({ params }: { params: { excels_name: string } }) {
         Opened <span>Excel {formatFilename(params.excels_name)}</span>
       </h2>
       <SelectMasterData />
-      <div className="flex flex-row gap-4 lg:gap-12 items-start justify-center my-4">
+      <div className="flex flex-row gap-4 lg:gap-12 items-center justify-center my-4 min-w-3xl mx-auto">
         <div className="hidden lg:block ">
           {/* {JSON.stringify(variableData.data)} */}
-          <VariableBestCaseForm variables={variableData} />
+          {/* <VariableBestCaseForm variables={variableData} /> */}
         </div>
         <VariableInputForm variables={variableData} />
       </div>

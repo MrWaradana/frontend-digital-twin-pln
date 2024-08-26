@@ -1,6 +1,7 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import { authConfig } from "@/auth/config";
 import { JWT } from "next-auth/jwt";
+import { AUTH_API_URL } from "../lib/api-url";
 // import { PrismaAdapter } from "@auth/prisma-adapter";
 // import { db } from "@/lib/db";
 // import { getUserById, updateUserById } from "@/services/user";
@@ -13,12 +14,14 @@ declare module "next-auth" {
     accessToken: string;
     refreshToken: string;
     user: object;
+    token_expires: number;
   }
 
   interface Session {
     user: {
       accessToken: string;
       refreshToken: string;
+      token_expires: number;
       user: any;
     } & DefaultSession["user"];
   }
@@ -30,49 +33,49 @@ declare module "next-auth/jwt" {
     user: object;
     accessToken: string;
     refreshToken: string;
-    accessTokenExpires: number;
+    token_expires: number;
   }
 }
 
-// async function refreshAccessToken(token) {
-//     try {
-//         // const url =
-//         //     "https://oauth2.googleapis.com/token?" +
-//         //     new URLSearchParams({
-//         //         client_id: process.env.GOOGLE_CLIENT_ID,
-//         //         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-//         //         grant_type: "refresh_token",
-//         //         refresh_token: token.refreshToken,
-//         //     })
+async function refreshAccessToken(token: any) {
+  try {
+    // const url =
+    //     "https://oauth2.googleapis.com/token?" +
+    //     new URLSearchParams({
+    //         client_id: process.env.GOOGLE_CLIENT_ID,
+    //         client_secret: process.env.GOOGLE_CLIENT_SECRET,
+    //         grant_type: "refresh_token",
+    //         refresh_token: token.refreshToken,
+    //     })
 
-//         const response = await fetch(url, {
-//             headers: {
-//                 "Content-Type": "application/x-www-form-urlencoded",
-//             },
-//             method: "POST",
-//         })
+    const response = await fetch(`${AUTH_API_URL}/refresh-token`, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${token.refreshToken}`,
+      },
+      method: "GET",
+    });
 
-//         const refreshedTokens = await response.json()
+    const refreshedTokens = await response.json();
 
-//         if (!response.ok) {
-//             throw refreshedTokens
-//         }
+    if (!response.ok) {
+      throw refreshedTokens;
+    }
 
-//         return {
-//             ...token,
-//             accessToken: refreshedTokens.access_token,
-//             accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
-//             refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
-//         }
-//     } catch (error) {
-//         console.log(error)
+    return {
+      ...token,
+      accessToken: refreshedTokens.access_token,
+      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
+    };
+  } catch (error) {
+    console.log(error);
 
-//         return {
-//             ...token,
-//             error: "RefreshAccessTokenError",
-//         }
-//     }
-//}
+    return {
+      ...token,
+      error: "RefreshAccessTokenError",
+    };
+  }
+}
 
 export const {
   handlers: { GET, POST },
@@ -90,21 +93,21 @@ export const {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.user = user.user;
-        token.accessToken = user.accessToken;
-        token.refreshToken = user.refreshToken;
-        token.accessTokenExpires = Date.now() + 5 * 1000;
-
-        // return token;
+        return {
+          user: user.user,
+          accessToken: user.accessToken,
+          refreshToken: user.refreshToken,
+          token_expires: user.token_expires,
+        };
       }
 
       // Return previous token if the access token has not expired yet
-      //   if (Date.now() < token.accessTokenExpires) {
-      //     return token;
-      //   }
-      //   console.log(token, "TOKENNNNNNNNNNNNNNNNNN");
+      if (Date.now() < token.token_expires * 1000) {
+        return token;
+      }
+      console.log(token, "TOKEN");
       // Access token has expired, try to update it
-      return token;
+      return refreshAccessToken(token);
     },
     async session({ session, token }) {
       if (token) {

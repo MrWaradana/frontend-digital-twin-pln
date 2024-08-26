@@ -15,10 +15,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input, Button } from "@nextui-org/react";
+import { Accordion, AccordionItem, Input, Button } from "@nextui-org/react";
 import { useState, Fragment } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+interface Variable {
+  category: string;
+  input_name: string;
+  satuan: string;
+  id: string;
+  in_out: string;
+}
 
 export default function VariableInputForm({ variables }: { variables: any }) {
   const router = useRouter();
@@ -34,6 +42,15 @@ export default function VariableInputForm({ variables }: { variables: any }) {
       ])
     )
   );
+
+  const categorizedData = variableData.reduce((acc: any, variable: any) => {
+    if (!acc[variable.category]) {
+      acc[variable.category] = [];
+    }
+    acc[variable.category].push(variable);
+    return acc;
+  }, {} as Record<string, Variable[]>);
+
   const [loading, setLoading] = useState(false);
 
   const filteredVariableData = variableData.filter(
@@ -113,10 +130,11 @@ export default function VariableInputForm({ variables }: { variables: any }) {
   function onError(formError: any) {
     console.log(formError);
   }
-
+  // console.log(categorizedData);
   return (
-    <div className="flex flex-col gap-4 max-w-md mx-2">
+    <div className="flex flex-col gap-4 mx-2 min-w-full">
       <Toaster />
+      {/* {JSON.stringify(categorizedData)} */}
       <h1 className="font-bold text-lg sticky top-16 bg-white z-50">
         Input Variables
       </h1>
@@ -125,6 +143,32 @@ export default function VariableInputForm({ variables }: { variables: any }) {
           onSubmit={formInput.handleSubmit(onSubmit, onError)}
           className="space-y-1"
         >
+          <Accordion className="min-w-full" selectionMode="multiple" isCompact>
+            {Object.entries(categorizedData).map(
+              ([category, variables]: any) => (
+                <AccordionItem
+                  key={category}
+                  title={category == "null" ? "Tidak Ada Kategori" : category}
+                >
+                  {variables.map((variable: any) => (
+                    <FormItem key={variable.id}>
+                      <FormLabel>
+                        {variable.input_name} ({variable.satuan})
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder={`Enter ${variable.input_name}`}
+                          name={variable.id}
+                          // Add more input attributes here as needed
+                        />
+                      </FormControl>
+                    </FormItem>
+                  ))}
+                </AccordionItem>
+              )
+            )}
+          </Accordion>
           {variableData.map((v: any) => {
             if (v.in_out == "in")
               return (
@@ -134,14 +178,13 @@ export default function VariableInputForm({ variables }: { variables: any }) {
                     name={v.id}
                     render={({ field }) => (
                       <FormItem>
-                        {/* <FormLabel>{v.variable}</FormLabel> */}
                         <FormControl>
                           <Input
                             placeholder={`${""}`}
                             label={v.input_name}
-                            size="sm"
+                            size="md"
                             className={`justify-between max-w-xs lg:max-w-full  border-b-1 pb-1`}
-                            labelPlacement="outside-left"
+                            labelPlacement="outside"
                             type="number"
                             required
                             {...field}
@@ -157,7 +200,6 @@ export default function VariableInputForm({ variables }: { variables: any }) {
                             }
                           />
                         </FormControl>
-                        {/* <FormDescription>{v.variable_type}</FormDescription> */}
                         <FormMessage />
                       </FormItem>
                     )}
@@ -165,7 +207,6 @@ export default function VariableInputForm({ variables }: { variables: any }) {
                 </Fragment>
               );
           })}
-
           <Button
             type="submit"
             color="primary"
@@ -175,9 +216,6 @@ export default function VariableInputForm({ variables }: { variables: any }) {
           >
             Submit Data
           </Button>
-          {/* <Button>
-            <Link href="/output">Submit</Link>
-          </Button> */}
         </form>
       </Form>
     </div>

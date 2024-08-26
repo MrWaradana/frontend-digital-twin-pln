@@ -59,7 +59,7 @@ export default function Page() {
   if (isLoading)
     return (
       <div className="w-full mt-24 flex justify-center items-center">
-        <CircularProgress />
+        <CircularProgress color="primary" />
       </div>
     );
   if (!excels)
