@@ -26,7 +26,9 @@ export default function Page({ params }: { params: { excels_name: string } }) {
 
       // Filter excels to find the one with the matching filename
       const selectedExcel = excels.find(
-        (excel) => excel.excel_filename === params.excels_name
+        (excel) =>
+          excel.excel_filename.toLowerCase() ===
+          formatFilename(params.excels_name).toLocaleLowerCase()
       );
 
       if (selectedExcel) {
