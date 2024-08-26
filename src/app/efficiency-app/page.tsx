@@ -28,7 +28,7 @@ export default function Page() {
 
   useEffect(() => {
     // fetch(`https://m20vpzqk-3001.asse.devtunnels.ms/excels/TFELINK.xlsm`)
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/excels`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/excels`)
       .then((res) => res.json())
       .then((data) => {
         setExcelList(data);

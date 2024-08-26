@@ -91,7 +91,7 @@ export default function VariableInputForm({
     const sendData = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/case-inputs`,
+          `${process.env.NEXT_PUBLIC_API_URL}/case-inputs`,
           {
             method: "POST",
             headers: {

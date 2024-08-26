@@ -11,15 +11,15 @@ export default async function Page({
 }: {
   params: { excels_name: string };
 }) {
-  const variables = await fetch("http://localhost:3001/api/variables", {
+  const variables = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/variables`, {
     next: { revalidate: 120 },
   }).then((res) => res.json());
 
-  const units = await fetch("http://localhost:3001/api/units", {
+  const units = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/units`, {
     next: { revalidate: 120 },
   }).then((res) => res.json());
 
-  const excels = await fetch("http://localhost:3001/api/excels", {
+  const excels = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/excels`, {
     next: { revalidate: 120 },
   }).then((res) => res.json());
 
