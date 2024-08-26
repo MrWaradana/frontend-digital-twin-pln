@@ -11,13 +11,13 @@ export default async function Page({
   params: { excels_name: string };
 }) {
   const variables = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/variables`,
+    `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/variables`,
     {
       next: { revalidate: 120 },
     }
   ).then((res) => res.json());
 
-  const units = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/units`, {
+  const units = await fetch(`${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/units`, {
     next: { revalidate: 120 },
   }).then((res) => res.json());
 

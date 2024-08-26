@@ -14,13 +14,9 @@ import { GearIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { EFFICIENCY_API_URL } from "../../lib/api-url";
-
-type excelGetData = {
-  data: [String];
-};
+import { useExcelStore } from "../../store/excels";
 
 export default function Page() {
-  const [excelList, setExcelList] = useState<excelGetData>();
   const [isLoading, setLoading] = useState(true);
 
   const session = useSession();
@@ -45,7 +41,7 @@ export default function Page() {
 
         const data = await response.json();
         console.log(response, "responseeeeeeeeeeeeeeeeeeeeeeeee");
-        setExcelList(data);
+        useExcelStore.getState().setExcels(data.data);
       } catch (error) {
         toast.error(`Failed to fetch excels: ${error}`);
       } finally {
@@ -58,24 +54,7 @@ export default function Page() {
     }
   }, [session?.data?.user?.accessToken]);
 
-  const excelListTemplate = [
-    {
-      name: "Excel 1",
-      url: "/efficiency-app/input",
-    },
-    {
-      name: "Excel 2",
-      url: "/efficiency-app/input",
-    },
-    {
-      name: "Excel 3",
-      url: "/efficiency-app/input",
-    },
-    {
-      name: "Excel 4",
-      url: "/efficiency-app/input",
-    },
-  ];
+  const excels = useExcelStore((state) => state.excels);
 
   if (isLoading)
     return (
@@ -83,7 +62,7 @@ export default function Page() {
         <CircularProgress />
       </div>
     );
-  if (!excelList || !excelList.data)
+  if (!excels)
     return (
       <div className="w-full mt-24 flex flex-col gap-6 justify-center items-center">
         <Button as={Link} href="/" color="primary">
@@ -96,6 +75,7 @@ export default function Page() {
   return (
     <div className="flex flex-col items-center justify-center mt-24">
       <h1>Choose Excel Page</h1>
+      {/* {JSON.stringify(excels)} */}
       <Card>
         <CardBody>
           <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -120,7 +100,7 @@ export default function Page() {
                 </div>
               );
             })} */}
-            {excelList?.data?.map((item: any, index: number) => {
+            {excels?.map((item: any, index: number) => {
               return (
                 <div
                   key={`${item.excel_filename}-${index}`}

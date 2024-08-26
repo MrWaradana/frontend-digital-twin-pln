@@ -20,13 +20,10 @@ import { useState } from "react";
 
 export default function VariableBestCaseForm({
   variables,
-  units,
 }: {
   variables: any;
-  units: any;
 }) {
-  const [variableData, setVariableData] = useState(variables.data);
-  const [unitsData, setUnitsData] = useState(units.data);
+  const [variableData, setVariableData] = useState(variables);
 
   const formSchema = z.object(
     Object.fromEntries(
@@ -40,13 +37,13 @@ export default function VariableBestCaseForm({
   );
 
   const defaultValues = Object.fromEntries(
-    variableData.map((v: any) => [v.variable, v.base_case])
+    variableData.map((v: any) => [v.input_name])
   );
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: defaultValues,
+    // defaultValues: defaultValue,
   });
 
   // 2. Define a submit handler.
@@ -54,6 +51,10 @@ export default function VariableBestCaseForm({
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     alert(JSON.stringify(values));
+  }
+
+  if (!variableData) {
+    return <div>No variables data!</div>;
   }
 
   return (
@@ -65,29 +66,27 @@ export default function VariableBestCaseForm({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1">
           {variableData.map((v: any) => {
-            if (v.variable_type == "input")
+            if (v.in_out == "in")
               return (
                 <FormField
                   key={v.id}
                   control={form.control}
-                  name={v.variable}
+                  name={v.input_name}
                   render={({ field }) => (
                     <FormItem>
                       {/* <FormLabel>{v.variable}</FormLabel> */}
                       <FormControl>
                         <Input
-                          placeholder={`${
-                            v.base_case == "NaN" ? "" : v.base_case
-                          }`}
+                          placeholder={`${""}`}
                           className={`justify-between pb-1 border-b-1`}
                           size="sm"
-                          label={v.variable}
+                          label={v.input_name}
                           labelPlacement="outside-left"
                           readOnly
                           {...field}
                           endContent={
                             <p className="text-sm">
-                              {v.units.name == "NaN" ? "" : v.units.name}
+                              {v.satuan == "NaN" ? "" : v.satuan}
                             </p>
                           }
                         />

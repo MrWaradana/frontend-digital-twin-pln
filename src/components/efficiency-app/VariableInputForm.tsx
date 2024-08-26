@@ -20,17 +20,11 @@ import { useState, Fragment } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export default function VariableInputForm({
-  variables,
-  units,
-}: {
-  variables: any;
-  units: any;
-}) {
+export default function VariableInputForm({ variables }: { variables: any }) {
   const router = useRouter();
 
-  const [variableData, setVariableData] = useState(variables.data);
-  const [unitsData, setUnitsData] = useState(units.data);
+  const [variableData, setVariableData] = useState(variables);
+  // const [unitsData, setUnitsData] = useState(units.data);
   // State to store input values
   const [inputValues, setInputValues] = useState(
     Object.fromEntries(
@@ -43,7 +37,7 @@ export default function VariableInputForm({
   const [loading, setLoading] = useState(false);
 
   const filteredVariableData = variableData.filter(
-    (v: any) => v.variable_type === "input"
+    (v: any) => v.in_out === "in"
   );
 
   const formSchemaInput = z.object(
@@ -66,7 +60,7 @@ export default function VariableInputForm({
   const formInput = useForm<z.infer<typeof formSchemaInput>>({
     resolver: zodResolver(formSchemaInput),
     mode: "onChange",
-    defaultValues: defaultValues,
+    // defaultValues: defaultValues,
   });
 
   const formError = formInput.formState.errors;
@@ -91,7 +85,7 @@ export default function VariableInputForm({
     const sendData = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/case-inputs`,
+          `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/case-inputs`,
           {
             method: "POST",
             headers: {
@@ -132,7 +126,7 @@ export default function VariableInputForm({
           className="space-y-1"
         >
           {variableData.map((v: any) => {
-            if (v.variable_type == "input")
+            if (v.in_out == "in")
               return (
                 <Fragment key={v.id}>
                   <FormField
@@ -143,10 +137,8 @@ export default function VariableInputForm({
                         {/* <FormLabel>{v.variable}</FormLabel> */}
                         <FormControl>
                           <Input
-                            placeholder={`${
-                              v.base_case == "NaN" ? "" : v.base_case
-                            }`}
-                            label={v.variable}
+                            placeholder={`${""}`}
+                            label={v.input_name}
                             size="sm"
                             className={`justify-between max-w-xs lg:max-w-full  border-b-1 pb-1`}
                             labelPlacement="outside-left"
@@ -160,7 +152,7 @@ export default function VariableInputForm({
                             endContent={
                               <p className="text-sm">
                                 {" "}
-                                {v.units.name == "NaN" ? "" : v.units.name}
+                                {v.satuan == "NaN" ? "" : v.satuan}
                               </p>
                             }
                           />

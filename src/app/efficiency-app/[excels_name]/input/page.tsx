@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import VariableBestCaseForm from "@/components/efficiency-app/VariableBestCaseForm";
 import VariableInputForm from "@/components/efficiency-app/VariableInputForm";
 import MasterDataRadioGroup from "@/components/efficiency-app/MasterDataRadioGroup";
@@ -5,23 +8,57 @@ import SelectMasterData from "@/components/efficiency-app/SelectMasterData";
 import { Link, Button } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import { formatFilename } from "@/lib/format-text";
+import toast, { Toaster } from "react-hot-toast";
+import { EFFICIENCY_API_URL } from "../../../../lib/api-url";
+import { useExcelStore } from "../../../../store/excels";
+import { useEffect } from "react";
 
-export default async function Page({
-  params,
-}: {
-  params: { excels_name: string };
-}) {
-  const variables = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/variables`, {
-    next: { revalidate: 120 },
-  }).then((res) => res.json());
+export default function Page({ params }: { params: { excels_name: string } }) {
+  const excels = useExcelStore((state) => state.excels);
+  const [variableData, setVariableData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const units = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/units`, {
-    next: { revalidate: 120 },
-  }).then((res) => res.json());
+  useEffect(() => {
+    const fetchVariables = async () => {
+      setLoading(true);
+      setError(null);
 
-  const excels = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/excels`, {
-    next: { revalidate: 120 },
-  }).then((res) => res.json());
+      // Filter excels to find the one with the matching filename
+      const selectedExcel = excels.find(
+        (excel) => excel.excel_filename === params.excels_name
+      );
+
+      if (selectedExcel) {
+        try {
+          const response = await fetch(
+            `${EFFICIENCY_API_URL}/variables?excel_id=${selectedExcel.id}`,
+            {
+              next: { revalidate: 7200 },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
+          }
+
+          const data = await response.json();
+          setVariableData(data.data);
+        } catch (error) {
+          setError(`Failed to fetch variables: ${error}`);
+        }
+      } else {
+        setError(`No excel found with the name: ${params.excels_name}`);
+      }
+
+      setLoading(false);
+    };
+
+    fetchVariables();
+  }, [params.excels_name, excels]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="flex flex-col items-center justify-center my-12 relative">
@@ -42,9 +79,10 @@ export default async function Page({
       <SelectMasterData />
       <div className="flex flex-row gap-4 lg:gap-12 items-start justify-center my-4">
         <div className="hidden lg:block ">
-          <VariableBestCaseForm variables={variables} units={units} />
+          {/* {JSON.stringify(variableData.data)} */}
+          <VariableBestCaseForm variables={variableData} />
         </div>
-        <VariableInputForm variables={variables} units={units} />
+        <VariableInputForm variables={variableData} />
       </div>
     </div>
   );

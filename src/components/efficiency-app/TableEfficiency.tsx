@@ -47,7 +47,7 @@ export default function TableEfficiency({
   params,
 }: {
   tableData: any;
-  addNewUrl: string;
+  addNewUrl?: string;
   params: string;
 }) {
   const { columns, users, statusOptions } = tableData;
@@ -168,10 +168,11 @@ export default function TableEfficiency({
                 <DropdownItem href={`/efficiency-app/${params}/heat-rate`}>
                   Heat Rate
                 </DropdownItem>
-                <DropdownItem href={`/efficiency-app/${params}/output`}>
+                <DropdownItem href={`#`}>
+                {/* <DropdownItem href={`/efficiency-app/${params}/output`}> */}
                   View
                 </DropdownItem>
-                <DropdownItem href="/admin/edit">Edit</DropdownItem>
+                <DropdownItem href="#">Edit</DropdownItem>
                 <DropdownItem>Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>
