@@ -65,9 +65,7 @@ const columns = [
 export default function Page() {
   return (
     <ContentLayout title="Digital Twin">
-      <section className="relative">
-        <TableAdmin />
-      </section>
+      <section className="relative"></section>
     </ContentLayout>
   );
 }

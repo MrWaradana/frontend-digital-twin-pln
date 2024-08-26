@@ -46,7 +46,7 @@ export default function TableAdmin({
   addNewUrl = "#",
 }: {
   tableData: any;
-  addNewUrl: string;
+  addNewUrl?: string;
 }) {
   const { columns, users, statusOptions } = tableData;
 
