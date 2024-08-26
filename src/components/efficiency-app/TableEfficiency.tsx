@@ -165,10 +165,13 @@ export default function TableEfficiency({
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
+                <DropdownItem href={`/efficiency-app/${params}/heat-rate`}>
+                  Heat Rate
+                </DropdownItem>
                 <DropdownItem href={`/efficiency-app/${params}/output`}>
                   View
                 </DropdownItem>
-                {/* <DropdownItem href="/admin/edit">Edit</DropdownItem> */}
+                <DropdownItem href="/admin/edit">Edit</DropdownItem>
                 <DropdownItem>Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>

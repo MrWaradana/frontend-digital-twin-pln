@@ -18,7 +18,7 @@ export default function Page({ params }: { params: { excels_name: string } }) {
         >
           Back to select excel
         </Button>
-        <Button
+        {/* <Button
           as={Link}
           color="primary"
           endContent={<ChevronRightIcon size={18} />}
@@ -26,7 +26,7 @@ export default function Page({ params }: { params: { excels_name: string } }) {
           size="sm"
         >
           Heat Rate
-        </Button>
+        </Button> */}
       </div>
       <h1>{formatFilename(params.excels_name)}</h1>
       <div>
