@@ -13,6 +13,7 @@ import {
 import { GearIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
+import { EFFICIENCY_API_URL } from "../../lib/api-url";
 
 type excelGetData = {
   data: [String];
@@ -27,18 +28,35 @@ export default function Page() {
   console.log(session.data?.user);
 
   useEffect(() => {
-    // fetch(`https://m20vpzqk-3001.asse.devtunnels.ms/excels/TFELINK.xlsm`)
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/excels`)
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchExcels = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${EFFICIENCY_API_URL}/excels`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.data?.user?.accessToken}`, // Adding Bearer prefix for the token
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log(response, "responseeeeeeeeeeeeeeeeeeeeeeeee");
         setExcelList(data);
+      } catch (error) {
+        toast.error(`Failed to fetch excels: ${error}`);
+      } finally {
         setLoading(false);
-      })
-      .catch((error) => {
-        setLoading(false);
-        toast.error(error);
-      });
-  }, []);
+      }
+    };
+
+    if (session?.data?.user?.accessToken) {
+      fetchExcels();
+    }
+  }, [session?.data?.user?.accessToken]);
 
   const excelListTemplate = [
     {
@@ -105,7 +123,7 @@ export default function Page() {
             {excelList?.data?.map((item: any, index: number) => {
               return (
                 <div
-                  key={`${item}-${index}`}
+                  key={`${item.excel_filename}-${index}`}
                   className="h-24 w-48 relative hover:bg-green-300 transition ease px-6 py-4 rounded-lg border flex justify-center items-center"
                 >
                   <Link
@@ -115,10 +133,10 @@ export default function Page() {
                     <GearIcon />
                   </Link>
                   <Link
-                    href={`/efficiency-app/${item}`}
+                    href={`/efficiency-app/${item.excel_filename}`}
                     className="text-base font-normal leading-tight text-black hover:scale-105 transition ease"
                   >
-                    {item}
+                    {item.excel_filename}
                   </Link>
                 </div>
               );

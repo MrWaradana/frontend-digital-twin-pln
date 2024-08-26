@@ -23,6 +23,7 @@ import {
 import PlnLogo from "../../public/Logo_PLN.svg";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Navbar() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -56,6 +57,7 @@ export default function Navbar() {
 
   return (
     <>
+      <Toaster />
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
@@ -77,10 +79,7 @@ export default function Navbar() {
                       await signOut();
                       router.push("/login");
                     } catch (err) {
-                      alert({
-                        title: "Unable to sign out",
-                        variant: "destructive",
-                      });
+                      toast.error("Unable to sign out!");
                     }
                   }}
                 >

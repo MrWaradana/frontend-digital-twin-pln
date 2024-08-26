@@ -1,7 +1,6 @@
 import { loginSchema } from "@/schemas";
 import Credentials from "next-auth/providers/credentials";
-
-const apiUrl = "http://192.168.1.51:3001"
+import { AUTH_API_URL } from "../lib/api-url";
 
 /**
  * Takes a token, and returns a new token with updated
@@ -9,40 +8,37 @@ const apiUrl = "http://192.168.1.51:3001"
  * returns the old token and an error property
  */
 
-
-
 export const CredentialsProvider = Credentials({
-    async authorize(credentials) {
-        const validatedFields = loginSchema.safeParse(credentials);
+  async authorize(credentials) {
+    const validatedFields = loginSchema.safeParse(credentials);
 
-        if (validatedFields.success) {
-            const { username, password } = validatedFields.data;
+    if (validatedFields.success) {
+      const { username, password } = validatedFields.data;
 
-            const res = await fetch(`${apiUrl}/sign-in`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username,
-                    password
-                })
-            })
+      const res = await fetch(`${AUTH_API_URL}/sign-in`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
 
-            if (!res.ok) {
-                return null;
-            }
-
-            const data = await res.json()
-            // eslint-disable-next-line no-console
-            return {
-                accessToken: data.data.access_token,
-                refreshToken: data.data.refresh_token,
-                user: data.data.user
-            }
-
-        }
-
+      if (!res.ok) {
         return null;
-    },
+      }
+
+      const data = await res.json();
+      // eslint-disable-next-line no-console
+      return {
+        accessToken: data.data.access_token,
+        refreshToken: data.data.refresh_token,
+        user: data.data.user,
+      };
+    }
+
+    return null;
+  },
 });
 
 // export const GithubProvider = Github({
