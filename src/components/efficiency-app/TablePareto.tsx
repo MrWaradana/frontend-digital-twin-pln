@@ -21,6 +21,8 @@ import {
   ChipProps,
   SortDescriptor,
   Link,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import {
   DotsVerticalIcon,
@@ -28,7 +30,7 @@ import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
 } from "@radix-ui/react-icons";
-import { columns, users, statusOptions } from "@/lib/efficiency-data";
+import { columns, users, statusOptions } from "@/lib/pareto-data";
 import { capitalize } from "@/lib/utils";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -41,14 +43,12 @@ const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
 
 type User = (typeof users)[0];
 
-export default function TableEfficiency({
+export default function TablePareto({
   tableData,
   addNewUrl = "#",
-  params,
 }: {
   tableData: any;
   addNewUrl?: string;
-  params: string;
 }) {
   const { columns, users, statusOptions } = tableData;
 
@@ -64,7 +64,7 @@ export default function TableEfficiency({
   // );
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>("all");
   const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(20);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
     column: "age",
     direction: "ascending",
@@ -125,92 +125,41 @@ export default function TableEfficiency({
     const cellValue = user[columnKey as keyof User];
 
     switch (columnKey) {
-      case "name":
-        return (
-          <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.email}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
-        );
-      case "role":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-400">
-              {user.team}
-            </p>
-          </div>
-        );
       case "parameter":
+        return <Input defaultValue={user.parameter} />;
+      case "uom":
+        return <p>{cellValue}</p>;
+      case "reference":
         return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[user.parameter]}
-            size="sm"
-            variant="flat"
-          >
-            {cellValue}
-          </Chip>
+          <Input defaultValue={user.reference} type="text" pattern="[0-9]" />
+        );
+      case "existing":
+        return (
+          <Input defaultValue={user.existing} type="text" pattern="[0-9]" />
         );
       case "actions":
+        return <Input defaultValue={user.team} />;
+      case "symptomps":
         return (
-          <div className="relative flex justify-center items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="solid" color="primary">
-                  <DotsVerticalIcon className="text-white text-2xl" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem href={`/efficiency-app/${params}/heat-rate`}>
-                  Heat Rate
-                </DropdownItem>
-                <DropdownItem href={`/efficiency-app/${params}/engine-flow`}>
-                  Engine Flow
-                </DropdownItem>
-                <DropdownItem href={`/efficiency-app/${params}/pareto`}>
-                  Pareto Heat Loss
-                </DropdownItem>
-                <DropdownItem href={`#`}>
-                  {/* <DropdownItem href={`/efficiency-app/${params}/output`}> */}
-                  View
-                </DropdownItem>
-                <DropdownItem href="#">Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
+          <Select
+            label="Symptomps"
+            className="min-w-full"
+            defaultSelectedKeys={[user.symptomps.toLowerCase()]}
+          >
+            <SelectItem key={`higher`}>{`Higher`}</SelectItem>
+            <SelectItem key={`lower`}>{`Lower`}</SelectItem>
+          </Select>
         );
-      case "permission":
-        return (
-          <div className="relative flex items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button variant="bordered" className="capitalize">
-                  Permission
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Multiple selection example"
-                variant="flat"
-                closeOnSelect={false}
-                disallowEmptySelection
-                selectionMode="multiple"
-                selectedKeys={selectedRoles}
-                onSelectionChange={setSelectedRoles}
-              >
-                <DropdownItem key="app1">Aplikasi 1</DropdownItem>
-                <DropdownItem key="app2">Aplikasi 2</DropdownItem>
-                <DropdownItem key="app3">Aplikasi 3</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
+      case "periode":
+        return <Input defaultValue={user.periode} />;
       default:
-        return cellValue;
+        return (
+          <Input
+            defaultValue={String(cellValue)}
+            size="md"
+            className="min-w-xl"
+          />
+        );
     }
   }, []);
 
@@ -255,7 +204,7 @@ export default function TableEfficiency({
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by parameter..."
+            placeholder="Search by parameter"
             startContent={<MagnifyingGlassIcon />}
             value={filterValue}
             onClear={() => onClear()}
@@ -315,6 +264,7 @@ export default function TableEfficiency({
               href={addNewUrl}
               color="primary"
               startContent={<PlusIcon />}
+              className={`${addNewUrl == "false" ? "hidden" : ""}`}
             >
               Add New
             </Button>
@@ -322,7 +272,7 @@ export default function TableEfficiency({
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {users.length} users
+            Total {users.length} data
           </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
@@ -333,6 +283,7 @@ export default function TableEfficiency({
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="15">15</option>
+              <option value="20">20</option>
             </select>
           </label>
         </div>
@@ -351,12 +302,12 @@ export default function TableEfficiency({
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
+        {/* <span className="w-[30%] text-small text-default-400">
           {selectedKeys === "all"
             ? "All items selected"
             : `${selectedKeys.size} of ${filteredItems.length} selected`}
-        </span>
-        <Pagination
+        </span> */}
+        {/* <Pagination
           isCompact
           showControls
           showShadow
@@ -382,7 +333,7 @@ export default function TableEfficiency({
           >
             Next
           </Button>
-        </div>
+        </div> */}
       </div>
     );
   }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
@@ -396,13 +347,14 @@ export default function TableEfficiency({
       classNames={{
         wrapper: "max-h-[382px]",
       }}
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
+      // selectedKeys={selectedKeys}
+      // selectionMode="multiple"
       sortDescriptor={sortDescriptor}
       topContent={topContent}
       topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
+      // onSelectionChange={setSelectedKeys}
       onSortChange={setSortDescriptor}
+      color="primary"
     >
       <TableHeader columns={headerColumns}>
         {(column: any) => (
@@ -410,6 +362,7 @@ export default function TableEfficiency({
             key={column.uid}
             align={column.uid === "actions" ? "center" : "start"}
             allowsSorting={column.sortable}
+            className="uppercase min-w-32 text-wrap "
           >
             {column.name}
           </TableColumn>

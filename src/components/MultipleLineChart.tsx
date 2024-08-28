@@ -2,6 +2,7 @@
 
 import { TrendingUp } from "lucide-react";
 import {
+  Bar,
   CartesianGrid,
   Line,
   LineChart,
@@ -9,6 +10,7 @@ import {
   YAxis,
   ReferenceLine,
   Legend,
+  ComposedChart,
 } from "recharts";
 
 import {
@@ -25,14 +27,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-];
+import { Slider, SliderValue } from "@nextui-org/react";
+import { useState } from "react";
 
 const chartConfig = {
   desktop: {
@@ -46,23 +42,33 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function MultipleLineChart() {
+  const [sliderValue, setSliderValue] = useState<SliderValue>(80);
+  const chartData = [
+    { month: "January", desktop: 28, mobile: 60 },
+    { month: "February", desktop: 45, mobile: 70 },
+    { month: "March", desktop: 37, mobile: 75 },
+    { month: "April", desktop: 73, mobile: 80 },
+    { month: "May", desktop: 79, mobile: 85 },
+    { month: "June", desktop: 94, mobile: 100 },
+  ];
   return (
     <Card>
       <CardHeader>
         <CardTitle>Line Chart - Multiple</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig}>
-          <LineChart
+      <CardContent className="grid grid-cols-3">
+        <ChartContainer config={chartConfig} className="col-span-2">
+          <ComposedChart
             accessibilityLayer
             data={chartData}
             margin={{
+              top: 12,
               left: 12,
               right: 12,
             }}
           >
-            <CartesianGrid vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#888888" />
             <XAxis
               dataKey="month"
               tickLine={false}
@@ -73,18 +79,21 @@ export default function MultipleLineChart() {
             <YAxis />
             <Legend />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+            <Bar dataKey={"desktop"} fill="#f5f1f5" barSize={20} />
             <ReferenceLine
               x="March"
-              stroke="blue"
+              stroke="#D2042D"
               label="Max PV PAGE"
               strokeDasharray={5}
+              strokeWidth={2}
               strokeDashoffset={1}
             />
             <ReferenceLine
-              y={240}
+              y={Number(sliderValue)}
               label="Max"
-              stroke="blue"
+              stroke="#D2042D"
               strokeDasharray={5}
+              strokeWidth={2}
               strokeDashoffset={1}
             />
             <Line
@@ -99,10 +108,23 @@ export default function MultipleLineChart() {
               type="monotone"
               stroke="var(--color-mobile)"
               strokeWidth={2}
-              dot={false}
+              dot={true}
             />
-          </LineChart>
+          </ComposedChart>
         </ChartContainer>
+        <div className="h-[348px] col-span-1">
+          <Slider
+            size="md"
+            label="Persentase"
+            step={1}
+            onChange={setSliderValue}
+            maxValue={100}
+            minValue={0}
+            formatOptions={{ style: "decimal" }}
+            orientation="vertical"
+            defaultValue={25}
+          />
+        </div>
       </CardContent>
       <CardFooter>
         <div className="flex w-full items-start gap-2 text-sm">

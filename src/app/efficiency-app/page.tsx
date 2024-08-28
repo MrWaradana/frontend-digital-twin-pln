@@ -13,6 +13,9 @@ import {
 import { GearIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
+import TableEfficiency from "@/components/efficiency-app/TableEfficiency";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { columns, users, statusOptions } from "@/lib/efficiency-data";
 import { EFFICIENCY_API_URL } from "../../lib/api-url";
 import { useExcelStore } from "../../store/excels";
 
@@ -74,9 +77,41 @@ export default function Page() {
 
   return (
     <div className="flex flex-col items-center justify-center mt-24">
-      <h1>Choose Excel Page</h1>
+      <div className="flex flex-col gap-8 justify-center items-center w-full">
+        <div className="w-full px-96 flex justify-between mx-24">
+          <Button
+            as={Link}
+            color="primary"
+            startContent={<ChevronLeftIcon size={18} />}
+            href={`/`}
+            size="sm"
+          >
+            Back to all apps
+          </Button>
+          {/* <Button
+          as={Link}
+          color="primary"
+          endContent={<ChevronRightIcon size={18} />}
+          href={`/efficiency-app/${params.excels_name}/heat-rate`}
+          size="sm"
+        >
+          Heat Rate
+        </Button> */}
+        </div>
+        {/* {JSON.stringify(excels)} */}
+        {/* <h1>{excels[3].excel_filename}</h1> */}
+        <div>
+          <TableEfficiency
+            tableData={{ columns, users, statusOptions }}
+            addNewUrl={`/efficiency-app/${excels[0].excel_filename}/input`}
+            params={excels[0].excel_filename}
+          />
+        </div>
+      </div>
+
+      {/* <h1>Choose Excel Page</h1> */}
       {/* {JSON.stringify(excels)} */}
-      <Card>
+      <Card className="hidden">
         <CardBody>
           <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* {excelListTemplate.map((item: any, index: number) => {

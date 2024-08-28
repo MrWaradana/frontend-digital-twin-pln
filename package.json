@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@hookform/resolvers": "^3.9.0",
     "@nextui-org/react": "^2.4.6",
     "@radix-ui/react-avatar": "^1.1.0",
@@ -21,6 +22,8 @@
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.2",
+    "@react-stately/data": "^3.11.6",
+    "@tanstack/react-table": "^8.20.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.3.28",

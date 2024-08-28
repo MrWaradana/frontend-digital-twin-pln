@@ -72,7 +72,7 @@ export default function Page({ params }: { params: { excels_name: string } }) {
       {/* <MasterDataRadioGroup /> */}
       <Button
         as={Link}
-        href={`/efficiency-app/${params.excels_name}`}
+        href={`/efficiency-app`}
         color="primary"
         size="sm"
         className="lg:absolute top-0 lg:left-72 mb-4"
