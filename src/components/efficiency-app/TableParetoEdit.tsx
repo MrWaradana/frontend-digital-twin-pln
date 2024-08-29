@@ -65,8 +65,23 @@ const defaultColumn: Partial<ColumnDef<ParetoType>> = {
         value={value as string}
         onChange={(e) => setValue(e.target.value)}
         onBlur={onBlur}
+        className="border border-primary rounded-md"
       />
     );
+  },
+};
+
+const displayOnlyColumn: Partial<ColumnDef<ParetoType>> = {
+  cell: ({ getValue }) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [mounted, setMounted] = React.useState(false);
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    React.useEffect(() => {
+      setMounted(true);
+    }, []);
+
+    return mounted ? <span>{getValue() as string}</span> : null;
   },
 };
 
@@ -95,11 +110,13 @@ export default function TableParetoEdit() {
         header: "PARAMETER",
         accessorKey: "parameter",
         footer: (props) => props.column.id,
+        ...displayOnlyColumn,
       },
       {
         header: "UOM",
         accessorKey: "uom",
         footer: (props) => props.column.id,
+        ...displayOnlyColumn,
       },
       {
         header: "REFERENCE DATA",
@@ -109,6 +126,7 @@ export default function TableParetoEdit() {
             header: "(Commisioning & Design Data)",
             accessorKey: "cdd",
             footer: (props) => props.column.id,
+            ...displayOnlyColumn,
           },
         ],
       },
@@ -120,6 +138,7 @@ export default function TableParetoEdit() {
             header: "(Average Data 2012 SM 1)",
             accessorKey: "average",
             footer: (props) => props.column.id,
+            ...displayOnlyColumn,
           },
         ],
       },
@@ -127,6 +146,7 @@ export default function TableParetoEdit() {
         header: "GAP",
         accessorKey: "gap",
         footer: (props) => props.column.id,
+        ...displayOnlyColumn,
       },
       {
         header: "FAKTOR KOREKSI",
@@ -136,11 +156,13 @@ export default function TableParetoEdit() {
             header: "% HR",
             accessorKey: "hr",
             footer: (props) => props.column.id,
+            ...defaultColumn,
           },
           {
-            header: "deviasi",
-            accessorKey: "DEVIASI",
+            header: "DEVIASI",
+            accessorKey: "deviasi",
             footer: (props) => props.column.id,
+            ...defaultColumn,
           },
         ],
       },
@@ -152,11 +174,13 @@ export default function TableParetoEdit() {
             header: "% ABSOLUTE",
             accessorKey: "absolute",
             footer: (props) => props.column.id,
+            ...defaultColumn,
           },
           {
             header: "kCal/kWh",
             accessorKey: "kcal",
             footer: (props) => props.column.id,
+            ...defaultColumn,
           },
         ],
       },
@@ -164,26 +188,31 @@ export default function TableParetoEdit() {
         header: "SYMPTOMPS",
         accessorKey: "symptomps",
         footer: (props) => props.column.id,
+        ...displayOnlyColumn,
       },
       {
         header: "POTENTIAL BENEFIT (Rp.)",
         accessorKey: "benefit",
         footer: (props) => props.column.id,
+        ...displayOnlyColumn,
       },
       {
         header: "ACTION MENUTUP GAP",
         accessorKey: "actionGap",
         footer: (props) => props.column.id,
+        ...displayOnlyColumn,
       },
       {
         header: "BIAYA UNTUK CLOSING GAP (Rp.)",
         accessorKey: "closing",
         footer: (props) => props.column.id,
+        ...displayOnlyColumn,
       },
       {
         header: "RATIO BENEFIT TO COST",
         accessorKey: "ratio",
         footer: (props) => props.column.id,
+        ...displayOnlyColumn,
       },
       {
         header: "ACTION",
@@ -368,7 +397,7 @@ export default function TableParetoEdit() {
     <div className="p-2">
       <div className="h-2" />
       <div className="max-w-full px-12 overflow-x-scroll">
-        <table className="border ">
+        <table>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="border">
