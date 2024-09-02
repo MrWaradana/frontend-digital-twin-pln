@@ -31,12 +31,12 @@ import { Slider, SliderValue } from "@nextui-org/react";
 import { useState } from "react";
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  category: {
+    label: "category",
     color: "hsl(var(--chart-1))",
   },
-  mobile: {
-    label: "Mobile",
+  cum_frequency: {
+    label: "cum_frequency",
     color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig;
@@ -44,17 +44,17 @@ const chartConfig = {
 export default function MultipleLineChart() {
   const [sliderValue, setSliderValue] = useState<SliderValue>(80);
   const chartData = [
-    { month: "January", desktop: 28, mobile: 60 },
-    { month: "February", desktop: 45, mobile: 70 },
-    { month: "March", desktop: 37, mobile: 75 },
-    { month: "April", desktop: 73, mobile: 80 },
-    { month: "May", desktop: 79, mobile: 85 },
-    { month: "June", desktop: 94, mobile: 100 },
+    { month: "January", category: 28, cum_frequency: 60 },
+    { month: "February", category: 45, cum_frequency: 70 },
+    { month: "March", category: 37, cum_frequency: 75 },
+    { month: "April", category: 73, cum_frequency: 80 },
+    { month: "May", category: 79, cum_frequency: 85 },
+    { month: "June", category: 94, cum_frequency: 100 },
   ];
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Line Chart - Multiple</CardTitle>
+        <CardTitle>Heat Loss Chart</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent className="grid grid-cols-3">
@@ -79,34 +79,34 @@ export default function MultipleLineChart() {
             <YAxis />
             <Legend />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <Bar dataKey={"desktop"} fill="#f5f1f5" barSize={20} />
+            <Bar dataKey={"category"} fill="#f5f1f5" barSize={20} />
             <ReferenceLine
               x="March"
               stroke="#D2042D"
-              label="Max PV PAGE"
+              label="VITAL FEW"
               strokeDasharray={5}
               strokeWidth={2}
               strokeDashoffset={1}
             />
             <ReferenceLine
               y={Number(sliderValue)}
-              label="Max"
+              label="USEFUL MANY"
               stroke="#D2042D"
               strokeDasharray={5}
               strokeWidth={2}
               strokeDashoffset={1}
             />
             <Line
-              dataKey="desktop"
+              dataKey="category"
               type="monotone"
-              stroke="var(--color-desktop)"
+              stroke="var(--color-category)"
               strokeWidth={2}
               dot={false}
             />
             <Line
-              dataKey="mobile"
+              dataKey="cum_frequency"
               type="monotone"
-              stroke="var(--color-mobile)"
+              stroke="var(--color-cum_frequency)"
               strokeWidth={2}
               dot={true}
             />
@@ -122,22 +122,22 @@ export default function MultipleLineChart() {
             minValue={0}
             formatOptions={{ style: "decimal" }}
             orientation="vertical"
-            defaultValue={25}
+            defaultValue={sliderValue}
           />
         </div>
       </CardContent>
-      <CardFooter>
+      {/* <CardFooter>
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 font-medium leading-none">
               Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
             </div>
             <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              Showing total visitors for the last 6 months
+              Showing increase for the last 6 months
             </div>
           </div>
         </div>
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   );
 }

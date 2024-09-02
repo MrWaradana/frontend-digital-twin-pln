@@ -17,6 +17,7 @@ import {
   getPaginationRowModel,
   flexRender,
   RowData,
+  aggregationFns,
 } from "@tanstack/react-table";
 import { makeData, Person, ParetoType } from "../../lib/makeData";
 import {
@@ -24,6 +25,12 @@ import {
   Checkbox,
   Input,
   Link,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -40,6 +47,27 @@ declare module "@tanstack/react-table" {
     updateData: (rowIndex: number, columnId: string, value: unknown) => void;
   }
 }
+
+const checkboxColumn = [
+  "Macrofouling",
+  "Microfouling",
+  "Excessive Air in leakage",
+  "Inadequate air removal capacity",
+  "Increase CW System Resistance",
+  "- Air binding cond. Disch. Pipe/tunnel",
+  "- Macrofouling at CW pump disch. Piping",
+  "- Plugged condenser tube",
+  "- Condenser inlet/outlet valve not open",
+  "- Air binding condensor inlet-outlet waterbox (low waterbox level)",
+  "Decrease CW Pump Performance",
+  "- Pump casing or impeller wear/corrosion",
+  "- Damaged casing or impeller",
+  "- Pump cavitation",
+  "- Macrofouling / siltation of intake/struct",
+  "- Low inlet pump level",
+  "Decrease Ejector/Vacuum pump performance",
+  "Instrument Error",
+];
 
 // Give our default column cell renderer editing superpowers!
 const defaultColumn: Partial<ColumnDef<ParetoType>> = {
@@ -60,12 +88,20 @@ const defaultColumn: Partial<ColumnDef<ParetoType>> = {
       setValue(initialValue);
     }, [initialValue]);
 
-    return (
+    return typeof initialValue === "number" ? (
+      <input
+        value={value as number}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={onBlur}
+        type="number"
+        className="border border-primary/20 rounded-md bg-neutral-100 max-w-24 my-1 mx-2"
+      />
+    ) : (
       <input
         value={value as string}
         onChange={(e) => setValue(e.target.value)}
         onBlur={onBlur}
-        className="border border-primary rounded-md"
+        className="border border-primary/20 rounded-md bg-neutral-100 max-w-24 my-1 mx-2"
       />
     );
   },
@@ -81,27 +117,12 @@ const displayOnlyColumn: Partial<ColumnDef<ParetoType>> = {
       setMounted(true);
     }, []);
 
-    return mounted ? <span>{getValue() as string}</span> : null;
+    return mounted ? <p className="p-1">{getValue() as string}</p> : null;
   },
 };
 
-function useSkipper() {
-  const shouldSkipRef = React.useRef(true);
-  const shouldSkip = shouldSkipRef.current;
-
-  // Wrap a function with this to skip a pagination reset temporarily
-  const skip = React.useCallback(() => {
-    shouldSkipRef.current = false;
-  }, []);
-
-  React.useEffect(() => {
-    shouldSkipRef.current = true;
-  });
-
-  return [shouldSkip, skip] as const;
-}
-
 export default function TableParetoEdit() {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const rerender = React.useReducer(() => ({}), {})[1];
 
   const columns = React.useMemo<ColumnDef<ParetoType>[]>(
@@ -109,35 +130,32 @@ export default function TableParetoEdit() {
       {
         header: "PARAMETER",
         accessorKey: "parameter",
-        footer: (props) => props.column.id,
+        footer: "Total",
         ...displayOnlyColumn,
       },
       {
         header: "UOM",
         accessorKey: "uom",
-        footer: (props) => props.column.id,
         ...displayOnlyColumn,
       },
       {
         header: "REFERENCE DATA",
-        footer: (props) => props.column.id,
         columns: [
           {
             header: "(Commisioning & Design Data)",
             accessorKey: "cdd",
-            footer: (props) => props.column.id,
+
             ...displayOnlyColumn,
           },
         ],
       },
       {
         header: "EXISTING DATA",
-        footer: (props) => props.column.id,
         columns: [
           {
             header: "(Average Data 2012 SM 1)",
             accessorKey: "average",
-            footer: (props) => props.column.id,
+
             ...displayOnlyColumn,
           },
         ],
@@ -145,244 +163,219 @@ export default function TableParetoEdit() {
       {
         header: "GAP",
         accessorKey: "gap",
-        footer: (props) => props.column.id,
         ...displayOnlyColumn,
       },
       {
         header: "FAKTOR KOREKSI",
-        footer: (props) => props.column.id,
         columns: [
           {
             header: "% HR",
             accessorKey: "hr",
-            footer: (props) => props.column.id,
             ...defaultColumn,
           },
           {
             header: "DEVIASI",
             accessorKey: "deviasi",
-            footer: (props) => props.column.id,
             ...defaultColumn,
           },
         ],
       },
       {
         header: "NILAI LOSSES",
-        footer: (props) => props.column.id,
         columns: [
           {
             header: "% ABSOLUTE",
             accessorKey: "absolute",
-            footer: (props) => props.column.id,
-            ...defaultColumn,
+            aggregationFn: "sum",
+            aggregatedCell: (props) => {
+              const total = props.getValue();
+              return total;
+            },
+            footer: (props) => {
+              const total = "1,10";
+              return <p>{total}</p>;
+            },
+            ...displayOnlyColumn,
           },
           {
             header: "kCal/kWh",
             accessorKey: "kcal",
-            footer: (props) => props.column.id,
-            ...defaultColumn,
+            footer: "1,55",
+            ...displayOnlyColumn,
           },
         ],
       },
       {
         header: "SYMPTOMPS",
         accessorKey: "symptomps",
-        footer: (props) => props.column.id,
-        ...displayOnlyColumn,
+        // footer: (props) => props.column.id,
+        cell: ({ getValue }) => {
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          const [mounted, setMounted] = React.useState(false);
+
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          React.useEffect(() => {
+            setMounted(true);
+          }, []);
+          if ((getValue() as string) == "Higher") {
+            return mounted ? (
+              <p className="p-1 bg-blue-400">{getValue() as string}</p>
+            ) : null;
+          } else {
+            return mounted ? (
+              <p className="p-1 bg-red-400">{getValue() as string}</p>
+            ) : null;
+          }
+        },
+        // ...displayOnlyColumn,
       },
       {
         header: "POTENTIAL BENEFIT (Rp.)",
         accessorKey: "benefit",
-        footer: (props) => props.column.id,
+        // footer: (props) => props.column.id,
         ...displayOnlyColumn,
       },
       {
         header: "ACTION MENUTUP GAP",
         accessorKey: "actionGap",
-        footer: (props) => props.column.id,
+        // footer: (props) => props.column.id,
         ...displayOnlyColumn,
       },
       {
         header: "BIAYA UNTUK CLOSING GAP (Rp.)",
         accessorKey: "closing",
-        footer: (props) => props.column.id,
+        // footer: (props) => props.column.id,
         ...displayOnlyColumn,
       },
       {
         header: "RATIO BENEFIT TO COST",
         accessorKey: "ratio",
-        footer: (props) => props.column.id,
+        // footer: (props) => props.column.id,
         ...displayOnlyColumn,
       },
       {
         header: "ACTION",
         accessorKey: "actions",
-        footer: (props) => props.column.id,
+        // footer: (props) => props.column.id,
         cell: ({ row }) => {
           const rows = Array.from({ length: 18 });
           return (
             <React.Fragment key={row.id}>
-              <Popover placement="bottom" showArrow offset={10}>
-                <PopoverTrigger>
-                  <Button color="primary">Root Cause Checkbox</Button>
-                </PopoverTrigger>
-                <PopoverContent className="">
-                  {(titleProps) => (
-                    <div className="px-1 py-2 w-[480px] overflow-ellipsis">
-                      <p
-                        className="text-small font-bold text-foreground"
-                        {...titleProps}
-                      >
-                        Root Cause Checkbox
-                      </p>
-                      {/* <div className="mt-2 flex flex-row gap-2 w-full overflow-x-scroll">
-                        <Checkbox defaultSelected>
-                          Kondensor TTD dan ∆ P naik{" "}
-                        </Checkbox>
-                        <Checkbox defaultSelected></Checkbox>
-                        <Checkbox defaultSelected></Checkbox>
-                        <Checkbox defaultSelected></Checkbox>
-                        <Checkbox defaultSelected></Checkbox>
-                      </div> */}
-                      <NextTable
-                        aria-label="Root Cause Checkbox"
-                        className=" h-[320px] overflow-y-scroll"
-                      >
-                        <TableHeader>
-                          <TableColumn>Heat Loss Caused </TableColumn>
-                          <TableColumn>Kondensor TTD dan ∆ P naik </TableColumn>
-                          <TableColumn>∆ T Kondensor naik</TableColumn>
-                          <TableColumn>High O2 in condensate water</TableColumn>
-                          <TableColumn>Repair</TableColumn>
-                          <TableColumn>Biaya</TableColumn>
-                        </TableHeader>
-                        <TableBody>
-                          {rows.map((_, rowIndex) => (
-                            <TableRow key={rowIndex}>
-                              {[1, 2, 3, 4, 5, 6].map((colIndex) => (
-                                <TableCell key={colIndex}>
-                                  {colIndex === 1 ? (
-                                    rowIndex === 0 ? (
-                                      "" // Leave the first cell of the first row empty
-                                    ) : (
-                                      `Row ${rowIndex} - Text` // Render a string for other rows in the first column
-                                    )
-                                  ) : (
-                                    <>
-                                      <Checkbox
-                                        defaultChecked
-                                        name={`${rowIndex * 5 + colIndex}`}
-                                        className={`${
-                                          rowIndex === 0 ? "hidden" : ""
-                                        }`}
-                                      />
-                                      <p
-                                        className={`${
-                                          rowIndex != 0 ? "hidden" : ""
-                                        }`}
-                                      >
-                                        {`Column ${colIndex - 1}`}
-                                      </p>
-                                    </>
-                                  )}
-                                </TableCell>
-                              ))}
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </NextTable>
-                    </div>
-                  )}
-                </PopoverContent>
-              </Popover>
-              {/* <Button
-                as={Link}
-                href={`/efficiency-app/TFELINK.xlsm/pareto/root-cause`}
-                color="primary"
-                variant="flat"
-                className="m-1"
-              >
-                Go to Root Cause Checklist {`>`}
-              </Button> */}
+              <Button onPress={onOpen} color="primary" className="m-2">
+                Open Checkbox
+              </Button>
             </React.Fragment>
           );
         },
       },
-      //   {
-      //     header: "Name",
-      //     footer: (props) => props.column.id,
-      //     columns: [
-      //       {
-      //         accessorKey: "firstName",
-      //         footer: (props) => props.column.id,
-      //       },
-      //       {
-      //         accessorFn: (row) => row.lastName,
-      //         id: "lastName",
-      //         header: () => <span>Last Name</span>,
-      //         footer: (props) => props.column.id,
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     header: "Info",
-      //     footer: (props) => props.column.id,
-      //     columns: [
-      //       {
-      //         accessorKey: "age",
-      //         header: () => "Age",
-      //         footer: (props) => props.column.id,
-      //       },
-      //       {
-      //         header: "More Info",
-      //         columns: [
-      //           {
-      //             accessorKey: "visits",
-      //             header: () => <span>Visits</span>,
-      //             footer: (props) => props.column.id,
-      //           },
-      //           {
-      //             accessorKey: "status",
-      //             header: "Status",
-      //             footer: (props) => props.column.id,
-      //           },
-      //           {
-      //             accessorKey: "progress",
-      //             header: "Profile Progress",
-      //             footer: (props) => props.column.id,
-      //           },
-      //         ],
-      //       },
-      //     ],
-      //   },
     ],
     []
   );
 
-  const [data, setData] = React.useState(() => makeData(1000));
-  const refreshData = () => setData(() => makeData(1000));
+  const [data, setData] = React.useState([
+    {
+      parameter: "Boiler fuel efficiency (LHV)",
+      uom: "%",
+      cdd: 75.52,
+      average: 72.36,
+      gap: 0.05,
+      hr: 100,
+      deviasi: 1,
+      absolute: 0.25,
+      kcal: 0.05,
+      symptomps: "Higher",
+      benefit: 0.3,
+      actionGap: "Action",
+      closing: 0.05,
+      ratio: 0.7,
+      actions: "Action",
+    },
+    {
+      parameter: "Boiler fuel efficiency (HHV)",
+      uom: "%",
+      cdd: 34.56,
+      average: 72.36,
+      gap: 0.65,
+      hr: 100,
+      deviasi: 1,
+      absolute: 0.25,
+      kcal: 0.44,
+      symptomps: "Lower",
+      benefit: 0.86,
+      actionGap: "Action",
+      closing: 0.16,
+      ratio: 0.63,
+      actions: "Action",
+    },
+    {
+      parameter: "Furnace w/ Pulverizer [7]: Pressure",
+      uom: "bar",
+      cdd: 34.56,
+      average: 72.36,
+      gap: 0.59,
+      hr: 100,
+      deviasi: 1,
+      absolute: 0.27,
+      kcal: 0.97,
+      symptomps: "Lower",
+      benefit: 0.72,
+      actionGap: "Action",
+      closing: 0.2,
+      ratio: 0.02,
+      actions: "Action",
+    },
+    {
+      parameter: "Furnace w/ Pulverizer [7]: Mass flow",
+      uom: "t/h",
+      cdd: 34.56,
+      average: 72.36,
+      gap: 0.97,
+      hr: 100,
+      deviasi: 1,
+      absolute: 0.33,
+      kcal: 0.09,
+      symptomps: "Higher",
+      benefit: 0.72,
+      actionGap: "Action",
+      closing: 0.15,
+      ratio: 0.49,
+      actions: "Action",
+    },
+  ]);
+  const refreshData = () => setData(() => makeData(5));
 
-  const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
+  // console.log(data, "data tabel");
 
   const table = useReactTable({
     data,
     columns,
     defaultColumn,
+    aggregationFns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    autoResetPageIndex,
     // Provide our updateData function to our table meta
     meta: {
-      updateData: (rowIndex, columnId, value) => {
-        // Skip page index reset until after next rerender
-        skipAutoResetPageIndex();
-        setData((old) =>
-          old.map((row, index) => {
+      updateData: (rowIndex: any, columnId: any, value: any) => {
+        setData((old: any) =>
+          old.map((row: any, index: any) => {
             if (index === rowIndex) {
+              // Get the original value type
+              const originalValue = old[rowIndex][columnId];
+
+              // Perform type conversion based on the original value type
+              let newValue;
+              if (typeof originalValue === "number") {
+                newValue = parseFloat(value);
+                if (isNaN(newValue)) newValue = 0; // Fallback if parsing fails
+              } else if (typeof originalValue === "boolean") {
+                newValue = value === "true" || value === true;
+              } else {
+                newValue = value; // Default case for strings or other types
+              }
+
               return {
-                ...old[rowIndex]!,
-                [columnId]: value,
+                ...old[rowIndex],
+                [columnId]: newValue,
               };
             }
             return row;
@@ -395,18 +388,92 @@ export default function TableParetoEdit() {
 
   return (
     <div className="p-2">
+      <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Root Cause Checkbox
+              </ModalHeader>
+              <ModalBody>
+                <NextTable
+                  aria-label="Root Cause Checkbox"
+                  className="h-[360px]"
+                >
+                  <TableHeader>
+                    <TableColumn>Heat Loss Caused </TableColumn>
+                    <TableColumn>Kondensor TTD dan ∆ P naik </TableColumn>
+                    <TableColumn>∆ T Kondensor naik</TableColumn>
+                    <TableColumn>High O2 in condensate water</TableColumn>
+                    <TableColumn>Repair</TableColumn>
+                    <TableColumn>Biaya</TableColumn>
+                  </TableHeader>
+                  <TableBody>
+                    {checkboxColumn.map((_, rowIndex) => (
+                      <TableRow key={rowIndex}>
+                        {[1, 2, 3, 4, 5, 6].map((colIndex) => (
+                          <TableCell key={colIndex} className="text-center">
+                            {colIndex === 1 ? (
+                              rowIndex === 0 ? (
+                                "" // Leave the first cell of the first row empty
+                              ) : (
+                                `${_}` // Render a string for other rows in the first column
+                              )
+                            ) : colIndex === 6 ? (
+                              rowIndex != 0 ? (
+                                <>
+                                  <input className="border bg-neutral-200 py-1 px-1 rounded-md" />
+                                </>
+                              ) : (
+                                `` // Render a string for other rows in the first column
+                              )
+                            ) : (
+                              <>
+                                <Checkbox
+                                  defaultChecked
+                                  name={`${rowIndex * 5 + colIndex}`}
+                                  className={`${
+                                    rowIndex === 0 ? "hidden" : ""
+                                  }`}
+                                />
+                                <p
+                                  className={`${rowIndex != 0 ? "hidden" : ""}`}
+                                >
+                                  {``}
+                                </p>
+                              </>
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </NextTable>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={onClose}>
+                  Action
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <div className="h-2" />
-      <div className="max-w-full px-12 overflow-x-scroll">
+      <div className="max-w-full px-12 overflow-x-auto">
         <table>
-          <thead>
+          <thead className="bg-primary/20">
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="border">
+              <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
                     <th
                       key={header.id}
                       colSpan={header.colSpan}
-                      className="border"
+                      className="border-1 border-black px-2 py-1"
                     >
                       {header.isPlaceholder ? null : (
                         <div>
@@ -433,7 +500,7 @@ export default function TableParetoEdit() {
                 <tr key={row.id}>
                   {row.getVisibleCells().map((cell) => {
                     return (
-                      <td key={cell.id} className="border">
+                      <td key={cell.id} className="border-b-1 border-black/20">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
@@ -445,77 +512,26 @@ export default function TableParetoEdit() {
               );
             })}
           </tbody>
+          <tfoot className="bg-neutral-300 border-t-1 border-black">
+            {table.getFooterGroups().map((footerGroup) => (
+              <tr key={footerGroup.id}>
+                {footerGroup.headers.map((header) => (
+                  <td key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.footer,
+                          header.getContext()
+                        )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tfoot>
         </table>
       </div>
 
       <div className="h-2" />
-      <div className="flex items-center gap-2">
-        <button
-          className="border rounded p-1"
-          onClick={() => table.setPageIndex(0)}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {"<<"}
-        </button>
-        <button
-          className="border rounded p-1"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {"<"}
-        </button>
-        <button
-          className="border rounded p-1"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          {">"}
-        </button>
-        <button
-          className="border rounded p-1"
-          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-          disabled={!table.getCanNextPage()}
-        >
-          {">>"}
-        </button>
-        <span className="flex items-center gap-1">
-          <div>Page</div>
-          <strong>
-            {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </strong>
-        </span>
-        <span className="flex items-center gap-1">
-          | Go to page:
-          <input
-            type="number"
-            min="1"
-            max={table.getPageCount()}
-            defaultValue={table.getState().pagination.pageIndex + 1}
-            onChange={(e) => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0;
-              table.setPageIndex(page);
-            }}
-            className="border p-1 rounded w-16"
-          />
-        </span>
-        <select
-          value={table.getState().pagination.pageSize}
-          onChange={(e) => {
-            table.setPageSize(Number(e.target.value));
-          }}
-        >
-          {[10, 20, 30, 40, 50].map((pageSize) => (
-            <option key={pageSize} value={pageSize}>
-              Show {pageSize}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>{table.getRowModel().rows.length} Rows</div>
-      <div>
-        <button onClick={() => rerender()}>Force Rerender</button>
-      </div>
       <div>
         <button onClick={() => refreshData()}>Refresh Data</button>
       </div>
@@ -529,15 +545,21 @@ function Filter({
   column: Column<any, any>;
   table: Table<any>;
 }) {
+  // if column id key is uom, don't show filter
+  if (column.id === "uom" || column.id === "actions") {
+    return null;
+  }
   const firstValue = table
     .getPreFilteredRowModel()
     .flatRows[0]?.getValue(column.id);
 
   const columnFilterValue = column.getFilterValue();
 
+  // If the column's accessorKey is 'uom', return null to hide the filter
+
   return typeof firstValue === "number" ? (
     <div className="flex space-x-2">
-      <input
+      {/* <input
         type="number"
         value={(columnFilterValue as [number, number])?.[0] ?? ""}
         onChange={(e) =>
@@ -560,7 +582,7 @@ function Filter({
         }
         placeholder={`Max`}
         className="w-24 border shadow rounded"
-      />
+      /> */}
     </div>
   ) : (
     <input
@@ -572,12 +594,3 @@ function Filter({
     />
   );
 }
-
-// const rootElement = document.getElementById("root");
-// if (!rootElement) throw new Error("Failed to find the root element");
-
-// ReactDOM.createRoot(rootElement).render(
-//   <React.StrictMode>
-//     <TableParetoEdit />
-//   </React.StrictMode>
-// );

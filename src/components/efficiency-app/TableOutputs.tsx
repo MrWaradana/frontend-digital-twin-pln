@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -11,8 +11,49 @@ import {
   Pagination,
   getKeyValue,
 } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
+import { EFFICIENCY_API_URL } from "@/lib/api-url";
+import toast from "react-hot-toast";
 
-export default function TableOutputs({ tableData }: { tableData: [string] }) {
+export default function TableOutputs() {
+  const [tableData, setTableData] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+  const session = useSession();
+
+  useEffect(() => {
+    const fetchVariables = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `${EFFICIENCY_API_URL}/variables/${"a6330942-8531-4063-a047-44c95f2c1f37"}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.data?.user?.accessToken}`, // Adding Bearer prefix for the token
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log(response, "responseeeeeeeeeeeeeeeeeeeeeeeee");
+        setTableData(data);
+      } catch (error) {
+        toast.error(`Failed to fetch variables: ${error}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (session?.data?.user?.accessToken) {
+      fetchVariables();
+    }
+  }, [session?.data?.user?.accessToken]);
+
   const filteredData = tableData.filter(
     (v: any) => v.variable_type === "input"
   );

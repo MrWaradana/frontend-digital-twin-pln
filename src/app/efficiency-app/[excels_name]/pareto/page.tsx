@@ -5,6 +5,7 @@ import { ChevronLeftIcon } from "lucide-react";
 import MultipleLineChart from "../../../../components/MultipleLineChart";
 import LineBarAreaComposedChart from "../../../../components/LineBarAreaComposedChart";
 import { columns, users, statusOptions } from "@/lib/pareto-data";
+import TableParetoHeatloss from "../../../../components/efficiency-app/TableParetoHeatloss";
 
 export default function Page({ params }: { params: { excels_name: string } }) {
   return (
@@ -23,10 +24,10 @@ export default function Page({ params }: { params: { excels_name: string } }) {
         Back to all data
       </Button>
       <MultipleLineChart />
-      <LineBarAreaComposedChart />
       <div className="max-w-full px-8">
         {/* <TablePareto tableData={{ columns, users, statusOptions }} /> */}
         <TableParetoEdit />
+        {/* <TableParetoHeatloss /> */}
       </div>
     </div>
   );

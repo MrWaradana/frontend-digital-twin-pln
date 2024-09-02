@@ -28,7 +28,7 @@ import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
 } from "@radix-ui/react-icons";
-import { columns, users, statusOptions } from "@/lib/efficiency-data";
+import { users as tableData, statusOptions } from "@/lib/efficiency-data";
 import { capitalize } from "@/lib/utils";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -37,9 +37,8 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   target: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
-
-type User = (typeof users)[0];
+const INITIAL_VISIBLE_COLUMNS = ["jenis_parameter", "periode", "actions"];
+const INITIAL_VISIBLE_PARAMETER = ["current"];
 
 export default function TableEfficiency({
   tableData,
@@ -50,20 +49,26 @@ export default function TableEfficiency({
   addNewUrl?: string;
   params: string;
 }) {
-  const { columns, users, statusOptions } = tableData;
+  console.log(tableData, "tableData");
+  const columns = [
+    { name: "ID", uid: "id", sortable: true },
+    { name: "JENIS PARAMETER", uid: "jenis_parameter", sortable: true },
+    { name: "PERIODE", uid: "periode", sortable: true },
+    { name: "ACTIONS", uid: "actions" },
+  ];
+
+  type TransactionsType = (typeof tableData)[0];
 
   const [filterValue, setFilterValue] = React.useState("");
-  const [selectedRoles, setSelectedRoles] = React.useState<Selection>(
-    new Set(["app1"])
-  );
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([])
   );
-  // const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
-  //   new Set(INITIAL_VISIBLE_COLUMNS)
-  // );
-  const [visibleColumns, setVisibleColumns] = React.useState<Selection>("all");
-  const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
+  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
+    new Set(INITIAL_VISIBLE_COLUMNS)
+  );
+  const [parameterFilter, setParameterFilter] = React.useState<Selection>(
+    new Set(INITIAL_VISIBLE_PARAMETER)
+  );
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
     column: "age",
@@ -83,7 +88,7 @@ export default function TableEfficiency({
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredUsers = [...tableData];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
@@ -91,16 +96,16 @@ export default function TableEfficiency({
       );
     }
     if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
+      parameterFilter !== "all" &&
+      Array.from(parameterFilter).length !== statusOptions.length
     ) {
       filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.parameter)
+        Array.from(parameterFilter).includes(user.parameter)
       );
     }
 
     return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+  }, [tableData, filterValue, parameterFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -112,107 +117,67 @@ export default function TableEfficiency({
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = React.useMemo(() => {
-    return [...items].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as number;
-      const second = b[sortDescriptor.column as keyof User] as number;
+    return [...items].sort((a: TransactionsType, b: TransactionsType) => {
+      const first = a[
+        sortDescriptor.column as keyof TransactionsType
+      ] as number;
+      const second = b[
+        sortDescriptor.column as keyof TransactionsType
+      ] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-    const cellValue = user[columnKey as keyof User];
+  const renderCell = React.useCallback(
+    (user: TransactionsType, columnKey: React.Key) => {
+      const cellValue = user[columnKey as keyof TransactionsType];
 
-    switch (columnKey) {
-      case "name":
-        return (
-          <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.email}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
-        );
-      case "role":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-400">
-              {user.team}
-            </p>
-          </div>
-        );
-      case "parameter":
-        return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[user.parameter]}
-            size="sm"
-            variant="flat"
-          >
-            {cellValue}
-          </Chip>
-        );
-      case "actions":
-        return (
-          <div className="relative flex justify-center items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="solid" color="primary">
-                  <DotsVerticalIcon className="text-white text-2xl" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem href={`/efficiency-app/${params}/heat-rate`}>
+      switch (columnKey) {
+        case "jenis_parameter":
+          return (
+            <Chip
+              className="capitalize"
+              color={statusColorMap[user.parameter]}
+              size="sm"
+              variant="flat"
+            >
+              {cellValue}
+            </Chip>
+          );
+        case "actions":
+          return (
+            <div className="relative flex justify-center items-center gap-2">
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button isIconOnly size="sm" variant="solid" color="primary">
+                    <DotsVerticalIcon className="text-white text-2xl" />
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu>
+                  {/* <DropdownItem href={`/efficiency-app/${params}/heat-rate`}>
                   Heat Rate
-                </DropdownItem>
-                <DropdownItem href={`/efficiency-app/${params}/engine-flow`}>
-                  Engine Flow
-                </DropdownItem>
-                <DropdownItem href={`/efficiency-app/${params}/pareto`}>
-                  Pareto Heat Loss
-                </DropdownItem>
-                <DropdownItem href={`#`}>
-                  {/* <DropdownItem href={`/efficiency-app/${params}/output`}> */}
-                  View
-                </DropdownItem>
-                <DropdownItem href="#">Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
-      case "permission":
-        return (
-          <div className="relative flex items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button variant="bordered" className="capitalize">
-                  Permission
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Multiple selection example"
-                variant="flat"
-                closeOnSelect={false}
-                disallowEmptySelection
-                selectionMode="multiple"
-                selectedKeys={selectedRoles}
-                onSelectionChange={setSelectedRoles}
-              >
-                <DropdownItem key="app1">Aplikasi 1</DropdownItem>
-                <DropdownItem key="app2">Aplikasi 2</DropdownItem>
-                <DropdownItem key="app3">Aplikasi 3</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
-      default:
-        return cellValue;
-    }
-  }, []);
+                </DropdownItem> */}
+                  <DropdownItem href={`/efficiency-app/${params}/engine-flow`}>
+                    Engine Flow
+                  </DropdownItem>
+                  <DropdownItem href={`/efficiency-app/${params}/pareto`}>
+                    Pareto Heat Loss
+                  </DropdownItem>
+                  <DropdownItem href={`#`}>View</DropdownItem>
+                  <DropdownItem href="#">Edit</DropdownItem>
+                  <DropdownItem>Delete</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </div>
+          );
+        default:
+          return cellValue;
+      }
+    },
+    []
+  );
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
@@ -275,9 +240,9 @@ export default function TableEfficiency({
                 disallowEmptySelection
                 aria-label="Table Columns"
                 closeOnSelect={false}
-                selectedKeys={statusFilter}
+                selectedKeys={parameterFilter}
                 selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
+                onSelectionChange={setParameterFilter}
               >
                 {statusOptions.map((status: any) => (
                   <DropdownItem key={status.uid} className="capitalize">
@@ -322,7 +287,7 @@ export default function TableEfficiency({
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {users.length} users
+            Total {tableData.length} users
           </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
@@ -340,11 +305,11 @@ export default function TableEfficiency({
     );
   }, [
     filterValue,
-    statusFilter,
+    parameterFilter,
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    users.length,
+    tableData.length,
     hasSearchFilter,
   ]);
 
@@ -415,7 +380,7 @@ export default function TableEfficiency({
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No users found"} items={sortedItems}>
+      <TableBody emptyContent={"No data found"} items={sortedItems}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (

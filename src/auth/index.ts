@@ -118,6 +118,7 @@ export const {
       }
       // Save to local storage
       // console.log(session.user, "=============================");
+      console.log(token, "token");
       return session;
     },
     // async signIn({ user, account }) {

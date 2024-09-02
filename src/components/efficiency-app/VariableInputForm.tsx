@@ -150,26 +150,49 @@ export default function VariableInputForm({ variables }: { variables: any }) {
                   key={category}
                   title={category == "null" ? "Tidak Ada Kategori" : category}
                 >
-                  {variables.map((variable: any) => (
-                    <FormItem key={variable.id}>
-                      <FormLabel>
-                        {variable.input_name} ({variable.satuan})
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          placeholder={`Enter ${variable.input_name}`}
-                          name={variable.id}
-                          // Add more input attributes here as needed
-                        />
-                      </FormControl>
-                    </FormItem>
+                  {variables.map((v: any) => (
+                    <Fragment key={v.id}>
+                      <FormField
+                        control={formInput.control}
+                        name={v.id}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                placeholder={`${""}`}
+                                label={v.input_name}
+                                size="md"
+                                className={`justify-between max-w-xs lg:max-w-full  border-b-1 pb-1`}
+                                labelPlacement="outside"
+                                type="number"
+                                required
+                                {...field}
+                                value={inputValues[v.id]} // Controlled input
+                                onChange={(e) =>
+                                  handleInputChange(
+                                    v.id,
+                                    Number(e.target.value)
+                                  )
+                                }
+                                endContent={
+                                  <p className="text-sm">
+                                    {" "}
+                                    {v.satuan == "NaN" ? "" : v.satuan}
+                                  </p>
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </Fragment>
                   ))}
                 </AccordionItem>
               )
             )}
           </Accordion>
-          {variableData.map((v: any) => {
+          {/* {variableData.map((v: any) => {
             if (v.in_out == "in")
               return (
                 <Fragment key={v.id}>
@@ -206,7 +229,7 @@ export default function VariableInputForm({ variables }: { variables: any }) {
                   />
                 </Fragment>
               );
-          })}
+          })} */}
           <Button
             type="submit"
             color="primary"

@@ -4,25 +4,16 @@ import { Button, Link } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import { stringify } from "querystring";
 import { formatFilename } from "../../../../lib/format-text";
+import { Toaster } from "react-hot-toast";
 
 export default async function Page({
   params,
 }: {
   params: { excels_name: string };
 }) {
-  const variables = await fetch(
-    `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/variables`,
-    {
-      next: { revalidate: 120 },
-    }
-  ).then((res) => res.json());
-
-  const units = await fetch(`${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/units`, {
-    next: { revalidate: 120 },
-  }).then((res) => res.json());
-
   return (
     <section className="w-full flex flex-col items-center justify-center mt-12">
+      <Toaster />
       <Button
         as={Link}
         href={`/efficiency-app/${params.excels_name}`}
@@ -36,7 +27,7 @@ export default async function Page({
       {/* <VariableOutputForm variables={variables} units={units} /> */}
       <h2 className="mb-4">Output {formatFilename(params.excels_name)}</h2>
       <div>
-        <TableOutputs tableData={variables.data} />
+        <TableOutputs />
       </div>
     </section>
   );

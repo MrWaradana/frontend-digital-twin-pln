@@ -21,6 +21,7 @@ import { useExcelStore } from "../../store/excels";
 
 export default function Page() {
   const [isLoading, setLoading] = useState(true);
+  const [efficiencyData, setEfficiencyData] = useState(true);
 
   const session = useSession();
 
@@ -43,7 +44,7 @@ export default function Page() {
         }
 
         const data = await response.json();
-        console.log(response, "responseeeeeeeeeeeeeeeeeeeeeeeee");
+        // console.log(response, "responseeeeeeeeeeeeeeeeeeeeeeeee");
         useExcelStore.getState().setExcels(data.data);
       } catch (error) {
         toast.error(`Failed to fetch excels: ${error}`);
@@ -54,6 +55,40 @@ export default function Page() {
 
     if (session?.data?.user?.accessToken) {
       fetchExcels();
+    }
+  }, [session?.data?.user?.accessToken]);
+
+  useEffect(() => {
+    const fetchEfficiencyData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `${EFFICIENCY_API_URL}/data?page=1&size=10`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.data?.user?.accessToken}`, // Adding Bearer prefix for the token
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        // console.log(response, "responseeeeeeeeeeeeeeeeeeeeeeeee");
+        setEfficiencyData(data.data.transactions);
+      } catch (error) {
+        toast.error(`Failed to fetch efficiency data: ${error}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (session?.data?.user?.accessToken) {
+      fetchEfficiencyData();
     }
   }, [session?.data?.user?.accessToken]);
 
@@ -102,7 +137,7 @@ export default function Page() {
         {/* <h1>{excels[3].excel_filename}</h1> */}
         <div>
           <TableEfficiency
-            tableData={{ columns, users, statusOptions }}
+            tableData={efficiencyData}
             addNewUrl={`/efficiency-app/${excels[0].excel_filename}/input`}
             params={excels[0].excel_filename}
           />

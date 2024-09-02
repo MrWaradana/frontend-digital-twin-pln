@@ -2,35 +2,42 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+First, clone this repository:
+
+```bash
+git clone https://gitlab.com/tjb-digital-twin/fe-front-end.git
+```
+
+Second, install the package dependencies:
+
+```bash
+npm install
+# all packages name and version can be seen
+# on package.json or package-lock.json
+```
+
+Third, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can start editing the page by modifying `src/app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+This project uses [`Typescript`](https://www.typescriptlang.org/docs/handbook/basic-types.html). Basically Javascript but with types like string and number so that you can easily detect rendered data type error and following the best practice.
 
-## Learn More
+All of the dependencies can be look at package.json. Some of the notable dependencies are:
+1. [Next UI](https://nextui.org/docs/guide/introduction)
+1. [ShadCN UI](https://ui.shadcn.com/charts)
+1. [Tailwind CSS](https://tailwindcss.com/)
+1. [TANStack for React](https://tanstack.com/)
 
-To learn more about Next.js, take a look at the following resources:
+## Structure of The Pages
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+All page is on `src/app/`. Here are the list of the pages:
+1. Login &rarr; `app/(auth)/login/page.tsx` 
+1. Admin &rarr; `app/admin/page.tsx`
+1. Efficiency App &rarr; `app/efficiency-app/page.tsx`
+1. Application X &rarr; `app/app-name/page.tsx`
