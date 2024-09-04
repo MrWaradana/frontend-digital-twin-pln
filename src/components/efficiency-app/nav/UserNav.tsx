@@ -2,14 +2,24 @@
 
 import Link from "next/link";
 import { LayoutGrid, LogOut, User } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Avatar,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  Button as NextButton,
+} from "@nextui-org/react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-  TooltipProvider
+  TooltipProvider,
 } from "@/components/ui/tooltip";
 import {
   DropdownMenu,
@@ -18,61 +28,103 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { signOut } from "next-auth/react";
+import toast from "react-hot-toast";
+import router from "next/router";
 
 export function UserNav() {
-  return (
-    <DropdownMenu>
-      <TooltipProvider disableHoverableContent>
-        <Tooltip delayDuration={100}>
-          <TooltipTrigger asChild>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="relative h-8 w-8 rounded-full"
-              >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="#" alt="Avatar" />
-                  <AvatarFallback className="bg-transparent">JD</AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">Profile</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const session = useSession();
 
-      <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">John Doe</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              johndoe@example.com
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem className="hover:cursor-pointer" asChild>
-            <Link href="/dashboard" className="flex items-center">
-              <LayoutGrid className="w-4 h-4 mr-3 text-muted-foreground" />
-              Dashboard
-            </Link>
+  return (
+    <>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Log Out Confirmation
+              </ModalHeader>
+              <ModalBody>
+                <p>Are you sure you want to Log Out?</p>
+              </ModalBody>
+              <ModalFooter>
+                <NextButton color="danger" variant="light" onPress={onClose}>
+                  Cancel
+                </NextButton>
+                <NextButton
+                  color="primary"
+                  onPress={async () => {
+                    try {
+                      await signOut();
+                      router.push("/login");
+                    } catch (err) {
+                      toast.error("Unable to sign out!");
+                    }
+                  }}
+                >
+                  Yes, Log Out
+                </NextButton>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <DropdownMenu>
+        <TooltipProvider disableHoverableContent>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger asChild>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="relative bg-transparent border-none p-0 rounded-full"
+                >
+                  <Avatar
+                    name={session.data?.user.user.name}
+                    color="primary"
+                    isBordered
+                    className="uppercase"
+                  />
+                </Button>
+              </DropdownMenuTrigger>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">Profile</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium leading-none">John Doe</p>
+              <p className="text-xs leading-none text-muted-foreground">
+                johndoe@example.com
+              </p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem className="hover:cursor-pointer" asChild>
+              <Link href="/dashboard" className="flex items-center">
+                <LayoutGrid className="w-4 h-4 mr-3 text-muted-foreground" />
+                Dashboard
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="hover:cursor-pointer" asChild>
+              <Link href="/account" className="flex items-center">
+                <User className="w-4 h-4 mr-3 text-muted-foreground" />
+                Account
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem className="hover:cursor-pointer" onClick={onOpen}>
+            <LogOut className="w-4 h-4 mr-3 text-muted-foreground" />
+            Sign out
           </DropdownMenuItem>
-          <DropdownMenuItem className="hover:cursor-pointer" asChild>
-            <Link href="/account" className="flex items-center">
-              <User className="w-4 h-4 mr-3 text-muted-foreground" />
-              Account
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem className="hover:cursor-pointer" onClick={() => {}}>
-          <LogOut className="w-4 h-4 mr-3 text-muted-foreground" />
-          Sign out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   );
 }

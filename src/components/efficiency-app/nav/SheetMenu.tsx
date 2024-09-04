@@ -8,7 +8,7 @@ import {
   SheetHeader,
   SheetContent,
   SheetTrigger,
-  SheetTitle
+  SheetTitle,
 } from "@/components/ui/sheet";
 
 export function SheetMenu() {
@@ -32,7 +32,7 @@ export function SheetMenu() {
             </Link>
           </Button>
         </SheetHeader>
-        <Menu isOpen />
+        <Menu isListOpen />
       </SheetContent>
     </Sheet>
   );

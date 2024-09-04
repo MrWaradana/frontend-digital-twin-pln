@@ -16,7 +16,7 @@ import {
   TooltipContent,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import {
   Modal,
   ModalContent,
@@ -42,7 +42,6 @@ export function Menu({ isListOpen }: MenuProps) {
   return (
     <>
       {" "}
-      <Toaster />
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
@@ -163,7 +162,7 @@ export function Menu({ isListOpen }: MenuProps) {
                 <Tooltip delayDuration={100}>
                   <TooltipTrigger asChild>
                     <Button
-                      onClick={() => {}}
+                      onClick={onOpen}
                       variant="outline"
                       className="w-full justify-center h-10 mt-5"
                     >

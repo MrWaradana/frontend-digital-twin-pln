@@ -22,11 +22,11 @@ import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 
 export default function Page() {
   const [isLoading, setLoading] = useState(true);
-  const [efficiencyData, setEfficiencyData] = useState(true);
+  const [efficiencyData, setEfficiencyData] = useState([]);
 
   const session = useSession();
 
-  console.log(session.data?.user);
+  // console.log(session.data?.user);
 
   useEffect(() => {
     const fetchExcels = async () => {
@@ -79,8 +79,9 @@ export default function Page() {
         }
 
         const data = await response.json();
-        // console.log(response, "responseeeeeeeeeeeeeeeeeeeeeeeee");
+        // console.log(data.data.transactions, "responseeeeeeeeeeeeeeeeeeeeeeeee");
         setEfficiencyData(data.data.transactions);
+        // console.log(efficiencyData, "Didalam use effect");
       } catch (error) {
         toast.error(`Failed to fetch efficiency data: ${error}`);
       } finally {
@@ -95,6 +96,7 @@ export default function Page() {
 
   const excels = useExcelStore((state) => state.excels);
 
+  // console.log(efficiencyData, "data");
   if (isLoading)
     return (
       <div className="w-full mt-24 flex justify-center items-center">
@@ -117,13 +119,11 @@ export default function Page() {
         <div className="flex flex-col gap-8 justify-center items-center w-full">
           {/* {JSON.stringify(excels)} */}
           {/* <h1>{excels[3].excel_filename}</h1> */}
-          <div>
-            <TableEfficiency
-              tableData={efficiencyData}
-              addNewUrl={`/efficiency-app/${excels[0].excel_filename}/input`}
-              params={excels[0].excel_filename}
-            />
-          </div>
+          <TableEfficiency
+            tableData={efficiencyData}
+            addNewUrl={`/efficiency-app/${excels[0].excel_filename}/input`}
+            params={excels[0].excel_filename}
+          />
         </div>
 
         <Card className="hidden">

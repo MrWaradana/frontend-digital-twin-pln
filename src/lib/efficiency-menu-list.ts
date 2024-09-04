@@ -1,4 +1,5 @@
 import { Tag, Users, AppWindowMac, LayoutGrid, LucideIcon } from "lucide-react";
+import path from "path";
 
 type Submenu = {
   href: string;
@@ -39,7 +40,7 @@ export function getMenuList(pathname: string): Group[] {
         {
           href: "/efficiency-app",
           label: "All Efficiency Data",
-          active: pathname.includes("/efficiency-app"),
+          active: pathname === "/efficiency-app" ? true : false,
           icon: Users,
           submenus: [],
         },

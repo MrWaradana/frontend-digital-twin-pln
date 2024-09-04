@@ -52,7 +52,7 @@ export default function TableEfficiency({
   addNewUrl?: string;
   params: string;
 }) {
-  console.log(tableData[0].jenis_parameter, "tableData");
+  // console.log(tableData, "Table Data");
 
   const columns = [
     { name: "ID", uid: "id", sortable: true },

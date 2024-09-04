@@ -105,7 +105,7 @@ export const {
       if (Date.now() < token.token_expires * 1000) {
         return token;
       }
-      console.log(token, "TOKEN");
+      // console.log(token, "TOKEN");
       // Access token has expired, try to update it
       return refreshAccessToken(token);
     },
@@ -118,7 +118,7 @@ export const {
       }
       // Save to local storage
       // console.log(session.user, "=============================");
-      console.log(token, "token");
+      // console.log(token, "token");
       return session;
     },
     // async signIn({ user, account }) {
