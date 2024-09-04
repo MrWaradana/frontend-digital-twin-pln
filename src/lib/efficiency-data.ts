@@ -6,10 +6,10 @@ const columns = [
   { name: "ACTIONS", uid: "actions" },
 ];
 
-const statusOptions = [
-  { name: "Target", uid: "target" },
+const parameterOptions = [
+  { name: "Target", uid: "Target" },
   { name: "Key Performance Indicator (KPI)", uid: "kpi" },
-  { name: "Current", uid: "current" },
+  { name: "Current", uid: "Current" },
 ];
 
 const users = [
@@ -215,4 +215,4 @@ const users = [
   },
 ];
 
-export { columns, users, statusOptions };
+export { columns, users, parameterOptions as statusOptions };

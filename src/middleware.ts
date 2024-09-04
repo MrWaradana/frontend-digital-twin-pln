@@ -11,21 +11,20 @@ export default auth(async (req) => {
     });
 
     const res = await response.json();
-
     // Update the token and expiration
     req.auth.user.accessToken = res.data.data.access_token;
     req.auth.user.token_expires = res.data.data.token_expires;
-    
+
     // Redirect back to the current page with a notification query parameter
     const newUrl = new URL(req.nextUrl.pathname, req.nextUrl.origin);
     newUrl.searchParams.set("notification", "Token refreshed");
 
     return Response.redirect(newUrl);
   }
-  // if (!req.auth && req.nextUrl.pathname !== "/login") {
-  //   const newUrl = new URL("/login", req.nextUrl.origin);
-  //   return Response.redirect(newUrl);
-  // }
+  if (!req.auth && req.nextUrl.pathname !== "/login") {
+    const newUrl = new URL("/login", req.nextUrl.origin);
+    return Response.redirect(newUrl);
+  }
 });
 
 export const config = {

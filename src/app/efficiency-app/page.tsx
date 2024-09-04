@@ -18,6 +18,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { columns, users, statusOptions } from "@/lib/efficiency-data";
 import { EFFICIENCY_API_URL } from "../../lib/api-url";
 import { useExcelStore } from "../../store/excels";
+import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 
 export default function Page() {
   const [isLoading, setLoading] = useState(true);
@@ -111,45 +112,24 @@ export default function Page() {
     );
 
   return (
-    <div className="flex flex-col items-center justify-center mt-24">
-      <div className="flex flex-col gap-8 justify-center items-center w-full">
-        <div className="w-full px-96 flex justify-between mx-24">
-          <Button
-            as={Link}
-            color="primary"
-            startContent={<ChevronLeftIcon size={18} />}
-            href={`/`}
-            size="sm"
-          >
-            Back to all apps
-          </Button>
-          {/* <Button
-          as={Link}
-          color="primary"
-          endContent={<ChevronRightIcon size={18} />}
-          href={`/efficiency-app/${params.excels_name}/heat-rate`}
-          size="sm"
-        >
-          Heat Rate
-        </Button> */}
+    <EfficiencyContentLayout title="All Efficiency Data">
+      <div className="flex flex-col items-center justify-center mt-24">
+        <div className="flex flex-col gap-8 justify-center items-center w-full">
+          {/* {JSON.stringify(excels)} */}
+          {/* <h1>{excels[3].excel_filename}</h1> */}
+          <div>
+            <TableEfficiency
+              tableData={efficiencyData}
+              addNewUrl={`/efficiency-app/${excels[0].excel_filename}/input`}
+              params={excels[0].excel_filename}
+            />
+          </div>
         </div>
-        {/* {JSON.stringify(excels)} */}
-        {/* <h1>{excels[3].excel_filename}</h1> */}
-        <div>
-          <TableEfficiency
-            tableData={efficiencyData}
-            addNewUrl={`/efficiency-app/${excels[0].excel_filename}/input`}
-            params={excels[0].excel_filename}
-          />
-        </div>
-      </div>
 
-      {/* <h1>Choose Excel Page</h1> */}
-      {/* {JSON.stringify(excels)} */}
-      <Card className="hidden">
-        <CardBody>
-          <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {/* {excelListTemplate.map((item: any, index: number) => {
+        <Card className="hidden">
+          <CardBody>
+            <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {/* {excelListTemplate.map((item: any, index: number) => {
               return (
                 <div
                   key={`${item.name}-${index}`}
@@ -170,30 +150,31 @@ export default function Page() {
                 </div>
               );
             })} */}
-            {excels?.map((item: any, index: number) => {
-              return (
-                <div
-                  key={`${item.excel_filename}-${index}`}
-                  className="h-24 w-48 relative hover:bg-green-300 transition ease px-6 py-4 rounded-lg border flex justify-center items-center"
-                >
-                  <Link
-                    href="#"
-                    className="hover:scale-105 hover:bg-white rounded-md p-1 absolute top-2 right-2 text-black"
+              {excels?.map((item: any, index: number) => {
+                return (
+                  <div
+                    key={`${item.excel_filename}-${index}`}
+                    className="h-24 w-48 relative hover:bg-green-300 transition ease px-6 py-4 rounded-lg border flex justify-center items-center"
                   >
-                    <GearIcon />
-                  </Link>
-                  <Link
-                    href={`/efficiency-app/${item.excel_filename}`}
-                    className="text-base font-normal leading-tight text-black hover:scale-105 transition ease"
-                  >
-                    {item.excel_filename}
-                  </Link>
-                </div>
-              );
-            })}
-          </section>
-        </CardBody>
-      </Card>
-    </div>
+                    <Link
+                      href="#"
+                      className="hover:scale-105 hover:bg-white rounded-md p-1 absolute top-2 right-2 text-black"
+                    >
+                      <GearIcon />
+                    </Link>
+                    <Link
+                      href={`/efficiency-app/${item.excel_filename}`}
+                      className="text-base font-normal leading-tight text-black hover:scale-105 transition ease"
+                    >
+                      {item.excel_filename}
+                    </Link>
+                  </div>
+                );
+              })}
+            </section>
+          </CardBody>
+        </Card>
+      </div>
+    </EfficiencyContentLayout>
   );
 }
