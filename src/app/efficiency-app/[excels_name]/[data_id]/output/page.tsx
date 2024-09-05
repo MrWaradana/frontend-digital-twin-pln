@@ -3,14 +3,16 @@ import TableOutputs from "@/components/efficiency-app/TableOutputs";
 import { Button, Link } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import { stringify } from "querystring";
-import { formatFilename } from "../../../../lib/format-text";
+import { formatFilename } from "../../../../../lib/format-text";
 import { Toaster } from "react-hot-toast";
 
 export default async function Page({
   params,
 }: {
-  params: { excels_name: string };
+  params: { excels_name: string, data_id: string };
 }) {
+  const data_id = params.data_id
+
   return (
     <section className="w-full flex flex-col items-center justify-center mt-12">
       <Toaster />
@@ -27,7 +29,7 @@ export default async function Page({
       {/* <VariableOutputForm variables={variables} units={units} /> */}
       <h2 className="mb-4">Output {formatFilename(params.excels_name)}</h2>
       <div>
-        <TableOutputs />
+        <TableOutputs data_id={data_id} />
       </div>
     </section>
   );

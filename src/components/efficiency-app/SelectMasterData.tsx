@@ -9,7 +9,9 @@ const masterDataParameter = [
   { key: "target", label: "Target" },
 ];
 
-export default function SelectMasterData() {
+
+export default function SelectMasterData({ onMasterDataChange }: { onMasterDataChange: any }) {
+
   return (
     <Select
       isRequired
@@ -18,6 +20,9 @@ export default function SelectMasterData() {
       defaultSelectedKeys={["current"]}
       size="sm"
       className="max-w-xs"
+      onChange={(e) => {
+        onMasterDataChange(e.target.value)
+      }}
     >
       {masterDataParameter.map((item) => (
         <SelectItem key={item.key}>{item.label}</SelectItem>

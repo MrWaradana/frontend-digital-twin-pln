@@ -21,6 +21,8 @@ export default function Page({ params }: { params: { excels_name: string } }) {
   const [variableData, setVariableData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedMasterData, setSelectedMasterData] = useState<string>("current");
+  
 
   // useEffect(() => {
   //   if (status === "loading") {
@@ -109,13 +111,13 @@ export default function Page({ params }: { params: { excels_name: string } }) {
         <h2 className="mb-4">
           Opened <span>Excel {formatFilename(params.excels_name)}</span>
         </h2>
-        <SelectMasterData />
+        <SelectMasterData onMasterDataChange={setSelectedMasterData} />
         <div className="flex flex-row gap-4 lg:gap-12 items-center justify-center my-4 min-w-3xl mx-auto">
           <div className="hidden lg:block ">
             {/* {JSON.stringify(variableData.data)} */}
             {/* <VariableBestCaseForm variables={variableData} /> */}
           </div>
-          <VariableInputForm variables={variableData} />
+          <VariableInputForm excel={excels} variables={variableData} selectedMasterData = {selectedMasterData} />
         </div>
       </div>
     </EfficiencyContentLayout>
