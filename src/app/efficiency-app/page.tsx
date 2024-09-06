@@ -37,23 +37,21 @@ export default function Page() {
     isLoading,
     isValidating,
     error,
-  } = useGetExcel(session?.user.accessToken)
+  } = useGetExcel(session?.user.accessToken);
 
-  const excel = excelData ?? []
+  const excel = excelData ?? [];
 
-  console.log(excel)
+  console.log(excel);
 
   if (!isLoading) {
     useExcelStore.getState().setExcels(excel);
   }
 
+  const { data: efficiencyData, isLoading: efficiencyLoading } = useGetData(
+    session?.user.accessToken
+  );
 
-  const {
-    data: efficiencyData,
-    isLoading: efficiencyLoading,
-  } = useGetData(session?.user.accessToken)
-
-  const efficiency = efficiencyData?.transactions ?? []
+  const efficiency = efficiencyData?.transactions ?? [];
 
   // useEffect(() => {
   //   const fetchExcels = async () => {

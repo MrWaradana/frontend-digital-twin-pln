@@ -33,6 +33,7 @@ import {
   statusOptions as parameterOptions,
 } from "@/lib/efficiency-data";
 import { capitalize } from "@/lib/utils";
+import { table } from "console";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   current: "success",
@@ -57,8 +58,6 @@ export default function TableEfficiency({
   addNewUrl?: string;
   params: string;
 }) {
-  // console.log(tableData, "Table Data");
-
   const columns = [
     { name: "ID", uid: "id", sortable: true },
     { name: "NAMA", uid: "name", sortable: true },
@@ -98,23 +97,22 @@ export default function TableEfficiency({
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...tableData];
-
-    if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.parameter.toLowerCase().includes(filterValue.toLowerCase())
+    let filteredData = [...tableData];
+    if (hasSearchFilter && filteredData.length != 0) {
+      filteredData = filteredData.filter((item) =>
+        item.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
       parameterFilter !== "all" &&
       Array.from(parameterFilter).length !== parameterOptions.length
     ) {
-      filteredUsers = filteredUsers.filter((item) =>
+      filteredData = filteredData.filter((item) =>
         Array.from(parameterFilter).includes(item.jenis_parameter)
       );
     }
 
-    return filteredUsers;
+    return filteredData;
   }, [tableData, filterValue, parameterFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
@@ -174,12 +172,18 @@ export default function TableEfficiency({
                   <DropdownItem href={`/efficiency-app/${params}/engine-flow`}>
                     Engine Flow
                   </DropdownItem>
-                  <DropdownItem href={`/efficiency-app/${params}/pareto`}>
+                  <DropdownItem
+                    href={`/efficiency-app/${params}/${tableData.id}/pareto`}
+                  >
                     Pareto Heat Loss
                   </DropdownItem>
-                  <DropdownItem href={`#`}>View</DropdownItem>
-                  <DropdownItem href="#">Edit</DropdownItem>
-                  <DropdownItem>Delete</DropdownItem>
+                  <DropdownItem
+                    href={`/efficiency-app/${params}/${tableData.id}/output`}
+                  >
+                    View
+                  </DropdownItem>
+                  {/* <DropdownItem href="#">Edit</DropdownItem>
+                  <DropdownItem>Delete</DropdownItem> */}
                 </DropdownMenu>
               </Dropdown>
             </div>
@@ -232,7 +236,7 @@ export default function TableEfficiency({
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by parameter..."
+            placeholder="Search by name..."
             startContent={<MagnifyingGlassIcon />}
             value={filterValue}
             onClear={() => onClear()}
@@ -256,9 +260,9 @@ export default function TableEfficiency({
                 selectionMode="multiple"
                 onSelectionChange={setParameterFilter}
               >
-                {parameterOptions.map((status: any) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {capitalize(status.name)}
+                {parameterOptions.map((parameter: any) => (
+                  <DropdownItem key={parameter.uid} className="capitalize">
+                    {capitalize(parameter.name)}
                   </DropdownItem>
                 ))}
               </DropdownMenu>

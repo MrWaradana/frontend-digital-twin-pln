@@ -28,9 +28,17 @@ interface Variable {
   in_out: string;
 }
 
-export default function VariableInputForm({ excel, variables, selectedMasterData }: { excel: any, variables: any, selectedMasterData: string }) {
+export default function VariableInputForm({
+  excel,
+  variables,
+  selectedMasterData,
+}: {
+  excel: any;
+  variables: any;
+  selectedMasterData: string;
+}) {
   const router = useRouter();
-  const session = useSession()
+  const session = useSession();
   const [variableData, setVariableData] = useState(variables);
   // const [unitsData, setUnitsData] = useState(units.data);
   // State to store input values
@@ -81,8 +89,8 @@ export default function VariableInputForm({ excel, variables, selectedMasterData
     resolver: zodResolver(formSchemaInput),
     mode: "onChange",
     defaultValues: {
-      name: '',
-      inputs: defaultInputs
+      name: "",
+      inputs: defaultInputs,
     },
   });
 
@@ -106,7 +114,7 @@ export default function VariableInputForm({ excel, variables, selectedMasterData
     // console.log(inputValues);
     setLoading(true);
 
-    console.log(excel)
+    // console.log(excel)
 
     const sendData = async () => {
       try {
@@ -115,7 +123,7 @@ export default function VariableInputForm({ excel, variables, selectedMasterData
           jenis_parameter: selectedMasterData,
           excel_id: excel[0].id,
           inputs: values.inputs,
-        }
+        };
 
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/data`,
@@ -123,7 +131,7 @@ export default function VariableInputForm({ excel, variables, selectedMasterData
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${session.data?.user.accessToken}`
+              Authorization: `Bearer ${session.data?.user.accessToken}`,
             },
             body: JSON.stringify(payload),
           }
@@ -133,14 +141,16 @@ export default function VariableInputForm({ excel, variables, selectedMasterData
           toast.error(`Error: ${response.statusText}`);
           setLoading(false);
 
-          return
+          return;
         }
 
-        const response_data = await response.json()
-        setLoading(false);
+        const response_data = await response.json();
 
         toast.success("Data Created!");
-        router.push(`/efficiency-app/${excel[0].excel_filename}/${response_data.data.data_id}/output`);
+        setLoading(false);
+        router.push(
+          `/efficiency-app/${excel[0].excel_filename}/${response_data.data.data_id}/output`
+        );
 
         // if (response) {
         //   setLoading(false);
@@ -191,8 +201,8 @@ export default function VariableInputForm({ excel, variables, selectedMasterData
                       required
                       {...field}
                       onChange={async ({ target: { value } }) => {
-                        field.onChange(value)
-                        await formInput.trigger('name');
+                        field.onChange(value);
+                        await formInput.trigger("name");
                       }}
                     />
                   </FormControl>

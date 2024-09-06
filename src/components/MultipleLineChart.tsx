@@ -28,7 +28,8 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Slider, SliderValue } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { debounce } from "lodash";
 
 const chartConfig = {
   category: {
@@ -41,16 +42,25 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function MultipleLineChart() {
-  const [sliderValue, setSliderValue] = useState<SliderValue>(80);
-  const chartData = [
-    { month: "January", category: 28, cum_frequency: 60 },
-    { month: "February", category: 45, cum_frequency: 70 },
-    { month: "March", category: 37, cum_frequency: 75 },
-    { month: "April", category: 73, cum_frequency: 80 },
-    { month: "May", category: 79, cum_frequency: 85 },
-    { month: "June", category: 94, cum_frequency: 100 },
-  ];
+export default function MultipleLineChart({
+  data,
+  onThresholdChange,
+  thresholdNumber,
+}: any) {
+  const [sliderValue, setSliderValue] = useState<SliderValue>(thresholdNumber);
+  const [internalSliderValue, setInternalSliderValue] =
+    useState<SliderValue>(thresholdNumber); // Holds the immediate value
+
+  // Debounce the onThresholdChange call
+  const debouncedThresholdChange = debounce((value) => {
+    onThresholdChange(value);
+  }, 500); // 300ms delay
+
+  useEffect(() => {
+    debouncedThresholdChange(internalSliderValue);
+    return () => debouncedThresholdChange.cancel(); // Clean up on unmount
+  }, [internalSliderValue]);
+
   return (
     <Card>
       <CardHeader>
@@ -61,7 +71,7 @@ export default function MultipleLineChart() {
         <ChartContainer config={chartConfig} className="col-span-2">
           <ComposedChart
             accessibilityLayer
-            data={chartData}
+            data={data}
             margin={{
               top: 12,
               left: 12,
@@ -70,19 +80,19 @@ export default function MultipleLineChart() {
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#888888" />
             <XAxis
-              dataKey="month"
+              dataKey="category"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
               tickFormatter={(value) => value.slice(0, 3)}
             />
-            <YAxis />
+            <YAxis domain={[0, 100]} />
             <Legend />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <Bar dataKey={"category"} fill="#f5f1f5" barSize={20} />
+            <Bar dataKey={"total_persen_losses"} fill="#111" barSize={20} />
             <ReferenceLine
-              x="March"
-              stroke="#D2042D"
+              x="Miscellaneous auxiliary load"
+              stroke="#00b0f0"
               label="VITAL FEW"
               strokeDasharray={5}
               strokeWidth={2}
@@ -91,25 +101,25 @@ export default function MultipleLineChart() {
             <ReferenceLine
               y={Number(sliderValue)}
               label="USEFUL MANY"
-              stroke="#D2042D"
+              stroke="#00b0f0"
               strokeDasharray={5}
               strokeWidth={2}
               strokeDashoffset={1}
             />
             <Line
-              dataKey="category"
+              dataKey="total_persen_losses"
               type="monotone"
               stroke="var(--color-category)"
               strokeWidth={2}
-              dot={false}
+              dot={true}
             />
-            <Line
+            {/* <Line
               dataKey="cum_frequency"
               type="monotone"
               stroke="var(--color-cum_frequency)"
               strokeWidth={2}
               dot={true}
-            />
+            /> */}
           </ComposedChart>
         </ChartContainer>
         <div className="h-[348px] col-span-1">
@@ -117,7 +127,7 @@ export default function MultipleLineChart() {
             size="md"
             label="Persentase"
             step={1}
-            onChange={setSliderValue}
+            onChange={setInternalSliderValue}
             maxValue={100}
             minValue={0}
             formatOptions={{ style: "decimal" }}

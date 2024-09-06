@@ -14,13 +14,50 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { paretoData, ParetoType } from "@/lib/pareto-api-data";
-import { Button, Input } from "@nextui-org/react";
+import {
+  Button,
+  Input,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  Table as NextTable,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  Checkbox,
+} from "@nextui-org/react";
 import { Box } from "lucide-react";
 
-export default function TableParetoHeatloss() {
-  const [data, setData] = React.useState(paretoData);
+const checkboxColumn = [
+  "Macrofouling",
+  "Microfouling",
+  "Excessive Air in leakage",
+  "Inadequate air removal capacity",
+  "Increase CW System Resistance",
+  "- Air binding cond. Disch. Pipe/tunnel",
+  "- Macrofouling at CW pump disch. Piping",
+  "- Plugged condenser tube",
+  "- Condenser inlet/outlet valve not open",
+  "- Air binding condensor inlet-outlet waterbox (low waterbox level)",
+  "Decrease CW Pump Performance",
+  "- Pump casing or impeller wear/corrosion",
+  "- Damaged casing or impeller",
+  "- Pump cavitation",
+  "- Macrofouling / siltation of intake/struct",
+  "- Low inlet pump level",
+  "Decrease Ejector/Vacuum pump performance",
+  "Instrument Error",
+];
 
-  const [expanded, setExpanded] = React.useState<ExpandedState>({});
+export default function TableParetoHeatloss({ tableData }: any) {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [data, setData] = React.useState(tableData);
+  const [expanded, setExpanded] = React.useState<ExpandedState>(true);
 
   const columns = useMemo(
     () => [
@@ -57,6 +94,7 @@ export default function TableParetoHeatloss() {
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) =>
           row.data ? null : row.variable?.satuan || "",
+        size: 25,
         cell: (props: any) => (
           <div
             style={{
@@ -76,6 +114,7 @@ export default function TableParetoHeatloss() {
             : (row.reference_data != null
                 ? row.reference_data.toFixed(2)
                 : 0) || "",
+        size: 25,
         cell: (props: any) => (
           <div
             style={{
@@ -208,13 +247,21 @@ export default function TableParetoHeatloss() {
       },
       {
         header: "Action",
-        cell: (props: any) => (
-          <div>
-            <Button size="sm" color="warning">
-              Checkbox
-            </Button>
-          </div>
-        ),
+        cell: ({ row }) => {
+          const rows = Array.from({ length: 18 });
+          return (
+            <React.Fragment key={row.id}>
+              <Button
+                onPress={onOpen}
+                color="warning"
+                size="sm"
+                className="m-2"
+              >
+                Open Checkbox
+              </Button>
+            </React.Fragment>
+          );
+        },
       },
 
       // {
@@ -239,8 +286,10 @@ export default function TableParetoHeatloss() {
       expanded,
     },
     onExpandedChange: setExpanded,
+    enableExpanding: true,
     getSubRows: (row) => row.data,
     getCoreRowModel: getCoreRowModel(),
+    columnResizeMode: "onChange",
     // getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
@@ -250,38 +299,113 @@ export default function TableParetoHeatloss() {
   });
 
   return (
-    <table
-      cellPadding="2"
-      cellSpacing="0"
-      className="border-2  overflow-y-scroll"
-      width={table.getTotalSize()}
-    >
-      <thead>
-        {table.getHeaderGroups().map((headerGroup: any) => {
-          return (
-            <tr
-              key={`${headerGroup.id}`}
-              className="border border-black bg-primary/20"
-            >
-              {headerGroup.headers.map((header: any) => {
-                return (
-                  <th
-                    key={header.id}
-                    className="border-2"
-                    style={{
-                      width: header.getSize(),
-                    }}
-                  >
-                    <Box
-                    />
-                    {header.column.columnDef.header}
-                  </th>
-                );
-              })}
-            </tr>
-          );
-        })}
-        {/* <tr className="border border-black bg-primary/20">
+    <>
+      <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Root Cause Checkbox
+              </ModalHeader>
+              <ModalBody>
+                <NextTable
+                  aria-label="Root Cause Checkbox"
+                  className="h-[360px]"
+                >
+                  <TableHeader>
+                    <TableColumn>Heat Loss Caused </TableColumn>
+                    <TableColumn>Kondensor TTD dan ∆ P naik </TableColumn>
+                    <TableColumn>∆ T Kondensor naik</TableColumn>
+                    <TableColumn>High O2 in condensate water</TableColumn>
+                    <TableColumn>Repair</TableColumn>
+                    <TableColumn>Biaya</TableColumn>
+                  </TableHeader>
+                  <TableBody>
+                    {checkboxColumn.map((_, rowIndex) => (
+                      <TableRow key={rowIndex}>
+                        {[1, 2, 3, 4, 5, 6].map((colIndex) => (
+                          <TableCell key={colIndex} className="text-center">
+                            {colIndex === 1 ? (
+                              rowIndex === 0 ? (
+                                "" // Leave the first cell of the first row empty
+                              ) : (
+                                `${_}` // Render a string for other rows in the first column
+                              )
+                            ) : colIndex === 6 ? (
+                              rowIndex != 0 ? (
+                                <>
+                                  <input className="border bg-neutral-200 py-1 px-1 rounded-md" />
+                                </>
+                              ) : (
+                                `` // Render a string for other rows in the first column
+                              )
+                            ) : (
+                              <>
+                                <Checkbox
+                                  defaultChecked
+                                  name={`${rowIndex * 5 + colIndex}`}
+                                  className={`${
+                                    rowIndex === 0 ? "hidden" : ""
+                                  }`}
+                                />
+                                <p
+                                  className={`${rowIndex != 0 ? "hidden" : ""}`}
+                                >
+                                  {``}
+                                </p>
+                              </>
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </NextTable>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={onClose}>
+                  Action
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <table
+        cellPadding="2"
+        cellSpacing="0"
+        className="border-2  overflow-y-scroll"
+        width={table.getTotalSize()}
+      >
+        <thead>
+          {table.getHeaderGroups().map((headerGroup: any) => {
+            return (
+              <tr key={`${headerGroup.id}`} className="bg-primary/20">
+                {headerGroup.headers.map((header: any) => {
+                  return (
+                    <th
+                      key={header.id}
+                      className="border-2 border-neutral-300 relative group text-sm capitalize font-bold"
+                      style={{
+                        width: header.getSize(),
+                      }}
+                    >
+                      <div
+                        className="absolute top-0 right-0 h-full w-[8px] group-hover:bg-primary/30 group-focus:bg-primary/30 hover:cursor-col-resize"
+                        onMouseDown={header.getResizeHandler()}
+                        onTouchStart={header.getResizeHandler()}
+                      ></div>
+                      {header.column.columnDef.header}
+                    </th>
+                  );
+                })}
+              </tr>
+            );
+          })}
+          {/* <tr className="border border-black bg-primary/20">
           <th>Category</th>
           <th>Variable Name</th>
           <th>Satuan</th>
@@ -298,9 +422,9 @@ export default function TableParetoHeatloss() {
           <th>Ratio Benefit to Cost</th>
           <th>Actions</th>
         </tr> */}
-      </thead>
-      <tbody>
-        {/* {data.map((item) => {
+        </thead>
+        <tbody>
+          {/* {data.map((item) => {
           return (
             <tr key={item.category}>
               <td colSpan={14}>
@@ -310,28 +434,28 @@ export default function TableParetoHeatloss() {
           );
         })}
         ; */}
-        {table.getRowModel().rows.map((row: any) => {
-          return (
-            <>
-              <tr key={row.id} className="border border-black">
-                {row.getVisibleCells().map((cell: any) => {
-                  return (
-                    <td
-                      key={cell.id}
-                      className=""
-                      style={{
-                        width: cell.column.getSize(),
-                      }}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-              {/* {row.getIsExpanded() &&
+          {table.getRowModel().rows.map((row: any) => {
+            return (
+              <>
+                <tr key={row.id} className="border border-black">
+                  {row.getVisibleCells().map((cell: any) => {
+                    return (
+                      <td
+                        key={cell.id}
+                        className="text-sm font-normal"
+                        style={{
+                          width: cell.column.getSize(),
+                        }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+                {/* {row.getIsExpanded() &&
                 row.subRows?.length > 0 &&
                 row.subRows.map((subRow) => (
                   <tr key={subRow.id}>
@@ -345,10 +469,10 @@ export default function TableParetoHeatloss() {
                     ))}
                   </tr>
                 ))} */}
-            </>
-          );
-        })}
-        {/* {data.map((item) => (
+              </>
+            );
+          })}
+          {/* {data.map((item) => (
           <React.Fragment key={item.category}>
             <tr className="border border-black">
               <td colSpan={9}>
@@ -410,7 +534,8 @@ export default function TableParetoHeatloss() {
             </tr>
           </React.Fragment>
         ))} */}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </>
   );
 }

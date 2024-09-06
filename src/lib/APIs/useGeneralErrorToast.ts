@@ -8,7 +8,7 @@ export function useGeneralErrorToast(error?: Error): void {
         if (error?.message) {
             toast.error(error.message);
         } else {
-            toast.error("Unknown Error")
+            // toast.error("Unknown Error")
         }
     }, [error, error?.name]);
 }

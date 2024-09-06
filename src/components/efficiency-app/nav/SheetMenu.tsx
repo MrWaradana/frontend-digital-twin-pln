@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { MenuIcon, PanelsTopLeft } from "lucide-react";
+import PLNLogo from "../../../../public/Logo_PLN.svg";
 
 import { Button } from "@/components/ui/button";
 import { Menu } from "@/components/efficiency-app/nav/Menu";
@@ -26,9 +28,10 @@ export function SheetMenu() {
             variant="link"
             asChild
           >
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <PanelsTopLeft className="w-6 h-6 mr-1" />
-              <SheetTitle className="font-bold text-lg">Brand</SheetTitle>
+            <Link href="#" className="flex items-center gap-2">
+              <Link href="#" className="flex items-center gap-2">
+                <Image src={PLNLogo} alt={`pln-logo`} width={84} />
+              </Link>
             </Link>
           </Button>
         </SheetHeader>
