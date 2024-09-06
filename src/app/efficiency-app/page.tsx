@@ -148,7 +148,7 @@ export default function Page() {
           {/* <h1>{excels[3].excel_filename}</h1> */}
           <TableEfficiency
             tableData={efficiency}
-            addNewUrl={`/efficiency-app/${excel[0].excel_filename}/input`}
+            addNewUrl={`/efficiency-app/input`}
             params={excel[0].excel_filename}
           />
         </div>
