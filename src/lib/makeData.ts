@@ -10,7 +10,7 @@ export type ParetoType = {
   deviasi: number;
   absolute: number;
   kcal: number;
-  symptomps: "Higher" | "Lower";
+  symptomps: "Higher" | "Lower" | string;
   benefit: number;
   actionGap: string;
   closing: number;

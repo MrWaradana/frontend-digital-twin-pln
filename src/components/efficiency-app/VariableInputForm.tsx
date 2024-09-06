@@ -19,7 +19,7 @@ import { Accordion, AccordionItem, Input, Button } from "@nextui-org/react";
 import { useState, Fragment } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+import { useSession } from "next-auth/react";
 interface Variable {
   category: string;
   input_name: string;
@@ -28,9 +28,9 @@ interface Variable {
   in_out: string;
 }
 
-export default function VariableInputForm({ variables }: { variables: any }) {
+export default function VariableInputForm({ excel, variables, selectedMasterData }: { excel: any, variables: any, selectedMasterData: string }) {
   const router = useRouter();
-
+  const session = useSession()
   const [variableData, setVariableData] = useState(variables);
   // const [unitsData, setUnitsData] = useState(units.data);
   // State to store input values
@@ -77,7 +77,7 @@ export default function VariableInputForm({ variables }: { variables: any }) {
   const formInput = useForm<z.infer<typeof formSchemaInput>>({
     resolver: zodResolver(formSchemaInput),
     mode: "onChange",
-    // defaultValues: defaultValues,
+    defaultValues: defaultValues,
   });
 
   const formError = formInput.formState.errors;
@@ -99,25 +99,51 @@ export default function VariableInputForm({ variables }: { variables: any }) {
     // alert(JSON.stringify(values));
     // console.log(inputValues);
     setLoading(true);
+
+    console.log(excel)
+
     const sendData = async () => {
       try {
+        const payload = {
+          name: "input Name",
+          jenis_parameter: selectedMasterData,
+          excel_id: excel[0].id,
+          inputs: values,
+        }
+
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/case-inputs`,
+          `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/data`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "Authorization": `Bearer ${session.data?.user.accessToken}`
             },
-            body: JSON.stringify(values),
+            body: JSON.stringify(payload),
           }
         );
-        if (response) {
+
+        if (!response.ok) {
+          toast.error(`Error: ${response.statusText}`);
           setLoading(false);
-          toast.success("Data Sent!");
+
+          return
         }
-        setTimeout(() => {
-          router.push("/output");
-        }, 1000);
+
+        const response_data = await response.json()
+        setLoading(false);
+
+        toast.success("Data Created!");
+        router.push(`/efficiency-app/${excel[0].excel_filename}/${response_data.data.data_id}/output`);
+
+        // if (response) {
+        //   setLoading(false);
+        //   toast.success("Data Sent!");
+        //   router.push("/output");
+        // }
+        // setTimeout(() => {
+
+        // }, 1000);
       } catch (error) {
         toast.error(`Error: ${error}`);
         setLoading(false);
@@ -167,7 +193,7 @@ export default function VariableInputForm({ variables }: { variables: any }) {
                                 type="number"
                                 required
                                 {...field}
-                                value={inputValues[v.id]} // Controlled input
+                                // value={inputValues[v.id]} // Controlled input
                                 onChange={(e) =>
                                   handleInputChange(
                                     v.id,

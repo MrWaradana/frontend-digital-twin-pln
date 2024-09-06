@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -15,7 +15,7 @@ import { useSession } from "next-auth/react";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import toast from "react-hot-toast";
 
-export default function TableOutputs() {
+export default function TableOutputs({ data_id }: { data_id: string }) {
   const [tableData, setTableData] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const session = useSession();
@@ -25,7 +25,7 @@ export default function TableOutputs() {
       setLoading(true);
       try {
         const response = await fetch(
-          `${EFFICIENCY_API_URL}/variables/${"a6330942-8531-4063-a047-44c95f2c1f37"}`,
+          `${EFFICIENCY_API_URL}/data/${data_id}/details?type=out`,
           {
             method: "GET",
             headers: {
@@ -41,7 +41,7 @@ export default function TableOutputs() {
 
         const data = await response.json();
         console.log(response, "responseeeeeeeeeeeeeeeeeeeeeeeee");
-        setTableData(data);
+        setTableData(data.data);
       } catch (error) {
         toast.error(`Failed to fetch variables: ${error}`);
       } finally {
@@ -52,12 +52,25 @@ export default function TableOutputs() {
     if (session?.data?.user?.accessToken) {
       fetchVariables();
     }
-  }, [session?.data?.user?.accessToken]);
+  }, [data_id, session?.data?.user?.accessToken]);
 
-  const filteredData = tableData.filter(
-    (v: any) => v.variable_type === "input"
-  );
-  const rows = filteredData;
+  const data = tableData ?? []
+
+  const mappedData = useMemo(() => {
+    return data.map((item: any) => {
+      console.log(item)
+      return {
+
+        id: item.id,
+        variable: item.variable.input_name,
+        value: item.nilai,
+      };
+    })
+  }, [isLoading])
+
+  console.log(mappedData)
+
+  const rows = mappedData;
 
   const columns = [
     {
@@ -65,7 +78,7 @@ export default function TableOutputs() {
       label: "VARIABLE",
     },
     {
-      key: "base_case",
+      key: "value",
       label: "OUTPUT VALUE",
     },
   ];
@@ -73,14 +86,14 @@ export default function TableOutputs() {
   const [page, setPage] = React.useState(1);
   const rowsPerPage = 15;
 
-  const pages = Math.ceil(filteredData.length / rowsPerPage);
+  const pages = Math.ceil(mappedData.length / rowsPerPage);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
-    return filteredData.slice(start, end);
-  }, [page, filteredData]);
+    return mappedData.slice(start, end);
+  }, [page, mappedData]);
 
   return (
     <>
@@ -108,7 +121,7 @@ export default function TableOutputs() {
         </TableHeader>
         <TableBody items={items}>
           {(item) => (
-            <TableRow key={item}>
+            <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{getKeyValue(item, columnKey)}</TableCell>
               )}
