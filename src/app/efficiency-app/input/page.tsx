@@ -9,11 +9,11 @@ import { Link, Button, CircularProgress } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import { formatFilename } from "@/lib/format-text";
 import toast, { Toaster } from "react-hot-toast";
-import { EFFICIENCY_API_URL } from "../../../../lib/api-url";
-import { useExcelStore } from "../../../../store/excels";
+import { EFFICIENCY_API_URL } from "../../../lib/api-url";
+import { useExcelStore } from "../../../store/excels";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { EfficiencyContentLayout } from "../../../../containers/EfficiencyContentLayout";
+import { EfficiencyContentLayout } from "../../../containers/EfficiencyContentLayout";
 import { useGetVariables } from "@/lib/APIs/useGetVariables";
 
 export default function Page({ params }: { params: { excels_name: string } }) {
@@ -120,7 +120,7 @@ export default function Page({ params }: { params: { excels_name: string } }) {
           Back to all
         </Button>
         <h2 className="mb-4">
-          Opened <span>Excel {formatFilename(params.excels_name)}</span>
+          Opened <span>Excel {formatFilename(excels[0].excel_filename)}</span>
         </h2>
         <SelectMasterData onMasterDataChange={setSelectedMasterData} />
         <div className="flex flex-row gap-4 lg:gap-12 items-center justify-center my-4 min-w-3xl mx-auto">

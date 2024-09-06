@@ -191,7 +191,7 @@ export default function VariableInputForm({ excel, variables, selectedMasterData
                       required
                       {...field}
                       onChange={async ({ target: { value } }) => {
-                        field.onChange(value)
+                        field.onChange(Number(value))
                         await formInput.trigger('name');
                       }}
                     />
