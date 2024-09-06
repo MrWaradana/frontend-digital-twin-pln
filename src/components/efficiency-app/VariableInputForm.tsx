@@ -57,16 +57,19 @@ export default function VariableInputForm({ excel, variables, selectedMasterData
     (v: any) => v.in_out === "in"
   );
 
-  const formSchemaInput = z.object(
-    Object.fromEntries(
-      filteredVariableData.map((v: any) => [
-        v.id, // This is the key for the schema
-        z.number({ message: "Value is not a number!" }),
-      ])
-    )
-  );
+  const formSchemaInput = z.object({
+    name: z.string({ message: "Name is required!" }), // Adjust validation as needed
+    inputs: z.object(
+      Object.fromEntries(
+        filteredVariableData.map((v: any) => [
+          v.id, // This is the key for the schema
+          z.number({ message: "Value is not a number!" }),
+        ])
+      )
+    ),
+  });
 
-  const defaultValues = Object.fromEntries(
+  const defaultInputs = Object.fromEntries(
     filteredVariableData.map((v: any) => [
       v.id,
       v.base_case == "NaN" ? 0 : Number(v.base_case),
@@ -77,19 +80,22 @@ export default function VariableInputForm({ excel, variables, selectedMasterData
   const formInput = useForm<z.infer<typeof formSchemaInput>>({
     resolver: zodResolver(formSchemaInput),
     mode: "onChange",
-    defaultValues: defaultValues,
+    defaultValues: {
+      name: '',
+      inputs: defaultInputs
+    },
   });
 
   const formError = formInput.formState.errors;
 
   // Handle input change to update state
-  const handleInputChange = (id: string, value: number) => {
-    setInputValues((prevValues) => ({
-      ...prevValues,
-      [id]: value,
-    }));
-    formInput.setValue(id, value); // Update react-hook-form value as well
-  };
+  // const handleInputChange = (id: string, value: number) => {
+  //   setInputValues((prevValues) => ({
+  //     ...prevValues,
+  //     [id]: value,
+  //   }));
+  //   formInput.setValue(id, value); // Update react-hook-form value as well
+  // };
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchemaInput>) {
@@ -105,10 +111,10 @@ export default function VariableInputForm({ excel, variables, selectedMasterData
     const sendData = async () => {
       try {
         const payload = {
-          name: "input Name",
+          name: values.name,
           jenis_parameter: selectedMasterData,
           excel_id: excel[0].id,
-          inputs: values,
+          inputs: values.inputs,
         }
 
         const response = await fetch(
@@ -161,14 +167,45 @@ export default function VariableInputForm({ excel, variables, selectedMasterData
     <div className="flex flex-col gap-4 mx-2 min-w-full">
       <Toaster />
       {/* {JSON.stringify(categorizedData)} */}
-      <h1 className="font-bold text-lg sticky top-16 bg-white z-50">
-        Input Variables
-      </h1>
+
       <Form {...formInput}>
         <form
           onSubmit={formInput.handleSubmit(onSubmit, onError)}
           className="space-y-1"
         >
+          {/* Name Input Field */}
+          <div className="mb-4">
+            <FormField
+              control={formInput.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter name"
+                      label="Name"
+                      size="md"
+                      className="max-w-xs lg:max-w-full border-b-1 pb-1"
+                      labelPlacement="outside"
+                      type="text"
+                      required
+                      {...field}
+                      onChange={async ({ target: { value } }) => {
+                        field.onChange(value)
+                        await formInput.trigger('name');
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <hr />
+          <h2 className="font-bold text-lg sticky top-16 bg-white z-50">
+            Input Variables
+          </h2>
+
           <Accordion className="min-w-full" selectionMode="multiple" isCompact>
             {Object.entries(categorizedData).map(
               ([category, variables]: any) => (
@@ -180,7 +217,7 @@ export default function VariableInputForm({ excel, variables, selectedMasterData
                     <Fragment key={v.id}>
                       <FormField
                         control={formInput.control}
-                        name={v.id}
+                        name={`inputs.${v.id}`} // Ensure correct nesting in form data
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
@@ -194,12 +231,10 @@ export default function VariableInputForm({ excel, variables, selectedMasterData
                                 required
                                 {...field}
                                 // value={inputValues[v.id]} // Controlled input
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    v.id,
-                                    Number(e.target.value)
-                                  )
-                                }
+                                onChange={async ({ target: { value } }) => {
+                                  field.onChange(value);
+                                  await formInput.trigger(`inputs.${v.id}`);
+                                }}
                                 endContent={
                                   <p className="text-sm">
                                     {" "}

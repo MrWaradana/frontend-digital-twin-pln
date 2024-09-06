@@ -14,13 +14,14 @@ import { useExcelStore } from "../../../../store/excels";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { EfficiencyContentLayout } from "../../../../containers/EfficiencyContentLayout";
+import { useGetVariables } from "@/lib/APIs/useGetVariables";
 
 export default function Page({ params }: { params: { excels_name: string } }) {
   const { data: session, status } = useSession();
   const excels = useExcelStore((state) => state.excels);
-  const [variableData, setVariableData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // const [variableData, setVariableData] = useState<any[]>([]);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState<string | null>(null);
   const [selectedMasterData, setSelectedMasterData] = useState<string>("current");
   
 
@@ -35,64 +36,74 @@ export default function Page({ params }: { params: { excels_name: string } }) {
   //   }
   // }, [status, session]);
 
-  useEffect(() => {
-    const fetchVariables = async () => {
-      setLoading(true);
-      setError(null);
+  // useEffect(() => {
+  //   const fetchVariables = async () => {
+  //     setLoading(true);
+  //     setError(null);
 
-      // Filter excels to find the one with the matching filename
-      const selectedExcel = excels.find(
-        (excel) =>
-          excel.excel_filename.toLowerCase() ===
-          formatFilename(params.excels_name).toLocaleLowerCase()
-      );
-      // console.log(selectedExcel, "id excel");
-      if (selectedExcel) {
-        try {
-          const response = await fetch(
-            `${EFFICIENCY_API_URL}/variables?excel_id=${selectedExcel.id}`,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${session?.user?.accessToken}`,
-              },
-            }
-          );
+  //     // Filter excels to find the one with the matching filename
+  //     const selectedExcel = excels.find(
+  //       (excel) =>
+  //         excel.excel_filename.toLowerCase() ===
+  //         formatFilename(params.excels_name).toLocaleLowerCase()
+  //     );
+  //     // console.log(selectedExcel, "id excel");
+  //     if (selectedExcel) {
+  //       try {
+  //         const response = await fetch(
+  //           `${EFFICIENCY_API_URL}/variables?excel_id=${selectedExcel.id}`,
+  //           {
+  //             headers: {
+  //               "Content-Type": "application/json",
+  //               Authorization: `Bearer ${session?.user?.accessToken}`,
+  //             },
+  //           }
+  //         );
 
-          console.log(response, "data variable");
-          if (!response.ok) {
-            throw new Error(`Error: ${response.status} ${response.statusText}`);
-          }
+  //         console.log(response, "data variable");
+  //         if (!response.ok) {
+  //           throw new Error(`Error: ${response.status} ${response.statusText}`);
+  //         }
 
-          const data = await response.json();
-          setVariableData(data.data);
-        } catch (error) {
-          setError(`Failed to fetch variables: ${error}`);
-        }
-      } else {
-        setError(`No excel found with the name: ${params.excels_name}`);
-      }
+  //         const data = await response.json();
+  //         setVariableData(data.data);
+  //       } catch (error) {
+  //         setError(`Failed to fetch variables: ${error}`);
+  //       }
+  //     } else {
+  //       setError(`No excel found with the name: ${params.excels_name}`);
+  //     }
 
-      setLoading(false);
-    };
+  //     setLoading(false);
+  //   };
 
-    if (status === "loading") {
-      // Session is still loading
-      console.log("Session is loading...");
-    } else if (status === "authenticated") {
-      fetchVariables();
-    } else {
-      console.log("No session available");
-    }
-  }, [excels, session, params.excels_name, status]);
+  //   if (status === "loading") {
+  //     // Session is still loading
+  //     console.log("Session is loading...");
+  //   } else if (status === "authenticated") {
+  //     fetchVariables();
+  //   } else {
+  //     console.log("No session available");
+  //   }
+  // }, [excels, session, params.excels_name, status]);
 
-  if (loading)
+
+  const {
+    data: variableData,
+    isLoading,
+    error
+  } = useGetVariables(session?.user.accessToken, excels[0].id, "in")
+
+  const variable = variableData ?? []
+  
+
+  if (isLoading)
     return (
       <div className="flex justify-center mt-12">
         <CircularProgress color="primary" />
       </div>
     );
-  if (error) return <div>{error}</div>;
+  if (error) return <div>{error.message}</div>;
 
   return (
     <EfficiencyContentLayout title="Input Form">
@@ -117,7 +128,7 @@ export default function Page({ params }: { params: { excels_name: string } }) {
             {/* {JSON.stringify(variableData.data)} */}
             {/* <VariableBestCaseForm variables={variableData} /> */}
           </div>
-          <VariableInputForm excel={excels} variables={variableData} selectedMasterData = {selectedMasterData} />
+          <VariableInputForm excel={excels} variables={variable} selectedMasterData = {selectedMasterData} />
         </div>
       </div>
     </EfficiencyContentLayout>
