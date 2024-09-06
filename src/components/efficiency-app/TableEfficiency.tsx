@@ -35,13 +35,18 @@ import {
 import { capitalize } from "@/lib/utils";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
-  Current: "success",
+  current: "success",
   kpi: "primary",
-  Target: "warning",
+  target: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["jenis_parameter", "periode", "actions"];
-const INITIAL_VISIBLE_PARAMETER = ["Current"];
+const INITIAL_VISIBLE_COLUMNS = [
+  "name",
+  "jenis_parameter",
+  "periode",
+  "actions",
+];
+const INITIAL_VISIBLE_PARAMETER = ["current"];
 
 export default function TableEfficiency({
   tableData,
@@ -56,6 +61,7 @@ export default function TableEfficiency({
 
   const columns = [
     { name: "ID", uid: "id", sortable: true },
+    { name: "NAMA", uid: "name", sortable: true },
     { name: "JENIS PARAMETER", uid: "jenis_parameter", sortable: true },
     { name: "PERIODE", uid: "periode", sortable: true },
     { name: "ACTIONS", uid: "actions" },
@@ -87,7 +93,7 @@ export default function TableEfficiency({
     if (visibleColumns === "all") return columns;
 
     return columns.filter((column: any) =>
-      Array.from(visibleColumns).includes(column.uid)
+      Array.from(visibleColumns).includes(column.uid.toLowerCase())
     );
   }, [visibleColumns]);
 
@@ -143,13 +149,15 @@ export default function TableEfficiency({
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[tableData.jenis_parameter]}
+              color={statusColorMap[tableData.jenis_parameter.toLowerCase()]}
               size="sm"
               variant="flat"
             >
               {cellValue}
             </Chip>
           );
+        case "periode":
+          return new Date(cellValue).toLocaleString("id");
         case "actions":
           return (
             <div className="relative flex justify-center items-center gap-2">
