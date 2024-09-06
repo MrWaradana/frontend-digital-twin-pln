@@ -22,10 +22,11 @@ import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { useRouter } from "next/navigation";
 import { error } from "console";
 import { useGetExcel } from "@/lib/APIs/useGetExcel";
+import { useGetData } from "@/lib/APIs/useGetData";
 
 export default function Page() {
   // const [isLoading, setLoading] = useState(true);
-  const [efficiencyData, setEfficiencyData] = useState([]);
+  // const [efficiencyData, setEfficiencyData] = useState([]);
   const router = useRouter();
   const { data: session, status } = useSession();
 
@@ -42,10 +43,17 @@ export default function Page() {
 
   console.log(excel)
 
-  if(!isLoading){
+  if (!isLoading) {
     useExcelStore.getState().setExcels(excel);
   }
-  
+
+
+  const {
+    data: efficiencyData,
+    isLoading: efficiencyLoading,
+  } = useGetData(session?.user.accessToken)
+
+  const efficiency = efficiencyData?.transactions ?? []
 
   // useEffect(() => {
   //   const fetchExcels = async () => {
@@ -116,7 +124,7 @@ export default function Page() {
   // const excels = useExcelStore((state) => state.excels);
 
   // console.log(efficiencyData, "data");
-  if (isLoading)
+  if (isLoading && efficiencyLoading)
     return (
       <div className="w-full mt-24 flex justify-center items-center">
         <CircularProgress color="primary" />
@@ -139,7 +147,7 @@ export default function Page() {
           {/* {JSON.stringify(excels)} */}
           {/* <h1>{excels[3].excel_filename}</h1> */}
           <TableEfficiency
-            tableData={efficiencyData}
+            tableData={efficiency}
             addNewUrl={`/efficiency-app/${excel[0].excel_filename}/input`}
             params={excel[0].excel_filename}
           />
