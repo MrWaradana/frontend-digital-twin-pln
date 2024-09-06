@@ -67,3 +67,19 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+@layer utilities {
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: #212121;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #22c55e;
+    opacity: 0.5;
+    border-radius: 4px;
+  }
+}

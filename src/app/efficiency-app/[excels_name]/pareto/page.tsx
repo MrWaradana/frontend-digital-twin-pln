@@ -1,5 +1,5 @@
 import TablePareto from "@/components/efficiency-app/TablePareto";
-import TableParetoEdit from "@/components/efficiency-app/TableParetoEdit";
+// import TableParetoEdit from "@/components/efficiency-app/TableParetoEdit";
 import { Button, Link } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import MultipleLineChart from "../../../../components/MultipleLineChart";
@@ -24,10 +24,8 @@ export default function Page({ params }: { params: { excels_name: string } }) {
         Back to all data
       </Button>
       <MultipleLineChart />
-      <div className="max-w-full px-8">
-        {/* <TablePareto tableData={{ columns, users, statusOptions }} /> */}
-        <TableParetoEdit />
-        {/* <TableParetoHeatloss /> */}
+      <div className="max-w-full px-8 mb-24 mt-12 overflow-x-auto">
+        <TableParetoHeatloss />
       </div>
     </div>
   );

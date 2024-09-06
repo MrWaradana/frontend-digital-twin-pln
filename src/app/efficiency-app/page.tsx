@@ -12,40 +12,42 @@ import {
 } from "@nextui-org/react";
 import { GearIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import TableEfficiency from "@/components/efficiency-app/TableEfficiency";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { columns, users, statusOptions } from "@/lib/efficiency-data";
 import { EFFICIENCY_API_URL } from "../../lib/api-url";
 import { useExcelStore } from "../../store/excels";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
+import { useRouter } from "next/navigation";
+import { error } from "console";
 
 export default function Page() {
   const [isLoading, setLoading] = useState(true);
   const [efficiencyData, setEfficiencyData] = useState([]);
-
-  const session = useSession();
+  const router = useRouter();
+  const { data: session, status } = useSession();
 
   // console.log(session.data?.user);
 
   useEffect(() => {
     const fetchExcels = async () => {
       setLoading(true);
+      // console.log(session?.user.accessToken, "access token");
       try {
         const response = await fetch(`${EFFICIENCY_API_URL}/excels`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.data?.user?.accessToken}`, // Adding Bearer prefix for the token
+            Authorization: `Bearer ${session?.user?.accessToken}`, // Adding Bearer prefix for the token
           },
         });
 
         if (!response.ok) {
           throw new Error(`Error: ${response.status} ${response.statusText}`);
         }
-
         const data = await response.json();
-        // console.log(response, "responseeeeeeeeeeeeeeeeeeeeeeeee");
+        // console.log(data.data, "responseeeeeeeeeeeeeeeeeeeeeeeee");
         useExcelStore.getState().setExcels(data.data);
       } catch (error) {
         toast.error(`Failed to fetch excels: ${error}`);
@@ -54,10 +56,8 @@ export default function Page() {
       }
     };
 
-    if (session?.data?.user?.accessToken) {
-      fetchExcels();
-    }
-  }, [session?.data?.user?.accessToken]);
+    fetchExcels();
+  }, [router, session, status]);
 
   useEffect(() => {
     const fetchEfficiencyData = async () => {
@@ -69,7 +69,7 @@ export default function Page() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${session?.data?.user?.accessToken}`, // Adding Bearer prefix for the token
+              Authorization: `Bearer ${session?.user?.accessToken}`, // Adding Bearer prefix for the token
             },
           }
         );
@@ -79,7 +79,7 @@ export default function Page() {
         }
 
         const data = await response.json();
-        // console.log(data.data.transactions, "responseeeeeeeeeeeeeeeeeeeeeeeee");
+        console.log(data.data.transactions, "responseeeeeeeeeeeeeeeeeeeeeeeee");
         setEfficiencyData(data.data.transactions);
         // console.log(efficiencyData, "Didalam use effect");
       } catch (error) {
@@ -89,10 +89,8 @@ export default function Page() {
       }
     };
 
-    if (session?.data?.user?.accessToken) {
-      fetchEfficiencyData();
-    }
-  }, [session?.data?.user?.accessToken]);
+    fetchEfficiencyData();
+  }, [session]);
 
   const excels = useExcelStore((state) => state.excels);
 

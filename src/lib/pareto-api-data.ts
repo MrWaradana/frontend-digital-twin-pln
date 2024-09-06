@@ -1,4 +1,40 @@
-export const paretoData = [
+// Define the types
+export type ParetoType = {
+  category: string | null;
+  data: DataParetoType[];
+  total_losses: number;
+};
+
+export type DataParetoType = {
+  deviasi: number;
+  existing_data: number | null;
+  gap: number | null;
+  id: string;
+  nilai_losses: number;
+  persen_hr: number;
+  reference_data: number | null;
+  variable: VariableType;
+};
+
+export type VariableType = {
+  category: string | null;
+  created_at: string;
+  created_by: string;
+  excel_id: string;
+  excel_variable_name: string;
+  id: string;
+  in_out: string;
+  input_name: string;
+  is_faktor_koreksi: boolean;
+  is_nilai_losses: boolean;
+  is_pareto: boolean;
+  satuan: string;
+  short_name: string;
+  updated_at: string;
+  updated_by: string | null;
+};
+
+export const paretoData: ParetoType[] = [
   {
     category: "Boiler Assembly [2] - BLR 1",
     data: [
