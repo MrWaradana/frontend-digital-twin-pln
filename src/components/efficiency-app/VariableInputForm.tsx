@@ -134,7 +134,7 @@ export default function VariableInputForm({ excel, variables, selectedMasterData
         setLoading(false);
 
         toast.success("Data Created!");
-        router.push(`/${response_data.data.data_id}/output`);
+        router.push(`/efficiency-app/${excel[0].excel_filename}/${response_data.data.data_id}/output`);
 
         // if (response) {
         //   setLoading(false);
