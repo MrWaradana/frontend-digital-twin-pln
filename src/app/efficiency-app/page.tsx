@@ -21,78 +21,99 @@ import { useExcelStore } from "../../store/excels";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { useRouter } from "next/navigation";
 import { error } from "console";
+import { useGetExcel } from "@/lib/APIs/useGetExcel";
 
 export default function Page() {
-  const [isLoading, setLoading] = useState(true);
+  // const [isLoading, setLoading] = useState(true);
   const [efficiencyData, setEfficiencyData] = useState([]);
   const router = useRouter();
   const { data: session, status } = useSession();
 
   // console.log(session.data?.user);
 
-  useEffect(() => {
-    const fetchExcels = async () => {
-      setLoading(true);
-      // console.log(session?.user.accessToken, "access token");
-      try {
-        const response = await fetch(`${EFFICIENCY_API_URL}/excels`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.user?.accessToken}`, // Adding Bearer prefix for the token
-          },
-        });
+  const {
+    data: excelData,
+    isLoading,
+    isValidating,
+    error,
+  } = useGetExcel(session?.user.accessToken)
 
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        // console.log(data.data, "responseeeeeeeeeeeeeeeeeeeeeeeee");
-        useExcelStore.getState().setExcels(data.data);
-      } catch (error) {
-        toast.error(`Failed to fetch excels: ${error}`);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const excel = excelData ?? []
 
-    fetchExcels();
-  }, [router, session, status]);
+  console.log(excel)
 
-  useEffect(() => {
-    const fetchEfficiencyData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `${EFFICIENCY_API_URL}/data?page=1&size=10`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${session?.user?.accessToken}`, // Adding Bearer prefix for the token
-            },
-          }
-        );
+  if(!isLoading){
+    useExcelStore.getState().setExcels(excel);
+  }
+  
 
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
+  // useEffect(() => {
+  //   const fetchExcels = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const response = await fetch(`${EFFICIENCY_API_URL}/excels`, {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${session?.data?.user?.accessToken}`, // Adding Bearer prefix for the token
+  //         },
+  //       });
 
-        const data = await response.json();
-        console.log(data.data.transactions, "responseeeeeeeeeeeeeeeeeeeeeeeee");
-        setEfficiencyData(data.data.transactions);
-        // console.log(efficiencyData, "Didalam use effect");
-      } catch (error) {
-        toast.error(`Failed to fetch efficiency data: ${error}`);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       if (!response.ok) {
+  //         throw new Error(`Error: ${response.status} ${response.statusText}`);
+  //       }
 
-    fetchEfficiencyData();
-  }, [session]);
+  //       const data = await response.json();
+  //       // console.log(response, "responseeeeeeeeeeeeeeeeeeeeeeeee");
+  //       useExcelStore.getState().setExcels(data.data);
+  //     } catch (error) {
+  //       toast.error(`Failed to fetch excels: ${error}`);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-  const excels = useExcelStore((state) => state.excels);
+  //   if (session?.data?.user?.accessToken) {
+  //     fetchExcels();
+  //   }
+  // }, [session?.data?.user?.accessToken]);
+
+  // useEffect(() => {
+  //   const fetchEfficiencyData = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const response = await fetch(
+  //         `${EFFICIENCY_API_URL}/data?page=1&size=10`,
+  //         {
+  //           method: "GET",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Authorization: `Bearer ${session?.data?.user?.accessToken}`, // Adding Bearer prefix for the token
+  //           },
+  //         }
+  //       );
+
+  //       if (!response.ok) {
+  //         throw new Error(`Error: ${response.status} ${response.statusText}`);
+  //       }
+
+  //       const data = await response.json();
+  //       // console.log(data.data.transactions, "responseeeeeeeeeeeeeeeeeeeeeeeee");
+  //       setEfficiencyData(data.data.transactions);
+  //       // console.log(efficiencyData, "Didalam use effect");
+  //     } catch (error) {
+  //       toast.error(`Failed to fetch efficiency data: ${error}`);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   if (session?.data?.user?.accessToken) {
+  //     fetchEfficiencyData();
+  //   }
+  // }, [session?.data?.user?.accessToken]);
+
+  // const excels = useExcelStore((state) => state.excels);
 
   // console.log(efficiencyData, "data");
   if (isLoading)
@@ -101,7 +122,7 @@ export default function Page() {
         <CircularProgress color="primary" />
       </div>
     );
-  if (!excels)
+  if (!excel)
     return (
       <div className="w-full mt-24 flex flex-col gap-6 justify-center items-center">
         <Button as={Link} href="/" color="primary">
@@ -119,8 +140,8 @@ export default function Page() {
           {/* <h1>{excels[3].excel_filename}</h1> */}
           <TableEfficiency
             tableData={efficiencyData}
-            addNewUrl={`/efficiency-app/${excels[0].excel_filename}/input`}
-            params={excels[0].excel_filename}
+            addNewUrl={`/efficiency-app/${excel[0].excel_filename}/input`}
+            params={excel[0].excel_filename}
           />
         </div>
 
@@ -148,7 +169,7 @@ export default function Page() {
                 </div>
               );
             })} */}
-              {excels?.map((item: any, index: number) => {
+              {excel?.map((item: any, index: number) => {
                 return (
                   <div
                     key={`${item.excel_filename}-${index}`}

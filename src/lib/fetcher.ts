@@ -1,4 +1,4 @@
-export async function fetcher<T = any>([url, token]: [string, string, string]): Promise<T> {
+export async function fetcher<T = any>([url, token]: [string, string]): Promise<T> {
     const headers: HeadersInit = {
         'Content-Type': 'application/json',
     };
@@ -15,7 +15,7 @@ export async function fetcher<T = any>([url, token]: [string, string, string]): 
     const body = await res.json();
 
     if (res.ok) {
-        return body;
+        return body.data;
     }
     if (body.error) {
         throw new Error(body.error);
