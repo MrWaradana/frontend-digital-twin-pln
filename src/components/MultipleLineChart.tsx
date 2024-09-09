@@ -89,7 +89,12 @@ export default function MultipleLineChart({
             <YAxis domain={[0, 100]} />
             <Legend />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <Bar dataKey={"total_persen_losses"} fill="#111" barSize={20} />
+            <Bar
+              dataKey={"total_persen_losses"}
+              name={"Total Persen Loss"}
+              fill="#111"
+              barSize={20}
+            />
             <ReferenceLine
               x="Miscellaneous auxiliary load"
               stroke="#00b0f0"
@@ -107,6 +112,7 @@ export default function MultipleLineChart({
               strokeDashoffset={1}
             />
             <Line
+              name={"Total Persen Loss"}
               dataKey="total_persen_losses"
               type="monotone"
               stroke="var(--color-category)"
@@ -114,6 +120,7 @@ export default function MultipleLineChart({
               dot={true}
             />
             <Line
+              name={`Cummulative Frequency`}
               dataKey="cum_frequency"
               type="monotone"
               stroke="var(--color-cum_frequency)"

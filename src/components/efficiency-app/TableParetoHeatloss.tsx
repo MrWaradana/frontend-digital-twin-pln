@@ -197,19 +197,29 @@ export default function TableParetoHeatloss({ tableData }: any) {
       {
         accessorKey: "total_persen_losses",
         header: "Total Losses",
-        cell: (props: any) => props.getValue(),
+        cell: (props: any) => {
+          const value = props.getValue();
+          if (!value) {
+            return;
+          }
+          return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
+        },
         footer: (props: any) => props.column.id,
       },
       {
         header: "Symptoms",
         cell: (props: any) => (
-          <div
-            style={{
-              paddingLeft: `${props.cell.row.depth * 2}rem`,
-            }}
-          >
-            {props.row.original.gap < 0 ? "Lower" : "Higher"}
-          </div>
+          <>
+            {props.row.depth > 0 && ( // Only render if it's a subrow
+              <div
+                style={{
+                  paddingLeft: `${props.cell.row.depth * 2}rem`,
+                }}
+              >
+                {props.row.original.gap < 0 ? "Lower" : "Higher"}
+              </div>
+            )}
+          </>
         ),
       },
       {
