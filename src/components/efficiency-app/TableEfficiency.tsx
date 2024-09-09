@@ -157,7 +157,7 @@ export default function TableEfficiency({
             </Chip>
           );
         case "periode":
-          return new Date(cellValue).toLocaleString("id");
+          return cellValue;
         case "actions":
           return (
             <div className="relative flex justify-center items-center gap-2">

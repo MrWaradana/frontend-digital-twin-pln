@@ -31,14 +31,26 @@ export default function Page({
     percentageThreshold
   );
   const tableData = data ?? [];
-  const chartDataRef = useRef<DataParetoList[] | null>(null);
+  const chartDataRef = useRef<any | null>(null);
   // If chartDataRef is null (first load), initialize it with tableData
   const chartData = useMemo(() => {
-    if (chartDataRef.current === null && tableData.length > 0) {
-      chartDataRef.current = tableData;
+    const mapped_data = tableData.map((item, index) => {
+      const cum_frequency = tableData
+        .slice(0, index + 1) // Get all previous items up to the current index
+        .reduce((acc, current) => acc + current.total_persen_losses, 0); // Accumulate total_persen_losses
+
+      return {
+        ...item, // Spread the original item
+        cum_frequency, // Add the accumulated frequency
+      };
+    });
+    if (chartDataRef.current === null && mapped_data.length > 0) {
+      chartDataRef.current = mapped_data;
     }
+    console.log(mapped_data, "mapped");
     return chartDataRef.current;
   }, [isLoading]);
+
   useEffect(() => {
     mutate();
   }, [mutate, percentageThreshold]);

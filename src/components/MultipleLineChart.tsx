@@ -113,13 +113,13 @@ export default function MultipleLineChart({
               strokeWidth={2}
               dot={true}
             />
-            {/* <Line
+            <Line
               dataKey="cum_frequency"
               type="monotone"
               stroke="var(--color-cum_frequency)"
               strokeWidth={2}
               dot={true}
-            /> */}
+            />
           </ComposedChart>
         </ChartContainer>
         <div className="h-[348px] col-span-1">
