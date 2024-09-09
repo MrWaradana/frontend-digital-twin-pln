@@ -2,7 +2,7 @@
 
 import TablePareto from "@/components/efficiency-app/TablePareto";
 // import TableParetoEdit from "@/components/efficiency-app/TableParetoEdit";
-import { Button, CircularProgress, Link } from "@nextui-org/react";
+import { Button, CircularProgress, Link, Spinner } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import MultipleLineChart from "../../../../../components/MultipleLineChart";
 import LineBarAreaComposedChart from "../../../../../components/LineBarAreaComposedChart";
@@ -75,7 +75,7 @@ export default function Page({
         <div className="max-w-full h-[564px] px-8 mb-24 mt-12 overflow-auto">
           {isLoading ? (
             <div className="h-36">
-              <CircularProgress color="primary" />
+              <Spinner color="primary" label="loading..." />
             </div>
           ) : (
             <TableParetoHeatloss tableData={tableData} />

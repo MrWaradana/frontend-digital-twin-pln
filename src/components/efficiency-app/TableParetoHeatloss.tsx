@@ -364,10 +364,7 @@ export default function TableParetoHeatloss({ tableData }: any) {
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Action
+                  Cancel
                 </Button>
               </ModalFooter>
             </>

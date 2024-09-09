@@ -21,6 +21,7 @@ import {
   ChipProps,
   SortDescriptor,
   Link,
+  Spinner,
 } from "@nextui-org/react";
 import {
   DotsVerticalIcon,
@@ -68,6 +69,7 @@ export default function TableEfficiency({
 
   type TransactionsType = (typeof tableData)[0];
 
+  const [loadingEfficiency, setLoadingEfficiency] = React.useState(true);
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([])
@@ -133,7 +135,7 @@ export default function TableEfficiency({
         sortDescriptor.column as keyof TransactionsType
       ] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
-
+      setLoadingEfficiency(false);
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
@@ -396,7 +398,16 @@ export default function TableEfficiency({
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No data found"} items={sortedItems}>
+      <TableBody
+        emptyContent={"No data found"}
+        isLoading={loadingEfficiency}
+        loadingContent={
+          <>
+            <Spinner color="primary" label="loading..." />
+          </>
+        }
+        items={sortedItems}
+      >
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (

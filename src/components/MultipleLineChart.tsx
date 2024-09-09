@@ -99,7 +99,7 @@ export default function MultipleLineChart({
               strokeDashoffset={1}
             />
             <ReferenceLine
-              y={Number(sliderValue)}
+              y={Number(internalSliderValue)}
               label="USEFUL MANY"
               stroke="#00b0f0"
               strokeDasharray={5}
