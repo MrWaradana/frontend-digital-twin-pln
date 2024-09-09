@@ -28,7 +28,7 @@ export default function Page({
   const { data, mutate, isLoading, error } = useGetDataPareto(
     session?.data?.user.accessToken,
     params.data_id,
-    percentageThreshold * 10000
+    percentageThreshold
   );
   const tableData = data ?? [];
   const chartDataRef = useRef<DataParetoList[] | null>(null);
