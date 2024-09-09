@@ -384,7 +384,7 @@ export default function TableParetoHeatloss({ tableData }: any) {
       <table
         cellPadding="2"
         cellSpacing="0"
-        className="border-2  overflow-y-scroll"
+        className="border-2 overflow-y-scroll"
         width={table.getTotalSize()}
       >
         <thead>
@@ -441,44 +441,34 @@ export default function TableParetoHeatloss({ tableData }: any) {
           );
         })}
         ; */}
-          {table.getRowModel().rows.map((row: any) => {
-            return (
-              <>
-                <tr key={row.id} className="border border-black">
-                  {row.getVisibleCells().map((cell: any) => {
-                    return (
-                      <td
-                        key={cell.id}
-                        className="text-sm font-normal"
-                        style={{
-                          width: cell.column.getSize(),
-                        }}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-                {/* {row.getIsExpanded() &&
-                row.subRows?.length > 0 &&
-                row.subRows.map((subRow) => (
-                  <tr key={subRow.id}>
-                    {subRow.getVisibleCells().map((cell) => (
-                      <td key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))} */}
-              </>
-            );
-          })}
+
+          {table.getRowModel().rows.length === 0 ? (
+            <tr>
+              <td
+                colSpan={table.getVisibleLeafColumns().length}
+                className="text-center"
+              >
+                No data!
+              </td>
+            </tr>
+          ) : (
+            table.getRowModel().rows.map((row: any) => (
+              <tr key={row.id} className="border border-black">
+                {row.getVisibleCells().map((cell: any) => (
+                  <td
+                    key={cell.id}
+                    className="text-sm font-normal"
+                    style={{
+                      width: cell.column.getSize(),
+                    }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
+
           {/* {data.map((item) => (
           <React.Fragment key={item.category}>
             <tr className="border border-black">
