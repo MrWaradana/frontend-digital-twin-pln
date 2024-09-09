@@ -195,7 +195,7 @@ export default function TableParetoHeatloss({ tableData }: any) {
         ),
       },
       {
-        accessorKey: "total_losses",
+        accessorKey: "total_persen_losses",
         header: "Total Losses",
         cell: (props: any) => props.getValue(),
         footer: (props: any) => props.column.id,
