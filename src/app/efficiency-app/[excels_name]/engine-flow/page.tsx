@@ -23,7 +23,7 @@ export default function Page({ params }: { params: { excels_name: string } }) {
               <div className="text-tiny">This is a custom tooltip content</div>
               <Button
                 as={Link}
-                href={`/efficiency-app/${params.excels_name}/pareto`}
+                href={`/efficiency-app`}
                 size="sm"
                 color="primary"
               >
@@ -47,7 +47,7 @@ export default function Page({ params }: { params: { excels_name: string } }) {
               <div className="text-tiny">This is a custom tooltip content</div>
               <Button
                 as={Link}
-                href={`/efficiency-app/${params.excels_name}/pareto`}
+                href={`/efficiency-app`}
                 size="sm"
                 color="primary"
               >
@@ -72,7 +72,7 @@ export default function Page({ params }: { params: { excels_name: string } }) {
               <div className="text-tiny">This is a custom tooltip content</div>
               <Button
                 as={Link}
-                href={`/efficiency-app/${params.excels_name}/pareto`}
+                href={`/efficiency-app`}
                 size="sm"
                 color="primary"
               >
@@ -97,7 +97,7 @@ export default function Page({ params }: { params: { excels_name: string } }) {
               <div className="text-tiny">This is a custom tooltip content</div>
               <Button
                 as={Link}
-                href={`/efficiency-app/${params.excels_name}/pareto`}
+                href={`/efficiency-app`}
                 size="sm"
                 color="primary"
               >

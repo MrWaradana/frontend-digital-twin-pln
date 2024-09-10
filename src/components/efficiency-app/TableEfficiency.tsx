@@ -110,7 +110,7 @@ export default function TableEfficiency({
       Array.from(parameterFilter).length !== parameterOptions.length
     ) {
       filteredData = filteredData.filter((item) =>
-        Array.from(parameterFilter).includes(item.jenis_parameter)
+        Array.from(parameterFilter).includes(item.jenis_parameter.toLowerCase())
       );
     }
 
