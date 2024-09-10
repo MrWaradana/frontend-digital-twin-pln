@@ -32,6 +32,8 @@ import {
   Checkbox,
 } from "@nextui-org/react";
 import { Box } from "lucide-react";
+import EditableCell from "./EditableCell";
+import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
 
 const checkboxColumn = [
   "Macrofouling",
@@ -71,7 +73,6 @@ export default function TableParetoHeatloss({ tableData }: any) {
               paddingLeft: `${props.cell.row.depth * 2}rem`,
             }}
           >
-            {" "}
             {props.row.getCanExpand() ? (
               <button
                 {...{
@@ -79,12 +80,16 @@ export default function TableParetoHeatloss({ tableData }: any) {
                   style: { cursor: "pointer" },
                 }}
               >
-                {props.row.getIsExpanded() ? "👇" : "👉"}
+                {props.row.getIsExpanded() ? (
+                  <CaretDownIcon fontSize={12} />
+                ) : (
+                  <CaretRightIcon fontSize={12} />
+                )}
               </button>
             ) : (
               `🔵 ${props.row.original.variable.input_name}`
             )}{" "}
-            {props.getValue()}
+            {props.getValue() || "Uncategorized"}
           </div>
         ),
         footer: (props: any) => props.column.id,
@@ -160,39 +165,36 @@ export default function TableParetoHeatloss({ tableData }: any) {
       {
         header: "% HR",
         // Access the correct UOM value for each row or sub-row
-        accessorFn: (row: any) => (row.data ? null : row.persen_hr || ""),
-        cell: (props: any) => (
-          <div
-            style={{
-              paddingLeft: `${props.cell.row.depth * 2}rem`,
-            }}
-          >
-            <Input
-              defaultValue={props.getValue()}
-              className={props.getValue() == null ? "hidden" : ""}
-              size="sm"
-              endContent={<>%</>}
-            />
-          </div>
-        ),
+        accessorFn: (row: any) => row.persen_hr || "",
+        cell: (props: any) =>
+          props.row.depth > 0 ? (
+            <EditableCell {...props} />
+          ) : (
+            <div>{props.getValue()}</div>
+          ),
       },
       {
         header: "Deviasi",
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) => (row.data ? null : row.deviasi || ""),
-        cell: (props: any) => (
-          <div
-            style={{
-              paddingLeft: `${props.cell.row.depth * 2}rem`,
-            }}
-          >
-            <Input
-              defaultValue={props.getValue()}
-              className={props.getValue() == null ? "hidden" : ""}
-              size="sm"
-            />
-          </div>
-        ),
+        cell: (props: any) =>
+          props.row.depth > 0 ? (
+            <EditableCell {...props} />
+          ) : (
+            <div>{props.getValue()}</div>
+          ),
+      },
+      {
+        accessorKey: "persen_losses",
+        header: "Persen Losses",
+        cell: (props: any) => {
+          const value = props.getValue();
+          if (!value) {
+            return;
+          }
+          return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
+        },
+        footer: (props: any) => props.column.id,
       },
       {
         accessorKey: "total_persen_losses",
@@ -224,32 +226,31 @@ export default function TableParetoHeatloss({ tableData }: any) {
       },
       {
         header: "Potential Benefit",
-        cell: (props: any) => (
-          <div>
-            <Input
-              defaultValue={"77000"}
-              size="sm"
-              type="number"
-              startContent={<>Rp.</>}
-            />
-          </div>
-        ),
+        cell: (props: any) =>
+          props.row.depth > 0 ? (
+            <EditableCell {...props} />
+          ) : (
+            <div>{props.getValue()}</div>
+          ),
       },
       {
         header: "Action Menutup Gap",
-        cell: (props: any) => (
-          <div>
-            <Input size="sm" />
-          </div>
-        ),
+        cell: (props: any) =>
+          props.row.depth > 0 ? (
+            <EditableCell {...props} />
+          ) : (
+            <div>{props.getValue()}</div>
+          ),
       },
       {
+        accessorKey: "total_biaya",
         header: "Biaya Untuk Closing Gap",
-        cell: (props: any) => (
-          <div>
-            <Input size="sm" startContent={<>Rp.</>} />
-          </div>
-        ),
+        cell: (props: any) =>
+          props.row.depth > 0 ? (
+            <EditableCell {...props} />
+          ) : (
+            <div>{props.getValue()}</div>
+          ),
       },
       {
         header: "Ratio Benefit to Cost",
@@ -294,6 +295,19 @@ export default function TableParetoHeatloss({ tableData }: any) {
     columns,
     state: {
       expanded,
+    },
+    meta: {
+      updateData: (rowIndex, columnId, value) =>
+        setData((prev: any) =>
+          prev.map((row: any, index: any) =>
+            index === rowIndex
+              ? {
+                  ...prev[rowIndex],
+                  [columnId]: value,
+                }
+              : row
+          )
+        ),
     },
     onExpandedChange: setExpanded,
     enableExpanding: true,
@@ -384,10 +398,10 @@ export default function TableParetoHeatloss({ tableData }: any) {
       <table
         cellPadding="2"
         cellSpacing="0"
-        className="border-2 overflow-y-scroll"
+        className="overflow-y-scroll"
         width={table.getTotalSize()}
       >
-        <thead>
+        <thead className="sticky top-0 z-50 border-2">
           {table.getHeaderGroups().map((headerGroup: any) => {
             return (
               <tr key={`${headerGroup.id}`} className="bg-primary/20">
@@ -395,7 +409,7 @@ export default function TableParetoHeatloss({ tableData }: any) {
                   return (
                     <th
                       key={header.id}
-                      className="border-2 border-neutral-300 relative group text-sm capitalize font-bold"
+                      className="relative group text-sm capitalize font-bold"
                       style={{
                         width: header.getSize(),
                       }}

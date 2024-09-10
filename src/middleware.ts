@@ -3,7 +3,12 @@ import { AUTH_API_URL } from "./lib/api-url";
 
 export default auth(async (req) => {
   const nowDate = Date.now();
+  // console.log(req.auth?.user, "user middleware");
   if (req.auth?.user && req.auth?.user.token_expires * 1000 <= nowDate) {
+    if (!("accessToken" in req.auth?.user)) {
+      return Response.redirect("/login");
+    }
+
     const response = await fetch(`${AUTH_API_URL}/refresh-token`, {
       headers: {
         Authorization: `Bearer ${req.auth.user.refreshToken}`,

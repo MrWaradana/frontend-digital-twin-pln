@@ -84,7 +84,7 @@ export default function Page({
           onThresholdChange={setPercentageThreshold}
           thresholdNumber={percentageThreshold}
         />
-        <div className="max-w-full max-h-[564px] px-8 mb-24 mt-12 overflow-auto">
+        <div className="max-w-full max-h-[564px] px-8 mb-24 mt-12 overflow-auto relative">
           {isLoading ? (
             <div className="h-36">
               <Spinner color="primary" label="loading..." />

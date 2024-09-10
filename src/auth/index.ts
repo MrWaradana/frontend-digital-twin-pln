@@ -102,12 +102,13 @@ export const {
       }
 
       // Return previous token if the access token has not expired yet
-      if (Date.now() < token.token_expires * 1000) {
-        return token;
-      }
+      // if (Date.now() < token.token_expires * 1000) {
+      //   return token;
+      // }
       // console.log(token, "TOKEN");
       // Access token has expired, try to update it
-      return refreshAccessToken(token);
+      // return refreshAccessToken(token);
+      return token;
     },
     async session({ session, token }) {
       if (token) {
@@ -115,6 +116,7 @@ export const {
         session.user.accessToken = token.accessToken;
         session.user.refreshToken = token.refreshToken;
         session.user.user = token.user;
+        session.user.token_expires = token.token_expires;
       }
       // Save to local storage
       // console.log(session.user, "=============================");

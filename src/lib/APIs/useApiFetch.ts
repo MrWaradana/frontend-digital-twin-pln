@@ -1,9 +1,9 @@
-'use client';
-import useSWR, { KeyedMutator, SWRConfiguration } from 'swr';
+"use client";
+import useSWR, { KeyedMutator, SWRConfiguration } from "swr";
 
-import { HookReply } from './types';
-import { useGeneralErrorToast } from './useGeneralErrorToast';
-import { fetcher } from '../fetcher';
+import { HookReply } from "./types";
+import { useGeneralErrorToast } from "./useGeneralErrorToast";
+import { fetcher } from "../fetcher";
 
 export function useApiFetch<T, RawT = T>(
   fetchUrl: string,
@@ -12,8 +12,9 @@ export function useApiFetch<T, RawT = T>(
   swrConfig?: SWRConfiguration<RawT | T, Error>,
   customFetcher?: ([url, token]: [string, string]) => Promise<RawT | T>
 ): HookReply<RawT | T> {
+  const isReady = isReadyCondition;
 
-  const isReady = isReadyCondition
+  if (!isReady) console.log("Token", token);
 
   const fetcherToUse = customFetcher ? customFetcher : fetcher;
 
