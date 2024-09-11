@@ -3,7 +3,7 @@ import EngineFlow from "../../../../../public/engine-flow.png";
 import { Tooltip, Button, Link } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 
-export default function Page({ params }: { params: { excels_name: string } }) {
+export default function Page() {
   return (
     <div className="w-full flex flex-col gap-6 justify-center items-center mt-24">
       <Button

@@ -17,8 +17,8 @@ export default auth(async (req) => {
 
     const res = await response.json();
     // Update the token and expiration
-    req.auth.user.accessToken = res.data.data.access_token;
-    req.auth.user.token_expires = res.data.data.token_expires;
+    req.auth.user.accessToken = res.data.access_token;
+    req.auth.user.token_expires = res.data.access_token;
 
     // Redirect back to the current page with a notification query parameter
     const newUrl = new URL(req.nextUrl.pathname, req.nextUrl.origin);

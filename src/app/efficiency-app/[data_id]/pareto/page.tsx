@@ -4,52 +4,54 @@ import TablePareto from "@/components/efficiency-app/TablePareto";
 // import TableParetoEdit from "@/components/efficiency-app/TableParetoEdit";
 import { Button, CircularProgress, Link, Spinner } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
-import MultipleLineChart from "../../../../../components/MultipleLineChart";
-import LineBarAreaComposedChart from "../../../../../components/LineBarAreaComposedChart";
+import MultipleLineChart from "@/components/MultipleLineChart";
+import LineBarAreaComposedChart from "@/components/LineBarAreaComposedChart";
 import { columns, users, statusOptions } from "@/lib/pareto-data";
 import { paretoData, ParetoType } from "@/lib/pareto-api-data";
-import TableParetoHeatloss from "../../../../../components/efficiency-app/TableParetoHeatloss";
-import { EfficiencyContentLayout } from "../../../../../containers/EfficiencyContentLayout";
+import TableParetoHeatloss from "@/components/efficiency-app/TableParetoHeatloss";
+import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { useEffect, useMemo, useState, useRef } from "react";
-import { EFFICIENCY_API_URL } from "../../../../../lib/api-url";
-import { useGetDataPareto } from "../../../../../lib/APIs/useGetDataPareto";
+import { EFFICIENCY_API_URL } from "@/lib/api-url";
+import { useGetDataPareto } from "@/lib/APIs/useGetDataPareto";
 import { useSession } from "next-auth/react";
-import { DataParetoList } from "../../../../../lib/APIs/useGetDataPareto";
+import { DataParetoList } from "@/lib/APIs/useGetDataPareto";
 
-export default function Page({
-  params,
-}: {
-  params: { excels_name: string; data_id: string };
-}) {
+export default function Page({ params }: { params: { data_id: string } }) {
   const [tableParetoData, setTableParetoData] = useState([]);
   const [percentageThreshold, setPercentageThreshold] = useState(100);
   const session = useSession();
 
-  const { data, mutate, isLoading, error } = useGetDataPareto(
+  const { data, mutate, isLoading, error, isValidating } = useGetDataPareto(
     session?.data?.user.accessToken,
     params.data_id,
     percentageThreshold
   );
   const tableData = data ?? [];
   const chartDataRef = useRef<any | null>(null);
-  // If chartDataRef is null (first load), initialize it with tableData
+  // Recalculate chartData every time tableData or validation state changes
   const chartData = useMemo(() => {
-    const mapped_data = tableData.map((item, index) => {
+    const mapped_data = tableData.map((item: any, index: number) => {
       const cum_frequency = tableData
         .slice(0, index + 1) // Get all previous items up to the current index
-        .reduce((acc, current) => acc + current.total_persen_losses, 0); // Accumulate total_persen_losses
+        .reduce(
+          (acc: any, current: { total_persen_losses: any }) =>
+            acc + current.total_persen_losses,
+          0
+        ); // Accumulate total_persen_losses
 
       return {
         ...item, // Spread the original item
         cum_frequency, // Add the accumulated frequency
       };
     });
-    if (chartDataRef.current === null && mapped_data.length > 0) {
-      chartDataRef.current = mapped_data;
-    }
-    console.log(mapped_data, "mapped");
-    return chartDataRef.current;
-  }, [isLoading]);
+
+    // console.log(mapped_data, "mapped chart data");
+    return mapped_data;
+  }, [tableData]);
+
+  const onMutate = () => {
+    mutate();
+  };
 
   useEffect(() => {
     mutate();
@@ -85,12 +87,12 @@ export default function Page({
           thresholdNumber={percentageThreshold}
         />
         <div className="max-w-full max-h-[564px] px-8 mb-24 mt-12 overflow-auto relative">
-          {isLoading ? (
+          {isLoading || isValidating ? (
             <div className="h-36">
               <Spinner color="primary" label="loading..." />
             </div>
           ) : (
-            <TableParetoHeatloss tableData={tableData} />
+            <TableParetoHeatloss tableData={tableData} mutate={onMutate} />
           )}
         </div>
       </div>

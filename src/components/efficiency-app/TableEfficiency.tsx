@@ -168,20 +168,16 @@ export default function TableEfficiency({
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu>
-                  {/* <DropdownItem href={`/efficiency-app/${params}/heat-rate`}>
+                  {/* <DropdownItem href={`/efficiency-app/heat-rate`}>
                   Heat Rate
                 </DropdownItem> */}
-                  <DropdownItem href={`/efficiency-app/${params}/engine-flow`}>
+                  <DropdownItem href={`/efficiency-app/engine-flow`}>
                     Engine Flow
                   </DropdownItem>
-                  <DropdownItem
-                    href={`/efficiency-app/${params}/${tableData.id}/pareto`}
-                  >
+                  <DropdownItem href={`/efficiency-app/${tableData.id}/pareto`}>
                     Pareto Heat Loss
                   </DropdownItem>
-                  <DropdownItem
-                    href={`/efficiency-app/${params}/${tableData.id}/output`}
-                  >
+                  <DropdownItem href={`/efficiency-app/${tableData.id}/output`}>
                     View
                   </DropdownItem>
                   {/* <DropdownItem href="#">Edit</DropdownItem>

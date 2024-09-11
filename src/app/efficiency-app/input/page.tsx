@@ -16,14 +16,14 @@ import { useSession } from "next-auth/react";
 import { EfficiencyContentLayout } from "../../../containers/EfficiencyContentLayout";
 import { useGetVariables } from "@/lib/APIs/useGetVariables";
 
-export default function Page({ params }: { params: { excels_name: string } }) {
+export default function Page() {
   const { data: session, status } = useSession();
   const excels = useExcelStore((state) => state.excels);
   // const [variableData, setVariableData] = useState<any[]>([]);
   // const [loading, setLoading] = useState(true);
   // const [error, setError] = useState<string | null>(null);
-  const [selectedMasterData, setSelectedMasterData] = useState<string>("current");
-  
+  const [selectedMasterData, setSelectedMasterData] =
+    useState<string>("current");
 
   // useEffect(() => {
   //   if (status === "loading") {
@@ -87,15 +87,13 @@ export default function Page({ params }: { params: { excels_name: string } }) {
   //   }
   // }, [excels, session, params.excels_name, status]);
 
-
   const {
     data: variableData,
     isLoading,
-    error
-  } = useGetVariables(session?.user.accessToken, excels[0].id, "in")
+    error,
+  } = useGetVariables(session?.user.accessToken, excels[0].id, "in");
 
-  const variable = variableData ?? []
-  
+  const variable = variableData ?? [];
 
   if (isLoading)
     return (
@@ -128,7 +126,11 @@ export default function Page({ params }: { params: { excels_name: string } }) {
             {/* {JSON.stringify(variableData.data)} */}
             {/* <VariableBestCaseForm variables={variableData} /> */}
           </div>
-          <VariableInputForm excel={excels} variables={variable} selectedMasterData = {selectedMasterData} />
+          <VariableInputForm
+            excel={excels}
+            variables={variable}
+            selectedMasterData={selectedMasterData}
+          />
         </div>
       </div>
     </EfficiencyContentLayout>

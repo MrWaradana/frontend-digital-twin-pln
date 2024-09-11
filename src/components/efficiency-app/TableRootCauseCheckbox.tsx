@@ -179,7 +179,7 @@ export default function TableRootCheck() {
           return (
             <Button
               as={Link}
-              href={`/efficiency-app/TFELINK.xlsm/pareto/root-cause`}
+              href={`/efficiency-app/pareto/root-cause`}
               color="primary"
               variant="flat"
               className="m-1"

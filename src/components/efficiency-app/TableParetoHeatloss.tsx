@@ -56,7 +56,13 @@ const checkboxColumn = [
   "Instrument Error",
 ];
 
-export default function TableParetoHeatloss({ tableData }: any) {
+export default function TableParetoHeatloss({
+  tableData,
+  mutate,
+}: {
+  tableData: any;
+  mutate: any;
+}) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [data, setData] = React.useState(tableData);
   const [expanded, setExpanded] = React.useState<ExpandedState>(true);
@@ -168,7 +174,7 @@ export default function TableParetoHeatloss({ tableData }: any) {
         accessorFn: (row: any) => row.persen_hr || "",
         cell: (props: any) =>
           props.row.depth > 0 ? (
-            <EditableCell {...props} />
+            <EditableCell {...props} mutate={mutate} />
           ) : (
             <div>{props.getValue()}</div>
           ),
@@ -179,7 +185,7 @@ export default function TableParetoHeatloss({ tableData }: any) {
         accessorFn: (row: any) => (row.data ? null : row.deviasi || ""),
         cell: (props: any) =>
           props.row.depth > 0 ? (
-            <EditableCell {...props} />
+            <EditableCell {...props} mutate={mutate} />
           ) : (
             <div>{props.getValue()}</div>
           ),
@@ -187,6 +193,18 @@ export default function TableParetoHeatloss({ tableData }: any) {
       {
         accessorKey: "persen_losses",
         header: "Persen Losses",
+        cell: (props: any) => {
+          const value = props.getValue();
+          if (!value) {
+            return;
+          }
+          return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
+        },
+        footer: (props: any) => props.column.id,
+      },
+      {
+        accessorKey: "nilai_losses",
+        header: "Nilai Losses",
         cell: (props: any) => {
           const value = props.getValue();
           if (!value) {
@@ -227,34 +245,23 @@ export default function TableParetoHeatloss({ tableData }: any) {
       {
         header: "Potential Benefit",
         cell: (props: any) =>
-          props.row.depth > 0 ? (
-            <EditableCell {...props} />
-          ) : (
-            <div>{props.getValue()}</div>
-          ),
+          props.row.depth > 0 ? <div>{props.getValue()}</div> : "",
       },
       {
         header: "Action Menutup Gap",
         cell: (props: any) =>
-          props.row.depth > 0 ? (
-            <EditableCell {...props} />
-          ) : (
-            <div>{props.getValue()}</div>
-          ),
+          props.row.depth > 0 ? <div>{props.getValue()}</div> : "",
       },
       {
         accessorKey: "total_biaya",
         header: "Biaya Untuk Closing Gap",
         cell: (props: any) =>
-          props.row.depth > 0 ? (
-            <EditableCell {...props} />
-          ) : (
-            <div>{props.getValue()}</div>
-          ),
+          props.row.depth > 0 ? <div>{props.getValue()}</div> : "",
       },
       {
         header: "Ratio Benefit to Cost",
-        cell: (props: any) => <div>1:7</div>,
+        cell: (props: any) =>
+          props.row.depth > 0 ? <div>{props.getValue()}</div> : "",
       },
       {
         header: "Action",
@@ -358,7 +365,7 @@ export default function TableParetoHeatloss({ tableData }: any) {
                             ) : colIndex === 6 ? (
                               rowIndex != 0 ? (
                                 <>
-                                  <input className="border bg-neutral-200 py-1 px-1 rounded-md" />
+                                  <input className="border bg-neutral-50 py-1 px-1 rounded-md" />
                                 </>
                               ) : (
                                 `` // Render a string for other rows in the first column
