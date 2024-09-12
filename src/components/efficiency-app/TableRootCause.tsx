@@ -4,6 +4,8 @@ import React from 'react'
 import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { VariableCause } from '@/lib/APIs/useGetVariableCause'
+import { VariableHeader } from '@/lib/APIs/useGetVariableHeaders'
+import { DetailRootCause } from './ModalRootCause'
 
 
 // // Define the structure of our tree data
@@ -53,7 +55,21 @@ const isLastChild = (node: VariableCause): boolean => {
 }
 
 // Recursive component to render each row and its children
-const TableRootCause: React.FC<{ node: VariableCause; level: number }> = ({ node, level }) => {
+const TableRootCause: React.FC<{ node: VariableCause; level: number; headers: Array<VariableHeader>, handleCheckBox: any, rootCauseData: Array<any> }> = ({ node, level, headers, handleCheckBox, rootCauseData }) => {
+    // Convert rootCauseData to a lookup map for efficient access
+    const rootCauseMap = new Map(rootCauseData.map(root => [root.id, root]));
+
+    // Map headers and check if node is the last child
+    const headerCheck = headers.map(header => {
+        const rootData = isLastChild(node) ? rootCauseMap.get(node.id) : null;
+
+        return {
+            id: header.id,
+            name: header.name,
+            isChecked: rootData ? rootData.variable_header_value[header.id] : false
+        };
+    });
+
     return (
         <>
             <TableRow>
@@ -67,12 +83,20 @@ const TableRootCause: React.FC<{ node: VariableCause; level: number }> = ({ node
                         {node.name}
                     </div>
                 </TableCell>
+                {headerCheck.map(header => (
+                    <TableCell key={header.id}>{isLastChild(node) && <Checkbox checked={true} onCheckedChange={(e) => {
+                        handleCheckBox(node.id, header.id, e)
+                    }} />}</TableCell>
+                ))}
                 <TableCell>
                     {isLastChild(node) && <Checkbox />}
                 </TableCell>
+                <TableCell>
+                    {isLastChild(node) && <input></input>}
+                </TableCell>
             </TableRow>
             {(node.children && node.children.length > 0) && node.children.map((child, index) => (
-                <TableRootCause key={child.id} node={child} level={level + 1} />
+                <TableRootCause key={child.id} node={child} level={level + 1} headers={headers} handleCheckBox={handleCheckBox} rootCauseData={rootCauseData} />
             ))}
         </>
     )

@@ -16,6 +16,7 @@ import { useGetVariableCauses } from "@/lib/APIs/useGetVariableCause";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useGetVariableHeaders } from "@/lib/APIs/useGetVariableHeaders";
+import PreviousMap from "postcss/lib/previous-map";
 
 const checkboxColumn = [
     "Macrofouling",
@@ -78,13 +79,40 @@ const checkboxColumn = [
 //     }
 // ]
 
+interface rootCheckBox {
+    [rowId: string]: {
+        [headerId: string]: boolean
+    }
+}
+
+const dummyRootCauses: Array<DetailRootCause> = [{
+    id: "12345",
+    is_repair: false,
+    biaya: 10000,
+    cause_id: "dsadqdwwwqdwq",
+    variable_header_value: {
+        ddasfassa: true
+    }
+}]
+
+export interface DetailRootCause {
+    id: string,
+    cause_id: string,
+    is_repair: boolean,
+    biaya: number,
+    variable_header_value: {
+        [headerId: string]: boolean
+    }
+}
+
+
 
 function ModalRootCause({ isOpen, onOpenChange, selectedModalId }: { isOpen: boolean, onOpenChange: any, selectedModalId: { detailId: string, variableId: string } }) {
     const { data: session } = useSession()
-    const [checkRootHeaders, setCheckRootHeaders] = useState({})
+    const [checkRootHeaders, setCheckRootHeaders] = useState<rootCheckBox>({})
+    const [rootCauseData, setRootCauseData] = useState<Array<DetailRootCause>>(dummyRootCauses)
 
-
-
+    console.log(checkRootHeaders)
 
     const {
         data,
@@ -101,6 +129,23 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId }: { isOpen: boo
     const variableCauses = data ?? []
     const variabelHeader = header ?? []
 
+    // Handler for checkbox changes
+    const handleCheckboxChange = (rowId: string, headerId: string, isChecked: boolean) => {
+        setCheckRootHeaders(prevState => ({
+            ...prevState,
+            [rowId]: {
+                ...prevState[rowId],
+                [headerId]: isChecked
+            }
+        }));
+    };
+
+    // Handler to log or save the checked values
+    const handleSave = () => {
+        console.log(checkRootHeaders);
+        // You can save the checkedValues to a backend or local storage here
+    };
+
     return (
         <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange}>
             <ModalContent>
@@ -113,25 +158,18 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId }: { isOpen: boo
                             {<Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>
-                                            <TableRow>
-                                                {/* Assuming you want a static header first */}
-                                                <TableCell>Name</TableCell>
-
-                                                {/* Dynamically generated headers */}
-                                                {variabelHeader.map(header => (
-                                                    <TableCell key={header.id}>{header.name}</TableCell>
-                                                ))}
-
-                                                {/* Another static header */}
-                                                <TableCell>Select</TableCell>
-                                            </TableRow>
-                                        </TableHead>
+                                        <TableHead>Heat Loss Caused</TableHead>
+                                        {/* Dynamically generated headers */}
+                                        {variabelHeader.map(header => (
+                                            <TableHead key={header.id}>{header.name}</TableHead>
+                                        ))}
+                                        <TableHead>Repair</TableHead>
+                                        <TableHead>Cost</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {variableCauses.map(node => (
-                                        <TableRootCause key={node.id} node={node} level={0} />
+                                        <TableRootCause key={node.id} node={node} headers={variabelHeader} level={0} handleCheckBox={handleCheckboxChange} rootCauseData={rootCauseData} />
                                     ))}
                                 </TableBody>
                             </Table>}
@@ -190,6 +228,12 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId }: { isOpen: boo
                             </NextTable> */}
                         </ModalBody>
                         <ModalFooter>
+                            <Button color="success" variant="light" onClick={() => {
+                                handleSave()
+                                onClose()
+                            }}>
+                                Submit
+                            </Button>
                             <Button color="danger" variant="light" onPress={onClose}>
                                 Cancel
                             </Button>
@@ -197,7 +241,7 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId }: { isOpen: boo
                     </>
                 )}
             </ModalContent>
-        </Modal>
+        </Modal >
     );
 }
 

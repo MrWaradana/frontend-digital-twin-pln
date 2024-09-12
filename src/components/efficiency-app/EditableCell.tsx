@@ -8,6 +8,7 @@ export default function EditableCell({
   column,
   table,
   mutate,
+  isValidating
 }: any) {
   const initialValue = getValue();
   const [value, setValue] = useState("");
@@ -70,7 +71,7 @@ export default function EditableCell({
 
   return (
     <div className="relative">
-      {isInputLoading && <Spinner size="lg" />}
+      {(isInputLoading || isValidating) && <Spinner size="lg" />}
       <Input
         value={value}
         onChange={(e) => setValue(e.target.value)}

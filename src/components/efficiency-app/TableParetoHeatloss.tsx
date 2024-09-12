@@ -39,9 +39,11 @@ import ModalRootCause from "./ModalRootCause";
 export default function TableParetoHeatloss({
   tableData,
   mutate,
+  isValidating,
 }: {
   tableData: any;
   mutate: any;
+  isValidating: any
 }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [data, setData] = React.useState(tableData);
@@ -112,8 +114,8 @@ export default function TableParetoHeatloss({
           row.data
             ? null
             : (row.reference_data != null
-                ? row.reference_data.toFixed(2)
-                : 0) || "",
+              ? row.reference_data.toFixed(2)
+              : 0) || "",
         size: 25,
         cell: (props: any) => (
           <div
@@ -132,7 +134,7 @@ export default function TableParetoHeatloss({
           row.data
             ? null
             : (row.existing_data != null ? row.existing_data.toFixed(2) : 0) ||
-              "",
+            "",
         cell: (props: any) => (
           <div
             style={{
@@ -163,7 +165,7 @@ export default function TableParetoHeatloss({
         accessorFn: (row: any) => row.persen_hr || "",
         cell: (props: any) =>
           props.row.depth > 0 ? (
-            <EditableCell {...props} mutate={mutate} />
+            <EditableCell {...props} mutate={mutate} isValidating={isValidating} />
           ) : (
             <div>{props.getValue()}</div>
           ),
@@ -174,7 +176,7 @@ export default function TableParetoHeatloss({
         accessorFn: (row: any) => (row.data ? null : row.deviasi || ""),
         cell: (props: any) =>
           props.row.depth > 0 ? (
-            <EditableCell {...props} mutate={mutate} />
+            <EditableCell {...props} mutate={mutate} isValidating={isValidating} />
           ) : (
             <div>{props.getValue()}</div>
           ),
@@ -304,12 +306,13 @@ export default function TableParetoHeatloss({
           prev.map((row: any, index: any) =>
             index === rowIndex
               ? {
-                  ...prev[rowIndex],
-                  [columnId]: value,
-                }
+                ...prev[rowIndex],
+                [columnId]: value,
+              }
               : row
           )
         ),
+
     },
     onExpandedChange: setExpanded,
     enableExpanding: true,

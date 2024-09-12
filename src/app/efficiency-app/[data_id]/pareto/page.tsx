@@ -87,12 +87,12 @@ export default function Page({ params }: { params: { data_id: string } }) {
           thresholdNumber={percentageThreshold}
         />
         <div className="max-w-full max-h-[564px] mb-24 mt-12 overflow-auto relative">
-          {isLoading || isValidating ? (
+          {isLoading ? (
             <div className="h-36">
               <Spinner color="primary" label="loading..." />
             </div>
           ) : (
-            <TableParetoHeatloss tableData={tableData} mutate={onMutate} />
+            <TableParetoHeatloss tableData={tableData} mutate={onMutate} isValidating={isValidating} />
           )}
         </div>
       </div>
