@@ -46,7 +46,10 @@ export default function TableParetoHeatloss({
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [data, setData] = React.useState(tableData);
   const [expanded, setExpanded] = React.useState<ExpandedState>(true);
-  const [selectecModalId, setSelectedModalId] = React.useState<string>("");
+  const [selectecModalId, setSelectedModalId] = React.useState<any>({
+    variableId: "",
+    detailId: ""
+  })
 
   const columns = useMemo(
     () => [
@@ -257,8 +260,11 @@ export default function TableParetoHeatloss({
             <React.Fragment key={row.id}>
               <Button
                 onPress={() => {
-                  setSelectedModalId(row.original.id);
-                  onOpen();
+                  setSelectedModalId({
+                    variableId: row.original.variable.id,
+                    detailId: row.original.id
+                  })
+                  onOpen()
                 }}
                 color="warning"
                 size="sm"

@@ -3,7 +3,7 @@ import { HookReply } from "./types";
 import { useApiFetch } from "./useApiFetch";
 
 
-interface Variable {
+export interface Variable {
     id: string
     input_name: string,
     short_name: string,

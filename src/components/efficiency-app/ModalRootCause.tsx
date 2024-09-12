@@ -1,3 +1,5 @@
+'use client'
+
 import {
     Button,
     Input,
@@ -10,6 +12,9 @@ import {
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import TableRootCause from "./TableRootCause";
+import { useGetVariableCauses } from "@/lib/APIs/useGetVariableCause";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 const checkboxColumn = [
     "Macrofouling",
@@ -33,47 +38,67 @@ const checkboxColumn = [
 ];
 
 // Define the structure of our tree data
-interface TreeNode {
-    id: string
-    name: string
-    children?: TreeNode[]
-}
+// interface TreeNode {
+//     id: string
+//     name: string
+//     children?: TreeNode[]
+// }
 
 // Sample data
-const treeData: TreeNode[] = [
-    {
-        id: '1',
-        name: 'Root 1',
-        children: [
-            {
-                id: '1.1',
-                name: 'Child 1.1',
-                children: [
-                    { id: '1.1.1', name: 'Grandchild 1.1.1' },
-                    { id: '1.1.2', name: 'Grandchild 1.1.2' }
-                ]
-            },
-            { id: '1.2', name: 'Child 1.2' }
-        ]
-    },
-    {
-        id: '2',
-        name: 'Root 2',
-        children: [
-            { id: '2.1', name: 'Child 2.1' },
-            {
-                id: '2.2',
-                name: 'Child 2.2',
-                children: [
-                    { id: '2.2.1', name: 'Grandchild 2.2.1' }
-                ]
-            }
-        ]
-    }
-]
+// const treeData: TreeNode[] = [
+//     {
+//         id: '1',
+//         name: 'Root 1',
+//         children: [
+//             {
+//                 id: '1.1',
+//                 name: 'Child 1.1',
+//                 children: [
+//                     { id: '1.1.1', name: 'Grandchild 1.1.1' },
+//                     { id: '1.1.2', name: 'Grandchild 1.1.2' }
+//                 ]
+//             },
+//             { id: '1.2', name: 'Child 1.2' }
+//         ]
+//     },
+//     {
+//         id: '2',
+//         name: 'Root 2',
+//         children: [
+//             { id: '2.1', name: 'Child 2.1' },
+//             {
+//                 id: '2.2',
+//                 name: 'Child 2.2',
+//                 children: [
+//                     { id: '2.2.1', name: 'Grandchild 2.2.1' }
+//                 ]
+//             }
+//         ]
+//     }
+// ]
 
 
-function ModalRootCause({ isOpen, onOpenChange, selectedModalId }: { isOpen: boolean, onOpenChange: any, selectedModalId: string }) {
+function ModalRootCause({ isOpen, onOpenChange, selectedModalId }: { isOpen: boolean, onOpenChange: any, selectedModalId: { detailId: string, variableId: string } }) {
+    const { data: session } = useSession()
+    const [checkRootHeaders, setCheckRootHeaders] = useState({})
+
+
+    
+
+    const {
+        data,
+        isLoading,
+        isValidating,
+        mutate
+    } = useGetVariableCauses(session?.user.accessToken, selectedModalId.variableId, isOpen)
+
+
+
+
+    console.log(data)
+
+    const variableCauses = data ?? []
+
     return (
         <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange}>
             <ModalContent>
@@ -83,8 +108,7 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId }: { isOpen: boo
                             Root Cause Checkbox
                         </ModalHeader>
                         <ModalBody>
-
-                            <Table>
+                            {<Table>
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Name</TableHead>
@@ -92,13 +116,11 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId }: { isOpen: boo
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {treeData.map(node => (
+                                    {variableCauses.map(node => (
                                         <TableRootCause key={node.id} node={node} level={0} />
                                     ))}
                                 </TableBody>
-                            </Table>
-
-
+                            </Table>}
 
                             {/* <NextTable
                                 aria-label="Root Cause Checkbox"
