@@ -62,10 +62,14 @@ export default function TableEfficiency({
   tableData,
   addNewUrl = "#",
   params,
+  mutate,
+  isValidating,
 }: {
   tableData: any;
   addNewUrl?: string;
   params: string;
+  mutate: any;
+  isValidating: boolean;
 }) {
   const [tableState, setTableState] = React.useState(tableData);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -129,7 +133,7 @@ export default function TableEfficiency({
     }
 
     return filteredData;
-  }, [tableData, filterValue, parameterFilter]);
+  }, [tableData, filterValue, parameterFilter, tableState]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -152,12 +156,12 @@ export default function TableEfficiency({
       setLoadingEfficiency(false);
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
-  }, [sortDescriptor, items]);
+  }, [sortDescriptor, items, tableState]);
 
   // Function to delete the selected row
   const handleDelete = async () => {
     if (!selectedRowId) return;
-
+    setLoadingEfficiency(isValidating);
     try {
       const response = await fetch(
         `${EFFICIENCY_API_URL}/data/${selectedRowId}`,
@@ -173,6 +177,8 @@ export default function TableEfficiency({
         const updatedData = tableData.filter(
           (item: TransactionsType) => item.id !== selectedRowId
         );
+        mutate();
+        setLoadingEfficiency(isValidating);
         setTableState(updatedData);
         setDeleteModalOpen(false); // Close the modal
       } else {
@@ -452,7 +458,7 @@ export default function TableEfficiency({
     <>
       {deleteConfirmationModal}
       <Table
-        aria-label="Example table with custom cells, pagination and sorting"
+        aria-label="Efficiency Data Table"
         isHeaderSticky
         bottomContent={bottomContent}
         bottomContentPlacement="outside"

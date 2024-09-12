@@ -50,8 +50,6 @@ export default function Page() {
     });
   }
 
-  console.log(session, "name");
-
   if (error) {
     console.log(error, "ERRPPPPPPPPPPR");
     fetch(`${AUTH_API_URL}/refresh-token`, {
@@ -78,15 +76,16 @@ export default function Page() {
 
   const excel = excelData ?? [];
 
-  console.log(excel);
-
   if (!isLoading) {
     useExcelStore.getState().setExcels(excel);
   }
 
-  const { data: efficiencyData, isLoading: efficiencyLoading } = useGetData(
-    session?.user.access_token
-  );
+  const {
+    data: efficiencyData,
+    isLoading: efficiencyLoading,
+    mutate: mutateEfficiency,
+    isValidating: isValidatingEfficiency,
+  } = useGetData(session?.user.access_token);
 
   const efficiency = efficiencyData?.transactions ?? [];
 
@@ -116,6 +115,8 @@ export default function Page() {
             tableData={efficiency}
             addNewUrl={`/efficiency-app/input`}
             params={excel[0].excel_filename}
+            mutate={mutateEfficiency}
+            isValidating={isValidatingEfficiency}
           />
         </div>
 
