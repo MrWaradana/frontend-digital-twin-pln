@@ -15,6 +15,7 @@ import TableRootCause from "./TableRootCause";
 import { useGetVariableCauses } from "@/lib/APIs/useGetVariableCause";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { useGetVariableHeaders } from "@/lib/APIs/useGetVariableHeaders";
 
 const checkboxColumn = [
     "Macrofouling",
@@ -83,21 +84,22 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId }: { isOpen: boo
     const [checkRootHeaders, setCheckRootHeaders] = useState({})
 
 
-    
+
 
     const {
         data,
         isLoading,
         isValidating,
         mutate
-    } = useGetVariableCauses(session?.user.accessToken, selectedModalId.variableId, isOpen)
+    } = useGetVariableCauses(session?.user.access_token, selectedModalId.variableId, isOpen)
 
-
-
-
-    console.log(data)
+    const {
+        data: header,
+        isLoading: headerLoading,
+    } = useGetVariableHeaders(session?.user.access_token, selectedModalId.variableId, isOpen)
 
     const variableCauses = data ?? []
+    const variabelHeader = header ?? []
 
     return (
         <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange}>
@@ -111,8 +113,20 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId }: { isOpen: boo
                             {<Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>Name</TableHead>
-                                        <TableHead>Select</TableHead>
+                                        <TableHead>
+                                            <TableRow>
+                                                {/* Assuming you want a static header first */}
+                                                <TableCell>Name</TableCell>
+
+                                                {/* Dynamically generated headers */}
+                                                {variabelHeader.map(header => (
+                                                    <TableCell key={header.id}>{header.name}</TableCell>
+                                                ))}
+
+                                                {/* Another static header */}
+                                                <TableCell>Select</TableCell>
+                                            </TableRow>
+                                        </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>

@@ -19,6 +19,11 @@ export default auth(async (req) => {
       },
     });
 
+    if (!response.ok) {
+      const newUrl = new URL("/login", req.nextUrl.origin);
+      return Response.redirect(newUrl);
+    }
+
     const res = await response.json();
     // Verify the token and expiration
     const resVerify = await fetch(`${AUTH_API_URL}/verify-token`, {
@@ -26,6 +31,8 @@ export default auth(async (req) => {
         Authorization: `Bearer ${req.auth.user.refresh_token}`,
       },
     });
+
+    console.log(res)
 
     if (resVerify.ok) {
       console.log("verify test");
