@@ -30,7 +30,7 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${session?.data?.user?.accessToken}`, // Adding Bearer prefix for the token
+              Authorization: `Bearer ${session?.data?.user?.access_token}`, // Adding Bearer prefix for the token
             },
           }
         );
@@ -49,10 +49,10 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
       }
     };
 
-    if (session?.data?.user?.accessToken) {
+    if (session?.data?.user?.access_token) {
       fetchVariables();
     }
-  }, [data_id, session?.data?.user?.accessToken]);
+  }, [data_id, session?.data?.user?.access_token]);
 
   const data = tableData ?? []
 

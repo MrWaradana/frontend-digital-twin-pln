@@ -22,7 +22,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
   const session = useSession();
 
   const { data, mutate, isLoading, error, isValidating } = useGetDataPareto(
-    session?.data?.user.accessToken,
+    session?.data?.user.access_token,
     params.data_id,
     percentageThreshold
   );
@@ -55,7 +55,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
 
   useEffect(() => {
     mutate();
-  }, [mutate, percentageThreshold]);
+  }, [percentageThreshold]);
 
   // if (isLoading)
   //   return (
@@ -86,7 +86,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
           onThresholdChange={setPercentageThreshold}
           thresholdNumber={percentageThreshold}
         />
-        <div className="max-w-full max-h-[564px] px-8 mb-24 mt-12 overflow-auto relative">
+        <div className="max-w-full max-h-[564px] mb-24 mt-12 overflow-auto relative">
           {isLoading || isValidating ? (
             <div className="h-36">
               <Spinner color="primary" label="loading..." />

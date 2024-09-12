@@ -2,8 +2,7 @@ import { auth } from "@/auth";
 import { AUTH_API_URL } from "./lib/api-url";
 import { encode, getToken } from "next-auth/jwt";
 import { signOut } from "next-auth/react";
-import { NextResponse } from "next/server";
-
+import { NextRequest, NextResponse } from "next/server";
 
 export default auth(async (req) => {
   if (!req.auth && req.nextUrl.pathname !== "/login") {
@@ -11,64 +10,55 @@ export default auth(async (req) => {
     return Response.redirect(newUrl);
   }
   const nowDate = Date.now();
-  // console.log(req.auth?.user, "user middleware");
-  if (req.auth?.user && req.auth?.user.token_expires * 1000 <= nowDate) {
-    if (!("accessToken" in req.auth?.user)) {
-      return Response.redirect("/login");
-    }
 
+  // If user is authenticated but the token is expired
+  if (req.auth?.user && req.auth?.user.token_expires * 1000 <= nowDate) {
     const response = await fetch(`${AUTH_API_URL}/refresh-token`, {
       headers: {
-        Authorization: `Bearer ${req.auth.user.refreshToken}`,
+        Authorization: `Bearer ${req.auth.user.refresh_token}`,
       },
     });
 
     const res = await response.json();
-    // Update the token and expiration
-    // req.auth.user.accessToken = res.data.access_token;
-    // req.auth.user.token_expires = res.data.token_expires;
+    // Verify the token and expiration
+    const resVerify = await fetch(`${AUTH_API_URL}/verify-token`, {
+      headers: {
+        Authorization: `Bearer ${req.auth.user.refresh_token}`,
+      },
+    });
 
-    // req.
-    const cookiesList = req.cookies.getAll();
-    const sessionCookie = process.env.NEXTAUTH_URL?.startsWith("https://")
-      ? "__Secure-next-auth.session-token"
-      : "next-auth.session-token";
-
-    // no session token present, remove all next-auth cookies and redirect to sign-in
-    if (!cookiesList.some((cookie) => cookie.name.includes(sessionCookie))) {
-      const response = NextResponse.redirect(new URL("/sign-in", req.url));
-
-      req.cookies.getAll().forEach((cookie) => {
-        if (cookie.name.includes("next-auth"))
-          response.cookies.delete(cookie.name);
-      });
-
-      return response;
+    if (resVerify.ok) {
+      console.log("verify test");
+      return NextResponse.next();
     }
-
-
-    const session = await getToken({
-      req,
-      salt: "",
-      secret: ""
-    })
 
     const newSessionToken = await encode({
       secret: process.env.AUTH_SECRET,
       token: {
-        ...session,
+        ...req.cookies.get("authjs.session-token"),
         accessToken: res.data.access_token,
       },
       maxAge: 30 * 24 * 60 * 60, // 30 days, or get the previous token's exp
-    })
+      salt: "123",
+    });
 
-    const resp = NextResponse.next()
+    // console.log(
+    //   req.cookies.get("authjs.session-token")?.value,
+    //   "session cookie token"
+    // );
+    // console.log(newSessionToken, "session2");
+    const resp = NextResponse.next();
 
-    resp.cookies.set(sessionCookie, newSessionToken)
-
-    return response;
-
+    resp.cookies.set(
+      req.cookies.get("authjs.session-token").value,
+      newSessionToken
+    );
+    // console.log(resp, "resp");
+    return resp;
   }
+
+  // Proceed if the request is authenticated or is for the login page
+  return;
 });
 
 export const config = {

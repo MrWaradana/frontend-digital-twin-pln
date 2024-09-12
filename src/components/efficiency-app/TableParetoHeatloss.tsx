@@ -36,8 +36,6 @@ import EditableCell from "./EditableCell";
 import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
 import ModalRootCause from "./ModalRootCause";
 
-
-
 export default function TableParetoHeatloss({
   tableData,
   mutate,
@@ -48,7 +46,7 @@ export default function TableParetoHeatloss({
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [data, setData] = React.useState(tableData);
   const [expanded, setExpanded] = React.useState<ExpandedState>(true);
-  const [selectecModalId, setSelectedModalId] = React.useState<string>("")
+  const [selectecModalId, setSelectedModalId] = React.useState<string>("");
 
   const columns = useMemo(
     () => [
@@ -56,6 +54,9 @@ export default function TableParetoHeatloss({
         accessorKey: "category",
         header: "Parameter",
         size: 50,
+        meta: {
+          className: "sticky left-0 z-20 shadow-inner",
+        },
         cell: (props: any) => (
           <div
             style={{
@@ -78,7 +79,9 @@ export default function TableParetoHeatloss({
             ) : (
               `🔵 ${props.row.original.variable.input_name}`
             )}{" "}
-            {props.getValue() || "Uncategorized"}
+            {props.getValue() || props.row.depth > 0
+              ? props.getValue()
+              : "Uncategorized"}
           </div>
         ),
         footer: (props: any) => props.column.id,
@@ -106,8 +109,8 @@ export default function TableParetoHeatloss({
           row.data
             ? null
             : (row.reference_data != null
-              ? row.reference_data.toFixed(2)
-              : 0) || "",
+                ? row.reference_data.toFixed(2)
+                : 0) || "",
         size: 25,
         cell: (props: any) => (
           <div
@@ -126,7 +129,7 @@ export default function TableParetoHeatloss({
           row.data
             ? null
             : (row.existing_data != null ? row.existing_data.toFixed(2) : 0) ||
-            "",
+              "",
         cell: (props: any) => (
           <div
             style={{
@@ -254,8 +257,8 @@ export default function TableParetoHeatloss({
             <React.Fragment key={row.id}>
               <Button
                 onPress={() => {
-                  setSelectedModalId(row.original.id)
-                  onOpen()
+                  setSelectedModalId(row.original.id);
+                  onOpen();
                 }}
                 color="warning"
                 size="sm"
@@ -295,9 +298,9 @@ export default function TableParetoHeatloss({
           prev.map((row: any, index: any) =>
             index === rowIndex
               ? {
-                ...prev[rowIndex],
-                [columnId]: value,
-              }
+                  ...prev[rowIndex],
+                  [columnId]: value,
+                }
               : row
           )
         ),
@@ -317,7 +320,11 @@ export default function TableParetoHeatloss({
 
   return (
     <>
-      <ModalRootCause isOpen={isOpen} onOpenChange={onOpenChange} selectedModalId={selectecModalId} />
+      <ModalRootCause
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        selectedModalId={selectecModalId}
+      />
       {/* <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
@@ -398,18 +405,20 @@ export default function TableParetoHeatloss({
         <thead className="sticky top-0 z-50 border-2">
           {table.getHeaderGroups().map((headerGroup: any) => {
             return (
-              <tr key={`${headerGroup.id}`} className="bg-primary/20">
+              <tr key={`${headerGroup.id}`}>
                 {headerGroup.headers.map((header: any) => {
                   return (
                     <th
                       key={header.id}
-                      className="relative group text-sm capitalize font-bold"
+                      className={`relative group text-sm capitalize font-bold bg-blue-200 ${
+                        header.column.columnDef.meta?.className ?? ""
+                      } `}
                       style={{
                         width: header.getSize(),
                       }}
                     >
                       <div
-                        className="absolute top-0 right-0 h-full w-[8px] group-hover:bg-primary/30 group-focus:bg-primary/30 hover:cursor-col-resize"
+                        className="absolute top-0 right-0 h-full w-[6px] group-hover:bg-red-300 group-focus:bg-red-300 hover:cursor-col-resize"
                         onMouseDown={header.getResizeHandler()}
                         onTouchStart={header.getResizeHandler()}
                       ></div>
@@ -465,7 +474,9 @@ export default function TableParetoHeatloss({
                 {row.getVisibleCells().map((cell: any) => (
                   <td
                     key={cell.id}
-                    className="text-sm font-normal"
+                    className={`text-sm font-normal bg-neutral-50 ${
+                      cell.column.columnDef.meta?.className ?? ""
+                    }`}
                     style={{
                       width: cell.column.getSize(),
                     }}

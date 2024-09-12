@@ -91,7 +91,7 @@ export default function Page() {
     data: variableData,
     isLoading,
     error,
-  } = useGetVariables(session?.user.accessToken, excels[0].id, "in");
+  } = useGetVariables(session?.user.access_token, excels[0].id, "in");
 
   const variable = variableData ?? [];
 

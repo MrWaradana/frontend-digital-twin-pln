@@ -16,28 +16,65 @@ import { useSession, signOut } from "next-auth/react";
 import TableEfficiency from "@/components/efficiency-app/TableEfficiency";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { columns, users, statusOptions } from "@/lib/efficiency-data";
-import { EFFICIENCY_API_URL } from "../../lib/api-url";
+import { AUTH_API_URL, EFFICIENCY_API_URL } from "../../lib/api-url";
 import { useExcelStore } from "../../store/excels";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { useRouter } from "next/navigation";
 import { error } from "console";
 import { useGetExcel } from "@/lib/APIs/useGetExcel";
 import { useGetData } from "@/lib/APIs/useGetData";
+import { mutate } from "swr";
+import { access } from "fs";
 
 export default function Page() {
   // const [isLoading, setLoading] = useState(true);
   // const [efficiencyData, setEfficiencyData] = useState([]);
   const router = useRouter();
-  const { data: session, status } = useSession();
-
-  // console.log(session.data?.user);
+  const { data: session, status, update } = useSession();
 
   const {
     data: excelData,
     isLoading,
     isValidating,
     error,
-  } = useGetExcel(session?.user.accessToken);
+    mutate,
+  } = useGetExcel(session?.user.access_token);
+
+  async function updateSessionToken(newToken: any) {
+    await update({
+      ...session,
+      user: {
+        ...session?.user,
+        access_token: newToken,
+      },
+    });
+  }
+
+  console.log(session, "name");
+
+  if (error) {
+    console.log(error, "ERRPPPPPPPPPPR");
+    fetch(`${AUTH_API_URL}/refresh-token`, {
+      headers: {
+        Authorization: `Bearer ${session?.user?.refresh_token}`, // Ensure refresh token exists
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Failed to refresh token: ${response.statusText}`);
+        }
+        return response.json(); // Parse response JSON
+      })
+      .then((resData) => {
+        updateSessionToken(resData.data.access_token);
+        mutate();
+        console.log(session?.user.access_token, "token baru");
+      })
+      .catch((error) => {
+        console.error("Error refreshing token:", error);
+      });
+  }
 
   const excel = excelData ?? [];
 
@@ -48,80 +85,11 @@ export default function Page() {
   }
 
   const { data: efficiencyData, isLoading: efficiencyLoading } = useGetData(
-    session?.user.accessToken
+    session?.user.access_token
   );
 
   const efficiency = efficiencyData?.transactions ?? [];
 
-  // useEffect(() => {
-  //   const fetchExcels = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const response = await fetch(`${EFFICIENCY_API_URL}/excels`, {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${session?.data?.user?.accessToken}`, // Adding Bearer prefix for the token
-  //         },
-  //       });
-
-  //       if (!response.ok) {
-  //         throw new Error(`Error: ${response.status} ${response.statusText}`);
-  //       }
-
-  //       const data = await response.json();
-  //       // console.log(response, "responseeeeeeeeeeeeeeeeeeeeeeeee");
-  //       useExcelStore.getState().setExcels(data.data);
-  //     } catch (error) {
-  //       toast.error(`Failed to fetch excels: ${error}`);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   if (session?.data?.user?.accessToken) {
-  //     fetchExcels();
-  //   }
-  // }, [session?.data?.user?.accessToken]);
-
-  // useEffect(() => {
-  //   const fetchEfficiencyData = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const response = await fetch(
-  //         `${EFFICIENCY_API_URL}/data?page=1&size=10`,
-  //         {
-  //           method: "GET",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Authorization: `Bearer ${session?.data?.user?.accessToken}`, // Adding Bearer prefix for the token
-  //           },
-  //         }
-  //       );
-
-  //       if (!response.ok) {
-  //         throw new Error(`Error: ${response.status} ${response.statusText}`);
-  //       }
-
-  //       const data = await response.json();
-  //       // console.log(data.data.transactions, "responseeeeeeeeeeeeeeeeeeeeeeeee");
-  //       setEfficiencyData(data.data.transactions);
-  //       // console.log(efficiencyData, "Didalam use effect");
-  //     } catch (error) {
-  //       toast.error(`Failed to fetch efficiency data: ${error}`);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   if (session?.data?.user?.accessToken) {
-  //     fetchEfficiencyData();
-  //   }
-  // }, [session?.data?.user?.accessToken]);
-
-  // const excels = useExcelStore((state) => state.excels);
-
-  // console.log(efficiencyData, "data");
   if (isLoading && efficiencyLoading)
     return (
       <div className="w-full mt-24 flex justify-center items-center">

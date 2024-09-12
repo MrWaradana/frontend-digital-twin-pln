@@ -31,8 +31,8 @@ export const CredentialsProvider = Credentials({
       const data = await res.json();
       // eslint-disable-next-line no-console
       return {
-        accessToken: data.data.access_token,
-        refreshToken: data.data.refresh_token,
+        access_token: data.data.access_token,
+        refresh_token: data.data.refresh_token,
         token_expires: data.data.token_expires,
         user: data.data.user,
       };

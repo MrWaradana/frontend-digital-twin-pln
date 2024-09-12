@@ -11,16 +11,16 @@ import { AUTH_API_URL } from "../lib/api-url";
 
 declare module "next-auth" {
   interface User {
-    accessToken: string;
-    refreshToken: string;
+    access_token: string;
+    refresh_token: string;
     user: object;
     token_expires: number;
   }
 
   interface Session {
     user: {
-      accessToken: string;
-      refreshToken: string;
+      access_token: string;
+      refresh_token: string;
       token_expires: number;
       user: any;
     } & DefaultSession["user"];
@@ -31,8 +31,8 @@ declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `auth`, when using JWT sessions */
   interface JWT {
     user: object;
-    accessToken: string;
-    refreshToken: string;
+    access_token: string;
+    refresh_token: string;
     token_expires: number;
   }
 }
@@ -64,8 +64,8 @@ async function refreshAccessToken(token: any) {
 
     return {
       ...token,
-      accessToken: refreshedTokens.access_token,
-      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
+      accessToken: refreshedTokens.accessToken,
+      refreshToken: refreshedTokens.refreshToken ?? token.refreshToken, // Fall back to old refresh token
     };
   } catch (error) {
     console.log(error);
@@ -91,36 +91,28 @@ export const {
     signIn: "/login",
   },
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        return {
-          user: user.user,
-          accessToken: user.accessToken,
-          refreshToken: user.refreshToken,
-          token_expires: user.token_expires,
-        };
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === "update") {
+        return { ...token, ...session.user };
       }
 
-      // Return previous token if the access token has not expired yet
-      // if (Date.now() < token.token_expires * 1000) {
-      //   return token;
-      // }
-      // console.log(token, "TOKEN");
-      // Access token has expired, try to update it
-      // return refreshAccessToken(token);
-      return token;
+      return {
+        ...token,
+        ...user,
+      };
     },
     async session({ session, token }) {
       if (token) {
         // session.user.id = token.id
-        session.user.accessToken = token.accessToken;
-        session.user.refreshToken = token.refreshToken;
+        session.user.access_token = token.access_token;
+        session.user.refresh_token = token.refresh_token;
         session.user.user = token.user;
         session.user.token_expires = token.token_expires;
       }
       // Save to local storage
       // console.log(session.user, "=============================");
       // console.log(token, "token");
+      // console.log(session, "session");
       return session;
     },
     // async signIn({ user, account }) {

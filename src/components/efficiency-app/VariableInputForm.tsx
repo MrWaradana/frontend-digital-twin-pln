@@ -131,7 +131,7 @@ export default function VariableInputForm({
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${session.data?.user.accessToken}`,
+              Authorization: `Bearer ${session.data?.user.access_token}`,
             },
             body: JSON.stringify(payload),
           }

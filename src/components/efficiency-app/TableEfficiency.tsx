@@ -2,6 +2,12 @@
 
 import React from "react";
 import {
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  ModalContent,
+  useDisclosure,
   Table,
   TableHeader,
   TableColumn,
@@ -35,6 +41,8 @@ import {
 } from "@/lib/efficiency-data";
 import { capitalize } from "@/lib/utils";
 import { table } from "console";
+import { EFFICIENCY_API_URL } from "../../lib/api-url";
+import { useSession } from "next-auth/react";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   current: "success",
@@ -59,6 +67,12 @@ export default function TableEfficiency({
   addNewUrl?: string;
   params: string;
 }) {
+  const [tableState, setTableState] = React.useState(tableData);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [selectedRowId, setSelectedRowId] = React.useState<string | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
+  const session = useSession();
+
   const columns = [
     { name: "ID", uid: "id", sortable: true },
     { name: "NAMA", uid: "name", sortable: true },
@@ -140,16 +154,45 @@ export default function TableEfficiency({
     });
   }, [sortDescriptor, items]);
 
+  // Function to delete the selected row
+  const handleDelete = async () => {
+    if (!selectedRowId) return;
+
+    try {
+      const response = await fetch(
+        `${EFFICIENCY_API_URL}/data/${selectedRowId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${session.data?.user.access_token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        // Remove the item from tableData after successful deletion
+        const updatedData = tableData.filter(
+          (item: TransactionsType) => item.id !== selectedRowId
+        );
+        setTableState(updatedData);
+        setDeleteModalOpen(false); // Close the modal
+      } else {
+        console.error("Failed to delete");
+      }
+    } catch (error) {
+      console.error("Error deleting data:", error);
+    }
+  };
+
   const renderCell = React.useCallback(
-    (tableData: TransactionsType, columnKey: React.Key) => {
-      const cellValue = tableData[columnKey as keyof TransactionsType];
+    (rowData: TransactionsType, columnKey: React.Key) => {
+      const cellValue = rowData[columnKey as keyof TransactionsType];
 
       switch (columnKey) {
         case "jenis_parameter":
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[tableData.jenis_parameter.toLowerCase()]}
+              color={statusColorMap[rowData.jenis_parameter.toLowerCase()]}
               size="sm"
               variant="flat"
             >
@@ -160,31 +203,45 @@ export default function TableEfficiency({
           return cellValue;
         case "actions":
           return (
-            <div className="relative flex justify-center items-center gap-2">
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button isIconOnly size="sm" variant="solid" color="primary">
-                    <DotsVerticalIcon className="text-white text-2xl" />
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu>
-                  {/* <DropdownItem href={`/efficiency-app/heat-rate`}>
+            <>
+              <div className="relative flex justify-center items-center gap-2">
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button
+                      isIconOnly
+                      size="sm"
+                      variant="solid"
+                      color="primary"
+                    >
+                      <DotsVerticalIcon className="text-white text-2xl" />
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu>
+                    {/* <DropdownItem href={`/efficiency-app/heat-rate`}>
                   Heat Rate
                 </DropdownItem> */}
-                  <DropdownItem href={`/efficiency-app/engine-flow`}>
-                    Engine Flow
-                  </DropdownItem>
-                  <DropdownItem href={`/efficiency-app/${tableData.id}/pareto`}>
-                    Pareto Heat Loss
-                  </DropdownItem>
-                  <DropdownItem href={`/efficiency-app/${tableData.id}/output`}>
-                    View
-                  </DropdownItem>
-                  {/* <DropdownItem href="#">Edit</DropdownItem>
-                  <DropdownItem>Delete</DropdownItem> */}
-                </DropdownMenu>
-              </Dropdown>
-            </div>
+                    <DropdownItem href={`/efficiency-app/engine-flow`}>
+                      Engine Flow
+                    </DropdownItem>
+                    <DropdownItem href={`/efficiency-app/${rowData.id}/pareto`}>
+                      Pareto Heat Loss
+                    </DropdownItem>
+                    <DropdownItem href={`/efficiency-app/${rowData.id}/output`}>
+                      View
+                    </DropdownItem>
+                    {/* <DropdownItem href="#">Edit</DropdownItem>*/}
+                    <DropdownItem
+                      onPress={() => {
+                        setSelectedRowId(rowData.id);
+                        setDeleteModalOpen(true);
+                      }}
+                    >
+                      Delete {rowData.name}
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              </div>
+            </>
           );
         default:
           return cellValue;
@@ -301,7 +358,7 @@ export default function TableEfficiency({
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {tableData.length} users
+            Total {tableData.length} data
           </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
@@ -331,9 +388,9 @@ export default function TableEfficiency({
     return (
       <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
+          {/* {selectedKeys === "all"
             ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
+            : `${selectedKeys.size} of ${filteredItems.length} selected`} */}
         </span>
         <Pagination
           isCompact
@@ -366,52 +423,80 @@ export default function TableEfficiency({
     );
   }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
-  return (
-    <Table
-      aria-label="Example table with custom cells, pagination and sorting"
-      isHeaderSticky
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[382px]",
-      }}
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column: any) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody
-        emptyContent={"No data found"}
-        isLoading={loadingEfficiency}
-        loadingContent={
+  // The modal that shows up when attempting to delete an item
+  const deleteConfirmationModal = (
+    <Modal isOpen={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+      <ModalContent>
+        {(onClose) => (
           <>
-            <Spinner color="primary" label="loading..." />
+            <ModalHeader>Confirm Deletion</ModalHeader>
+            <ModalBody>
+              Are you sure you want to delete this item? This action cannot be
+              undone.
+            </ModalBody>
+            <ModalFooter>
+              <Button color="danger" onPress={handleDelete}>
+                Delete
+              </Button>
+              <Button variant="light" onPress={onClose}>
+                Cancel
+              </Button>
+            </ModalFooter>
           </>
-        }
-        items={sortedItems}
-      >
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
         )}
-      </TableBody>
-    </Table>
+      </ModalContent>
+    </Modal>
+  );
+
+  return (
+    <>
+      {deleteConfirmationModal}
+      <Table
+        aria-label="Example table with custom cells, pagination and sorting"
+        isHeaderSticky
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        classNames={{
+          wrapper: "max-h-[382px]",
+        }}
+        selectedKeys={selectedKeys}
+        // selectionMode="multiple"
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSelectionChange={setSelectedKeys}
+        onSortChange={setSortDescriptor}
+      >
+        <TableHeader columns={headerColumns}>
+          {(column: any) => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === "actions" ? "center" : "start"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody
+          emptyContent={"No data found"}
+          isLoading={loadingEfficiency}
+          loadingContent={
+            <>
+              <Spinner color="primary" label="loading..." />
+            </>
+          }
+          items={sortedItems}
+        >
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </>
   );
 }
