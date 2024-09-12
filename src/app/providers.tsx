@@ -3,6 +3,8 @@
 
 import { NextUIProvider } from "@nextui-org/react";
 import { SessionProvider as NextAuthProvider } from "next-auth/react";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { type ThemeProviderProps } from "next-themes/dist/types";
 import { Session } from "next-auth";
 
 export function Providers({
@@ -13,8 +15,10 @@ export function Providers({
   session: Session | null;
 }) {
   return (
-    <NextAuthProvider>
-      <NextUIProvider>{children}</NextUIProvider>
-    </NextAuthProvider>
+    <NextThemesProvider attribute="class" defaultTheme="light" enableSystem>
+      <NextAuthProvider>
+        <NextUIProvider>{children}</NextUIProvider>
+      </NextAuthProvider>
+    </NextThemesProvider>
   );
 }

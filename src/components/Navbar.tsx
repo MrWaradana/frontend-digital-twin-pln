@@ -24,6 +24,7 @@ import PlnLogo from "../../public/Logo_PLN.svg";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
+import { ModeToggle } from "./ModeToggle";
 
 export default function Navbar() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -138,6 +139,7 @@ export default function Navbar() {
         </NavbarContent>
 
         <NavbarContent justify="end">
+          <ModeToggle />
           <NavbarItem>
             <Avatar
               name={session?.user.user.name}

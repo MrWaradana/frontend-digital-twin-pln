@@ -48,8 +48,8 @@ export default function TableParetoHeatloss({
   const [expanded, setExpanded] = React.useState<ExpandedState>(true);
   const [selectecModalId, setSelectedModalId] = React.useState<any>({
     variableId: "",
-    detailId: ""
-  })
+    detailId: "",
+  });
 
   const columns = useMemo(
     () => [
@@ -262,9 +262,9 @@ export default function TableParetoHeatloss({
                 onPress={() => {
                   setSelectedModalId({
                     variableId: row.original.variable.id,
-                    detailId: row.original.id
-                  })
-                  onOpen()
+                    detailId: row.original.id,
+                  });
+                  onOpen();
                 }}
                 color="warning"
                 size="sm"
@@ -416,7 +416,7 @@ export default function TableParetoHeatloss({
                   return (
                     <th
                       key={header.id}
-                      className={`relative group text-sm capitalize font-bold bg-blue-200 ${
+                      className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 ${
                         header.column.columnDef.meta?.className ?? ""
                       } `}
                       style={{
@@ -480,7 +480,7 @@ export default function TableParetoHeatloss({
                 {row.getVisibleCells().map((cell: any) => (
                   <td
                     key={cell.id}
-                    className={`text-sm font-normal bg-neutral-50 ${
+                    className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${
                       cell.column.columnDef.meta?.className ?? ""
                     }`}
                     style={{
