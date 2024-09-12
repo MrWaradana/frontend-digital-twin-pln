@@ -40,10 +40,12 @@ export default function TableParetoHeatloss({
   tableData,
   mutate,
   isValidating,
+  data_id
 }: {
   tableData: any;
   mutate: any;
-  isValidating: any
+  isValidating: any,
+  data_id: string
 }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [data, setData] = React.useState(tableData);
@@ -333,6 +335,7 @@ export default function TableParetoHeatloss({
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         selectedModalId={selectecModalId}
+        data_id={data_id}
       />
       {/* <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange}>
         <ModalContent>
@@ -419,9 +422,8 @@ export default function TableParetoHeatloss({
                   return (
                     <th
                       key={header.id}
-                      className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 ${
-                        header.column.columnDef.meta?.className ?? ""
-                      } `}
+                      className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 ${header.column.columnDef.meta?.className ?? ""
+                        } `}
                       style={{
                         width: header.getSize(),
                       }}
@@ -483,9 +485,8 @@ export default function TableParetoHeatloss({
                 {row.getVisibleCells().map((cell: any) => (
                   <td
                     key={cell.id}
-                    className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${
-                      cell.column.columnDef.meta?.className ?? ""
-                    }`}
+                    className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${cell.column.columnDef.meta?.className ?? ""
+                      }`}
                     style={{
                       width: cell.column.getSize(),
                     }}

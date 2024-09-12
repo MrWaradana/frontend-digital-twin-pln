@@ -17,6 +17,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useGetVariableHeaders } from "@/lib/APIs/useGetVariableHeaders";
 import PreviousMap from "postcss/lib/previous-map";
+import { useGetDataRootCauses } from "@/lib/APIs/useGetDataRootCause";
 
 const checkboxColumn = [
     "Macrofouling",
@@ -107,7 +108,7 @@ export interface DetailRootCause {
 
 
 
-function ModalRootCause({ isOpen, onOpenChange, selectedModalId }: { isOpen: boolean, onOpenChange: any, selectedModalId: { detailId: string, variableId: string } }) {
+function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { isOpen: boolean, onOpenChange: any, selectedModalId: { detailId: string, variableId: string }, data_id: string }) {
     const { data: session } = useSession()
     const [checkRootHeaders, setCheckRootHeaders] = useState<rootCheckBox>({})
     const [rootCauseData, setRootCauseData] = useState<Array<DetailRootCause>>(dummyRootCauses)
@@ -126,8 +127,15 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId }: { isOpen: boo
         isLoading: headerLoading,
     } = useGetVariableHeaders(session?.user.access_token, selectedModalId.variableId, isOpen)
 
+    const {
+        data: rootCause,
+        isLoading: rootCauseLoading,
+    } = useGetDataRootCauses(session?.user.access_token, data_id, selectedModalId.detailId, isOpen)
+
+
     const variableCauses = data ?? []
     const variabelHeader = header ?? []
+    const dataRootCauses = rootCause?? []
 
     // Handler for checkbox changes
     const handleCheckboxChange = (rowId: string, headerId: string, isChecked: boolean) => {
@@ -169,7 +177,7 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId }: { isOpen: boo
                                 </TableHeader>
                                 <TableBody>
                                     {variableCauses.map(node => (
-                                        <TableRootCause key={node.id} node={node} headers={variabelHeader} level={0} handleCheckBox={handleCheckboxChange} rootCauseData={rootCauseData} />
+                                        <TableRootCause key={node.id} node={node} headers={variabelHeader} level={0} handleCheckBox={handleCheckboxChange} rootCauseData={dataRootCauses} />
                                     ))}
                                 </TableBody>
                             </Table>}

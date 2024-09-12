@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { VariableCause } from '@/lib/APIs/useGetVariableCause'
 import { VariableHeader } from '@/lib/APIs/useGetVariableHeaders'
 import { DetailRootCause } from './ModalRootCause'
+import { DataRootCause } from '@/lib/APIs/useGetDataRootCause'
 
 
 // // Define the structure of our tree data
@@ -55,7 +56,7 @@ const isLastChild = (node: VariableCause): boolean => {
 }
 
 // Recursive component to render each row and its children
-const TableRootCause: React.FC<{ node: VariableCause; level: number; headers: Array<VariableHeader>, handleCheckBox: any, rootCauseData: Array<any> }> = ({ node, level, headers, handleCheckBox, rootCauseData }) => {
+const TableRootCause: React.FC<{ node: VariableCause; level: number; headers: Array<VariableHeader>, handleCheckBox: any, rootCauseData: Array<DataRootCause> }> = ({ node, level, headers, handleCheckBox, rootCauseData }) => {
     // Convert rootCauseData to a lookup map for efficient access
     const rootCauseMap = new Map(rootCauseData.map(root => [root.id, root]));
 
@@ -84,7 +85,7 @@ const TableRootCause: React.FC<{ node: VariableCause; level: number; headers: Ar
                     </div>
                 </TableCell>
                 {headerCheck.map(header => (
-                    <TableCell key={header.id}>{isLastChild(node) && <Checkbox checked={true} onCheckedChange={(e) => {
+                    <TableCell key={header.id}>{isLastChild(node) && <Checkbox checked={header.isChecked} onCheckedChange={(e) => {
                         handleCheckBox(node.id, header.id, e)
                     }} />}</TableCell>
                 ))}

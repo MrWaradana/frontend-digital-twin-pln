@@ -92,7 +92,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
               <Spinner color="primary" label="loading..." />
             </div>
           ) : (
-            <TableParetoHeatloss tableData={tableData} mutate={onMutate} isValidating={isValidating} />
+            <TableParetoHeatloss tableData={tableData} mutate={onMutate} isValidating={isValidating} data_id={params.data_id} />
           )}
         </div>
       </div>
