@@ -34,27 +34,9 @@ import {
 import { Box } from "lucide-react";
 import EditableCell from "./EditableCell";
 import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
+import ModalRootCause from "./ModalRootCause";
 
-const checkboxColumn = [
-  "Macrofouling",
-  "Microfouling",
-  "Excessive Air in leakage",
-  "Inadequate air removal capacity",
-  "Increase CW System Resistance",
-  "- Air binding cond. Disch. Pipe/tunnel",
-  "- Macrofouling at CW pump disch. Piping",
-  "- Plugged condenser tube",
-  "- Condenser inlet/outlet valve not open",
-  "- Air binding condensor inlet-outlet waterbox (low waterbox level)",
-  "Decrease CW Pump Performance",
-  "- Pump casing or impeller wear/corrosion",
-  "- Damaged casing or impeller",
-  "- Pump cavitation",
-  "- Macrofouling / siltation of intake/struct",
-  "- Low inlet pump level",
-  "Decrease Ejector/Vacuum pump performance",
-  "Instrument Error",
-];
+
 
 export default function TableParetoHeatloss({
   tableData,
@@ -66,6 +48,7 @@ export default function TableParetoHeatloss({
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [data, setData] = React.useState(tableData);
   const [expanded, setExpanded] = React.useState<ExpandedState>(true);
+  const [selectecModalId, setSelectedModalId] = React.useState<string>("")
 
   const columns = useMemo(
     () => [
@@ -123,8 +106,8 @@ export default function TableParetoHeatloss({
           row.data
             ? null
             : (row.reference_data != null
-                ? row.reference_data.toFixed(2)
-                : 0) || "",
+              ? row.reference_data.toFixed(2)
+              : 0) || "",
         size: 25,
         cell: (props: any) => (
           <div
@@ -143,7 +126,7 @@ export default function TableParetoHeatloss({
           row.data
             ? null
             : (row.existing_data != null ? row.existing_data.toFixed(2) : 0) ||
-              "",
+            "",
         cell: (props: any) => (
           <div
             style={{
@@ -270,7 +253,10 @@ export default function TableParetoHeatloss({
           return (
             <React.Fragment key={row.id}>
               <Button
-                onPress={onOpen}
+                onPress={() => {
+                  setSelectedModalId(row.original.id)
+                  onOpen()
+                }}
                 color="warning"
                 size="sm"
                 className="m-2"
@@ -309,9 +295,9 @@ export default function TableParetoHeatloss({
           prev.map((row: any, index: any) =>
             index === rowIndex
               ? {
-                  ...prev[rowIndex],
-                  [columnId]: value,
-                }
+                ...prev[rowIndex],
+                [columnId]: value,
+              }
               : row
           )
         ),
@@ -331,7 +317,8 @@ export default function TableParetoHeatloss({
 
   return (
     <>
-      <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange}>
+      <ModalRootCause isOpen={isOpen} onOpenChange={onOpenChange} selectedModalId={selectecModalId} />
+      {/* <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>
@@ -375,9 +362,8 @@ export default function TableParetoHeatloss({
                                 <Checkbox
                                   defaultChecked
                                   name={`${rowIndex * 5 + colIndex}`}
-                                  className={`${
-                                    rowIndex === 0 ? "hidden" : ""
-                                  }`}
+                                  className={`${rowIndex === 0 ? "hidden" : ""
+                                    }`}
                                 />
                                 <p
                                   className={`${rowIndex != 0 ? "hidden" : ""}`}
@@ -401,7 +387,8 @@ export default function TableParetoHeatloss({
             </>
           )}
         </ModalContent>
-      </Modal>
+      </Modal> */}
+
       <table
         cellPadding="2"
         cellSpacing="0"
