@@ -8,7 +8,7 @@ export default function EditableCell({
   column,
   table,
   mutate,
-  isValidating
+  isValidating,
 }: any) {
   const initialValue = getValue();
   const [value, setValue] = useState("");
@@ -19,6 +19,18 @@ export default function EditableCell({
   const updateParetoData = async () => {
     setIsInputLoading(true);
     try {
+      // Initialize an empty object for the payload
+      const payload = {
+        detail_id: row.original.id,
+      };
+
+      // Conditionally add either 'deviasi' or 'persen_hr' to the payload
+      if (column.id.toLowerCase() === "deviasi") {
+        payload.deviasi = value;
+      } else if (column.id.toLowerCase() === "% hr") {
+        payload.persen_hr = value;
+      }
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/data/${row.original.id}/pareto`,
         {
@@ -27,20 +39,7 @@ export default function EditableCell({
             "Content-Type": "application/json",
             Authorization: `Bearer ${session.data?.user.access_token}`,
           },
-          body: JSON.stringify(
-            {
-              detail_id: row.original.id,
-              deviasi:
-                column.id.toLowerCase() === "deviasi"
-                  ? value
-                  : row.original.deviasi, // Assuming this field should contain the updated value
-              persen_hr:
-                column.id.toLowerCase() === "% hr"
-                  ? value
-                  : row.original.persen_hr, // You can adjust these values as needed
-            }
-            // Add more objects if needed
-          ),
+          body: JSON.stringify(payload),
         }
       );
 
@@ -59,10 +58,13 @@ export default function EditableCell({
   };
 
   const onBlur = () => {
-    table.options.meta?.updateData(row.index, column.id, value);
+    const isDone = table.options.meta?.updateData(row.index, column.id, value);
+
     // console.log(value, "value");
     // console.log(column.id.toLowerCase() === "deviasi");
-    updateParetoData();
+    if (isDone) {
+      updateParetoData();
+    }
   };
 
   useEffect(() => {

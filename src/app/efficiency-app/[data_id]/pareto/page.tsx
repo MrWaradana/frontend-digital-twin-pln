@@ -54,7 +54,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
   };
 
   useEffect(() => {
-    mutate();
+    onMutate();
   }, [percentageThreshold]);
 
   // if (isLoading)
