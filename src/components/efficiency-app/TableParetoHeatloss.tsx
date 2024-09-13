@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import {
   Column,
   Table,
@@ -77,11 +77,9 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
 export const MemoizedTableBody = React.memo(TableBody, (prev, next) => {
   const prevRowModel = prev.table.getRowModel().rows;
   const nextRowModel = next.table.getRowModel().rows;
-  console.log(prevRowModel, nextRowModel, "Row");
   // Check for expanded state changes
   const prevExpanded = prevRowModel.map((row: any) => row.getIsExpanded());
   const nextExpanded = nextRowModel.map((row: any) => row.getIsExpanded());
-  console.log(prevExpanded, nextExpanded);
   // If expanded state changes, re-render
   const hasExpandedStateChanged = prevExpanded.some(
     (isExpanded: boolean, idx: number) => isExpanded !== nextExpanded[idx]
@@ -98,21 +96,22 @@ export default function TableParetoHeatloss({
   mutate,
   isValidating,
   data_id,
+  setIsMutating,
 }: {
   tableData: any;
   mutate: any;
   isValidating: any;
   data_id: string;
+  setIsMutating: any;
 }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [data, setData] = React.useState(tableData);
   const [expanded, setExpanded] = React.useState<ExpandedState>({});
+
   const [selectecModalId, setSelectedModalId] = React.useState<any>({
     variableId: "",
     detailId: "",
   });
-
-  console.log(expanded, "Expanded State");
 
   const columns = useMemo(
     () => [
@@ -120,6 +119,7 @@ export default function TableParetoHeatloss({
         accessorKey: "category",
         header: "Parameter",
         minSize: 60,
+        size: 550,
         maxSize: 800,
         meta: {
           className:
@@ -234,6 +234,7 @@ export default function TableParetoHeatloss({
               {...props}
               mutate={mutate}
               isValidating={isValidating}
+              setIsMutating={setIsMutating}
             />
           ) : (
             <div>{props.getValue()}</div>
@@ -250,6 +251,7 @@ export default function TableParetoHeatloss({
               {...props}
               mutate={mutate}
               isValidating={isValidating}
+              setIsMutating={setIsMutating}
             />
           ) : (
             <div>{props.getValue()}</div>
@@ -331,25 +333,30 @@ export default function TableParetoHeatloss({
       {
         header: "Action",
         cell: ({ row }) => {
-          const rows = Array.from({ length: 18 });
-          return (
-            <React.Fragment key={row.id}>
-              <Button
-                onPress={() => {
-                  setSelectedModalId({
-                    variableId: row.original.variable.id,
-                    detailId: row.original.id,
-                  });
-                  onOpen();
-                }}
-                color="warning"
-                size="sm"
-                className="m-2"
-              >
-                Open Checkbox
-              </Button>
-            </React.Fragment>
-          );
+          // Only render the button if it's a subrow (depth > 0)
+          if (row.depth > 0) {
+            return (
+              <React.Fragment key={row.id}>
+                <Button
+                  onPress={() => {
+                    setSelectedModalId({
+                      variableId: row.original.variable.id,
+                      detailId: row.original.id,
+                    });
+                    onOpen();
+                  }}
+                  color="warning"
+                  size="sm"
+                  className="m-2"
+                >
+                  Open Checkbox
+                </Button>
+              </React.Fragment>
+            );
+          }
+
+          // Return null or an empty fragment if it's not a subrow
+          return null;
         },
       },
 

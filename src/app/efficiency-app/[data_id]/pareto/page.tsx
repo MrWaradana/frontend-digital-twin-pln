@@ -19,6 +19,7 @@ import { DataParetoList } from "@/lib/APIs/useGetDataPareto";
 export default function Page({ params }: { params: { data_id: string } }) {
   const [tableParetoData, setTableParetoData] = useState([]);
   const [percentageThreshold, setPercentageThreshold] = useState(100);
+  const [isMutating, setIsMutating] = useState(false);
   const session = useSession();
 
   const { data, mutate, isLoading, error, isValidating } = useGetDataPareto(
@@ -47,20 +48,28 @@ export default function Page({ params }: { params: { data_id: string } }) {
 
     // console.log(mapped_data, "mapped chart data");
     //   return mapped_data;
-    // }, [percentageThreshold]);
+    // }, [tableData]);
     if (chartDataRef.current === null && mapped_data.length > 0) {
       chartDataRef.current = mapped_data;
     }
-    console.log(mapped_data, "mapped");
+
+    // if (chartDataRef.current != null && isMutating) {
+    //   chartDataRef.current = mapped_data;
+    // }
+
     return chartDataRef.current;
-  }, [isValidating, tableData]);
+  }, [tableData]);
 
   const onMutate = () => {
+    setIsMutating(true);
     mutate();
+    setIsMutating(false);
   };
 
   useEffect(() => {
+    setIsMutating(true);
     onMutate();
+    setIsMutating(false);
   }, [percentageThreshold]);
 
   // if (isLoading)
@@ -96,7 +105,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
           <Spinner color="primary" label="loading..." />
         ) : (
           <div className="max-w-full max-h-[564px] mb-24 mt-12 overflow-auto relative">
-            {isValidating ? (
+            {isValidating || isMutating ? (
               <div className="h-36">
                 <Spinner color="primary" label="validating..." />
               </div>
@@ -106,6 +115,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
                 mutate={onMutate}
                 isValidating={isValidating}
                 data_id={params.data_id}
+                setIsMutating={setIsMutating}
               />
             )}
           </div>

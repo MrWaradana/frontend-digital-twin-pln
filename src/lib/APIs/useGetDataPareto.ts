@@ -31,6 +31,6 @@ export function useGetDataPareto(
     `${EFFICIENCY_API_URL}/data/${data_id}/pareto?percent_threshold=${thresholdValue}`,
     !!token,
     token,
-    { keepPreviousData: true }
+    { keepPreviousData: true, refreshInterval: 72000 }
   );
 }

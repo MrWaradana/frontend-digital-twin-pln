@@ -14,8 +14,6 @@ export function useApiFetch<T, RawT = T>(
 ): HookReply<RawT | T> {
   const isReady = isReadyCondition;
 
-  if (!isReady) console.log("Token is not Ready!");
-
   const fetcherToUse = customFetcher ? customFetcher : fetcher;
 
   const {

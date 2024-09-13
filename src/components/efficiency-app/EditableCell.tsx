@@ -9,6 +9,7 @@ export default function EditableCell({
   table,
   mutate,
   isValidating,
+  setIsMutating,
 }: any) {
   const initialValue = getValue();
   const [value, setValue] = useState("");
@@ -53,6 +54,7 @@ export default function EditableCell({
       console.error("Error updating pareto data:", error);
     } finally {
       setIsInputLoading(false);
+
       mutate();
     }
   };
@@ -65,9 +67,10 @@ export default function EditableCell({
         column.id,
         value
       );
-
+      setIsMutating(true);
       if (isDone) {
         updateParetoData();
+        setIsMutating(false);
       }
     } else {
       console.log("No changes detected, skipping update.");
