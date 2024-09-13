@@ -24,7 +24,7 @@ import {
   ModalFooter,
   useDisclosure,
   Table as NextTable,
-  TableBody,
+  TableBody as NextTableBody,
   TableCell,
   TableColumn,
   TableHeader,
@@ -36,16 +36,73 @@ import EditableCell from "./EditableCell";
 import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
 import ModalRootCause from "./ModalRootCause";
 
+//un-memoized normal table body component - see memoized version below
+function TableBody({ table }: { table: Table<ParetoType> }) {
+  return (
+    <tbody>
+      {table.getRowModel().rows.length === 0 ? (
+        <tr>
+          <td
+            colSpan={table.getVisibleLeafColumns().length}
+            className="text-center"
+          >
+            No data!
+          </td>
+        </tr>
+      ) : (
+        table.getRowModel().rows.map((row: any) => (
+          <tr key={row.id} className="border border-black">
+            {row.getVisibleCells().map((cell: any) => (
+              <td
+                key={cell.id}
+                className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${
+                  cell.column.columnDef.meta?.className ?? ""
+                }`}
+                style={{
+                  width: `calc(var(--col-${cell.column.id}-size) * 1px)`,
+                  maxWidth: "100px",
+                }}
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </td>
+            ))}
+          </tr>
+        ))
+      )}
+    </tbody>
+  );
+}
+
+// Memoized version of TableBody
+export const MemoizedTableBody = React.memo(TableBody, (prev, next) => {
+  const prevRowModel = prev.table.getRowModel().rows;
+  const nextRowModel = next.table.getRowModel().rows;
+
+  // Check for expanded state changes
+  const prevExpanded = prevRowModel.map((row: any) => row.getIsExpanded());
+  const nextExpanded = nextRowModel.map((row: any) => row.getIsExpanded());
+
+  // If expanded state changes, re-render
+  const hasExpandedStateChanged = prevExpanded.some(
+    (isExpanded: boolean, idx: number) => isExpanded !== nextExpanded[idx]
+  );
+
+  // Also compare the data to ensure changes in data are detected
+  const isSameData = prev.table.options.data === next.table.options.data;
+
+  return isSameData && !hasExpandedStateChanged;
+}) as typeof TableBody;
+
 export default function TableParetoHeatloss({
   tableData,
   mutate,
   isValidating,
-  data_id
+  data_id,
 }: {
   tableData: any;
   mutate: any;
-  isValidating: any,
-  data_id: string
+  isValidating: any;
+  data_id: string;
 }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [data, setData] = React.useState(tableData);
@@ -55,14 +112,18 @@ export default function TableParetoHeatloss({
     detailId: "",
   });
 
+  console.log(expanded, "Expanded State");
+
   const columns = useMemo(
     () => [
       {
         accessorKey: "category",
         header: "Parameter",
-        size: 50,
+        minSize: 60,
+        maxSize: 800,
         meta: {
-          className: "sticky left-0 z-20 shadow-inner",
+          className:
+            "sticky left-0 z-20 shadow-inner overflow-hidden whitespace-nowrap text-clip",
         },
         cell: (props: any) => (
           <div
@@ -91,6 +152,7 @@ export default function TableParetoHeatloss({
               : "Uncategorized"}
           </div>
         ),
+        enableResizing: true,
         footer: (props: any) => props.column.id,
       },
       {
@@ -164,6 +226,7 @@ export default function TableParetoHeatloss({
       {
         header: "% HR",
         // Access the correct UOM value for each row or sub-row
+        size: 25,
         accessorFn: (row: any) => row.persen_hr || "",
         cell: (props: any) =>
           props.row.depth > 0 ? (
@@ -179,6 +242,7 @@ export default function TableParetoHeatloss({
       {
         header: "Deviasi",
         // Access the correct UOM value for each row or sub-row
+        size: 25,
         accessorFn: (row: any) => (row.data ? null : row.deviasi || ""),
         cell: (props: any) =>
           props.row.depth > 0 ? (
@@ -325,6 +389,9 @@ export default function TableParetoHeatloss({
         return true;
       },
     },
+    initialState: {
+      expanded: true,
+    },
     onExpandedChange: setExpanded,
     enableExpanding: true,
     getSubRows: (row) => row.data,
@@ -335,8 +402,20 @@ export default function TableParetoHeatloss({
     getExpandedRowModel: getExpandedRowModel(),
     // filterFromLeafRows: true,
     // maxLeafRowFilterDepth: 0,
-    debugTable: true,
+    debugTable: false,
+    debugRows: false,
   });
+
+  const columnSizeVars = React.useMemo(() => {
+    const headers = table.getFlatHeaders();
+    const colSizes: { [key: string]: number } = {};
+    for (let i = 0; i < headers.length; i++) {
+      const header = headers[i]!;
+      colSizes[`--header-${header.id}-size`] = header.getSize();
+      colSizes[`--col-${header.column.id}-size`] = header.column.getSize();
+    }
+    return colSizes;
+  }, [table.getState().columnSizingInfo, table.getState().columnSizing]);
 
   return (
     <>
@@ -421,7 +500,10 @@ export default function TableParetoHeatloss({
         cellPadding="2"
         cellSpacing="0"
         className="overflow-y-scroll"
-        width={table.getTotalSize()}
+        style={{
+          ...columnSizeVars,
+          width: table.getTotalSize(),
+        }}
       >
         <thead className="sticky top-0 z-50 border-2">
           {table.getHeaderGroups().map((headerGroup: any) => {
@@ -431,14 +513,19 @@ export default function TableParetoHeatloss({
                   return (
                     <th
                       key={header.id}
-                      className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 ${header.column.columnDef.meta?.className ?? ""
-                        } `}
+                      className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 ${
+                        header.column.columnDef.meta?.className ?? ""
+                      } `}
                       style={{
-                        width: header.getSize(),
+                        width: `calc(var(--header-${header?.id}-size) * 1px)`,
                       }}
                     >
                       <div
-                        className="absolute top-0 right-0 h-full w-[6px] group-hover:bg-red-300 group-focus:bg-red-300 hover:cursor-col-resize"
+                        className={`absolute top-0 right-0 h-full w-[6px] hover:cursor-col-resize ${
+                          header.column.getIsResizing()
+                            ? "bg-red-700"
+                            : "group-hover:bg-red-500 group-focus:bg-red-500"
+                        }`}
                         onMouseDown={header.getResizeHandler()}
                         onTouchStart={header.getResizeHandler()}
                       ></div>
@@ -467,109 +554,10 @@ export default function TableParetoHeatloss({
           <th>Actions</th>
         </tr> */}
         </thead>
-        <tbody>
-          {/* {data.map((item) => {
-          return (
-            <tr key={item.category}>
-              <td colSpan={14}>
-                {item.category !== null ? item.category : "Uncategorized"}
-              </td>
-            </tr>
-          );
-        })}
-        ; */}
-
-          {table.getRowModel().rows.length === 0 ? (
-            <tr>
-              <td
-                colSpan={table.getVisibleLeafColumns().length}
-                className="text-center"
-              >
-                No data!
-              </td>
-            </tr>
-          ) : (
-            table.getRowModel().rows.map((row: any) => (
-              <tr key={row.id} className="border border-black">
-                {row.getVisibleCells().map((cell: any) => (
-                  <td
-                    key={cell.id}
-                    className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${cell.column.columnDef.meta?.className ?? ""
-                      }`}
-                    style={{
-                      width: cell.column.getSize(),
-                    }}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))
-          )}
-
-          {/* {data.map((item) => (
-          <React.Fragment key={item.category}>
-            <tr className="border border-black">
-              <td colSpan={9}>
-                <strong>
-                  {item.category !== null ? item.category : "Uncategorized"}
-                </strong>
-              </td>
-            </tr>
-            {item.data.map((dataItem) => (
-              <tr key={dataItem.id} className="border border-black">
-                <td></td>
-                <td className="text-nowrap max-w-64 overflow-x-scroll">
-                  {dataItem.variable.input_name}
-                </td>
-                <td>{dataItem.variable.satuan}</td>
-                <td>{dataItem.reference_data?.toFixed(4)}</td>
-                <td>{dataItem.existing_data?.toFixed(4)}</td>
-                <td>{dataItem.gap != null ? dataItem.gap?.toFixed(4) : 0}</td>
-                <td>
-                  <Input
-                    defaultValue={Number(dataItem.persen_hr)}
-                    size="sm"
-                    type="number"
-                  />
-                </td>
-                <td>
-                  <Input
-                    defaultValue={Number(dataItem.deviasi)}
-                    size="sm"
-                    type="number"
-                  />
-                </td>
-                <td>{dataItem.nilai_losses.toFixed(4)}</td>
-                <td>Higher</td>
-                <td>
-                  <Input type="number" size="sm" placeholder="Rp. 999.999" />
-                </td>
-                <td>
-                  <Input type="number" size="sm" placeholder="" />
-                </td>
-                <td>
-                  <Input type="number" size="sm" placeholder="" />
-                </td>
-                <td>
-                  <Input type="number" size="sm" placeholder="" />
-                </td>
-                <td>
-                  <Button color="primary">Checkbox</Button>
-                </td>
-              </tr>
-            ))}
-            <tr className="bg-neutral-200">
-              <td colSpan={14}>
-                <strong>Total Losses</strong>
-              </td>
-              <td colSpan={1}>
-                <strong>{item.total_losses.toFixed(4)}</strong>
-              </td>
-            </tr>
-          </React.Fragment>
-        ))} */}
-        </tbody>
+        {/* Memoized Table Body for resizing performance  */}
+        {/* <MemoizedTableBody table={table} /> */}
+        {/* Initial Table Body for expanding row works */}
+        <TableBody table={table} />
       </table>
     </>
   );

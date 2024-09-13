@@ -45,7 +45,7 @@ export default async function Home() {
   return (
     <Fragment>
       <Navbar />
-      <div className="flex justify-center mt-24">
+      <div className="flex justify-center items-start mt-24 min-h-screen">
         <Card>
           <CardHeader>
             <h1 className="font-semibold text-xl">Aplikasi</h1>

@@ -1,16 +1,23 @@
-'use client'
+"use client";
 
 import {
-    Button,
-    Input,
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
+  Button,
+  Input,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from "@nextui-org/react";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import TableRootCause from "./TableRootCause";
 import { useGetVariableCauses } from "@/lib/APIs/useGetVariableCause";
 import { useSession } from "next-auth/react";
@@ -20,24 +27,24 @@ import PreviousMap from "postcss/lib/previous-map";
 import { useGetDataRootCauses } from "@/lib/APIs/useGetDataRootCause";
 
 const checkboxColumn = [
-    "Macrofouling",
-    "Microfouling",
-    "Excessive Air in leakage",
-    "Inadequate air removal capacity",
-    "Increase CW System Resistance",
-    "- Air binding cond. Disch. Pipe/tunnel",
-    "- Macrofouling at CW pump disch. Piping",
-    "- Plugged condenser tube",
-    "- Condenser inlet/outlet valve not open",
-    "- Air binding condensor inlet-outlet waterbox (low waterbox level)",
-    "Decrease CW Pump Performance",
-    "- Pump casing or impeller wear/corrosion",
-    "- Damaged casing or impeller",
-    "- Pump cavitation",
-    "- Macrofouling / siltation of intake/struct",
-    "- Low inlet pump level",
-    "Decrease Ejector/Vacuum pump performance",
-    "Instrument Error",
+  "Macrofouling",
+  "Microfouling",
+  "Excessive Air in leakage",
+  "Inadequate air removal capacity",
+  "Increase CW System Resistance",
+  "- Air binding cond. Disch. Pipe/tunnel",
+  "- Macrofouling at CW pump disch. Piping",
+  "- Plugged condenser tube",
+  "- Condenser inlet/outlet valve not open",
+  "- Air binding condensor inlet-outlet waterbox (low waterbox level)",
+  "Decrease CW Pump Performance",
+  "- Pump casing or impeller wear/corrosion",
+  "- Damaged casing or impeller",
+  "- Pump cavitation",
+  "- Macrofouling / siltation of intake/struct",
+  "- Low inlet pump level",
+  "Decrease Ejector/Vacuum pump performance",
+  "Instrument Error",
 ];
 
 // Define the structure of our tree data
@@ -81,108 +88,133 @@ const checkboxColumn = [
 // ]
 
 interface rootCheckBox {
-    [rowId: string]: {
-        [headerId: string]: boolean
-    }
+  [rowId: string]: {
+    [headerId: string]: boolean;
+  };
 }
 
-const dummyRootCauses: Array<DetailRootCause> = [{
+const dummyRootCauses: Array<DetailRootCause> = [
+  {
     id: "12345",
     is_repair: false,
     biaya: 10000,
     cause_id: "dsadqdwwwqdwq",
     variable_header_value: {
-        ddasfassa: true
-    }
-}]
+      ddasfassa: true,
+    },
+  },
+];
 
 export interface DetailRootCause {
-    id: string,
-    cause_id: string,
-    is_repair: boolean,
-    biaya: number,
-    variable_header_value: {
-        [headerId: string]: boolean
-    }
+  id: string;
+  cause_id: string;
+  is_repair: boolean;
+  biaya: number;
+  variable_header_value: {
+    [headerId: string]: boolean;
+  };
 }
 
+function ModalRootCause({
+  isOpen,
+  onOpenChange,
+  selectedModalId,
+  data_id,
+}: {
+  isOpen: boolean;
+  onOpenChange: any;
+  selectedModalId: { detailId: string; variableId: string };
+  data_id: string;
+}) {
+  const { data: session } = useSession();
+  const [checkRootHeaders, setCheckRootHeaders] = useState<rootCheckBox>({});
+  const [rootCauseData, setRootCauseData] =
+    useState<Array<DetailRootCause>>(dummyRootCauses);
 
+//   console.log(checkRootHeaders);
 
-function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { isOpen: boolean, onOpenChange: any, selectedModalId: { detailId: string, variableId: string }, data_id: string }) {
-    const { data: session } = useSession()
-    const [checkRootHeaders, setCheckRootHeaders] = useState<rootCheckBox>({})
-    const [rootCauseData, setRootCauseData] = useState<Array<DetailRootCause>>(dummyRootCauses)
+  const { data, isLoading, isValidating, mutate } = useGetVariableCauses(
+    session?.user.access_token,
+    selectedModalId.variableId,
+    isOpen
+  );
 
-    console.log(checkRootHeaders)
+  const { data: header, isLoading: headerLoading } = useGetVariableHeaders(
+    session?.user.access_token,
+    selectedModalId.variableId,
+    isOpen
+  );
 
-    const {
-        data,
-        isLoading,
-        isValidating,
-        mutate
-    } = useGetVariableCauses(session?.user.access_token, selectedModalId.variableId, isOpen)
+  const { data: rootCause, isLoading: rootCauseLoading } = useGetDataRootCauses(
+    session?.user.access_token,
+    data_id,
+    selectedModalId.detailId,
+    isOpen
+  );
 
-    const {
-        data: header,
-        isLoading: headerLoading,
-    } = useGetVariableHeaders(session?.user.access_token, selectedModalId.variableId, isOpen)
+  const variableCauses = data ?? [];
+  const variabelHeader = header ?? [];
+  const dataRootCauses = rootCause ?? [];
 
-    const {
-        data: rootCause,
-        isLoading: rootCauseLoading,
-    } = useGetDataRootCauses(session?.user.access_token, data_id, selectedModalId.detailId, isOpen)
+  // Handler for checkbox changes
+  const handleCheckboxChange = (
+    rowId: string,
+    headerId: string,
+    isChecked: boolean
+  ) => {
+    setCheckRootHeaders((prevState) => ({
+      ...prevState,
+      [rowId]: {
+        ...prevState[rowId],
+        [headerId]: isChecked,
+      },
+    }));
+  };
 
+  // Handler to log or save the checked values
+  const handleSave = () => {
+    console.log(checkRootHeaders);
+    // You can save the checkedValues to a backend or local storage here
+  };
 
-    const variableCauses = data ?? []
-    const variabelHeader = header ?? []
-    const dataRootCauses = rootCause?? []
+  return (
+    <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange}>
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader className="flex flex-col gap-1">
+              Root Cause Checkbox
+            </ModalHeader>
+            <ModalBody>
+              {
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Heat Loss Caused</TableHead>
+                      {/* Dynamically generated headers */}
+                      {variabelHeader.map((header) => (
+                        <TableHead key={header.id}>{header.name}</TableHead>
+                      ))}
+                      <TableHead>Repair</TableHead>
+                      <TableHead>Cost</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {variableCauses.map((node) => (
+                      <TableRootCause
+                        key={node.id}
+                        node={node}
+                        headers={variabelHeader}
+                        level={0}
+                        handleCheckBox={handleCheckboxChange}
+                        rootCauseData={dataRootCauses}
+                      />
+                    ))}
+                  </TableBody>
+                </Table>
+              }
 
-    // Handler for checkbox changes
-    const handleCheckboxChange = (rowId: string, headerId: string, isChecked: boolean) => {
-        setCheckRootHeaders(prevState => ({
-            ...prevState,
-            [rowId]: {
-                ...prevState[rowId],
-                [headerId]: isChecked
-            }
-        }));
-    };
-
-    // Handler to log or save the checked values
-    const handleSave = () => {
-        console.log(checkRootHeaders);
-        // You can save the checkedValues to a backend or local storage here
-    };
-
-    return (
-        <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange}>
-            <ModalContent>
-                {(onClose) => (
-                    <>
-                        <ModalHeader className="flex flex-col gap-1">
-                            Root Cause Checkbox
-                        </ModalHeader>
-                        <ModalBody>
-                            {<Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Heat Loss Caused</TableHead>
-                                        {/* Dynamically generated headers */}
-                                        {variabelHeader.map(header => (
-                                            <TableHead key={header.id}>{header.name}</TableHead>
-                                        ))}
-                                        <TableHead>Repair</TableHead>
-                                        <TableHead>Cost</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {variableCauses.map(node => (
-                                        <TableRootCause key={node.id} node={node} headers={variabelHeader} level={0} handleCheckBox={handleCheckboxChange} rootCauseData={dataRootCauses} />
-                                    ))}
-                                </TableBody>
-                            </Table>}
-
-                            {/* <NextTable
+              {/* <NextTable
                                 aria-label="Root Cause Checkbox"
                                 className="h-[360px]"
                             >
@@ -234,23 +266,27 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
                                     ))}
                                 </TableBody>
                             </NextTable> */}
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="success" variant="light" onClick={() => {
-                                handleSave()
-                                onClose()
-                            }}>
-                                Submit
-                            </Button>
-                            <Button color="danger" variant="light" onPress={onClose}>
-                                Cancel
-                            </Button>
-                        </ModalFooter>
-                    </>
-                )}
-            </ModalContent>
-        </Modal >
-    );
+            </ModalBody>
+            <ModalFooter>
+              <Button color="danger" variant="light" onPress={onClose}>
+                Cancel
+              </Button>
+              <Button
+                color="success"
+                variant="light"
+                onClick={() => {
+                  handleSave();
+                  onClose();
+                }}
+              >
+                Submit
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
+  );
 }
 
 export default ModalRootCause;

@@ -58,12 +58,19 @@ export default function EditableCell({
   };
 
   const onBlur = () => {
-    const isDone = table.options.meta?.updateData(row.index, column.id, value);
+    // Check if the value has changed
+    if (value !== initialValue) {
+      const isDone = table.options.meta?.updateData(
+        row.index,
+        column.id,
+        value
+      );
 
-    // console.log(value, "value");
-    // console.log(column.id.toLowerCase() === "deviasi");
-    if (isDone) {
-      updateParetoData();
+      if (isDone) {
+        updateParetoData();
+      }
+    } else {
+      console.log("No changes detected, skipping update.");
     }
   };
 
@@ -73,7 +80,7 @@ export default function EditableCell({
 
   return (
     <div className="relative">
-      {(isInputLoading || isValidating) && <Spinner size="lg" />}
+      {(isInputLoading || isValidating) && <Spinner size="sm" />}
       <Input
         value={value}
         onChange={(e) => setValue(e.target.value)}

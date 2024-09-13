@@ -9,6 +9,7 @@ export default auth(async (req) => {
     const newUrl = new URL("/login", req.nextUrl.origin);
     return Response.redirect(newUrl);
   }
+
   const nowDate = Date.now();
 
   // If user is authenticated but the token is expired
@@ -32,7 +33,7 @@ export default auth(async (req) => {
       },
     });
 
-    console.log(res)
+    // console.log(res);
 
     if (resVerify.ok) {
       console.log("verify test");

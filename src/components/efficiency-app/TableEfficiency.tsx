@@ -219,7 +219,7 @@ export default function TableEfficiency({
                       variant="solid"
                       color="primary"
                     >
-                      <DotsVerticalIcon className="text-white text-2xl" />
+                      <DotsVerticalIcon className="text-white dark:text-black text-2xl" />
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu>
