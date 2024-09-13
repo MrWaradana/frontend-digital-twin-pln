@@ -84,7 +84,9 @@ export default function MultipleLineChart({
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value) =>
+                value ? value.slice(0, 4) : "Uncategorized"
+              }
             />
             <YAxis domain={[0, 100]} />
             <Legend />

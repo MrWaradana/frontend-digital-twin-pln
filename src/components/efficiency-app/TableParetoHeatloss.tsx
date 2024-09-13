@@ -77,11 +77,11 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
 export const MemoizedTableBody = React.memo(TableBody, (prev, next) => {
   const prevRowModel = prev.table.getRowModel().rows;
   const nextRowModel = next.table.getRowModel().rows;
-
+  console.log(prevRowModel, nextRowModel, "Row");
   // Check for expanded state changes
   const prevExpanded = prevRowModel.map((row: any) => row.getIsExpanded());
   const nextExpanded = nextRowModel.map((row: any) => row.getIsExpanded());
-
+  console.log(prevExpanded, nextExpanded);
   // If expanded state changes, re-render
   const hasExpandedStateChanged = prevExpanded.some(
     (isExpanded: boolean, idx: number) => isExpanded !== nextExpanded[idx]
@@ -90,7 +90,7 @@ export const MemoizedTableBody = React.memo(TableBody, (prev, next) => {
   // Also compare the data to ensure changes in data are detected
   const isSameData = prev.table.options.data === next.table.options.data;
 
-  return isSameData && !hasExpandedStateChanged;
+  return isSameData && hasExpandedStateChanged;
 }) as typeof TableBody;
 
 export default function TableParetoHeatloss({
@@ -106,7 +106,7 @@ export default function TableParetoHeatloss({
 }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [data, setData] = React.useState(tableData);
-  const [expanded, setExpanded] = React.useState<ExpandedState>(true);
+  const [expanded, setExpanded] = React.useState<ExpandedState>({});
   const [selectecModalId, setSelectedModalId] = React.useState<any>({
     variableId: "",
     detailId: "",
@@ -555,9 +555,9 @@ export default function TableParetoHeatloss({
         </tr> */}
         </thead>
         {/* Memoized Table Body for resizing performance  */}
-        {/* <MemoizedTableBody table={table} /> */}
+        <MemoizedTableBody table={table} />
         {/* Initial Table Body for expanding row works */}
-        <TableBody table={table} />
+        {/* <TableBody table={table} /> */}
       </table>
     </>
   );
