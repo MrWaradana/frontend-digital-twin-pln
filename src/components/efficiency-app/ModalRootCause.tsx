@@ -21,7 +21,7 @@ import {
 import TableRootCause from "./TableRootCause";
 import { useGetVariableCauses } from "@/lib/APIs/useGetVariableCause";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetVariableHeaders } from "@/lib/APIs/useGetVariableHeaders";
 import PreviousMap from "postcss/lib/previous-map";
 import { DataRootCause, useGetDataRootCauses } from "@/lib/APIs/useGetDataRootCause";
@@ -108,7 +108,6 @@ interface rootRepairCost {
 
 function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { isOpen: boolean, onOpenChange: any, selectedModalId: { detailId: string, variableId: string }, data_id: string }) {
     const { data: session } = useSession()
-    const [checkRootHeaders, setCheckRootHeaders] = useState<rootCheckBox>({})
 
     const { data: rootCause, isLoading: rootCauseLoading } = useGetDataRootCauses(
         session?.user.access_token,
@@ -137,6 +136,22 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
 
     const dataRootCauses: Map<string, DataRootCause> = new Map(rootCauseData.map(root => [root.cause_id, root]));
 
+    const [checkRootHeaders, setCheckRootHeaders] = useState<rootCheckBox>({})
+
+
+
+    useEffect(() => {
+        const data = Object.fromEntries(rootCauseData.map(root => [root.cause_id, {
+            header_value: Object.fromEntries(variabelHeader.map(header => [header.id, root.variable_header_value?.[header.id] ?? false]),
+            ),
+            biaya: root.biaya,
+            is_repair: root.is_repair
+        }]));
+
+        setCheckRootHeaders(data);
+    }, [rootCauseData, rootCauseLoading]);
+
+    console.log(checkRootHeaders);
 
 
     // Handler for checkbox changes
@@ -148,9 +163,9 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
                     ...prev[rowId],
                     header_value: {
                         ...prev[rowId]?.header_value,
-                        ...(headerId ? { [headerId]: isChecked ? isChecked : prev[rowId].header_value[headerId] ? prev[rowId].header_value[headerId] : false } : {})
+                        ...(headerId ? { [headerId]: isChecked ?? prev[rowId].header_value?.[headerId] ?? false } : {})
                     },
-                    ...(biaya > 0 ? { biaya: biaya } : is_repair ? { is_repair: is_repair } : {})
+                    ...(biaya > 0 ? { biaya } : is_repair ? { is_repair } : {})
                 }
             }
         })
@@ -201,14 +216,14 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
 
     return (
         <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange} onClose={() => setCheckRootHeaders({})}>
-            <ModalContent>
+            {<ModalContent>
                 {(onClose) => (
                     <>
                         <ModalHeader className="flex flex-col gap-1">
                             Root Cause Checkbox
                         </ModalHeader>
                         <ModalBody>
-                            {<Table>
+                            {(!isLoading && !rootCauseLoading && !headerLoading) && <Table>
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Heat Loss Caused</TableHead>
@@ -295,6 +310,7 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
                     </>
                 )}
             </ModalContent>
+            }
         </Modal >
     );
 }

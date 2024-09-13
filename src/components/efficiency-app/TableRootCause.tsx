@@ -71,7 +71,7 @@ const TableRootCause: React.FC<{ node: VariableCause; level: number; headers: Ar
         return {
             id: header.id,
             name: header.name,
-            isChecked: rootData ? rootData.variable_header_value[header.id] : false
+            isChecked: rootData?.variable_header_value?.[header.id] ?? false
         };
     })
     );
