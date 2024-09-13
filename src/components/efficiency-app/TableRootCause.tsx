@@ -1,12 +1,13 @@
 "use client"
 
-import React from 'react'
+import React, { SetStateAction } from 'react'
 import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { VariableCause } from '@/lib/APIs/useGetVariableCause'
 import { VariableHeader } from '@/lib/APIs/useGetVariableHeaders'
-import { DetailRootCause } from './ModalRootCause'
 import { DataRootCause } from '@/lib/APIs/useGetDataRootCause'
+import { Input } from '../ui/input'
+import { CheckedState } from '@radix-ui/react-checkbox'
 
 
 // // Define the structure of our tree data
@@ -55,21 +56,40 @@ const isLastChild = (node: VariableCause): boolean => {
     return !node.children || node.children.length === 0
 }
 
+interface rootCostData {
+    is_repair: boolean | undefined,
+    biaya: number | undefined
+}
+
 // Recursive component to render each row and its children
-const TableRootCause: React.FC<{ node: VariableCause; level: number; headers: Array<VariableHeader>, handleCheckBox: any, rootCauseData: Array<DataRootCause> }> = ({ node, level, headers, handleCheckBox, rootCauseData }) => {
+const TableRootCause: React.FC<{ node: VariableCause; level: number; headers: Array<VariableHeader>, handleCheckBox: any, rootCauseData: Map<string, DataRootCause>, checkRoot: any }> = ({ node, level, headers, handleCheckBox, rootCauseData, checkRoot }) => {
+    // const [rootCauseDataState, setRootCauseDataState] = React.useState<rootCostData | null>(null);
+    const rootData = isLastChild(node) ? rootCauseData.get(node.id) as DataRootCause : null;
+
     // Convert rootCauseData to a lookup map for efficient access
-    const rootCauseMap = new Map(rootCauseData.map(root => [root.id, root]));
-
-    // Map headers and check if node is the last child
-    const headerCheck = headers.map(header => {
-        const rootData = isLastChild(node) ? rootCauseMap.get(node.id) : null;
-
+    const [headerCheck, setHeaderCheck] = React.useState(headers.map(header => {
         return {
             id: header.id,
             name: header.name,
             isChecked: rootData ? rootData.variable_header_value[header.id] : false
         };
-    });
+    })
+    );
+
+    // setRootCauseDataState(rootData ? {
+    //     is_repair: rootData.is_repair,
+    //     biaya: rootData.biaya
+    // } : null);
+
+    const onCheckedChange = (e: CheckedState, headerId: string) => {
+        const newHeaderCheck = headerCheck.map(header => {
+            if (header.id === headerId) {
+                header.isChecked = e as boolean;
+            }
+            return header;
+        });
+        setHeaderCheck(newHeaderCheck);
+    }
 
     return (
         <>
@@ -86,19 +106,37 @@ const TableRootCause: React.FC<{ node: VariableCause; level: number; headers: Ar
                 </TableCell>
                 {headerCheck.map(header => (
                     <TableCell key={header.id}>{isLastChild(node) && <Checkbox checked={header.isChecked} onCheckedChange={(e) => {
-                        handleCheckBox(node.id, header.id, e)
+                        onCheckedChange(e, header.id);
+                        handleCheckBox({ rowId: node.id, headerId: header.id, isChecked: e as boolean });
                     }} />}</TableCell>
                 ))}
                 <TableCell>
-                    {isLastChild(node) && <Checkbox />}
+                    {isLastChild(node) && <Checkbox checked={checkRoot[node.id] ? checkRoot[node.id].is_repair : false} onCheckedChange={(e: boolean) => {
+                        // setRootCauseDataState((prev) => {
+                        //     return {
+                        //         is_repair: e,
+                        //         biaya: prev?.biaya && 0
+                        //     }
+                        // });
+                        handleCheckBox({ rowId: node.id, is_repair: e as boolean });
+                    }} />}
                 </TableCell>
                 <TableCell>
-                    {isLastChild(node) && <input></input>}
+                    {isLastChild(node) && <Input type='number' value={checkRoot[node.id] ? checkRoot[node.id].biaya : 0} onChange={e => {
+                        // setRootCauseDataState((prev) => {
+                        //     return {
+                        //         is_repair: prev?.is_repair && false,
+                        //         biaya: e.target.value ? parseInt(e.target.value) : 0
+                        //     }
+                        // });
+                        handleCheckBox({ rowId: node.id, biaya: e.target.value });
+                    }}></Input>}
                 </TableCell>
-            </TableRow>
+            </TableRow >
             {(node.children && node.children.length > 0) && node.children.map((child, index) => (
-                <TableRootCause key={child.id} node={child} level={level + 1} headers={headers} handleCheckBox={handleCheckBox} rootCauseData={rootCauseData} />
-            ))}
+                <TableRootCause key={child.id} node={child} level={level + 1} headers={headers} handleCheckBox={handleCheckBox} rootCauseData={rootCauseData} checkRoot={checkRoot} />
+            ))
+            }
         </>
     )
 }
