@@ -1,5 +1,5 @@
 import Image from "next/image";
-import EngineFlow from "../../../../../public/engine-flow.png";
+import EngineFlow from "../../../../public/engine-flow.png";
 import { Tooltip, Button, Link } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 
