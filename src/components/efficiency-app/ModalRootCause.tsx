@@ -22,10 +22,13 @@ import TableRootCause from "./TableRootCause";
 import { useGetVariableCauses } from "@/lib/APIs/useGetVariableCause";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { useGetVariableHeaders } from "@/lib/APIs/useGetVariableHeaders";
+import { useGetVariableHeaders, VariableHeader } from "@/lib/APIs/useGetVariableHeaders";
 import PreviousMap from "postcss/lib/previous-map";
 import { DataRootCause, useGetDataRootCauses } from "@/lib/APIs/useGetDataRootCause";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
+import { set } from "lodash";
+import { useForm } from "react-hook-form";
+import { Form } from "../ui/form";
 
 const checkboxColumn = [
     "Macrofouling",
@@ -109,7 +112,7 @@ interface rootRepairCost {
 function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { isOpen: boolean, onOpenChange: any, selectedModalId: { detailId: string, variableId: string }, data_id: string }) {
     const { data: session } = useSession()
 
-    const { data: rootCause, isLoading: rootCauseLoading } = useGetDataRootCauses(
+    const { data: rootCause, isLoading: rootCauseLoading, isValidating: rootCauseValidating } = useGetDataRootCauses(
         session?.user.access_token,
         data_id,
         selectedModalId.detailId,
@@ -134,23 +137,30 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
     const variabelHeader = header ?? []
     const rootCauseData = rootCause ?? []
 
+    // const formInit = useForm({
+    //     mode: 'onChange',
+    //     defaultValues: Object.fromEntries(rootCauseData.map(root => [root.cause_id, {
+    //         header_value: Object.fromEntries(variabelHeader.map(header => [header.id, root.variable_header_value?.[header.id] ?? false])),
+    //         biaya: root.biaya,
+    //         is_repair: root.is_repair
+    //     }]))
+    // })
+
     const dataRootCauses: Map<string, DataRootCause> = new Map(rootCauseData.map(root => [root.cause_id, root]));
 
-    const [checkRootHeaders, setCheckRootHeaders] = useState<rootCheckBox>({})
-
-
+    const [checkRootHeaders, setCheckRootHeaders] = useState<rootCheckBox>({});
 
     useEffect(() => {
-        const data = Object.fromEntries(rootCauseData.map(root => [root.cause_id, {
-            header_value: Object.fromEntries(variabelHeader.map(header => [header.id, root.variable_header_value?.[header.id] ?? false]),
-            ),
-            biaya: root.biaya,
-            is_repair: root.is_repair
-        }]));
+        if (rootCauseData.length > 0) {
+            const data = Object.fromEntries(rootCauseData.map(root => [root.cause_id, {
+                header_value: Object.fromEntries(variabelHeader.map(header => [header.id, root.variable_header_value?.[header.id] ?? false])),
+                biaya: root.biaya,
+                is_repair: root.is_repair
+            }]));
 
-        setCheckRootHeaders(data);
-    }, [rootCauseData, rootCauseLoading]);
-
+            setCheckRootHeaders(data);
+        }
+    }, [rootCauseData]);
 
     // Handler for checkbox changes
     const handleCheckboxChange = ({ rowId, headerId = undefined, isChecked = false, is_repair = false, biaya = 0 }: { rowId: string, headerId: string | undefined, isChecked: boolean, is_repair: boolean, biaya: number }) => {
@@ -171,9 +181,9 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
 
     // Handler to log or save the checked values
     const handleSave = async () => {
-        console.log(checkRootHeaders);
         // console.log(rootRepairCost);
         // You can save the checkedValues to a backend or local storage here
+
 
         const payload = {
             data_root_causes: Object.entries(checkRootHeaders).map(([cause_id, value]) => {
@@ -203,6 +213,7 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
             const resData = await response.json();
 
             console.log(resData);
+            setCheckRootHeaders({});
         }
 
         catch (error) {
@@ -211,7 +222,7 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
     };
 
     return (
-        <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange} onClose={() => setCheckRootHeaders({})}>
+        <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange}>
             {<ModalContent>
                 {(onClose) => (
                     <>
@@ -232,9 +243,15 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
+                                    {/* <Form {...formInit}>
+                                        <form
+                                            onSubmit={formInit.handleSubmit(handleSave)}
+                                        > */}
                                     {variableCauses.map(node => (
                                         <TableRootCause key={node.id} node={node} headers={variabelHeader} level={0} handleCheckBox={handleCheckboxChange} rootCauseData={dataRootCauses} checkRoot={checkRootHeaders} />
                                     ))}
+                                    {/* </form>
+                                    </Form> */}
                                 </TableBody>
                             </Table>}
 
@@ -294,8 +311,7 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
                         <ModalFooter>
                             <Button color="success" variant="light" onClick={() => {
                                 handleSave()
-                                onClose()    
-
+                                onClose()
                             }}>
                                 Submit
                             </Button>
