@@ -151,8 +151,6 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
         setCheckRootHeaders(data);
     }, [rootCauseData, rootCauseLoading]);
 
-    console.log(checkRootHeaders);
-
 
     // Handler for checkbox changes
     const handleCheckboxChange = ({ rowId, headerId = undefined, isChecked = false, is_repair = false, biaya = 0 }: { rowId: string, headerId: string | undefined, isChecked: boolean, is_repair: boolean, biaya: number }) => {
@@ -172,7 +170,7 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
     };
 
     // Handler to log or save the checked values
-    const handleSave = async (onClose: { (): void; (): void; }) => {
+    const handleSave = async () => {
         console.log(checkRootHeaders);
         // console.log(rootRepairCost);
         // You can save the checkedValues to a backend or local storage here
@@ -205,8 +203,6 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
             const resData = await response.json();
 
             console.log(resData);
-
-            onClose();
         }
 
         catch (error) {
@@ -297,7 +293,9 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
                         </ModalBody>
                         <ModalFooter>
                             <Button color="success" variant="light" onClick={() => {
-                                handleSave(onClose)
+                                handleSave()
+                                onClose()    
+
                             }}>
                                 Submit
                             </Button>
