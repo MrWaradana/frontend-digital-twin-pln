@@ -45,8 +45,8 @@ export function useGetDataPareto(
       revalidateOnReconnect: false,
       refreshWhenHidden: false,
       refreshWhenOffline: false,
-      revalidateIfStale: false,
-      revalidateOnMount: false,
+      // revalidateIfStale: false,
+      // revalidateOnMount: false,
     }
   );
 }
