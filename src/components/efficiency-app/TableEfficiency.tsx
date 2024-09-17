@@ -55,7 +55,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "periode",
   "actions",
 ];
-const INITIAL_VISIBLE_PARAMETER = ["current", "target", "kpi"];
+const INITIAL_VISIBLE_PARAMETER = ["current"];
 
 export default function TableEfficiency({
   tableData,
@@ -76,7 +76,7 @@ export default function TableEfficiency({
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
   const session = useSession();
 
-  console.log(tableData, "table data");
+  // console.log(tableData, "table data");
 
   const columns = [
     { name: "ID", uid: "id", sortable: true },
