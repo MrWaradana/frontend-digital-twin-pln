@@ -10,11 +10,11 @@ export default function GlobalError({
   return (
     // global-error must include html and body tags
     <html>
-      <body className="flex w-full justify-center items-center mt-12">
+      <body className="flex flex-col gap-4 w-full justify-center items-center mt-12">
         <h2 className="font-bold">Something went wrong!</h2>
         <h3 className="font-semibold text-red-400">{error.message}</h3>
         <button onClick={() => reset()}>Try again</button>
-        <a href="/" className="text-blue hover:underline">
+        <a href="/" className="text-blue-300 hover:underline">
           Back to all apps
         </a>
       </body>

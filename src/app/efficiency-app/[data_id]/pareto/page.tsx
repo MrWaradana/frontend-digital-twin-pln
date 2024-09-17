@@ -14,7 +14,10 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { useGetDataPareto } from "@/lib/APIs/useGetDataPareto";
 import { useSession } from "next-auth/react";
-import { DataParetoList } from "@/lib/APIs/useGetDataPareto";
+import {
+  DataParetoList,
+  ParetoResultDataList,
+} from "@/lib/APIs/useGetDataPareto";
 
 export default function Page({ params }: { params: { data_id: string } }) {
   const [tableParetoData, setTableParetoData] = useState([]);
@@ -27,7 +30,10 @@ export default function Page({ params }: { params: { data_id: string } }) {
     params.data_id,
     percentageThreshold
   );
-  const tableData = data ?? [];
+
+  console.log(data?.pareto_result, "table data pareto");
+
+  const tableData = data?.pareto_result ?? [];
   const chartDataRef = useRef<any | null>(null);
   // Recalculate chartData every time tableData or validation state changes
   const chartData = useMemo(() => {

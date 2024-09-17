@@ -149,7 +149,7 @@ export default function VariableInputForm({
         toast.success("Data Created!");
         setLoading(false);
         router.push(
-          `/efficiency-app/${excel[0].excel_filename}/${response_data.data.data_id}/output`
+          `/efficiency-app/${response_data.data.data_id}/output`
         );
 
         // if (response) {

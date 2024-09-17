@@ -51,7 +51,7 @@ export default function Page() {
   }
 
   if (error) {
-    console.log(error, "ERRPPPPPPPPPPR");
+    console.log(error, "ERROOOOOOOR");
     fetch(`${AUTH_API_URL}/refresh-token`, {
       headers: {
         Authorization: `Bearer ${session?.user?.refresh_token}`, // Ensure refresh token exists
@@ -87,6 +87,8 @@ export default function Page() {
     isValidating: isValidatingEfficiency,
   } = useGetData(session?.user.access_token);
 
+  console.log(efficiencyData, "data efficiency");
+
   const efficiency = efficiencyData?.transactions ?? [];
 
   if (isLoading && efficiencyLoading)
@@ -119,55 +121,6 @@ export default function Page() {
             isValidating={isValidatingEfficiency}
           />
         </div>
-
-        <Card className="hidden">
-          <CardBody>
-            <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {/* {excelListTemplate.map((item: any, index: number) => {
-              return (
-                <div
-                  key={`${item.name}-${index}`}
-                  className="h-24 w-48 relative hover:bg-green-300 transition ease px-6 py-4 rounded-lg border flex justify-center items-center"
-                >
-                  <Link
-                    href="#"
-                    className="hover:scale-105 hover:bg-white rounded-md p-1 absolute top-2 right-2"
-                  >
-                    <GearIcon />
-                  </Link>
-                  <Link
-                    href={item.url}
-                    className="text-base font-normal leading-tight"
-                  >
-                    {item.name}
-                  </Link>
-                </div>
-              );
-            })} */}
-              {excel?.map((item: any, index: number) => {
-                return (
-                  <div
-                    key={`${item.excel_filename}-${index}`}
-                    className="h-24 w-48 relative hover:bg-green-300 transition ease px-6 py-4 rounded-lg border flex justify-center items-center"
-                  >
-                    <Link
-                      href="#"
-                      className="hover:scale-105 hover:bg-white rounded-md p-1 absolute top-2 right-2 text-black"
-                    >
-                      <GearIcon />
-                    </Link>
-                    <Link
-                      href={`/efficiency-app/${item.excel_filename}`}
-                      className="text-base font-normal leading-tight text-black hover:scale-105 transition ease"
-                    >
-                      {item.excel_filename}
-                    </Link>
-                  </div>
-                );
-              })}
-            </section>
-          </CardBody>
-        </Card>
       </div>
     </EfficiencyContentLayout>
   );

@@ -106,7 +106,7 @@ export default function TableParetoHeatloss({
 }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [data, setData] = React.useState(tableData);
-  const [expanded, setExpanded] = React.useState<ExpandedState>({});
+  const [expanded, setExpanded] = React.useState<ExpandedState>(true);
 
   const [selectecModalId, setSelectedModalId] = React.useState<any>({
     variableId: "",
@@ -282,8 +282,20 @@ export default function TableParetoHeatloss({
         footer: (props: any) => props.column.id,
       },
       {
+        accessorKey: "total_nilai_losses",
+        header: "Total Nilai Losses",
+        cell: (props: any) => {
+          const value = props.getValue();
+          if (!value) {
+            return;
+          }
+          return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
+        },
+        footer: (props: any) => props.column.id,
+      },
+      {
         accessorKey: "total_persen_losses",
-        header: "Total Losses",
+        header: "Total Persen Losses",
         cell: (props: any) => {
           const value = props.getValue();
           if (!value) {

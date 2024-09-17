@@ -2,6 +2,13 @@ import { EFFICIENCY_API_URL } from "../api-url";
 import { HookReply } from "./types";
 import { useApiFetch } from "./useApiFetch";
 
+export interface ParetoResultDataList {
+  pareto_result: Array<DataParetoList>;
+  total_nilai: number;
+  total_persen: number;
+  percent_threshold: number;
+}
+
 export interface DataParetoList {
   category: string;
   data: Array<DataPareto>;
@@ -26,11 +33,20 @@ export function useGetDataPareto(
   token: string | undefined,
   data_id: string | undefined,
   thresholdValue: number | undefined
-): HookReply<Array<DataParetoList>> {
+): HookReply<Array<ParetoResultDataList>> {
   return useApiFetch(
     `${EFFICIENCY_API_URL}/data/${data_id}/pareto?percent_threshold=${thresholdValue}`,
     !!token,
     token,
-    { keepPreviousData: true, refreshInterval: 72000 }
+    {
+      keepPreviousData: true,
+      refreshInterval: 7200000,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      refreshWhenHidden: false,
+      refreshWhenOffline: false,
+      revalidateIfStale: false,
+      revalidateOnMount: false,
+    }
   );
 }

@@ -40,7 +40,6 @@ import {
   statusOptions as parameterOptions,
 } from "@/lib/efficiency-data";
 import { capitalize } from "@/lib/utils";
-import { table } from "console";
 import { EFFICIENCY_API_URL } from "../../lib/api-url";
 import { useSession } from "next-auth/react";
 
@@ -56,7 +55,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "periode",
   "actions",
 ];
-const INITIAL_VISIBLE_PARAMETER = ["current"];
+const INITIAL_VISIBLE_PARAMETER = ["current", "target", "kpi"];
 
 export default function TableEfficiency({
   tableData,
@@ -76,6 +75,8 @@ export default function TableEfficiency({
   const [selectedRowId, setSelectedRowId] = React.useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
   const session = useSession();
+
+  console.log(tableData, "table data");
 
   const columns = [
     { name: "ID", uid: "id", sortable: true },
@@ -133,7 +134,7 @@ export default function TableEfficiency({
     }
 
     return filteredData;
-  }, [tableData, filterValue, parameterFilter, tableState]);
+  }, [tableData, filterValue, parameterFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
