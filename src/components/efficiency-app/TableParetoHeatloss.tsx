@@ -50,24 +50,104 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
           </td>
         </tr>
       ) : (
-        table.getRowModel().rows.map((row: any) => (
-          <tr key={row.id} className="border border-black">
-            {row.getVisibleCells().map((cell: any) => (
-              <td
-                key={cell.id}
-                className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${
-                  cell.column.columnDef.meta?.className ?? ""
-                }`}
-                style={{
-                  width: `calc(var(--col-${cell.column.id}-size) * 1px)`,
-                  maxWidth: "100px",
-                }}
-              >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </td>
-            ))}
-          </tr>
-        ))
+        table.getRowModel().rows.map(
+          (row: any) =>
+            row.depth < 1 && (
+              <>
+                <tr key={row.id} className="border border-black">
+                  {row.getVisibleCells().map((cell: any) => (
+                    <td
+                      key={cell.id}
+                      className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${
+                        cell.column.columnDef.meta?.className ?? ""
+                      }`}
+                      style={{
+                        width: `calc(var(--col-${cell.column.id}-size) * 1px)`,
+                        maxWidth: "100px",
+                      }}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  ))}
+                </tr>
+
+                {/* Render expandable sub-rows only once */}
+                {row.getIsExpanded() && row.subRows.length > 0 && (
+                  <>
+                    {row.subRows.map((subRow: any) => (
+                      <tr key={subRow.id}>
+                        {subRow.getVisibleCells().map((cell: any) => (
+                          <td
+                            key={cell.id}
+                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border border-neutral-500 ${
+                              cell.column.columnDef.meta?.className ?? ""
+                            }`}
+                            style={{
+                              width: `calc(var(--col-${cell.column.id}-size) * 1px)`,
+                              maxWidth: "100px",
+                            }}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </>
+                )}
+
+                {/* Render summary row under specific columns */}
+                {row.original.total_nilai_losses &&
+                  row.original.total_persen_losses && (
+                    <tr
+                      key={`summary-${row.id}`}
+                      className="bg-neutral-100 border border-black"
+                    >
+                      {row.getVisibleCells().map((cell: any) => {
+                        // Render summary under the specific columns
+                        if (cell.column.id === "category") {
+                          return (
+                            <td
+                              key={cell.id}
+                              className="font-bold sticky left-0 bg-neutral-100"
+                            >
+                              Summary
+                            </td>
+                          );
+                        }
+                        if (cell.column.id === "nilai_losses") {
+                          return (
+                            <td
+                              key={cell.id}
+                              className="font-bold border border-neutral-700"
+                            >
+                              {row.original.total_nilai_losses.toFixed(2)}
+                            </td>
+                          );
+                        }
+                        if (cell.column.id === "persen_losses") {
+                          return (
+                            <td
+                              key={cell.id}
+                              className="font-bold border border-neutral-700"
+                            >
+                              {row.original.total_persen_losses.toFixed(2)}
+                            </td>
+                          );
+                        }
+                        // Render empty cells for other columns
+                        return <td key={cell.id}></td>;
+                      })}
+                    </tr>
+                  )}
+              </>
+            )
+        )
       )}
     </tbody>
   );
@@ -128,7 +208,7 @@ export default function TableParetoHeatloss({
         cell: (props: any) => (
           <div
             style={{
-              paddingLeft: `${props.cell.row.depth * 2}rem`,
+              paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
             {props.row.getCanExpand() ? (
@@ -147,9 +227,12 @@ export default function TableParetoHeatloss({
             ) : (
               `🔵 ${props.row.original.variable.input_name}`
             )}{" "}
-            {props.getValue() || props.row.depth > 0
-              ? props.getValue()
-              : "Uncategorized"}
+            <span className="text-base">
+              {" "}
+              {props.getValue() || props.row.depth > 0
+                ? props.getValue()
+                : "Uncategorized"}
+            </span>
           </div>
         ),
         enableResizing: true,
@@ -159,12 +242,12 @@ export default function TableParetoHeatloss({
         header: "UOM",
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) =>
-          row.data ? null : row.variable?.satuan || "",
+          row.depth === 0 ? null : row.variable?.satuan || "",
         size: 25,
         cell: (props: any) => (
           <div
             style={{
-              paddingLeft: `${props.cell.row.depth * 2}rem`,
+              paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
             {props.getValue()}
@@ -175,16 +258,15 @@ export default function TableParetoHeatloss({
         header: "Reference Data",
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) =>
-          row.data
+          row.depth === 0
             ? null
             : (row.reference_data != null
                 ? row.reference_data.toFixed(2)
                 : 0) || "",
-        size: 25,
         cell: (props: any) => (
           <div
             style={{
-              paddingLeft: `${props.cell.row.depth * 2}rem`,
+              paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
             {props.getValue()}
@@ -195,14 +277,14 @@ export default function TableParetoHeatloss({
         header: "Existing Data",
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) =>
-          row.data
+          row.depth === 0
             ? null
             : (row.existing_data != null ? row.existing_data.toFixed(2) : 0) ||
               "",
         cell: (props: any) => (
           <div
             style={{
-              paddingLeft: `${props.cell.row.depth * 2}rem`,
+              paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
             {props.getValue()}
@@ -216,7 +298,7 @@ export default function TableParetoHeatloss({
         cell: (props: any) => (
           <div
             style={{
-              paddingLeft: `${props.cell.row.depth * 2}rem`,
+              paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
             {props.getValue()}
@@ -226,7 +308,6 @@ export default function TableParetoHeatloss({
       {
         header: "% HR",
         // Access the correct UOM value for each row or sub-row
-        size: 25,
         accessorFn: (row: any) => row.persen_hr || "",
         cell: (props: any) =>
           props.row.depth > 0 ? (
@@ -243,7 +324,6 @@ export default function TableParetoHeatloss({
       {
         header: "Deviasi",
         // Access the correct UOM value for each row or sub-row
-        size: 25,
         accessorFn: (row: any) => (row.data ? null : row.deviasi || ""),
         cell: (props: any) =>
           props.row.depth > 0 ? (
@@ -281,30 +361,30 @@ export default function TableParetoHeatloss({
         },
         footer: (props: any) => props.column.id,
       },
-      {
-        accessorKey: "total_nilai_losses",
-        header: "Total Nilai Losses",
-        cell: (props: any) => {
-          const value = props.getValue();
-          if (!value) {
-            return;
-          }
-          return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
-        },
-        footer: (props: any) => props.column.id,
-      },
-      {
-        accessorKey: "total_persen_losses",
-        header: "Total Persen Losses",
-        cell: (props: any) => {
-          const value = props.getValue();
-          if (!value) {
-            return;
-          }
-          return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
-        },
-        footer: (props: any) => props.column.id,
-      },
+      // {
+      //   accessorKey: "total_nilai_losses",
+      //   header: "Total Nilai Losses",
+      //   cell: (props: any) => {
+      //     const value = props.getValue();
+      //     if (!value) {
+      //       return;
+      //     }
+      //     return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
+      //   },
+      //   footer: (props: any) => props.column.id,
+      // },
+      // {
+      //   accessorKey: "total_persen_losses",
+      //   header: "Total Persen Losses",
+      //   cell: (props: any) => {
+      //     const value = props.getValue();
+      //     if (!value) {
+      //       return;
+      //     }
+      //     return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
+      //   },
+      //   footer: (props: any) => props.column.id,
+      // },
       {
         header: "Symptoms",
         cell: (props: any) => (
@@ -315,7 +395,13 @@ export default function TableParetoHeatloss({
                   paddingLeft: `${props.cell.row.depth * 2}rem`,
                 }}
               >
-                {props.row.original.gap < 0 ? "Lower" : "Higher"}
+                {props.row.original.gap < 0 ? (
+                  <span className="py-1 px-3 bg-red-400 rounded-md">Lower</span>
+                ) : (
+                  <span className="py-1 px-3 bg-blue-400 rounded-md">
+                    Higher
+                  </span>
+                )}
               </div>
             )}
           </>
@@ -516,7 +602,7 @@ export default function TableParetoHeatloss({
       </Modal> */}
 
       <table
-        cellPadding="2"
+        cellPadding="1"
         cellSpacing="0"
         className="overflow-y-scroll"
         style={{
