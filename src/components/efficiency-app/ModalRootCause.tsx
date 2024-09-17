@@ -158,9 +158,18 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
                 is_repair: root.is_repair
             }]));
 
-            setCheckRootHeaders(data);
+            setCheckRootHeaders((prev) => {
+                return {
+                    ...prev,
+                    ...data
+                }
+            });
         }
-    }, [rootCauseData]);
+    }, [rootCauseData, rootCauseValidating]);
+
+    
+
+  
 
     // Handler for checkbox changes
     const handleCheckboxChange = ({ rowId, headerId = undefined, isChecked = false, is_repair = false, biaya = 0 }: { rowId: string, headerId: string | undefined, isChecked: boolean, is_repair: boolean, biaya: number }) => {
@@ -230,7 +239,7 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
                             Root Cause Checkbox
                         </ModalHeader>
                         <ModalBody>
-                            {(!isLoading && !rootCauseLoading && !headerLoading) && <Table>
+                            {(!isLoading && !rootCauseLoading && !headerLoading) && (!rootCauseValidating) && <Table>
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Heat Loss Caused</TableHead>
