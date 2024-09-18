@@ -9,7 +9,7 @@ import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@nextui-org/react";
 import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -119,7 +119,9 @@ export default function Component() {
           <Button
             type="submit"
             className="w-full"
+            color="primary"
             disabled={isLoading ? true : false}
+            isLoading={isLoading}
           >
             Sign in
           </Button>

@@ -27,6 +27,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { ModeToggle } from "./ModeToggle";
 
 export default function Navbar() {
+  const [isLoading, setIsLoading] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
@@ -77,12 +78,15 @@ export default function Navbar() {
                   color="primary"
                   onPress={async () => {
                     try {
+                      setIsLoading(true);
                       await signOut();
+                      setIsLoading(false);
                       router.push("/login");
                     } catch (err) {
                       toast.error("Unable to sign out!");
                     }
                   }}
+                  isLoading={isLoading}
                 >
                   Yes, Log Out
                 </Button>

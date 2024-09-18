@@ -36,6 +36,7 @@ interface MenuProps {
 export function Menu({ isListOpen }: MenuProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const pathname = usePathname();
   const menuList = getMenuList(pathname);
 
@@ -60,12 +61,15 @@ export function Menu({ isListOpen }: MenuProps) {
                   color="primary"
                   onPress={async () => {
                     try {
+                      setIsLoading(true);
                       await signOut();
+                      setIsLoading(false);
                       router.push("/login");
                     } catch (err) {
                       toast.error("Unable to sign out!");
                     }
                   }}
+                  isLoading={isLoading}
                 >
                   Yes, Log Out
                 </NextButton>
