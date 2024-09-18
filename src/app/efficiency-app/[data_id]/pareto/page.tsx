@@ -31,27 +31,30 @@ export default function Page({ params }: { params: { data_id: string } }) {
     percentageThreshold
   );
 
-  console.log(data?.pareto_result, "table data pareto");
+  // console.log(data?.pareto_result, "table data pareto");
 
   const tableData = data?.pareto_result ?? [];
+  const chartRawData = data?.chart_result ?? [];
   const summaryData = data ?? [];
   const chartDataRef = useRef<any | null>(null);
   // Recalculate chartData every time tableData or validation state changes
   const chartData = useMemo(() => {
-    const mapped_data = tableData.map((item: any, index: number) => {
-      const cum_frequency = tableData
-        .slice(0, index + 1) // Get all previous items up to the current index
-        .reduce(
-          (acc: any, current: { total_persen_losses: any }) =>
-            acc + current.total_persen_losses,
-          0
-        ); // Accumulate total_persen_losses
+    const mapped_data = chartRawData
+      .slice(0, 30)
+      .map((item: any, index: number) => {
+        const cum_frequency = chartRawData
+          .slice(0, index + 1) // Get all previous items up to the current index
+          .reduce(
+            (acc: any, current: { total_persen_losses: any }) =>
+              acc + current.total_persen_losses,
+            0
+          ); // Accumulate total_persen_losses
 
-      return {
-        ...item, // Spread the original item
-        cum_frequency, // Add the accumulated frequency
-      };
-    });
+        return {
+          ...item, // Spread the original item
+          cum_frequency, // Add the accumulated frequency
+        };
+      });
 
     // console.log(mapped_data, "mapped chart data");
     //   return mapped_data;
