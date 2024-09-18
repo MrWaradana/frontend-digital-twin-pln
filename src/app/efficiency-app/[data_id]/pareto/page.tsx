@@ -40,7 +40,6 @@ export default function Page({ params }: { params: { data_id: string } }) {
   // Recalculate chartData every time tableData or validation state changes
   const chartData = useMemo(() => {
     const mapped_data = chartRawData
-      .slice(0, 30)
       .map((item: any, index: number) => {
         const cum_frequency = chartRawData
           .slice(0, index + 1) // Get all previous items up to the current index
@@ -49,12 +48,12 @@ export default function Page({ params }: { params: { data_id: string } }) {
               acc + current.total_persen_losses,
             0
           ); // Accumulate total_persen_losses
-
         return {
           ...item, // Spread the original item
           cum_frequency, // Add the accumulated frequency
         };
-      });
+      })
+      .filter((item: any) => item.cum_frequency <= 100);
 
     // console.log(mapped_data, "mapped chart data");
     //   return mapped_data;
