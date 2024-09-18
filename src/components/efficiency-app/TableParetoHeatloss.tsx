@@ -173,12 +173,14 @@ export const MemoizedTableBody = React.memo(TableBody, (prev, next) => {
 
 export default function TableParetoHeatloss({
   tableData,
+  summaryData,
   mutate,
   isValidating,
   data_id,
   setIsMutating,
 }: {
   tableData: any;
+  summaryData: any;
   mutate: any;
   isValidating: any;
   data_id: string;
@@ -192,6 +194,8 @@ export default function TableParetoHeatloss({
     variableId: "",
     detailId: "",
   });
+
+  console.log(summaryData, "summaryData");
 
   const columns = useMemo(
     () => [
@@ -250,7 +254,7 @@ export default function TableParetoHeatloss({
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
-            {props.getValue()}
+            {props.getValue() != "NaN" ? props.getValue() : ""}
           </div>
         ),
       },
@@ -604,7 +608,7 @@ export default function TableParetoHeatloss({
       <table
         cellPadding="1"
         cellSpacing="0"
-        className="overflow-y-scroll"
+        className="overflow-y-scroll relative"
         style={{
           ...columnSizeVars,
           width: table.getTotalSize(),
@@ -663,6 +667,19 @@ export default function TableParetoHeatloss({
         <MemoizedTableBody table={table} />
         {/* Initial Table Body for expanding row works */}
         {/* <TableBody table={table} /> */}
+        <tfoot className="sticky bottom-0 z-50 border-2">
+          <tr className="text-left">
+            <th className="sticky left-0 bg-blue-200 ">Total Summary</th>
+            <th className="bg-blue-200" colSpan={6}></th>
+            <th className="bg-blue-200">
+              {summaryData.total_persen.toFixed(2)}
+            </th>
+            <th className="bg-blue-200">
+              {summaryData.total_nilai.toFixed(2)}
+            </th>
+            <th className="bg-blue-200" colSpan={6}></th>
+          </tr>
+        </tfoot>
       </table>
     </>
   );

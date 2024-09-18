@@ -34,6 +34,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
   console.log(data?.pareto_result, "table data pareto");
 
   const tableData = data?.pareto_result ?? [];
+  const summaryData = data ?? [];
   const chartDataRef = useRef<any | null>(null);
   // Recalculate chartData every time tableData or validation state changes
   const chartData = useMemo(() => {
@@ -55,11 +56,26 @@ export default function Page({ params }: { params: { data_id: string } }) {
     // console.log(mapped_data, "mapped chart data");
     //   return mapped_data;
     // }, [tableData]);
-    if (chartDataRef.current === null && mapped_data.length > 0) {
+
+    // Ensure that chartDataRef is always updated correctly
+    if (!chartDataRef.current) {
+      chartDataRef.current = mapped_data;
+    } else if (chartDataRef.current.length === mapped_data.length) {
+      // Preserve array length and only update necessary fields
+      chartDataRef.current = chartDataRef.current.map(
+        (item: any, index: number) => ({
+          ...item,
+          total_persen_losses: mapped_data[index].total_persen_losses,
+          total_nilai_losses: mapped_data[index].total_nilai_losses,
+          cum_frequency: mapped_data[index].cum_frequency,
+        })
+      );
+    } else {
+      // In case of mismatch, reset chartDataRef to match the mapped_data
       chartDataRef.current = mapped_data;
     }
 
-    // if (chartDataRef.current != null && isMutating) {
+    // if (chartDataRef.current != null && mapped_data.length > 0) {
     //   chartDataRef.current = mapped_data;
     // }
 
@@ -118,6 +134,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
             ) : (
               <TableParetoHeatloss
                 tableData={tableData}
+                summaryData={summaryData}
                 mutate={onMutate}
                 isValidating={isValidating}
                 data_id={params.data_id}
