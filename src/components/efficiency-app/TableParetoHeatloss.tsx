@@ -195,7 +195,7 @@ export default function TableParetoHeatloss({
     detailId: "",
   });
 
-  console.log(summaryData, "summaryData");
+  // console.log(summaryData, "summaryData");
 
   const columns = useMemo(
     () => [
@@ -436,7 +436,7 @@ export default function TableParetoHeatloss({
         header: "Action",
         cell: ({ row }) => {
           // Only render the button if it's a subrow (depth > 0)
-          if (row.depth > 0) {
+          if (row.depth > 0 && row.original.has_cause) {
             return (
               <React.Fragment key={row.id}>
                 <Button

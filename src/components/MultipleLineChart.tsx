@@ -65,7 +65,7 @@ export default function MultipleLineChart({
     <Card>
       <CardHeader>
         <CardTitle>Heat Loss Chart</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardDescription>{new Date().getFullYear()}</CardDescription>
       </CardHeader>
       <CardContent className="grid grid-cols-3">
         <ChartContainer config={chartConfig} className="col-span-2">
