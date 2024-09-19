@@ -533,6 +533,7 @@ export default function TableParetoHeatloss({
         onOpenChange={onOpenChange}
         selectedModalId={selectecModalId}
         data_id={data_id}
+        paretoMutate={mutate}
       />
       {/* <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange}>
         <ModalContent>
