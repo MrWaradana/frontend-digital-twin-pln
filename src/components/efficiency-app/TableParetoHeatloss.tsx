@@ -14,6 +14,8 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { paretoData, ParetoType } from "@/lib/pareto-api-data";
+import { mkConfig, generateCsv, download } from "export-to-csv";
+import html2PDF from "jspdf-html2canvas";
 import {
   Button,
   Input,
@@ -31,7 +33,7 @@ import {
   TableRow,
   Checkbox,
 } from "@nextui-org/react";
-import { Box } from "lucide-react";
+import { Box, DownloadIcon, PrinterIcon } from "lucide-react";
 import EditableCell from "./EditableCell";
 import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
 import ModalRootCause from "./ModalRootCause";
@@ -140,6 +142,26 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                             </td>
                           );
                         }
+                        if (cell.column.id === "cost_benefit") {
+                          return (
+                            <td
+                              key={cell.id}
+                              className="font-bold border border-neutral-700"
+                            >
+                              Rp.{row.original.total_cost_benefit.toFixed(2)}
+                            </td>
+                          );
+                        }
+                        if (cell.column.id === "total_biaya") {
+                          return (
+                            <td
+                              key={cell.id}
+                              className="font-bold border border-neutral-700"
+                            >
+                              Rp.{row.original.total_cost_gap.toFixed(2)}
+                            </td>
+                          );
+                        }
                         // Render empty cells for other columns
                         return <td key={cell.id}></td>;
                       })}
@@ -189,6 +211,7 @@ export default function TableParetoHeatloss({
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [data, setData] = React.useState(tableData);
   const [expanded, setExpanded] = React.useState<ExpandedState>(true);
+  const [tableDataPrint, setTableDataPrint] = React.useState([tableData]);
 
   const [selectecModalId, setSelectedModalId] = React.useState<any>({
     variableId: "",
@@ -413,8 +436,14 @@ export default function TableParetoHeatloss({
       },
       {
         header: "Potential Benefit",
-        cell: (props: any) =>
-          props.row.depth > 0 ? <div>{props.getValue()}</div> : "",
+        accessorKey: "cost_benefit",
+        cell: (props: any) => {
+          const value = props.getValue();
+          if (props.row.depth > 0) {
+            return `Rp.${value.toFixed(2)}`;
+          }
+          return "";
+        },
       },
       {
         header: "Action Menutup Gap",
@@ -424,8 +453,13 @@ export default function TableParetoHeatloss({
       {
         accessorKey: "total_biaya",
         header: "Biaya Untuk Closing Gap",
-        cell: (props: any) =>
-          props.row.depth > 0 ? <div>{props.getValue()}</div> : "",
+        cell: (props: any) => {
+          const value = props.getValue();
+          if (props.row.depth > 0) {
+            return `Rp.${value.toFixed(2)}`;
+          }
+          return "";
+        },
       },
       {
         header: "Ratio Benefit to Cost",
@@ -451,7 +485,7 @@ export default function TableParetoHeatloss({
                   size="sm"
                   className="m-2"
                 >
-                  Open Checkbox
+                  Root Cause
                 </Button>
               </React.Fragment>
             );
@@ -514,6 +548,67 @@ export default function TableParetoHeatloss({
     debugTable: false,
     debugRows: false,
   });
+
+  const csvConfig = mkConfig({
+    fieldSeparator: ",",
+    decimalSeparator: ".",
+    useKeysAsHeaders: true,
+  });
+
+  const handleExportData = () => {
+    const flattenedData = data.flatMap((entry: any) =>
+      entry.data.map((dataItem: any) => ({
+        id: dataItem.id,
+        category: entry.category,
+        parameter: dataItem.variable.input_name,
+        existing_data: dataItem.existing_data,
+        reference_data: dataItem.reference_data,
+        gap: dataItem.gap,
+        nilai_losses: dataItem.nilai_losses,
+        persen_losses: dataItem.persen_losses,
+        persen_hr: dataItem.persen_hr,
+        deviasi: dataItem.deviasi,
+        symptoms: dataItem.symptoms,
+        total_biaya: dataItem.total_biaya,
+        total_nilai_losses: entry.total_nilai_losses,
+        total_persen_losses: entry.total_persen_losses,
+        total_cost_benefit: entry.total_cost_benefit,
+        total_cost_gap: entry.total_cost_gap,
+      }))
+    );
+    // Generate CSV using flattened data
+    const csv = generateCsv(csvConfig)(flattenedData);
+    download(csvConfig)(csv);
+  };
+
+  const handleExportPDFData = async () => {
+    const table = document.getElementById("table-pareto");
+    const pdf = await html2PDF(table, {
+      jsPDF: {
+        format: "a4",
+        orientation: "landscape",
+      },
+      margin: {
+        top: 12,
+        right: 12,
+        bottom: 12,
+        left: 12,
+      },
+      html2canvas: {
+        scrollX: 0,
+        scrollY: -window.scrollY,
+      },
+      imageType: "image/jpeg",
+      autoResize: true,
+      output: "./pdf/pareto-generated.pdf",
+    });
+    return pdf;
+  };
+
+  const handlePrint = () => {
+    // Trigger the print dialog
+    window.print();
+  };
 
   const columnSizeVars = React.useMemo(() => {
     const headers = table.getFlatHeaders();
@@ -604,48 +699,72 @@ export default function TableParetoHeatloss({
           )}
         </ModalContent>
       </Modal> */}
-
-      <table
-        cellPadding="1"
-        cellSpacing="0"
-        className="overflow-y-scroll relative"
-        style={{
-          ...columnSizeVars,
-          width: table.getTotalSize(),
-        }}
-      >
-        <thead className="sticky top-0 z-50 border-2">
-          {table.getHeaderGroups().map((headerGroup: any) => {
-            return (
-              <tr key={`${headerGroup.id}`}>
-                {headerGroup.headers.map((header: any) => {
-                  return (
-                    <th
-                      key={header.id}
-                      className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 ${
-                        header.column.columnDef.meta?.className ?? ""
-                      } `}
-                      style={{
-                        width: `calc(var(--header-${header?.id}-size) * 1px)`,
-                      }}
-                    >
-                      <div
-                        className={`absolute top-0 right-0 h-full w-[6px] hover:cursor-col-resize ${
-                          header.column.getIsResizing()
-                            ? "bg-red-700"
-                            : "group-hover:bg-red-500 group-focus:bg-red-500"
-                        }`}
-                        onMouseDown={header.getResizeHandler()}
-                        onTouchStart={header.getResizeHandler()}
-                      ></div>
-                      {header.column.columnDef.header}
-                    </th>
-                  );
-                })}
-              </tr>
-            );
-          })}
-          {/* <tr className="border border-black bg-primary/20">
+      <div className=" flex justify-end gap-6">
+        <Button
+          onClick={() => handleExportData()}
+          color="success"
+          endContent={<DownloadIcon size={16} />}
+        >
+          Export to CSV
+        </Button>
+        <Button
+          onClick={() => handleExportPDFData()}
+          color="danger"
+          endContent={<DownloadIcon size={16} />}
+        >
+          Export to PDF
+        </Button>
+        {/* <Button
+          onClick={() => handlePrint()}
+          color="secondary"
+          endContent={<PrinterIcon size={16} />}
+        >
+          Print table
+        </Button> */}
+      </div>
+      <div className="max-w-full mb-24 mt-12 overflow-auto relative printable-table">
+        <table
+          cellPadding="1"
+          cellSpacing="0"
+          className="overflow-y-scroll relative"
+          style={{
+            ...columnSizeVars,
+            width: table.getTotalSize(),
+          }}
+          id="table-pareto"
+        >
+          <thead className="sticky top-0 z-50 border-2">
+            {table.getHeaderGroups().map((headerGroup: any) => {
+              return (
+                <tr key={`${headerGroup.id}`}>
+                  {headerGroup.headers.map((header: any) => {
+                    return (
+                      <th
+                        key={header.id}
+                        className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 ${
+                          header.column.columnDef.meta?.className ?? ""
+                        } `}
+                        style={{
+                          width: `calc(var(--header-${header?.id}-size) * 1px)`,
+                        }}
+                      >
+                        <div
+                          className={`absolute top-0 right-0 h-full w-[6px] hover:cursor-col-resize ${
+                            header.column.getIsResizing()
+                              ? "bg-red-700"
+                              : "group-hover:bg-red-500 group-focus:bg-red-500"
+                          }`}
+                          onMouseDown={header.getResizeHandler()}
+                          onTouchStart={header.getResizeHandler()}
+                        ></div>
+                        {header.column.columnDef.header}
+                      </th>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+            {/* <tr className="border border-black bg-primary/20">
           <th>Category</th>
           <th>Variable Name</th>
           <th>Satuan</th>
@@ -662,25 +781,34 @@ export default function TableParetoHeatloss({
           <th>Ratio Benefit to Cost</th>
           <th>Actions</th>
         </tr> */}
-        </thead>
-        {/* Memoized Table Body for resizing performance  */}
-        <MemoizedTableBody table={table} />
-        {/* Initial Table Body for expanding row works */}
-        {/* <TableBody table={table} /> */}
-        <tfoot className="sticky bottom-0 z-50 border-2">
-          <tr className="text-left">
-            <th className="sticky left-0 bg-blue-200 ">Total Summary</th>
-            <th className="bg-blue-200" colSpan={6}></th>
-            <th className="bg-blue-200">
-              {summaryData.total_persen.toFixed(2)}
-            </th>
-            <th className="bg-blue-200">
-              {summaryData.total_nilai.toFixed(2)}
-            </th>
-            <th className="bg-blue-200" colSpan={6}></th>
-          </tr>
-        </tfoot>
-      </table>
+          </thead>
+          {/* Memoized Table Body for resizing performance  */}
+          <MemoizedTableBody table={table} />
+          {/* Initial Table Body for expanding row works */}
+          {/* <TableBody table={table} /> */}
+          <tfoot className="sticky bottom-0 z-50 border-2">
+            <tr className="text-left">
+              <th className="sticky left-0 bg-blue-200 ">Total Summary</th>
+              <th className="bg-blue-200" colSpan={6}></th>
+              <th className="bg-blue-200">
+                {summaryData.total_persen.toFixed(2)}
+              </th>
+              <th className="bg-blue-200">
+                {summaryData.total_nilai.toFixed(2)}
+              </th>
+              <th className="bg-blue-200" colSpan={1}></th>
+              <th className="bg-blue-200">
+                Rp.{summaryData.total_cost_benefit.toFixed(2)}
+              </th>
+              <th className="bg-blue-200" colSpan={1}></th>
+              <th className="bg-blue-200">
+                Rp.{summaryData.total_cost_gap.toFixed(2)}
+              </th>
+              <th className="bg-blue-200" colSpan={2}></th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     </>
   );
 }

@@ -82,3 +82,24 @@
     border-radius: 4px;
   }
 }
+
+@media print {
+  /* Hide all elements by default */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Show only the table you want to print */
+  .printable-table,
+  .printable-table * {
+    visibility: visible;
+  }
+
+  /* Ensure the printable table uses full width for better formatting */
+  .printable-table {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+}

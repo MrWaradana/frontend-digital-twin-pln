@@ -4,6 +4,7 @@ import { useApiFetch } from "./useApiFetch";
 
 export interface ParetoResultDataList {
   pareto_result: Array<DataParetoList>;
+  chart_result: Array<DataParetoList>;
   total_nilai: number;
   total_persen: number;
   percent_threshold: number;
@@ -32,7 +33,7 @@ interface DataPareto {
 export function useGetDataPareto(
   token: string | undefined,
   data_id: string | undefined,
-  thresholdValue: number | undefined
+  thresholdValue: string | number | null
 ): HookReply<Array<ParetoResultDataList>> {
   return useApiFetch(
     `${EFFICIENCY_API_URL}/data/${data_id}/pareto?percent_threshold=${thresholdValue}`,

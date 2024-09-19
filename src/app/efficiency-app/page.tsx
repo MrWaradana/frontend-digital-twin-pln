@@ -15,9 +15,8 @@ import toast from "react-hot-toast";
 import { useSession, signOut } from "next-auth/react";
 import TableEfficiency from "@/components/efficiency-app/TableEfficiency";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { columns, users, statusOptions } from "@/lib/efficiency-data";
-import { AUTH_API_URL, EFFICIENCY_API_URL } from "../../lib/api-url";
-import { useExcelStore } from "../../store/excels";
+import { AUTH_API_URL, EFFICIENCY_API_URL } from "@/lib/api-url";
+import { useExcelStore } from "@/store/excels";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { useRouter } from "next/navigation";
 import { error } from "console";
@@ -97,6 +96,7 @@ export default function Page() {
         <CircularProgress color="primary" />
       </div>
     );
+
   if (!excel)
     return (
       <div className="w-full mt-24 flex flex-col gap-6 justify-center items-center">

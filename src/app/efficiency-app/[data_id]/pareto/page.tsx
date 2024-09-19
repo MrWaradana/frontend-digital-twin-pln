@@ -1,29 +1,27 @@
 "use client";
 
-import TablePareto from "@/components/efficiency-app/TablePareto";
-// import TableParetoEdit from "@/components/efficiency-app/TableParetoEdit";
-import { Button, CircularProgress, Link, Spinner } from "@nextui-org/react";
+import { Button, Link, Spinner } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import MultipleLineChart from "@/components/MultipleLineChart";
-import LineBarAreaComposedChart from "@/components/LineBarAreaComposedChart";
-import { columns, users, statusOptions } from "@/lib/pareto-data";
-import { paretoData, ParetoType } from "@/lib/pareto-api-data";
 import TableParetoHeatloss from "@/components/efficiency-app/TableParetoHeatloss";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { useEffect, useMemo, useState, useRef } from "react";
-import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { useGetDataPareto } from "@/lib/APIs/useGetDataPareto";
 import { useSession } from "next-auth/react";
-import {
-  DataParetoList,
-  ParetoResultDataList,
-} from "@/lib/APIs/useGetDataPareto";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function Page({ params }: { params: { data_id: string } }) {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const percent_threshold = searchParams.get("percent-threshold");
   const [tableParetoData, setTableParetoData] = useState([]);
-  const [percentageThreshold, setPercentageThreshold] = useState(100);
   const [isMutating, setIsMutating] = useState(false);
   const session = useSession();
+
+  const [percentageThreshold, setPercentageThreshold] =
+    useState(percent_threshold);
 
   const { data, mutate, isLoading, error, isValidating } = useGetDataPareto(
     session?.data?.user.access_token,
@@ -91,6 +89,12 @@ export default function Page({ params }: { params: { data_id: string } }) {
   };
 
   useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("percent-threshold", percentageThreshold);
+    router.replace(`${pathname}?${params}`, {
+      scroll: false,
+    });
+    console.log(params.toString(), "params");
     setIsMutating(true);
     onMutate();
     setIsMutating(false);
@@ -128,7 +132,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
         {isLoading ? (
           <Spinner color="primary" label="loading..." />
         ) : (
-          <div className="max-w-full max-h-[564px] mb-24 mt-12 overflow-auto relative">
+          <div className="max-w-full mb-24 mt-12 overflow-hidden relative">
             {isValidating || isMutating ? (
               <div className="h-36">
                 <Spinner color="primary" label="validating..." />

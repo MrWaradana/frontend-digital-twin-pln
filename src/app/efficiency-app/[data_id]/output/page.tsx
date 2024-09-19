@@ -27,7 +27,7 @@ export default async function Page({
         >
           Back to all
         </Button>
-        <Button
+        {/* <Button
           as={Link}
           href={`/efficiency-app/${params.data_id}/pareto`}
           className="mb-4"
@@ -36,7 +36,7 @@ export default async function Page({
           endContent={<ChevronRightIcon size={16} />}
         >
           To Pareto Heat Loss
-        </Button>
+        </Button> */}
       </div>
       {/* <VariableOutputForm variables={variables} units={units} /> */}
       <h2 className="mb-4">Output {formatFilename(params.data_id)}</h2>

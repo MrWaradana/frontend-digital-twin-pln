@@ -35,12 +35,9 @@ import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
 } from "@radix-ui/react-icons";
-import {
-  users as tableData,
-  statusOptions as parameterOptions,
-} from "@/lib/efficiency-data";
+import { parameterOptions } from "@/lib/efficiency-data";
 import { capitalize } from "@/lib/utils";
-import { EFFICIENCY_API_URL } from "../../lib/api-url";
+import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { useSession } from "next-auth/react";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -230,7 +227,9 @@ export default function TableEfficiency({
                     <DropdownItem href={`/efficiency-app/engine-flow`}>
                       Engine Flow
                     </DropdownItem>
-                    <DropdownItem href={`/efficiency-app/${rowData.id}/pareto`}>
+                    <DropdownItem
+                      href={`/efficiency-app/${rowData.id}/pareto?percent-threshold=${rowData.persen_threshold}`}
+                    >
                       Pareto Heat Loss
                     </DropdownItem>
                     <DropdownItem href={`/efficiency-app/${rowData.id}/output`}>
@@ -467,7 +466,6 @@ export default function TableEfficiency({
           wrapper: "max-h-[382px]",
         }}
         selectedKeys={selectedKeys}
-        // selectionMode="multiple"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
