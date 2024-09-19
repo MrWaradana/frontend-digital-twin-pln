@@ -109,7 +109,7 @@ interface rootRepairCost {
 }
 
 
-function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { isOpen: boolean, onOpenChange: any, selectedModalId: { detailId: string, variableId: string }, data_id: string }) {
+function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id, paretoMutate }: { isOpen: boolean, onOpenChange: any, selectedModalId: { detailId: string, variableId: string }, data_id: string, paretoMutate: any }) {
     const { data: session } = useSession()
 
     const { data: rootCause, isLoading: rootCauseLoading, isValidating: rootCauseValidating } = useGetDataRootCauses(
@@ -167,9 +167,9 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
         }
     }, [rootCauseData, rootCauseValidating]);
 
-    
 
-  
+
+
 
     // Handler for checkbox changes
     const handleCheckboxChange = ({ rowId, headerId = undefined, isChecked = false, is_repair = false, biaya = 0 }: { rowId: string, headerId: string | undefined, isChecked: boolean, is_repair: boolean, biaya: number }) => {
@@ -221,8 +221,8 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
 
             const resData = await response.json();
 
-            console.log(resData);
             setCheckRootHeaders({});
+            paretoMutate();
         }
 
         catch (error) {
@@ -239,7 +239,7 @@ function ModalRootCause({ isOpen, onOpenChange, selectedModalId, data_id }: { is
                             Root Cause Checkbox
                         </ModalHeader>
                         <ModalBody>
-                            {(!isLoading && !rootCauseLoading && !headerLoading) && (!rootCauseValidating) && <Table>
+                            {(!isLoading && !rootCauseLoading && !headerLoading && !rootCauseValidating) && <Table>
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Heat Loss Caused</TableHead>

@@ -1,6 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useContext,
+  ChangeEvent,
+} from "react";
+import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -8,10 +15,12 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { HeatLossTrendingChart } from "@/components/efficiency-app/HeatLossTrendingChart";
-// import { PeriodeDatePicker } from "@/components/efficiency-app/PeriodeDatePicker";
 import { useGetVariables } from "@/lib/APIs/useGetVariables";
+import {
+  // DataTrending,
+  useGetDataTrending,
+} from "@/lib/APIs/useGetDataTrending";
 import { useSession } from "next-auth/react";
-import { revalidatePath } from "next/cache";
 
 /** LATER IT WILL BE SEPARATE COMPONENT */
 import {
@@ -28,56 +37,61 @@ import { useDateFormatter } from "@react-aria/i18n";
 import PeriodeDatePicker from "@/components/efficiency-app/PeriodeDatePicker";
 /** LATER IT WILL BE SEPARATE COMPONENT */
 
-// import { HeatLossTrendingCheckBox } from "@/components/efficiency-app/HeatLossTrendingCheckBox"
-
-const items = [
-  "Item 1",
-  "Item 2",
-  "Item 3",
-  "Item 4",
-  "Item 5",
-  "Item 6",
-  "Item 7",
-  "Item 8",
-  "Item 9",
-  "Item 10",
-  "Item 11",
-  "Item 12",
-  "Item 13",
-  "Item 14",
-  "Item 15",
-  "Item 16",
-  "Item 17",
-  "Item 18",
-  "Item 19",
-  "Item 20",
-];
-
 const excelId = "add1cefb-1231-423c-8942-6bcd56998106";
 const type = "out";
 
 export default function Page() {
   const session = useSession();
-  const {
-    data: trendingData,
-    isLoading,
-    mutate,
-  } = useGetVariables(session?.data?.user.accessToken, excelId, type);
-  const [checkedItems, setCheckedItems] = useState<any[]>([]);
 
-  console.log(`ini tokennya: ${session?.data?.user.accessToken}`);
-
-  const handleCheckboxChange = (item: any) => {
-    setCheckedItems((prev) =>
-      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
-    );
+  const formatDate = (date: Date | null) => {
+    return date ? format(date, "yyyy-MM-dd") : "";
   };
+  //
+  const [variableRawState, setVariableRawState] = useState<any[]>([]);
 
-  /** PeriodeDatePicker */
+  // GET LIST VARIABLE
+  const {
+    data: variableData,
+    isLoading: isLoadingVariableData,
+    mutate: mutateVariableData,
+  } = useGetVariables(session?.data?.user.access_token, excelId, type);
 
+  /** Start & end date state */
   const [startDateValue, setStartDateValue] = useState<Date | null>(new Date());
-
   const [endDateValue, setEndDateValue] = useState<Date | null>(new Date());
+  /** Start & end date state */
+
+  // variables checked state
+  const [checkedVariables, setCheckedVariables] = useState<any[]>([]);
+
+  console.log(`ini tokennya: ${session?.data?.user.access_token}`);
+  // console.log("WOWO");
+  // console.log(variableRawState);
+
+  // GET DATA TRENDING BY VARIABLES
+  const {
+    data: trendingDatas,
+    isLoading: isLoadingTrendingDatas,
+    mutate: mutateTrendingDatas,
+    error: errorTrendingDatas,
+  } = useGetDataTrending(
+    session?.data?.user.access_token,
+    checkedVariables,
+    startDateValue,
+    endDateValue
+  );
+
+  const handleVariableCheckboxChange = useCallback(
+    (item: any, isChecked: any) => {
+      setCheckedVariables((prev) =>
+        isChecked ? [...prev, item] : prev.filter((i) => i !== item)
+      );
+    },
+    []
+  );
+
+  console.log("CHECKED VARIABLES");
+  console.log(checkedVariables);
 
   const handleStartDateChange = (e: ChangeEvent<HTMLInputElement>) => {
     const date = new Date(e.target.value);
@@ -96,87 +110,70 @@ export default function Page() {
     }
   };
 
-  const formatDate = (date: Date | null) => {
-    return date ? format(date, "yyyy-MM-dd") : "";
-  };
+  useEffect(() => {
+    mutateTrendingDatas();
+    // console.log("HARUSNYA SEH MUTATE YGY?!?!");
+  }, [startDateValue, endDateValue, checkedVariables, mutateTrendingDatas]);
 
   useEffect(() => {
-    console.log(startDateValue);
-    console.log(formatDate(startDateValue));
-    console.log(typeof startDateValue);
-    console.log(`tanggal akhir: ${endDateValue}`);
-  });
-
-  /** PeriodeDatePicker */
-
-  // Change graphic based on checkbox
-  // useEffect(() => {
-  //   mutate();
-  // }, [mutate, checkedItems]);
-
-  // const [heatLossTrendingData, setHeatLossTrendingData] = useState([]);
-  // useEffect(() => {
-
-  // }, []);
-  // const heatLossTrendingData = await fetch()
-
-  // if (isLoading && efficiencyLoading)
-  //   return (
-  //     <div className="w-full mt-24 flex justify-center items-center">
-  //       <CircularProgress color="primary" />
-  //     </div>
-  //   );
-  // if (!excel)
-  //   return (
-  //     <div className="w-full mt-24 flex flex-col gap-6 justify-center items-center">
-  //       <Button as={Link} href="/" color="primary">
-  //         Back to All Apps
-  //       </Button>
-  //       <p>No Excel Data!</p>
-  //     </div>
-  //   );
+    if (variableData) {
+      setVariableRawState(variableData);
+    }
+    // console.log(variableRawState, "variable raw state");
+  }, [variableData]);
 
   return (
     <EfficiencyContentLayout title="Heat Loss Trending">
-      <h1 className="bg-gray-950">Heat Loss Trending Page</h1>
+      <h1>Heat Loss Trending Page</h1>
       <div className="flex h-screen overflow-hidden bg-background text-foreground">
         <div className="flex-1 overflow-y-auto p-6">
           {/* PeriodeDatePicker */}
-          <Input
-            type="date"
-            label="Tanggal Awal Periode"
-            placeholder="Select start date"
-            value={formatDate(startDateValue)}
-            onChange={handleStartDateChange}
-            // startContent={<CalendarIcon className="text-gray-400" size={20} />}
-          />
-          <Input
-            type="date"
-            label="Tanggal Akhir Periode"
-            placeholder="Select end date"
-            value={formatDate(endDateValue)}
-            onChange={handleEndDateChange}
-            // startContent={<CalendarIcon className="text-gray-400" size={20} />}
-            isDisabled={!startDateValue}
-          />
+          <div className={cn("flex mb-3 gap-x-3 space-2")}>
+            <Input
+              type="date"
+              label="Tanggal Awal Periode"
+              placeholder="Select start date"
+              value={formatDate(startDateValue)}
+              onChange={handleStartDateChange}
+              // startContent={<CalendarIcon className="text-gray-400" size={20} />}
+            />
+            <Input
+              type="date"
+              label="Tanggal Akhir Periode"
+              placeholder="Select end date"
+              value={formatDate(endDateValue)}
+              onChange={handleEndDateChange}
+              // startContent={<CalendarIcon className="text-gray-400" size={20} />}
+              isDisabled={!startDateValue}
+            />
+          </div>
           {/* PeriodeDatePicker */}
 
           <HeatLossTrendingChart
-            dataLineChart={checkedItems}
+            session={session}
+            isLoadingTrendingDatas={isLoadingTrendingDatas}
+            errorTrendingDatas={errorTrendingDatas}
+            trendingDatas={trendingDatas || []}
+            checkedVariables={checkedVariables}
+            startDate={formatDate(startDateValue)}
+            endDate={formatDate(endDateValue)}
+            variableData={variableRawState}
           ></HeatLossTrendingChart>
         </div>
 
-        {/* Aside on the right */}
+        {/* Aside on the right: (variable checkbox component) */}
         <Card className="w-64 bg-muted/50 p-4 overflow-hidden flex flex-col border-l">
-          <h2 className="text-lg font-semibold mb-4">Select Items</h2>
+          <h2 className="text-lg font-semibold mb-4">Select Variables</h2>
           <ScrollArea className="flex-1 rounded-md border">
             <div className="p-4 space-y-4">
-              {trendingData?.map((item) => (
+              {variableRawState?.map((item: any) => (
                 <div key={item.id} className="flex items-center space-x-2">
                   <Checkbox
                     id={item.id}
-                    checked={checkedItems.includes(item)}
-                    onCheckedChange={() => handleCheckboxChange(item)}
+                    checked={checkedVariables.includes(item.id)}
+                    onCheckedChange={(isChecked) =>
+                      handleVariableCheckboxChange(item.id, isChecked)
+                    }
                   />
                   <Label
                     htmlFor={item.id}
@@ -190,7 +187,7 @@ export default function Page() {
           </ScrollArea>
           <Separator className="my-4" />
           <p className="text-sm text-muted-foreground">
-            Selected: {checkedItems.length} item(s)
+            Selected: {checkedVariables.length} variable(s)
           </p>
         </Card>
       </div>
