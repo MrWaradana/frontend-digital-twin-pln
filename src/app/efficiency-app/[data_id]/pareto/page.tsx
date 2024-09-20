@@ -2,7 +2,7 @@
 
 import { Button, Link, Spinner } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
-import MultipleLineChart from "@/components/MultipleLineChart";
+import MultipleLineChart from "@/components/efficiency-app/pareto/MultipleLineChart";
 import TableParetoHeatloss from "@/components/efficiency-app/TableParetoHeatloss";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { useEffect, useMemo, useState, useRef } from "react";
@@ -119,6 +119,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
           as={Link}
           color="primary"
           startContent={<ChevronLeftIcon size={18} />}
+          className="my-6"
           href={`/efficiency-app`}
           size="sm"
         >

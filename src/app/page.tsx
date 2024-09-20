@@ -10,7 +10,7 @@ export default async function Home() {
     },
     {
       name: "Aplikasi 2",
-      url: "/aplikasi-2",
+      url: "#",
     },
     {
       name: "App3",
