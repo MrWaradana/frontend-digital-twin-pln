@@ -124,11 +124,13 @@ export default function Page({ params }: { params: { data_id: string } }) {
         >
           Back to all data
         </Button>
-        <MultipleLineChart
-          data={chartData}
-          onThresholdChange={setPercentageThreshold}
-          thresholdNumber={percentageThreshold}
-        />
+        <div className="min-w-full">
+          <MultipleLineChart
+            data={chartData}
+            onThresholdChange={setPercentageThreshold}
+            thresholdNumber={percentageThreshold}
+          />
+        </div>
         {isLoading ? (
           <Spinner color="primary" label="loading..." />
         ) : (

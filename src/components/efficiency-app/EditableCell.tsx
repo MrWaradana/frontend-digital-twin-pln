@@ -90,7 +90,8 @@ export default function EditableCell({
         onBlur={onBlur}
         size="sm"
         variant="flat"
-        className="whitespace-nowrap overflow-hidden"
+        className="whitespace-nowrap overflow-hidden text-right justify-end items-end"
+        style={{ textAlign: "right" }}
         disabled={isInputLoading} // Prevent input when loading
       />
     </div>

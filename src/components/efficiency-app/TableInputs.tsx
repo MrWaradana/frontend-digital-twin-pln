@@ -99,6 +99,7 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
       {/* {JSON.stringify(filteredData)} */}
       <Table
         aria-label="Example table with dynamic content"
+        color="success"
         bottomContent={
           <div className="flex w-full justify-center">
             <Pagination

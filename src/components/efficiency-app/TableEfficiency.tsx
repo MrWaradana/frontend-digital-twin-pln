@@ -190,6 +190,16 @@ export default function TableEfficiency({
       const cellValue = rowData[columnKey as keyof TransactionsType];
 
       switch (columnKey) {
+        case "name":
+          return (
+            <Link
+              size="sm"
+              href={`/efficiency-app/${rowData.id}/output`}
+              underline={"hover"}
+            >
+              {cellValue}
+            </Link>
+          );
         case "jenis_parameter":
           return (
             <Chip

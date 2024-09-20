@@ -89,12 +89,13 @@ export default function MultipleLineChart({
               }
             />
             <YAxis domain={[0, 100]} />
-            <Legend />
+            <Legend className="dark:fill-slate-50" />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Bar
               dataKey={"total_persen_losses"}
               name={"Total Persen Loss"}
-              fill="#111"
+              fill="#111 dark:#fff"
+              className="dark:fill-slate-50 dark:stroke-slate-50"
               barSize={20}
             />
             <ReferenceLine
@@ -131,7 +132,7 @@ export default function MultipleLineChart({
             />
           </ComposedChart>
         </ChartContainer>
-        <div className="h-[348px] col-span-1">
+        <div className="h-full col-span-1">
           <Slider
             size="md"
             label="Persentase"
@@ -145,18 +146,6 @@ export default function MultipleLineChart({
           />
         </div>
       </CardContent>
-      {/* <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              Showing increase for the last 6 months
-            </div>
-          </div>
-        </div>
-      </CardFooter> */}
     </Card>
   );
 }

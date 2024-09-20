@@ -39,6 +39,38 @@ import EditableCell from "./EditableCell";
 import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
 import ModalRootCause from "./ModalRootCause";
 
+const formatCurrency = (number: any) => {
+  // Convert to absolute value to handle negative numbers
+  const absNumber = Math.abs(number);
+
+  // Determine the appropriate suffix based on the value
+  let formattedNumber;
+  let suffix = "";
+
+  if (absNumber >= 1_000_000_000_000) {
+    // Trillions
+    formattedNumber = (number / 1_000_000_000_000).toFixed(0);
+    suffix = " triliun";
+  } else if (absNumber >= 1_000_000_000) {
+    // Billions
+    formattedNumber = (number / 1_000_000_000).toFixed(0);
+    suffix = " miliar";
+  } else if (absNumber >= 1_000_000) {
+    // Millions
+    formattedNumber = (number / 1_000_000).toFixed(0);
+    suffix = " juta";
+  } else if (absNumber >= 1_000) {
+    // Millions
+    formattedNumber = (number / 1_000).toFixed(0);
+    suffix = " ribu";
+  } else {
+    // Thousands separator for smaller numbers
+    formattedNumber = number.toLocaleString("id-ID");
+  }
+
+  return formattedNumber + suffix;
+};
+
 //un-memoized normal table body component - see memoized version below
 function TableBody({ table }: { table: Table<ParetoType> }) {
   return (
@@ -85,7 +117,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         {subRow.getVisibleCells().map((cell: any) => (
                           <td
                             key={cell.id}
-                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border border-neutral-500 ${
+                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border border-neutral-500 print-cell ${
                               cell.column.columnDef.meta?.className ?? ""
                             }`}
                             style={{
@@ -109,7 +141,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                   row.original.total_persen_losses && (
                     <tr
                       key={`summary-${row.id}`}
-                      className="bg-neutral-100 border border-black"
+                      className="bg-neutral-100 dark:bg-neutral-900 border border-black"
                     >
                       {row.getVisibleCells().map((cell: any) => {
                         // Render summary under the specific columns
@@ -117,7 +149,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                           return (
                             <td
                               key={cell.id}
-                              className="font-bold sticky left-0 bg-neutral-100"
+                              className="font-bold sticky left-0 bg-neutral-100 dark:bg-neutral-900 print-cell"
                             >
                               Summary
                             </td>
@@ -127,7 +159,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                           return (
                             <td
                               key={cell.id}
-                              className="font-bold border border-neutral-700"
+                              className="font-bold border border-neutral-700 text-right"
                             >
                               {row.original.total_nilai_losses.toFixed(2)}
                             </td>
@@ -137,7 +169,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                           return (
                             <td
                               key={cell.id}
-                              className="font-bold border border-neutral-700"
+                              className="font-bold border border-neutral-700 text-right"
                             >
                               {row.original.total_persen_losses.toFixed(2)}
                             </td>
@@ -147,9 +179,12 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                           return (
                             <td
                               key={cell.id}
-                              className="font-bold border border-neutral-700"
+                              className="font-bold border border-neutral-700 text-right"
                             >
-                              Rp.{row.original.total_cost_benefit.toFixed(2)}
+                              Rp.
+                              {formatCurrency(
+                                row.original.total_cost_benefit.toFixed(0)
+                              )}
                             </td>
                           );
                         }
@@ -157,9 +192,12 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                           return (
                             <td
                               key={cell.id}
-                              className="font-bold border border-neutral-700"
+                              className="font-bold border border-neutral-700 text-right"
                             >
-                              Rp.{row.original.total_cost_gap.toFixed(2)}
+                              Rp.
+                              {formatCurrency(
+                                row.original.total_cost_gap.toFixed(0)
+                              )}
                             </td>
                           );
                         }
@@ -231,13 +269,14 @@ export default function TableParetoHeatloss({
         maxSize: 800,
         meta: {
           className:
-            "sticky left-0 z-20 shadow-inner overflow-hidden whitespace-nowrap text-clip",
+            "sticky left-0 z-20 shadow-inner overflow-hidden whitespace-nowrap text-clip print-column",
         },
         cell: (props: any) => (
           <div
             style={{
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
+            className="print-cell"
           >
             {props.row.getCanExpand() ? (
               <button
@@ -255,7 +294,7 @@ export default function TableParetoHeatloss({
             ) : (
               `🔵 ${props.row.original.variable.input_name}`
             )}{" "}
-            <span className="text-base">
+            <span className="text-base print-cell">
               {" "}
               {props.getValue() || props.row.depth > 0
                 ? props.getValue()
@@ -284,6 +323,9 @@ export default function TableParetoHeatloss({
       },
       {
         header: "Reference Data",
+        meta: {
+          className: "text-right",
+        },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) =>
           row.depth === 0
@@ -303,6 +345,9 @@ export default function TableParetoHeatloss({
       },
       {
         header: "Existing Data",
+        meta: {
+          className: "text-right",
+        },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) =>
           row.depth === 0
@@ -321,6 +366,9 @@ export default function TableParetoHeatloss({
       },
       {
         header: "Gap",
+        meta: {
+          className: "text-right",
+        },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) => (row.data ? null : row.gap.toFixed(2) || ""),
         cell: (props: any) => (
@@ -335,6 +383,9 @@ export default function TableParetoHeatloss({
       },
       {
         header: "% HR",
+        meta: {
+          className: "text-right",
+        },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) => row.persen_hr || "",
         cell: (props: any) =>
@@ -351,6 +402,9 @@ export default function TableParetoHeatloss({
       },
       {
         header: "Deviasi",
+        meta: {
+          className: "text-right",
+        },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) => (row.data ? null : row.deviasi || ""),
         cell: (props: any) =>
@@ -367,6 +421,9 @@ export default function TableParetoHeatloss({
       },
       {
         accessorKey: "persen_losses",
+        meta: {
+          className: "text-right",
+        },
         header: "Persen Losses",
         cell: (props: any) => {
           const value = props.getValue();
@@ -379,6 +436,9 @@ export default function TableParetoHeatloss({
       },
       {
         accessorKey: "nilai_losses",
+        meta: {
+          className: "text-right",
+        },
         header: "Nilai Losses",
         cell: (props: any) => {
           const value = props.getValue();
@@ -389,30 +449,6 @@ export default function TableParetoHeatloss({
         },
         footer: (props: any) => props.column.id,
       },
-      // {
-      //   accessorKey: "total_nilai_losses",
-      //   header: "Total Nilai Losses",
-      //   cell: (props: any) => {
-      //     const value = props.getValue();
-      //     if (!value) {
-      //       return;
-      //     }
-      //     return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
-      //   },
-      //   footer: (props: any) => props.column.id,
-      // },
-      // {
-      //   accessorKey: "total_persen_losses",
-      //   header: "Total Persen Losses",
-      //   cell: (props: any) => {
-      //     const value = props.getValue();
-      //     if (!value) {
-      //       return;
-      //     }
-      //     return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
-      //   },
-      //   footer: (props: any) => props.column.id,
-      // },
       {
         header: "Symptoms",
         cell: (props: any) => (
@@ -437,11 +473,14 @@ export default function TableParetoHeatloss({
       },
       {
         header: "Potential Benefit",
+        meta: {
+          className: "text-right",
+        },
         accessorKey: "cost_benefit",
         cell: (props: any) => {
           const value = props.getValue();
           if (props.row.depth > 0) {
-            return `Rp.${value.toFixed(2)}`;
+            return `Rp.${formatCurrency(value.toFixed(0))}`;
           }
           return "";
         },
@@ -453,17 +492,23 @@ export default function TableParetoHeatloss({
       },
       {
         accessorKey: "total_biaya",
+        meta: {
+          className: "text-right",
+        },
         header: "Biaya Untuk Closing Gap",
         cell: (props: any) => {
           const value = props.getValue();
           if (props.row.depth > 0) {
-            return `Rp.${value.toFixed(2)}`;
+            return `Rp.${formatCurrency(value.toFixed(0))}`;
           }
           return "";
         },
       },
       {
         header: "Ratio Benefit to Cost",
+        meta: {
+          className: "text-right",
+        },
         cell: (props: any) =>
           props.row.depth > 0 ? <div>{props.getValue()}</div> : "",
       },
@@ -584,6 +629,21 @@ export default function TableParetoHeatloss({
 
   const handleExportPDFData = async () => {
     const table = document.getElementById("table-pareto");
+    const tableContainer = document.querySelector(".printable-table");
+    const stickyColumns = document.querySelectorAll(".print-column");
+    const stickyCells = document.querySelectorAll(".print-cell");
+
+    // Remove classes that limit the height and width and make columns sticky
+    tableContainer?.classList.remove(
+      "max-h-[568px]",
+      "max-w-full",
+      "overflow-hidden",
+      "overflow-auto"
+    );
+    stickyColumns.forEach((column) => column.classList.remove("sticky"));
+    stickyCells.forEach((cell) => cell.classList.remove("sticky"));
+
+    // Create PDF
     const pdf = await html2PDF(table, {
       jsPDF: {
         format: "a4",
@@ -598,11 +658,24 @@ export default function TableParetoHeatloss({
       html2canvas: {
         scrollX: 0,
         scrollY: -window.scrollY,
+        scale: 2, // Increase scale for better resolution
+        useCORS: true, // Use CORS for external images if required
+        backgroundColor: "#ffffff", // Set a white background to avoid transparency issues
       },
       imageType: "image/jpeg",
       autoResize: true,
       output: "./pdf/pareto-generated.pdf",
     });
+
+    // Restore classes after generating the PDF
+    tableContainer?.classList.add(
+      "max-h-[568px]",
+      "max-w-full",
+      "overflow-auto"
+    );
+    stickyColumns.forEach((column) => column.classList.add("sticky"));
+    stickyCells.forEach((cell) => cell.classList.add("sticky"));
+
     return pdf;
   };
 
@@ -660,76 +733,6 @@ export default function TableParetoHeatloss({
         data_id={data_id}
         paretoMutate={mutate}
       />
-      {/* <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Root Cause Checkbox
-              </ModalHeader>
-              <ModalBody>
-                <NextTable
-                  aria-label="Root Cause Checkbox"
-                  className="h-[360px]"
-                >
-                  <TableHeader>
-                    <TableColumn>Heat Loss Caused </TableColumn>
-                    <TableColumn>Kondensor TTD dan ∆ P naik </TableColumn>
-                    <TableColumn>∆ T Kondensor naik</TableColumn>
-                    <TableColumn>High O2 in condensate water</TableColumn>
-                    <TableColumn>Repair</TableColumn>
-                    <TableColumn>Biaya</TableColumn>
-                  </TableHeader>
-                  <TableBody>
-                    {checkboxColumn.map((_, rowIndex) => (
-                      <TableRow key={rowIndex}>
-                        {[1, 2, 3, 4, 5, 6].map((colIndex) => (
-                          <TableCell key={colIndex} className="text-center">
-                            {colIndex === 1 ? (
-                              rowIndex === 0 ? (
-                                "" // Leave the first cell of the first row empty
-                              ) : (
-                                `${_}` // Render a string for other rows in the first column
-                              )
-                            ) : colIndex === 6 ? (
-                              rowIndex != 0 ? (
-                                <>
-                                  <input className="border bg-neutral-50 py-1 px-1 rounded-md" />
-                                </>
-                              ) : (
-                                `` // Render a string for other rows in the first column
-                              )
-                            ) : (
-                              <>
-                                <Checkbox
-                                  defaultChecked
-                                  name={`${rowIndex * 5 + colIndex}`}
-                                  className={`${rowIndex === 0 ? "hidden" : ""
-                                    }`}
-                                />
-                                <p
-                                  className={`${rowIndex != 0 ? "hidden" : ""}`}
-                                >
-                                  {``}
-                                </p>
-                              </>
-                            )}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </NextTable>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Cancel
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal> */}
       <div className=" flex justify-end gap-6">
         <Button
           onClick={() => handleExportExcel()}
@@ -760,7 +763,7 @@ export default function TableParetoHeatloss({
           Print table
         </Button> */}
       </div>
-      <div className="max-w-full mb-24 mt-12 overflow-auto relative printable-table">
+      <div className="max-w-full max-h-[568px] mb-24 mt-12 overflow-auto relative printable-table">
         <table
           cellPadding="1"
           cellSpacing="0"
@@ -802,23 +805,6 @@ export default function TableParetoHeatloss({
                 </tr>
               );
             })}
-            {/* <tr className="border border-black bg-primary/20">
-          <th>Category</th>
-          <th>Variable Name</th>
-          <th>Satuan</th>
-          <th>Reference Data</th>
-          <th>Existing Data</th>
-          <th>Gap</th>
-          <th>Percentage HR</th>
-          <th>Deviation</th>
-          <th>Losses</th>
-          <th>Symptoms</th>
-          <th>Potential Benefit</th>
-          <th>Action Menutup Gap</th>
-          <th>Biaya untuk Closing Gap</th>
-          <th>Ratio Benefit to Cost</th>
-          <th>Actions</th>
-        </tr> */}
           </thead>
           {/* Memoized Table Body for resizing performance  */}
           <MemoizedTableBody table={table} />
@@ -826,23 +812,23 @@ export default function TableParetoHeatloss({
           {/* <TableBody table={table} /> */}
           <tfoot className="sticky bottom-0 z-50 border-2">
             <tr className="text-left">
-              <th className="sticky left-0 bg-blue-200 ">Total Summary</th>
-              <th className="bg-blue-200" colSpan={6}></th>
-              <th className="bg-blue-200">
-                {summaryData.total_persen.toFixed(2)}
+              <th className="sticky left-0 bg-blue-200 dark:bg-blue-600">Total Summary</th>
+              <th className="bg-blue-200 dark:bg-blue-600" colSpan={6}></th>
+              <th className="bg-blue-200 dark:bg-blue-600 text-right">
+                {formatCurrency(summaryData.total_persen.toFixed(2))}
               </th>
-              <th className="bg-blue-200">
-                {summaryData.total_nilai.toFixed(2)}
+              <th className="bg-blue-200 dark:bg-blue-600 text-right">
+                {formatCurrency(summaryData.total_nilai.toFixed(2))}
               </th>
-              <th className="bg-blue-200" colSpan={1}></th>
-              <th className="bg-blue-200">
-                Rp.{summaryData.total_cost_benefit.toFixed(2)}
+              <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
+              <th className="bg-blue-200 dark:bg-blue-600 text-right">
+                Rp.{formatCurrency(summaryData.total_cost_benefit.toFixed(2))}
               </th>
-              <th className="bg-blue-200" colSpan={1}></th>
-              <th className="bg-blue-200">
-                Rp.{summaryData.total_cost_gap.toFixed(2)}
+              <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
+              <th className="bg-blue-200 dark:bg-blue-600 text-right">
+                Rp.{formatCurrency(summaryData.total_cost_gap.toFixed(2))}
               </th>
-              <th className="bg-blue-200" colSpan={2}></th>
+              <th className="bg-blue-200 dark:bg-blue-600" colSpan={2}></th>
             </tr>
           </tfoot>
         </table>
