@@ -57,13 +57,11 @@ const INITIAL_VISIBLE_PARAMETER = ["current"];
 export default function TableEfficiency({
   tableData,
   addNewUrl = "#",
-  params,
   mutate,
   isValidating,
 }: {
   tableData: any;
   addNewUrl?: string;
-  params: string;
   mutate: any;
   isValidating: boolean;
 }) {

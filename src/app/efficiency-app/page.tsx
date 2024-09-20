@@ -116,7 +116,6 @@ export default function Page() {
           <TableEfficiency
             tableData={efficiency}
             addNewUrl={`/efficiency-app/input`}
-            params={excel[0].excel_filename}
             mutate={mutateEfficiency}
             isValidating={isValidatingEfficiency}
           />

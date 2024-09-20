@@ -1,5 +1,5 @@
-import VariableOutputForm from "@/components/efficiency-app/VariableOutputForm";
 import TableOutputs from "@/components/efficiency-app/TableOutputs";
+import TableInputs from "@/components/efficiency-app/TableInputs";
 import { Button, Link } from "@nextui-org/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { stringify } from "querystring";
@@ -38,10 +38,19 @@ export default async function Page({
           To Pareto Heat Loss
         </Button> */}
       </div>
-      {/* <VariableOutputForm variables={variables} units={units} /> */}
-      <h2 className="mb-4">Output {formatFilename(params.data_id)}</h2>
-      <div>
-        <TableOutputs data_id={data_id} />
+      <div className="grid grid-cols-1 lg:grid-cols-2">
+        <div>
+          <h2 className="mb-4">Input {formatFilename(params.data_id)}</h2>
+          <div>
+            <TableInputs data_id={data_id} />
+          </div>
+        </div>
+        <div>
+          <h2 className="mb-4">Output {formatFilename(params.data_id)}</h2>
+          <div>
+            <TableOutputs data_id={data_id} />
+          </div>
+        </div>
       </div>
     </section>
   );

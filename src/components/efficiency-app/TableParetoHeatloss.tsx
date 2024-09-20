@@ -15,6 +15,7 @@ import {
 } from "@tanstack/react-table";
 import { paretoData, ParetoType } from "@/lib/pareto-api-data";
 import { mkConfig, generateCsv, download } from "export-to-csv";
+import * as XLSX from "xlsx";
 import html2PDF from "jspdf-html2canvas";
 import {
   Button,
@@ -605,6 +606,35 @@ export default function TableParetoHeatloss({
     return pdf;
   };
 
+  const handleExportExcel = () => {
+    const flattenedData = data.flatMap((entry: any) =>
+      entry.data.map((dataItem: any) => ({
+        id: dataItem.id,
+        category: entry.category,
+        parameter: dataItem.variable.input_name,
+        existing_data: dataItem.existing_data,
+        reference_data: dataItem.reference_data,
+        gap: dataItem.gap,
+        nilai_losses: dataItem.nilai_losses,
+        persen_losses: dataItem.persen_losses,
+        persen_hr: dataItem.persen_hr,
+        deviasi: dataItem.deviasi,
+        symptoms: dataItem.symptoms,
+        total_biaya: dataItem.total_biaya,
+        total_nilai_losses: entry.total_nilai_losses,
+        total_persen_losses: entry.total_persen_losses,
+        total_cost_benefit: entry.total_cost_benefit,
+        total_cost_gap: entry.total_cost_gap,
+      }))
+    );
+    const worksheet = XLSX.utils.json_to_sheet(flattenedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+    //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+    return XLSX.writeFile(workbook, "ParetoData.xlsx");
+  };
+
   const handlePrint = () => {
     // Trigger the print dialog
     window.print();
@@ -701,6 +731,13 @@ export default function TableParetoHeatloss({
         </ModalContent>
       </Modal> */}
       <div className=" flex justify-end gap-6">
+        <Button
+          onClick={() => handleExportExcel()}
+          color="success"
+          endContent={<DownloadIcon size={16} />}
+        >
+          Export to Excel
+        </Button>
         <Button
           onClick={() => handleExportData()}
           color="success"
