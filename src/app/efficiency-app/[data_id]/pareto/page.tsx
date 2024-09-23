@@ -106,12 +106,13 @@ export default function Page({ params }: { params: { data_id: string } }) {
   //       <CircularProgress color="primary" />
   //     </div>
   //   );
+
   if (error) return <div>{error.message}</div>;
 
   return (
     <EfficiencyContentLayout title="Pareto Heat Loss">
       <div
-        className="flex flex-col w-full items-center justify-center mt-24"
+        className="flex flex-col w-full items-center justify-center mt-6"
         id="root"
       >
         Pareto Page

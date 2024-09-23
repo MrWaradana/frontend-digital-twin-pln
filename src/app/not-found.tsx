@@ -1,11 +1,13 @@
-import Link from "next/link";
+import { Link } from "@nextui-org/react";
 
 export default function NotFound() {
   return (
-    <div className="flex w-full justify-center mt-12">
-      <h2>Not Found</h2>
-      <p>Could not find requested resource</p>
-      <Link href="/">Return to all apps</Link>
+    <div className="flex flex-col w-full h-screen justify-center items-center">
+      <h2 className="text-red-600 font-bold text-4xl">404 Not Found!</h2>
+      <p>Could not find page!</p>
+      <Link href="/" underline="hover">
+        Return to all apps
+      </Link>
     </div>
   );
 }
