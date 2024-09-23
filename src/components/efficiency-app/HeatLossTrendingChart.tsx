@@ -1,16 +1,8 @@
 "use client";
 
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  useMemo,
-  createContext,
-  useContext,
-} from "react";
+import React, { useState, useMemo } from "react";
 import { TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
-import useSWR, { mutate } from "swr";
 import { Variable } from "@/lib/APIs/useGetVariables";
 import {
   // DataTrending,
@@ -52,31 +44,31 @@ const monthName = [
   "December",
 ];
 
-// const chartData = [
-//   { month: "January", year: "2010", desktop: 186, laptop: 120, mobile: 80 },
-//   { month: "February", year: "2011", desktop: 305, laptop: 180, mobile: 200 },
-//   { month: "March", year: "2012", desktop: 237, laptop: 200, mobile: 120 },
-//   { month: "April", year: "2013", desktop: 73, laptop: 140, mobile: 190 },
-//   { month: "May", year: "2014", desktop: 209, laptop: 168, mobile: 130 },
-//   { month: "June", year: "2015", desktop: 214, laptop: 470, mobile: 140 },
-//   { month: "July", year: "2016", desktop: 214, laptop: 470, mobile: 140 },
-//   { month: "July", year: "2016", desktop: 233, laptop: 790, mobile: 200 },
-// ];
+const chartDummyData = [
+  { month: "January", year: "2010", desktop: 186, laptop: 120, mobile: 80 },
+  { month: "February", year: "2011", desktop: 305, laptop: 180, mobile: 200 },
+  { month: "March", year: "2012", desktop: 237, laptop: 200, mobile: 120 },
+  { month: "April", year: "2013", desktop: 73, laptop: 140, mobile: 190 },
+  { month: "May", year: "2014", desktop: 209, laptop: 168, mobile: 130 },
+  { month: "June", year: "2015", desktop: 214, laptop: 470, mobile: 140 },
+  { month: "July", year: "2016", desktop: 214, laptop: 470, mobile: 140 },
+  { month: "July", year: "2016", desktop: 233, laptop: 790, mobile: 200 },
+];
 
-// const chartConfig = {
-//   desktop: {
-//     label: "Desktop",
-//     color: "hsl(var(--chart-1))",
-//   },
-//   laptop: {
-//     label: "Laptop",
-//     color: randomColor(),
-//   },
-//   mobile: {
-//     label: "Mobile",
-//     color: "hsl(var(--chart-3))",
-//   },
-// } satisfies ChartConfig;
+const chartDummyConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "hsl(var(--chart-1))",
+  },
+  laptop: {
+    label: "Laptop",
+    color: "hsl(var(--chart-2))",
+  },
+  mobile: {
+    label: "Mobile",
+    color: "hsl(var(--chart-3))",
+  },
+} satisfies ChartConfig;
 
 export function HeatLossTrendingChart({
   session,
@@ -112,19 +104,36 @@ export function HeatLossTrendingChart({
   // }, [checkedVariables]);
 
   //   const trendingDatas = trendingData ?? [];
+
+  /**
+   * (START): GET CHART DATA========================================================================================
+   */
   const chartData = useMemo(() => {
     if (!trendingDatas) return [];
 
     return trendingDatas.map((data: any) => {
       const dataPoint: any = {
-        periode: data.periode,
+        periode: new Date(data.periode),
       };
       data.pareto.forEach((pareto: any) => {
         dataPoint[pareto.variable_id] = pareto.persen_losses;
       });
+
       return dataPoint;
     });
   }, [trendingDatas]);
+  // console.log("typeof periode: ", chartData[0].periode);
+  chartData.length > 0
+    ? console.log(
+        "typeof Periode",
+        typeof chartData[0].periode,
+        " and data: ",
+        chartData[0].periode.getDate()
+      )
+    : console.log("chartData");
+  /**
+   * (END): GET CHART DATA==========================================================================================
+   */
 
   /**
    * (START): GET CHART CONFIG========================================================================================
@@ -157,61 +166,74 @@ export function HeatLossTrendingChart({
 
   return (
     variableData && (
-      <Card>
-        <CardHeader>
-          <CardTitle>Heat Loss Trending Chart</CardTitle>
-          <CardDescription>{`${startDate} to ${endDate}`}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ChartContainer config={chartConfig}>
-            <LineChart
-              accessibilityLayer
-              data={chartData}
-              margin={{
-                left: 0,
-                right: 12,
-              }}
-            >
-              <CartesianGrid vertical={true} stroke="#DEE5D4" />
-              <XAxis
-                dataKey="periode"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                tickFormatter={(value) =>
-                  value ? value.slice(0, 3) : "undefined"
-                }
-              />
-              {/* <XAxis dataKey="periode" /> */}
-              <YAxis />
+      <>
+        {/* CARD HEAT LOSS TRENDING DATA */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Heat Loss Trending Chart</CardTitle>
+            <CardDescription>{`${startDate} to ${endDate}`}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig}>
+              <LineChart
+                accessibilityLayer
+                data={chartData}
+                margin={{
+                  left: 0,
+                  right: 12,
+                  bottom: 32,
+                }}
+              >
+                <CartesianGrid vertical={true} stroke="#DEE5D4" />
+                <XAxis
+                  angle={-45}
+                  textAnchor="end"
+                  dataKey="periode"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={2}
+                  tickFormatter={(value) =>
+                    value
+                      ? `${value.getDate()} ${monthName[value.getMonth()].slice(
+                          0,
+                          3
+                        )} ${value.getFullYear()}`
+                      : "undefined"
+                  }
+                />
+                {/* <XAxis dataKey="periode" /> */}
+                <YAxis />
 
-              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-              {Object.entries(chartConfig)?.map(
-                ([id, config]: [string, any]) => (
-                  <Line
-                    key={id}
-                    type="monotone"
-                    dataKey={id}
-                    name={config.name}
-                    stroke={config.color}
-                    activeDot={{ r: 8 }}
-                  />
-                )
-              )}
-              {/* For Example */}
-              {/* <Line
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent />}
+                />
+                {Object.entries(chartConfig)?.map(
+                  ([id, config]: [string, any]) => (
+                    <Line
+                      key={id}
+                      type="monotone"
+                      dataKey={id}
+                      name={config.name}
+                      stroke={config.color}
+                      activeDot={{ r: 8 }}
+                    />
+                  )
+                )}
+                {/* For Example */}
+                {/* <Line
                 dataKey="f8be624b-ffee-4d22-a36a-d3a80add5402"
                 type="monotone"
                 stroke={randomColor()}
                 strokeWidth={2}
                 dot={false}
               /> */}
-            </LineChart>
-          </ChartContainer>
-          {/* {JSON.stringify(checkedVariables)} */}
-        </CardContent>
-        <CardFooter>
-          {/* <div className="flex w-full items-start gap-2 text-sm">
+              </LineChart>
+            </ChartContainer>
+            {/* {JSON.stringify(checkedVariables)} */}
+          </CardContent>
+          <CardFooter>
+            {/* <div className="flex w-full items-start gap-2 text-sm"> 
             <div className="grid gap-2">
               <div className="flex items-center gap-2 font-medium leading-none">
                 Trending up by 5.2% this month{" "}
@@ -223,8 +245,8 @@ export function HeatLossTrendingChart({
             </div>
           </div> */}
 
-          {/* FOR TESTING PURPOSE */}
-          {/* <div>
+            {/* FOR TESTING PURPOSE */}
+            {/* <div>
             <h4>YOHOHO</h4>
             {trendingDatas?.map((data: any) => {
               return <pre key={data.id}>{JSON.stringify(data, null, 2)}</pre>;
@@ -234,8 +256,99 @@ export function HeatLossTrendingChart({
               return <pre key={data}>{JSON.stringify(data, null, 2)}</pre>;
             })}
           </div> */}
-        </CardFooter>
-      </Card>
+          </CardFooter>
+        </Card>
+
+        {/* NEW CARD HEAT LOSS TRENDING DATA */}
+        <Card className="mt-3">
+          <CardHeader>
+            <CardTitle>API DUMMY DATA</CardTitle>
+            <CardDescription>
+              STILL WAITING FOR ACTUAL DATA TO DISPLAY
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartDummyConfig}>
+              <LineChart
+                accessibilityLayer
+                data={chartDummyData}
+                margin={{
+                  left: 0,
+                  right: 12,
+                  bottom: 32,
+                }}
+              >
+                <CartesianGrid vertical={true} stroke="#DEE5D4" />
+                <XAxis
+                  angle={-45}
+                  textAnchor="end"
+                  dataKey="month"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={2}
+                  tickFormatter={(value) => value.slice(0, 3)}
+                />
+                {/* <XAxis dataKey="periode" /> */}
+                <YAxis />
+
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent />}
+                />
+
+                {/* For Example */}
+                <Line
+                  dataKey="desktop"
+                  type="monotone"
+                  stroke={randomColor()}
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  dataKey="laptop"
+                  type="monotone"
+                  stroke={randomColor()}
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  dataKey="mobile"
+                  type="monotone"
+                  stroke={randomColor()}
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            </ChartContainer>
+            {/* {JSON.stringify(checkedVariables)} */}
+          </CardContent>
+          <CardFooter>
+            {/* <div className="flex w-full items-start gap-2 text-sm"> 
+            <div className="grid gap-2">
+              <div className="flex items-center gap-2 font-medium leading-none">
+                Trending up by 5.2% this month{" "}
+                <TrendingUp className="h-4 w-4" />
+              </div>
+              <div className="flex items-center gap-2 leading-none text-muted-foreground">
+                Showing total visitors for the last 6 months
+              </div>
+            </div>
+          </div> */}
+
+            {/* FOR TESTING PURPOSE */}
+            {/* <div>
+            <h4>YOHOHO</h4>
+            {trendingDatas?.map((data: any) => {
+              return <pre key={data.id}>{JSON.stringify(data, null, 2)}</pre>;
+            })}
+            <h4>YOHOHO</h4>
+            {checkedVariables?.map((data: any) => {
+              return <pre key={data}>{JSON.stringify(data, null, 2)}</pre>;
+            })}
+          </div> */}
+          </CardFooter>
+        </Card>
+      </>
     )
   );
 }

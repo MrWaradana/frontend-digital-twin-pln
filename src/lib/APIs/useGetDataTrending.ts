@@ -43,8 +43,8 @@ export function useGetDataTrending(
 
     const variable_ids_toString = variable_ids?.join();
 
-    console.log('VARIABLE IDS');
-    console.log(variable_ids);
+    // console.log('VARIABLE IDS');
+    // console.log(variable_ids);
 
     // return useApiFetch(
     //         `${EFFICIENCY_API_URL}/data/trending?variable_ids=${variable_ids_toString}&start_date=2024-09-01&end_date=2024-09-30`,
