@@ -57,10 +57,10 @@ export default auth(async (req) => {
     // console.log(newSessionToken, "session2");
     const resp = NextResponse.next();
 
-    resp.cookies.set(
-      req.cookies.get("authjs.session-token").value,
-      newSessionToken
-    );
+    // resp.cookies.set(
+    //   req.cookies.get("authjs.session-token").value,
+    //   newSessionToken
+    // );
     // console.log(resp, "resp");
     return resp;
   }
