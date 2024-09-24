@@ -1,6 +1,5 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
 import {
   Bar,
   CartesianGrid,
@@ -28,7 +27,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Slider, SliderValue } from "@nextui-org/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { debounce } from "lodash";
 
 const chartConfig = {
@@ -46,6 +45,7 @@ export default function MultipleLineChart({
   data,
   onThresholdChange,
   thresholdNumber,
+  onBarClick,
 }: any) {
   const [sliderValue, setSliderValue] = useState<SliderValue>(thresholdNumber);
   const [internalSliderValue, setInternalSliderValue] =

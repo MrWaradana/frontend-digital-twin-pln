@@ -4,6 +4,7 @@ import {
   ThermometerSun,
   ChartCandlestick,
   DiamondPlus,
+  Gauge,
 } from "lucide-react";
 import path from "path";
 
@@ -58,14 +59,22 @@ export function getMenuList(pathname: string): Group[] {
           icon: ThermometerSun,
           submenus: [],
         },
-        // {
-        //   href: "/efficiency-app/cost-benefit-analysis",
-        //   label: "Cost Benefit Analysis",
-        //   active:
-        //     pathname === "/efficiency-app/cost-benefit-analysis" ? true : false,
-        //   icon: ChartCandlestick,
-        //   submenus: [],
-        // },
+        {
+          href: "/efficiency-app/nett-plant-heat-rate",
+          label: "Nett Plant Heat Rate",
+          active:
+            pathname === "/efficiency-app/nett-plant-heat-rate" ? true : false,
+          icon: ChartCandlestick,
+          submenus: [],
+        },
+        {
+          href: "/efficiency-app/performance-test",
+          label: "Performance Test",
+          active:
+            pathname === "/efficiency-app/performance-test" ? true : false,
+          icon: Gauge,
+          submenus: [],
+        },
       ],
     },
   ];

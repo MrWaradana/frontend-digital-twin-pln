@@ -480,7 +480,7 @@ export default function TableParetoHeatloss({
         cell: (props: any) => {
           const value = props.getValue();
           if (props.row.depth > 0) {
-            return `Rp.${formatCurrency(value.toFixed(0))}`;
+            return `Rp.${formatCurrency(value.toFixed(2))}`;
           }
           return "";
         },
@@ -509,8 +509,40 @@ export default function TableParetoHeatloss({
         meta: {
           className: "text-right",
         },
-        cell: (props: any) =>
-          props.row.depth > 0 ? <div>{props.getValue()}</div> : "",
+        cell: (props: any) => {
+          const costBenefit = props.row.original.cost_benefit;
+          const totalBiaya = props.row.original.total_biaya;
+          if (totalBiaya === 0) {
+            return `${costBenefit.toFixed(0)} : 0 | -`;
+          }
+
+          // Calculate the ratio
+          const ratio = costBenefit / totalBiaya;
+
+          // Scale both values to one decimal place
+          const scaledCostBenefit = ratio * 1; // numerator scaled to 1 decimal place
+          const scaledTotalBiaya = 1; // denominator is 10
+          // Round both values to the nearest whole number
+          const roundedCostBenefit = scaledCostBenefit.toFixed(2);
+          const roundedTotalBiaya = Math.round(scaledTotalBiaya);
+          return (
+            <>
+              {props.row.depth > 0 && ( // Only render if it's a subrow
+                <div
+                  style={{
+                    paddingLeft: `${props.cell.row.depth * 2}rem`,
+                  }}
+                >
+                  {`${roundedCostBenefit} : ${roundedTotalBiaya} | ${
+                    totalBiaya == 0
+                      ? "-"
+                      : (costBenefit / totalBiaya).toFixed(2)
+                  }`}
+                </div>
+              )}
+            </>
+          );
+        },
       },
       {
         header: "Action",
@@ -812,7 +844,9 @@ export default function TableParetoHeatloss({
           {/* <TableBody table={table} /> */}
           <tfoot className="sticky bottom-0 z-50 border-2">
             <tr className="text-left">
-              <th className="sticky left-0 bg-blue-200 dark:bg-blue-600">Total Summary</th>
+              <th className="sticky left-0 bg-blue-200 dark:bg-blue-600">
+                Total Summary
+              </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={6}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
                 {formatCurrency(summaryData.total_persen.toFixed(2))}
