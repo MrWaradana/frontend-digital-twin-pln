@@ -41,6 +41,7 @@ export function useGetTags(
     token: string | undefined,
 ): HookReply<Array<Tags>> {
 
+    
     return useApiFetch(
         `${API_V1_LIVE_URL}/tags`,
         !!token,

@@ -38,6 +38,7 @@ import { compareAsc, format, isAfter, isBefore, isValid } from "date-fns";
 import { parseDate, getLocalTimeZone } from "@internationalized/date";
 import { useDateFormatter } from "@react-aria/i18n";
 import PeriodeDatePicker from "@/components/efficiency-app/PeriodeDatePicker";
+import { API_V1_LIVE_URL } from "@/lib/api-url";
 /** LATER IT WILL BE SEPARATE COMPONENT */
 
 const excelId = "add1cefb-1231-423c-8942-6bcd56998106";
@@ -50,7 +51,7 @@ export default function Page() {
     return date ? format(date, "yyyy-MM-dd") : "";
   };
   //
-
+  console.log("API PFI", API_V1_LIVE_URL);
   /** Start & end date state */
   const [startDateValue, setStartDateValue] = useState<Date | null>(new Date());
   const [endDateValue, setEndDateValue] = useState<Date | null>(new Date());
