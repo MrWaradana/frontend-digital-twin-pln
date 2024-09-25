@@ -28,6 +28,7 @@ import {
   SortDescriptor,
   Link,
   Spinner,
+  Checkbox,
 } from "@nextui-org/react";
 import {
   DotsVerticalIcon,
@@ -49,24 +50,24 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 const INITIAL_VISIBLE_COLUMNS = [
   "name",
   "jenis_parameter",
-  "is_performance_test",
+  "performance_test_weight",
   "periode",
   "actions",
 ];
 const INITIAL_VISIBLE_PARAMETER = ["current"];
 
-export default function TableEfficiency({
+export default function TablePerformanceTest({
   tableData,
   addNewUrl = "#",
   mutate,
-  efficiencyLoading,
+  isLoading,
   isValidating,
 }: {
   tableData: any;
   addNewUrl?: string;
-  mutate: any;
-  efficiencyLoading: any;
-  isValidating: boolean;
+  mutate?: any;
+  isLoading: any;
+  isValidating?: boolean;
 }) {
   const [tableState, setTableState] = React.useState(tableData);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -80,13 +81,14 @@ export default function TableEfficiency({
     { name: "ID", uid: "id", sortable: true },
     { name: "NAMA", uid: "name", sortable: true },
     { name: "JENIS PARAMETER", uid: "jenis_parameter", sortable: true },
+    { name: "BEBAN", uid: "performance_test_weight", sortable: true },
     { name: "PERIODE", uid: "periode", sortable: true },
     { name: "ACTIONS", uid: "actions" },
   ];
 
   type TransactionsType = (typeof tableData)[0];
 
-  const [loadingEfficiency, setLoadingEfficiency] = React.useState(false);
+  const [loadingEfficiency, setLoadingEfficiency] = React.useState(true);
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([])
@@ -130,10 +132,6 @@ export default function TableEfficiency({
         Array.from(parameterFilter).includes(item.jenis_parameter.toLowerCase())
       );
     }
-    // filter non performance data
-    filteredData = filteredData.filter((item) => {
-      return item.is_performance_test !== true;
-    });
 
     return filteredData;
   }, [tableData, filterValue, parameterFilter]);
@@ -218,6 +216,8 @@ export default function TableEfficiency({
               {cellValue}
             </Chip>
           );
+        case "performance_test_weight":
+          return `${cellValue}%`;
         case "periode":
           return cellValue;
         case "actions":
@@ -480,7 +480,10 @@ export default function TableEfficiency({
         classNames={{
           wrapper: "max-h-[382px]",
         }}
+        color="primary"
+        selectionMode="single"
         selectedKeys={selectedKeys}
+        selectionBehavior={`toggle`}
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
@@ -500,7 +503,7 @@ export default function TableEfficiency({
         </TableHeader>
         <TableBody
           emptyContent={"No data found"}
-          isLoading={efficiencyLoading}
+          isLoading={isLoading}
           loadingContent={
             <>
               <Spinner color="primary" label="loading..." />

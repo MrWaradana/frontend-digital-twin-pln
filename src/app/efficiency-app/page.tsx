@@ -116,6 +116,7 @@ export default function Page() {
           <TableEfficiency
             tableData={efficiency}
             addNewUrl={`/efficiency-app/input`}
+            efficiencyLoading={efficiencyLoading}
             mutate={mutateEfficiency}
             isValidating={isValidatingEfficiency}
           />

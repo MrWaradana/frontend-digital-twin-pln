@@ -12,9 +12,12 @@ interface DataList {
   transactions: any;
 }
 
-export function useGetData(token: string | undefined): HookReply<DataList> {
+export function useGetData(
+  token: string | undefined,
+  isPerformance: number | undefined = 0
+): HookReply<DataList> {
   return useApiFetch(
-    `${EFFICIENCY_API_URL}/data?page=1&size=100`,
+    `${EFFICIENCY_API_URL}/data?page=1&size=100&is_performance_test=${isPerformance}`,
     !!token,
     token
   );

@@ -29,28 +29,89 @@ import {
 } from "@nextui-org/react";
 
 import MultipleLineChart from "./MultipleLineChart";
+import { useGetDataNPHR } from "@/lib/APIs/useGetDataNPHR";
+import { useSession } from "next-auth/react";
+import { useMemo, useRef } from "react";
 
 export const description = "A stacked bar chart with a legend";
 
-const chartData = [
-  { month: "Niaga", nphr: 500, gap: 0 },
-  { month: "Current", nphr: 350, gap: 0 },
-  { month: "Commission", nphr: 100, gap: 250 },
-];
-
 const chartConfig = {
   nphr: {
-    label: "NPHR",
+    label: "Net Plant Heat Rate",
     color: "hsl(var(--chart-1))",
   },
   gap: {
-    label: "GAP",
+    label: "Heat Loss Gap",
     color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig;
 
-export default function BarChartNPHR() {
+export default function BarChartNPHR({ data_id }: any) {
+  const session = useSession();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const { data, mutate, isLoading, isValidating } = useGetDataNPHR(
+    session?.data?.user.access_token,
+    data_id
+  );
+  const chartParetoData = data?.chart_result ?? [];
+  const nphrData = data?.nphr_result ?? [];
+  const chartDataRef = useRef<any | null>(null);
+  const chartParetoDataWithCumFeq = useMemo(() => {
+    const mapped_data = chartParetoData
+      .map((item: any, index: number) => {
+        const cum_frequency = chartParetoData
+          .slice(0, index + 1) // Get all previous items up to the current index
+          .reduce(
+            (acc: any, current: { total_persen_losses: any }) =>
+              acc + current.total_persen_losses,
+            0
+          ); // Accumulate total_persen_losses
+        return {
+          ...item, // Spread the original item
+          cum_frequency, // Add the accumulated frequency
+        };
+      })
+      .filter((item: any) => item.cum_frequency <= 300);
+
+    // console.log(mapped_data, "mapped chart data");
+    //   return mapped_data;
+    // }, [tableData]);
+
+    // Ensure that chartDataRef is always updated correctly
+    if (!chartDataRef.current) {
+      chartDataRef.current = mapped_data;
+    } else if (chartDataRef.current.length === mapped_data.length) {
+      // Preserve array length and only update necessary fields
+      chartDataRef.current = chartDataRef.current.map(
+        (item: any, index: number) => ({
+          ...item,
+          total_persen_losses: mapped_data[index].total_persen_losses,
+          total_nilai_losses: mapped_data[index].total_nilai_losses,
+          cum_frequency: mapped_data[index].cum_frequency,
+        })
+      );
+    } else {
+      // In case of mismatch, reset chartDataRef to match the mapped_data
+      chartDataRef.current = mapped_data;
+    }
+
+    // if (chartDataRef.current != null && mapped_data.length > 0) {
+    //   chartDataRef.current = mapped_data;
+    // }
+
+    return chartDataRef.current;
+  }, [chartParetoData]);
+
+  const chartData = [
+    { month: "Niaga", nphr: nphrData.kpi, gap: 0 },
+    { month: "Current", nphr: nphrData.current, gap: 0 },
+    {
+      month: "Commission",
+      nphr: nphrData.target,
+      gap: nphrData.current - nphrData.target,
+    },
+  ];
   return (
     <>
       <Modal
@@ -62,12 +123,10 @@ export default function BarChartNPHR() {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-                
-              </ModalHeader>
+              <ModalHeader className="flex flex-col gap-1"></ModalHeader>
               <ModalBody className="flex justify-center items-center">
                 <div className="min-h-full min-w-[968px] overflow-hidden">
-                  <MultipleLineChart />
+                  <MultipleLineChart data={chartParetoDataWithCumFeq} />
                 </div>
               </ModalBody>
               <ModalFooter>

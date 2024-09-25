@@ -90,11 +90,10 @@ export default function Page({ params }: { params: { data_id: string } }) {
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("percent-threshold", percentageThreshold);
+    params.set("percent-threshold", percentageThreshold as string);
     router.replace(`${pathname}?${params}`, {
       scroll: false,
     });
-    console.log(params.toString(), "params");
     setIsMutating(true);
     onMutate();
     setIsMutating(false);

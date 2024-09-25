@@ -34,7 +34,7 @@ export function useGetDataPareto(
   token: string | undefined,
   data_id: string | undefined,
   thresholdValue: string | number | null
-): HookReply<Array<ParetoResultDataList>> {
+): HookReply<ParetoResultDataList> {
   return useApiFetch(
     `${EFFICIENCY_API_URL}/data/${data_id}/pareto?percent_threshold=${thresholdValue}`,
     !!token,

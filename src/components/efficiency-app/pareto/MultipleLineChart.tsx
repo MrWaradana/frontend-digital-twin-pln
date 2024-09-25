@@ -88,13 +88,20 @@ export default function MultipleLineChart({
                 value ? value.slice(0, 4) : "Uncategorized"
               }
             />
-            <YAxis domain={[0, 100]} />
+            <YAxis domain={[0, 100]} allowDataOverflow={true} />
             <Legend className="dark:fill-slate-50" />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Bar
               dataKey={"total_persen_losses"}
               name={"Total Persen Loss"}
-              fill="#111 dark:#fff"
+              fill="#1b85b8"
+              className="dark:fill-slate-50 dark:stroke-slate-50"
+              barSize={20}
+            />
+            <Bar
+              dataKey={"total_nilai_losses"}
+              name={"Total Nilai Loss"}
+              fill="#559e83"
               className="dark:fill-slate-50 dark:stroke-slate-50"
               barSize={20}
             />
@@ -126,7 +133,7 @@ export default function MultipleLineChart({
               name={`Cummulative Frequency`}
               dataKey="cum_frequency"
               type="monotone"
-              stroke="var(--color-cum_frequency)"
+              stroke="#f1c232"
               strokeWidth={2}
               dot={true}
             />

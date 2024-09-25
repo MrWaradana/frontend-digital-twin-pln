@@ -194,7 +194,7 @@ const data = [
   },
 ];
 
-export default function MultipleLineChart({ thresholdNumber }: any) {
+export default function MultipleLineChart({ data, thresholdNumber }: any) {
   const router = useRouter();
   const [sliderValue, setSliderValue] = useState<SliderValue>(thresholdNumber);
   const [internalSliderValue, setInternalSliderValue] =
@@ -227,13 +227,20 @@ export default function MultipleLineChart({ thresholdNumber }: any) {
                 value ? value.slice(0, 4) : "Uncategorized"
               }
             />
-            <YAxis domain={[0, 100]} />
+            <YAxis domain={[0, 300]} />
             <Legend className="dark:fill-slate-50" />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Bar
               dataKey={"total_persen_losses"}
               name={"Total Persen Loss"}
-              fill="#111 dark:#fff"
+              fill="#ffcaaf"
+              className="dark:fill-slate-50 dark:stroke-slate-50 hover:cursor-pointer"
+              barSize={20}
+            />
+            <Bar
+              dataKey={"total_nilai_losses"}
+              name={"Total Nilai Loss"}
+              fill="#a7bed3"
               className="dark:fill-slate-50 dark:stroke-slate-50 hover:cursor-pointer"
               barSize={20}
             />

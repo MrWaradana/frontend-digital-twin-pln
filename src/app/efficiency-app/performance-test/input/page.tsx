@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import VariableBestCaseForm from "@/components/efficiency-app/VariableBestCaseForm";
-import VariableInputForm from "@/components/efficiency-app/VariableInputForm";
+import VariableInputForm from "@/components/efficiency-app/performance-test/VariableInputForm";
 import MasterDataRadioGroup from "@/components/efficiency-app/MasterDataRadioGroup";
 import SelectMasterData from "@/components/efficiency-app/SelectMasterData";
 import { Link, Button, CircularProgress } from "@nextui-org/react";
@@ -52,6 +52,7 @@ export default function Page() {
           <ChevronLeftIcon size={12} />
           Back to all
         </Button>
+        <h1 className="text-3xl font-bold mb-8">Performance Test Input</h1>
         <h2 className="mb-4">
           Opened <span>Excel {formatFilename(excels[0].excel_filename)}</span>
         </h2>
