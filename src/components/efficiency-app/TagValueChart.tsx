@@ -1,30 +1,33 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import CanvasJSReact from "@canvasjs/react-charts";
+const CanvasJSChart = CanvasJSReact.CanvasJSChart;
+
 import { Variable } from "@/lib/APIs/useGetVariables";
 var randomColor = require("randomcolor");
 
-import { Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+// import { Line } from "react-chartjs-2";
+// import {
+//   Chart as ChartJS,
+//   CategoryScale,
+//   LinearScale,
+//   PointElement,
+//   LineElement,
+//   Title,
+//   Tooltip,
+//   Legend,
+// } from "chart.js";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+// ChartJS.register(
+//   CategoryScale,
+//   LinearScale,
+//   PointElement,
+//   LineElement,
+//   Title,
+//   Tooltip,
+//   Legend
+// );
 
 import {
   Card,
@@ -52,37 +55,6 @@ const monthName = [
   "November",
   "December",
 ];
-
-const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "top" as const,
-    },
-    title: {
-      display: true,
-      text: "Dynamic Multi-Line Chart",
-    },
-  },
-  //   scales: {
-  //     x: {
-  //       type: "linear",
-  //       position: "bottom",
-  //       title: {
-  //         display: true,
-  //         text: "Data Point",
-  //       },
-  //     },
-  //     y: {
-  //       type: "linear",
-  //       position: "left",
-  //       title: {
-  //         display: true,
-  //         text: "Value",
-  //       },
-  //     },
-  //   },
-};
 
 export function TagValueChart({
   session,
@@ -127,28 +99,73 @@ export function TagValueChart({
 
     // const labelsNameAttribute = [];
 
-    const dataSetAttribute = tagValueDatas!!.map((data: any) => {
+    const dataSetAttributes = tagValueDatas!!.map((data: any) => {
       const datasets = {
-        label: data.name,
-        data: [],
-        borderColor: randomColor(),
-        backgroundColor: "rgba(0, 0, 0, 0.1)",
-        tension: 0.1,
+        type: "line",
+        name: data.name,
+        showInLegend: false,
       };
+
+      datasets["dataPoints"] = datasets["dataPoints"] || [];
+
       data.values.forEach((values: any) => {
-        datasets["data"] += values.value;
+        datasets["dataPoints"].push({
+          x: new Date(values.time_stamp),
+          y: values.value,
+        });
       });
 
       return datasets;
     });
 
     return {
-      labels: ["January", "February", "March", "April", "May", "June", "July"],
-      datasets: dataSetAttribute,
+      dataSetAttributes,
     };
   }, [tagValueDatas]);
+  // console.log(chartData);
+  /**
+   * (END): GET CHART TAG VALUES DATA==========================================================================================
+   */
 
-  console.log("chart data", chartData);
+  // CREATE OPTION FOR LINE CHART
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+      title: {
+        display: true,
+        text: "Tag Value Chart",
+      },
+    },
+    toolTip: {
+      shared: true,
+    },
+    data: chartData.dataSetAttributes,
+    //   scales: {
+    //     x: {
+    //       type: "linear",
+    //       position: "bottom",
+    //       title: {
+    //         display: true,
+    //         text: "Data Point",
+    //       },
+    //     },
+    //     y: {
+    //       type: "linear",
+    //       position: "left",
+    //       title: {
+    //         display: true,
+    //         text: "Value",
+    //       },
+    //     },
+    //   },
+  };
+  // console.log("OPTION==================================================");
+  // console.log(options);
+
+  // console.log("chart data", chartData);
   // console.log("typeof periode: ", chartData[0].periode);
   // chartData.length > 0
   //   ? console.log(
@@ -158,9 +175,6 @@ export function TagValueChart({
   //       chartData[0].periode.getDate()
   //     )
   //   : console.log("chartData");
-  /**
-   * (END): GET CHART TAG VALUES DATA==========================================================================================
-   */
 
   /**
    * (START): GET CHART TAG VALUES CONFIG========================================================================================
@@ -204,7 +218,7 @@ export function TagValueChart({
           </CardHeader>
           <CardContent>
             <div className="h-[500px]">
-              <Line data={chartData} options={options} />
+              <CanvasJSChart options={options} />
             </div>
           </CardContent>
         </Card>

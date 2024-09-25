@@ -15,6 +15,7 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { HeatLossTrendingChart } from "@/components/efficiency-app/HeatLossTrendingChart";
+// import { HeatLossTrendingChartNew } from "@/components/efficiency-app/HeatLossTrendingChartNew";
 import { TagValueChart } from "@/components/efficiency-app/TagValueChart";
 import { useGetVariables } from "@/lib/APIs/useGetVariables";
 import {
@@ -223,11 +224,11 @@ export default function Page() {
         </div>
 
         {/* Aside on the right: (variable checkbox component) */}
-        <div className="w-64 bg-muted/50 p-4 overflow-hidden flex items-center flex-col gap-y-3 border-l">
-          <Card className="w-64 bg-muted/50 p-4 overflow-hidden flex flex-col border-l">
+        <div className="w-64 bg-muted/50 p-4 overflow-hidden flex items-center flex-col gap-y-3 border-l ">
+          <Card className="w-64 bg-muted/50 p-4 overflow-hidden flex flex-1 flex-col border-l">
             <h2 className="text-lg font-semibold mb-4">Select Variables</h2>
             <ScrollArea className="flex-1 rounded-md border">
-              <div className="pt-24 pb-4 px-4 space-y-4">
+              <div className="p-4 space-y-4">
                 {variableRawData?.map((item: any) => (
                   <div key={item.id} className="flex items-center space-x-2">
                     <Checkbox
@@ -253,7 +254,7 @@ export default function Page() {
             </p>
           </Card>
 
-          <Card className="w-64 bg-muted/50 p-4 overflow-hidden flex flex-col border-l">
+          <Card className="w-64 bg-muted/50 p-4 overflow-hidden flex flex-1 flex-col border-l">
             <h2 className="text-lg font-semibold mb-4">Select Tags</h2>
             <ScrollArea className="flex-1 rounded-md border">
               <div className="p-4 space-y-4">
