@@ -9,8 +9,8 @@ export default async function Home() {
       url: "/efficiency-app",
     },
     {
-      name: "Aplikasi 2",
-      url: "#",
+      name: "PFI App",
+      url: "/pfi-app",
     },
     {
       name: "App3",
