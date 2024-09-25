@@ -70,7 +70,7 @@ const chartDummyConfig = {
   },
 } satisfies ChartConfig;
 
-export function HeatLossTrendingChart({
+export function HeatLossTrendingChartNew({
   session,
   isLoadingTrendingDatas,
   errorTrendingDatas,
@@ -120,15 +120,22 @@ export function HeatLossTrendingChart({
   const chartData = useMemo(() => {
     if (!trendingDatas) return [];
 
-    return trendingDatas.map((data: any) => {
-      const dataPoint: any = {
-        periode: new Date(data.periode),
+    const dataSetAttributes = trendingDatas.map((data: any) => {
+      // const dataPoint: any = {
+      //   periode: new Date(data.periode),
+      // };
+      const datasets = {
+        type: "line",
+        name: data.name,
+        showInLegend: false,
       };
+
+      datasets["dataPoints"] = datasets["dataPoints"] || [];
       data.pareto.forEach((pareto: any) => {
-        dataPoint[pareto.variable_id] = pareto.persen_losses;
+        datasets[pareto.variable_id] = pareto.persen_losses;
       });
 
-      return dataPoint;
+      return datasets;
     });
   }, [trendingDatas]);
   // console.log("typeof periode: ", chartData[0].periode);

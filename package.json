@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@canvasjs/react-charts": "^1.0.2",
     "@faker-js/faker": "^8.4.1",
     "@hookform/resolvers": "^3.9.0",
     "@mantine/core": "^7.12.2",
@@ -43,7 +44,7 @@
     "lodash": "^4.17.21",
     "lucide-react": "^0.428.0",
     "mantine-react-table": "^2.0.0-beta.6",
-    "next": "14.2.5",
+    "next": "^14.2.13",
     "next-auth": "^5.0.0-beta.20",
     "next-themes": "^0.3.0",
     "randomcolor": "^0.6.2",
