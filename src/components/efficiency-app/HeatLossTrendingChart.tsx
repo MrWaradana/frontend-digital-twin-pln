@@ -75,19 +75,28 @@ export function HeatLossTrendingChart({
   isLoadingTrendingDatas,
   errorTrendingDatas,
   trendingDatas,
+  isLoadingTagValueDatas,
+  errorTagValueDatas,
+  tagValueDatas,
   checkedVariables,
   startDate,
   endDate,
-  variableData,
+  variableRawData,
+  tagRawData,
 }: {
   session: any;
   isLoadingTrendingDatas: any;
   errorTrendingDatas: any;
   trendingDatas: any;
+  isLoadingTagValueDatas: any;
+  errorTagValueDatas: any;
+  tagValueDatas: any;
   checkedVariables: any | Variable[];
+  checkedTags: any | Variable[];
   startDate: Date | any | null;
   endDate: Date | any | null;
-  variableData: any;
+  variableRawData: any;
+  tagRawData: any;
 }) {
   // const [variables, setVariables] = useState(null);
   // const [trendingDataChart, setTrendingDataChart] = useState(null);
@@ -106,7 +115,7 @@ export function HeatLossTrendingChart({
   //   const trendingDatas = trendingData ?? [];
 
   /**
-   * (START): GET CHART DATA========================================================================================
+   * (START): GET CHART TRENDING DATA========================================================================================
    */
   const chartData = useMemo(() => {
     if (!trendingDatas) return [];
@@ -123,23 +132,23 @@ export function HeatLossTrendingChart({
     });
   }, [trendingDatas]);
   // console.log("typeof periode: ", chartData[0].periode);
-  chartData.length > 0
-    ? console.log(
-        "typeof Periode",
-        typeof chartData[0].periode,
-        " and data: ",
-        chartData[0].periode.getDate()
-      )
-    : console.log("chartData");
+  // chartData.length > 0
+  //   ? console.log(
+  //       "typeof Periode",
+  //       typeof chartData[0].periode,
+  //       " and data: ",
+  //       chvisxartData[0].periode.getDate()
+  //     )
+  //   : console.log("chartData");
   /**
-   * (END): GET CHART DATA==========================================================================================
+   * (END): GET CHART TRENDING DATA==========================================================================================
    */
 
   /**
-   * (START): GET CHART CONFIG========================================================================================
+   * (START): GET CHART TRENDING CONFIG========================================================================================
    */
   const chartConfig = useMemo(() => {
-    return variableData.reduce((config: any, variable: any) => {
+    return variableRawData.reduce((config: any, variable: any) => {
       if (checkedVariables.includes(variable.id)) {
         config[variable.id] = {
           name: variable.short_name,
@@ -148,10 +157,10 @@ export function HeatLossTrendingChart({
       }
       return config;
     }, {});
-  }, [variableData, checkedVariables]);
+  }, [variableRawData, checkedVariables]);
 
   /**
-   * (END): GET CHART CONFIG===========================================================================================
+   * (END): GET CHART TRENDING CONFIG===========================================================================================
    */
 
   if (isLoadingTrendingDatas)
@@ -165,7 +174,7 @@ export function HeatLossTrendingChart({
   /** MANAGE TRENDING DATA */
 
   return (
-    variableData && (
+    variableRawData && (
       <>
         {/* CARD HEAT LOSS TRENDING DATA */}
         <Card>
@@ -259,10 +268,10 @@ export function HeatLossTrendingChart({
           </CardFooter>
         </Card>
 
-        {/* NEW CARD HEAT LOSS TRENDING DATA */}
+        {/* CARD TAG VALUE DATA */}
         <Card className="mt-3">
           <CardHeader>
-            <CardTitle>API DUMMY DATA</CardTitle>
+            <CardTitle>Value of Each Tag</CardTitle>
             <CardDescription>
               STILL WAITING FOR ACTUAL DATA TO DISPLAY
             </CardDescription>

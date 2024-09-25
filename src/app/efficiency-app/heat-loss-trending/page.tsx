@@ -15,11 +15,14 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { HeatLossTrendingChart } from "@/components/efficiency-app/HeatLossTrendingChart";
+import { TagValueChart } from "@/components/efficiency-app/TagValueChart";
 import { useGetVariables } from "@/lib/APIs/useGetVariables";
 import {
   // DataTrending,
   useGetDataTrending,
 } from "@/lib/APIs/useGetDataTrending";
+import { useGetTags } from "@/lib/APIs/useGetTags";
+import { useGetTagValue } from "@/lib/APIs/useGetTagValue";
 import { useSession } from "next-auth/react";
 
 /** LATER IT WILL BE SEPARATE COMPONENT */
@@ -47,14 +50,6 @@ export default function Page() {
     return date ? format(date, "yyyy-MM-dd") : "";
   };
   //
-  const [variableRawState, setVariableRawState] = useState<any[]>([]);
-
-  // GET LIST VARIABLE
-  const {
-    data: variableData,
-    isLoading: isLoadingVariableData,
-    mutate: mutateVariableData,
-  } = useGetVariables(session?.data?.user.access_token, excelId, type);
 
   /** Start & end date state */
   const [startDateValue, setStartDateValue] = useState<Date | null>(new Date());
@@ -63,10 +58,29 @@ export default function Page() {
 
   // variables checked state
   const [checkedVariables, setCheckedVariables] = useState<any[]>([]);
+  // Tags checked state
+  const [checkedTags, setCheckedTags] = useState<any[]>([]);
 
-  console.log(`ini tokennya: ${session?.data?.user.access_token}`);
+  const [variableRawData, setVariableRawData] = useState<any[]>([]);
+  const [tagRawData, setTagRawData] = useState<any[]>([]);
+
+  // GET LIST VARIABLE
+  const {
+    data: variableData,
+    isLoading: isLoadingVariableData,
+    mutate: mutateVariableData,
+  } = useGetVariables(session?.data?.user.access_token, excelId, type);
+
+  // GET LIST TAGS
+  const {
+    data: tagData,
+    isLoading: isLoadingTagData,
+    mutate: mutateTagData,
+  } = useGetTags(session?.data?.user.access_token);
+
+  // console.log(`ini tokennya: ${session?.data?.user.access_token}`);
   // console.log("WOWO");
-  // console.log(variableRawState);
+  // console.log(variableRawData);
 
   // GET DATA TRENDING BY VARIABLES
   const {
@@ -81,6 +95,19 @@ export default function Page() {
     endDateValue
   );
 
+  // GET TAG VALUE DATA BY TAG
+  const {
+    data: tagValueDatas,
+    isLoading: isLoadingTagValueDatas,
+    mutate: mutateTagValueDatas,
+    error: errorTagValueDatas,
+  } = useGetTagValue(
+    session?.data?.user.access_token,
+    checkedTags,
+    startDateValue,
+    endDateValue
+  );
+
   const handleVariableCheckboxChange = useCallback(
     (item: any, isChecked: any) => {
       setCheckedVariables((prev) =>
@@ -90,8 +117,14 @@ export default function Page() {
     []
   );
 
-  console.log("CHECKED VARIABLES");
-  console.log(checkedVariables);
+  const handleTagCheckboxChange = useCallback((item: any, isChecked: any) => {
+    setCheckedTags((prev) =>
+      isChecked ? [...prev, item] : prev.filter((i) => i !== item)
+    );
+  }, []);
+
+  // console.log("CHECKED VARIABLES");
+  // console.log(checkedVariables);
 
   const handleStartDateChange = (e: ChangeEvent<HTMLInputElement>) => {
     const date = new Date(e.target.value);
@@ -112,15 +145,26 @@ export default function Page() {
 
   useEffect(() => {
     mutateTrendingDatas();
+    mutateTagValueDatas();
     // console.log("HARUSNYA SEH MUTATE YGY?!?!");
-  }, [startDateValue, endDateValue, checkedVariables, mutateTrendingDatas]);
+  }, [
+    startDateValue,
+    endDateValue,
+    checkedVariables,
+    mutateTrendingDatas,
+    mutateTagValueDatas,
+  ]);
 
   useEffect(() => {
     if (variableData) {
-      setVariableRawState(variableData);
+      setVariableRawData(variableData);
     }
-    // console.log(variableRawState, "variable raw state");
-  }, [variableData]);
+
+    if (tagData) {
+      setTagRawData(tagData);
+    }
+    // console.log(variableRawData, "variable raw state");
+  }, [variableData, tagData]);
 
   return (
     <EfficiencyContentLayout title="Heat Loss Trending">
@@ -154,42 +198,90 @@ export default function Page() {
             isLoadingTrendingDatas={isLoadingTrendingDatas}
             errorTrendingDatas={errorTrendingDatas}
             trendingDatas={trendingDatas || []}
+            isLoadingTagValueDatas={isLoadingTagValueDatas}
+            errorTagValueDatas={errorTagValueDatas}
+            tagValueDatas={tagValueDatas || []}
             checkedVariables={checkedVariables}
+            checkedTags={checkedTags}
             startDate={formatDate(startDateValue)}
             endDate={formatDate(endDateValue)}
-            variableData={variableRawState}
+            variableRawData={variableRawData}
+            tagRawData={tagRawData}
           ></HeatLossTrendingChart>
+
+          <TagValueChart
+            session={session}
+            checkedTags={checkedTags}
+            startDate={formatDate(startDateValue)}
+            endDate={formatDate(endDateValue)}
+            isLoadingTagValueDatas={isLoadingTagValueDatas}
+            errorTagValueDatas={errorTagValueDatas}
+            tagValueDatas={tagValueDatas}
+            tagRawData={tagRawData}
+          ></TagValueChart>
         </div>
 
         {/* Aside on the right: (variable checkbox component) */}
-        <Card className="w-64 bg-muted/50 p-4 overflow-hidden flex flex-col border-l">
-          <h2 className="text-lg font-semibold mb-4">Select Variables</h2>
-          <ScrollArea className="flex-1 rounded-md border">
-            <div className="p-4 space-y-4">
-              {variableRawState?.map((item: any) => (
-                <div key={item.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={item.id}
-                    checked={checkedVariables.includes(item.id)}
-                    onCheckedChange={(isChecked) =>
-                      handleVariableCheckboxChange(item.id, isChecked)
-                    }
-                  />
-                  <Label
-                    htmlFor={item.id}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {item.short_name}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
-          <Separator className="my-4" />
-          <p className="text-sm text-muted-foreground">
-            Selected: {checkedVariables.length} variable(s)
-          </p>
-        </Card>
+        <div className="w-64 bg-muted/50 p-4 overflow-hidden flex items-center flex-col gap-y-3 border-l">
+          <Card className="w-64 bg-muted/50 p-4 overflow-hidden flex flex-col border-l">
+            <h2 className="text-lg font-semibold mb-4">Select Variables</h2>
+            <ScrollArea className="flex-1 rounded-md border">
+              <div className="pt-24 pb-4 px-4 space-y-4">
+                {variableRawData?.map((item: any) => (
+                  <div key={item.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={item.id}
+                      checked={checkedVariables.includes(item.id)}
+                      onCheckedChange={(isChecked) =>
+                        handleVariableCheckboxChange(item.id, isChecked)
+                      }
+                    />
+                    <Label
+                      htmlFor={item.id}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {item.short_name}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+            <Separator className="my-4" />
+            <p className="text-sm text-muted-foreground">
+              Selected: {checkedVariables.length} variable(s)
+            </p>
+          </Card>
+
+          <Card className="w-64 bg-muted/50 p-4 overflow-hidden flex flex-col border-l">
+            <h2 className="text-lg font-semibold mb-4">Select Tags</h2>
+            <ScrollArea className="flex-1 rounded-md border">
+              <div className="p-4 space-y-4">
+                {tagRawData?.map((item: any) => (
+                  <div key={item.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={item.id}
+                      checked={checkedTags.includes(item.id)}
+                      onCheckedChange={(isChecked) =>
+                        handleTagCheckboxChange(item.id, isChecked)
+                      }
+                    />
+                    <Label
+                      htmlFor={item.id}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {/* {item.short_name} */}
+                      {item.name}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+            <Separator className="my-4" />
+            <p className="text-sm text-muted-foreground">
+              Selected: {checkedTags.length} tag(s)
+            </p>
+          </Card>
+        </div>
       </div>
     </EfficiencyContentLayout>
   );
