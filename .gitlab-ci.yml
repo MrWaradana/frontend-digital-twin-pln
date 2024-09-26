@@ -9,12 +9,12 @@ deploy_to_server: # Name of the job
   before_script:
     - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )" # Ensure SSH is available on the runner
     - eval $(ssh-agent -s) # Start the SSH agent
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - # Add the SSH private key stored in GitLab CI variables
+    - chmod 600 "$SSH_PRIVATE_KEY"
     - mkdir -p ~/.ssh # Create SSH directory
     - chmod 700 ~/.ssh # Set proper permissions for the SSH directory
     - ssh-keyscan -H 192.168.1.51 >> ~/.ssh/known_hosts # Add the server to known hosts to avoid SSH verification prompt
   script:
-    - ssh aimo@192.168.1.51 'cd /home/aimo/fe-front-end && git pull ssh main && npm install && npm run build && pm2 restart 0' # Connect to the server and execute the deployment commands
+    - ssh -i "$SSH_PRIVATE_KEY" -o StrictHostKeyChecking=no aimo@192.168.1.51 'cd /home/aimo/fe-front-end && git pull ssh main && npm install && npm run build && pm2 restart 0' # Connect to the server and execute the deployment commands
   only:
     - main # This job will only run when changes are pushed to the 'main' branch (adjust this if needed)
 
