@@ -9,7 +9,7 @@ deploy_to_server: # Name of the job
   before_script:
     - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )" # Ensure SSH is available on the runner
     - eval $(ssh-agent -s) # Start the SSH agent
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - # Add the SSH private key stored in GitLab CI variables
+    - echo "$SSH_PRIVATE_KEY" | base64 --decode | ssh-add - # Add the SSH private key stored in GitLab CI variables
     - mkdir -p ~/.ssh # Create SSH directory
     - chmod 700 ~/.ssh # Set proper permissions for the SSH directory
     - ssh-keyscan -H 192.168.1.51 >> ~/.ssh/known_hosts # Add the server to known hosts to avoid SSH verification prompt
