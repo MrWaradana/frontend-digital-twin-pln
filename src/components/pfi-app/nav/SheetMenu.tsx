@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import PLNLogo from "../../../../public/Logo_PLN.svg";
 
-// import { Menu } from "@/components/pfi-app/nav/Menu";
+import { Menu } from "@/components/pfi-app/nav/Menu";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -34,7 +34,7 @@ export function SheetMenu() {
             </Link>
           </Button>
         </SheetHeader>
-        {/* <Menu isListOpen /> */}
+        <Menu isListOpen />
       </SheetContent>
     </Sheet>
   );

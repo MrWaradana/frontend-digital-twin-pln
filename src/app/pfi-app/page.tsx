@@ -1,8 +1,28 @@
 "use client";
 
+import TableEquipment from "@/components/pfi-app/TableEquipment";
 import { PFIContentLayout } from "@/containers/PFIContentLayout";
+import { useGetCategories } from "@/lib/APIs/useGetCategoryPfi";
+import { useGetEquipments } from "@/lib/APIs/useGetEquipments";
+import { CircularProgress } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 export default function Page() {
+  const { data: session } = useSession();
+
+  const {
+    data: equipmentsData,
+    isLoading: equipmentLoading,
+    isValidating,
+    mutate,
+  } = useGetEquipments(session?.user.access_token);
+
+  const { data: categoriesData } = useGetCategories(session?.user.access_token);
+
+  const equipments = equipmentsData ?? [];
+  const categories = categoriesData ?? [];
+
   return (
     <PFIContentLayout title="All PFI Data">
       <div className="flex flex-col items-center justify-center mt-24">
@@ -18,6 +38,13 @@ export default function Page() {
           </div>
 
           {/* Table disini */}
+          <TableEquipment
+            dataRow={equipments}
+            categories={categories}
+            mutate={mutate}
+            isValidating={isValidating}
+            parent_id={null}
+          />
         </div>
       </div>
     </PFIContentLayout>
