@@ -1,0 +1,24 @@
+# GitLab CI/CD Configuration File for Automating Deployment
+# This file pulls changes, installs dependencies, builds the project, and restarts the PM2 process on the server
+
+stages: # Define the stages of the pipeline
+  - deploy # Define a single deploy stage
+
+deploy_to_server: # Name of the job
+  stage: deploy # Job belongs to the deploy stage
+  before_script:
+    - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )" # Ensure SSH is available on the runner
+    - eval $(ssh-agent -s) # Start the SSH agent
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - # Add the SSH private key stored in GitLab CI variables
+    - mkdir -p ~/.ssh # Create SSH directory
+    - chmod 700 ~/.ssh # Set proper permissions for the SSH directory
+    - ssh-keyscan -H 192.168.1.51 >> ~/.ssh/known_hosts # Add the server to known hosts to avoid SSH verification prompt
+  script:
+    - ssh aimo@192.168.1.51 'cd /home/aimo/fe-front-end && git pull ssh main && npm install && npm run build && pm2 restart 0' # Connect to the server and execute the deployment commands
+  only:
+    - main # This job will only run when changes are pushed to the 'main' branch (adjust this if needed)
+
+# Optional Cache for npm dependencies (improves speed)
+cache:
+  paths:
+    - node_modules/
