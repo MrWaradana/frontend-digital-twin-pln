@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Modal,
   ModalBody,
@@ -39,6 +39,7 @@ import { parameterOptions } from "@/lib/efficiency-data";
 import { capitalize } from "@/lib/utils";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { useSession } from "next-auth/react";
+import { useSelectedEfficiencyDataStore } from "../../store/selectedEfficiencyData";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   current: "success",
@@ -102,6 +103,16 @@ export default function TableEfficiency({
     column: "age",
     direction: "ascending",
   });
+
+  const selectedEfficiencyData = useSelectedEfficiencyDataStore(
+    (state) => state.selectedEfficiencyData
+  ); // Retrieve currentKey from Zustand
+
+  useEffect(() => {
+    if (selectedEfficiencyData) {
+      setSelectedKeys(new Set([selectedEfficiencyData])); // Convert currentKey to Set and update the state
+    }
+  }, [selectedEfficiencyData]);
 
   const [page, setPage] = React.useState(1);
 
@@ -477,14 +488,22 @@ export default function TableEfficiency({
         isHeaderSticky
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
+        color="primary"
         classNames={{
           wrapper: "max-h-[382px]",
         }}
         selectedKeys={selectedKeys}
+        selectionMode="multiple"
+        selectionBehavior="replace"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
-        onSelectionChange={setSelectedKeys}
+        onSelectionChange={(value) => {
+          setSelectedKeys(value);
+          useSelectedEfficiencyDataStore
+            .getState()
+            .setSelectedEfficiencyData(value);
+        }}
         onSortChange={setSortDescriptor}
       >
         <TableHeader columns={headerColumns}>

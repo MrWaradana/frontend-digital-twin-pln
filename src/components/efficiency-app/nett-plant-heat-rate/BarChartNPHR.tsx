@@ -32,6 +32,7 @@ import MultipleLineChart from "./MultipleLineChart";
 import { useGetDataNPHR } from "@/lib/APIs/useGetDataNPHR";
 import { useSession } from "next-auth/react";
 import { useMemo, useRef } from "react";
+import { useSelectedEfficiencyDataStore } from "../../../store/selectedEfficiencyData";
 
 export const description = "A stacked bar chart with a legend";
 
@@ -50,10 +51,15 @@ export default function BarChartNPHR({ data_id }: any) {
   const session = useSession();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const { data, mutate, isLoading, isValidating } = useGetDataNPHR(
-    session?.data?.user.access_token,
-    data_id
+  const selectedEfficiencyData = useSelectedEfficiencyDataStore(
+    (state) => state.selectedEfficiencyData
   );
+  console.log(selectedEfficiencyData, "selected");
+  const { data, mutate, isLoading, isValidating, error } = useGetDataNPHR(
+    session?.data?.user.access_token,
+    selectedEfficiencyData ? selectedEfficiencyData : data_id
+  );
+
   const chartParetoData = data?.chart_result ?? [];
   const nphrData = data?.nphr_result ?? [];
   const chartDataRef = useRef<any | null>(null);
@@ -169,7 +175,7 @@ export default function BarChartNPHR({ data_id }: any) {
               <Bar
                 dataKey="gap"
                 stackId="a"
-                fill="#e2cf9d"
+                fill="#FF6961"
                 radius={[4, 4, 0, 0]}
                 className="hover:cursor-pointer"
                 onClick={onOpen}

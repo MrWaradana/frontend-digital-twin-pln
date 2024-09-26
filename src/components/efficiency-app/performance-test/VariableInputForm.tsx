@@ -67,7 +67,7 @@ export default function VariableInputForm({
 
   const formSchemaInput = z.object({
     name: z.string({ message: "Name is required!" }), // Adjust validation as needed
-    beban: z.number({ message: "Beban is required!" }),
+    beban: z.string({ message: "Beban is required!" }),
     inputs: z.object(
       Object.fromEntries(
         filteredVariableData.map((v: any) => [
@@ -91,7 +91,7 @@ export default function VariableInputForm({
     mode: "onChange",
     defaultValues: {
       name: "",
-      beban: 50,
+      beban: "50",
       inputs: defaultInputs,
     },
   });
