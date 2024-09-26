@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Modal,
   ModalBody,
@@ -40,6 +40,8 @@ import { parameterOptions } from "@/lib/efficiency-data";
 import { capitalize } from "@/lib/utils";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { useSession } from "next-auth/react";
+import { useSelectedEfficiencyDataStore } from "@/store/selectedEfficiencyData";
+import { update } from "lodash";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   current: "success",
@@ -67,7 +69,7 @@ export default function TablePerformanceTest({
   addNewUrl?: string;
   mutate?: any;
   isLoading: any;
-  isValidating?: boolean;
+  isValidating?: any;
 }) {
   const [tableState, setTableState] = React.useState(tableData);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -83,6 +85,7 @@ export default function TablePerformanceTest({
     { name: "JENIS PARAMETER", uid: "jenis_parameter", sortable: true },
     { name: "BEBAN", uid: "performance_test_weight", sortable: true },
     { name: "PERIODE", uid: "periode", sortable: true },
+    { name: "FLAG NPHR", uid: "flag_nphr" },
     { name: "ACTIONS", uid: "actions" },
   ];
 
@@ -104,6 +107,16 @@ export default function TablePerformanceTest({
     column: "age",
     direction: "ascending",
   });
+
+  const selectedEfficiencyData = useSelectedEfficiencyDataStore(
+    (state) => state.selectedEfficiencyData
+  ); // Retrieve currentKey from Zustand
+
+  useEffect(() => {
+    if (selectedEfficiencyData) {
+      setSelectedKeys(new Set([selectedEfficiencyData])); // Convert currentKey to Set and update the state
+    }
+  }, [selectedEfficiencyData]);
 
   const [page, setPage] = React.useState(1);
 
@@ -220,6 +233,12 @@ export default function TablePerformanceTest({
           return `${cellValue}%`;
         case "periode":
           return cellValue;
+        case "flag_nphr":
+          return (
+            <>
+              <Checkbox />
+            </>
+          );
         case "actions":
           return (
             <>
@@ -481,13 +500,18 @@ export default function TablePerformanceTest({
           wrapper: "max-h-[382px]",
         }}
         color="primary"
-        selectionMode="single"
         selectedKeys={selectedKeys}
-        selectionBehavior={`toggle`}
+        selectionMode="multiple"
+        selectionBehavior={"replace"}
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
-        onSelectionChange={setSelectedKeys}
+        onSelectionChange={(value) => {
+          setSelectedKeys(value);
+          useSelectedEfficiencyDataStore
+            .getState()
+            .setSelectedEfficiencyData(value);
+        }}
         onSortChange={setSortDescriptor}
       >
         <TableHeader columns={headerColumns}>

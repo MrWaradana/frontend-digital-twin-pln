@@ -45,6 +45,6 @@ export function useGetTags(
     return useApiFetch(
         `${API_V1_LIVE_URL}/tags`,
         !!token,
-        token
+        token,
     )
 }
