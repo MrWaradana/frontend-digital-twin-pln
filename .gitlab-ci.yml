@@ -10,11 +10,15 @@ deploy:
   only:
     - main  # Adjust this to your default branch
   script:
+    - set -x  # Enable debug output
     - echo "Deploying to the server..."
+    - echo "$SSH_PRIVATE_KEY"
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
+    - ls -la ~/.ssh
     - ssh-keyscan -H 192.168.1.51 >> ~/.ssh/known_hosts
+    - cat ~/.ssh/known_hosts
     - ssh aimo@192.168.1.51 'cd /home/aimo/fe-front-end && git pull ssh main && npm install && pm2 restart 0' 
   only:
     - main # This job will only run when changes are pushed to the 'main' branch (adjust this if needed)
