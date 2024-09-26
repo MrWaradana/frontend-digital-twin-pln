@@ -4,65 +4,18 @@
 stages: # Define the stages of the pipeline
   - deploy # Define a single deploy stage
 
-deploy_to_server: # Name of the job
-  stage: deploy # Job belongs to the deploy stage
-  before_script:
-    - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )" # Ensure SSH is available on the runner
-    - eval $(ssh-agent -s) # Start the SSH agent
-    - echo "-----BEGIN OPENSSH PRIVATE KEY-----
-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
------END OPENSSH PRIVATE KEY-----" | tr -d '\r' | ssh-add - # Add the SSH private key stored in GitLab CI variables
-    - mkdir -p ~/.ssh # Create SSH directory
-    - chmod 700 ~/.ssh # Set proper permissions for the SSH directory
-    - ssh-keyscan -H 192.168.1.51 >> ~/.ssh/known_hosts # Add the server to known hosts to avoid SSH verification prompt
+
+deploy:
+  stage: deploy
+  only:
+    - main  # Adjust this to your default branch
   script:
-    - ssh aimo@192.168.1.51 'cd /home/aimo/fe-front-end && git pull ssh main && npm install && npm run build && pm2 restart 0' # Connect to the server and execute the deployment commands
+    - echo "Deploying to the server..."
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H 192.168.1.51 >> ~/.ssh/known_hosts
+    - ssh aimo@192.168.1.51 'cd /home/aimo/fe-front-end && git pull ssh main && npm install && pm2 restart 0' 
   only:
     - main # This job will only run when changes are pushed to the 'main' branch (adjust this if needed)
 
