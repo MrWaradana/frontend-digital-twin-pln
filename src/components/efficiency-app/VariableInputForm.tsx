@@ -43,12 +43,7 @@ export default function VariableInputForm({
   // const [unitsData, setUnitsData] = useState(units.data);
   // State to store input values
   const [inputValues, setInputValues] = useState(
-    Object.fromEntries(
-      variableData.map((v: any) => [
-        v.id,
-        v.base_case == "NaN" ? 0 : Number(v.base_case),
-      ])
-    )
+    Object.fromEntries(variableData.map((v: any) => [v.id, v.base_case]))
   );
 
   const categorizedData = variableData.reduce((acc: any, variable: any) => {
@@ -71,17 +66,14 @@ export default function VariableInputForm({
       Object.fromEntries(
         filteredVariableData.map((v: any) => [
           v.id, // This is the key for the schema
-          z.number({ message: "Value is not a number!" }),
+          z.string({ message: "Value is required!" }),
         ])
       )
     ),
   });
 
   const defaultInputs = Object.fromEntries(
-    filteredVariableData.map((v: any) => [
-      v.id,
-      v.base_case == "NaN" ? 0 : Number(v.base_case),
-    ])
+    filteredVariableData.map((v: any) => [v.id, v.base_case.toString()])
   );
 
   // 1. Define your form.
@@ -148,9 +140,7 @@ export default function VariableInputForm({
 
         toast.success("Data Created!");
         setLoading(false);
-        router.push(
-          `/efficiency-app/${response_data.data.data_id}/output`
-        );
+        router.push(`/efficiency-app/${response_data.data.data_id}/output`);
 
         // if (response) {
         //   setLoading(false);
@@ -235,14 +225,14 @@ export default function VariableInputForm({
                                 placeholder={`${""}`}
                                 label={v.input_name}
                                 size="md"
-                                className={`justify-between max-w-xs lg:max-w-full  border-b-1 pb-1`}
+                                className={`justify-between max-w-xs lg:max-w-full  border-b-1 pb-1 pt-4`}
                                 labelPlacement="outside"
-                                type="number"
+                                type="text"
                                 required
                                 {...field}
                                 // value={inputValues[v.id]} // Controlled input
                                 onChange={async ({ target: { value } }) => {
-                                  field.onChange(Number(value));
+                                  field.onChange(value.toString());
                                   await formInput.trigger(`inputs.${v.id}`);
                                 }}
                                 endContent={

@@ -54,21 +54,20 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
     }
   }, [data_id, session?.data?.user?.access_token]);
 
-  const data = tableData ?? []
+  const data = tableData ?? [];
 
   const mappedData = useMemo(() => {
     return data.map((item: any) => {
-      console.log(item)
+      console.log(item);
       return {
-
         id: item.id,
         variable: item.variable.input_name,
         value: item.nilai,
       };
-    })
-  }, [isLoading])
+    });
+  }, [isLoading]);
 
-  console.log(mappedData)
+  console.log(mappedData);
 
   const rows = mappedData;
 
@@ -119,7 +118,7 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={items}>
+        <TableBody items={items} emptyContent={`Data is not available yet!`}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (

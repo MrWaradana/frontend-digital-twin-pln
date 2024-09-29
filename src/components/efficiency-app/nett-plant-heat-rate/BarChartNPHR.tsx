@@ -61,7 +61,7 @@ export default function BarChartNPHR({ data_id }: any) {
   );
 
   const chartParetoData = data?.chart_result ?? [];
-  const nphrData = data?.nphr_result ?? [];
+  const nphrData: any = data?.nphr_result ?? [];
   const chartDataRef = useRef<any | null>(null);
   const chartParetoDataWithCumFeq = useMemo(() => {
     const mapped_data = chartParetoData
@@ -147,6 +147,9 @@ export default function BarChartNPHR({ data_id }: any) {
           )}
         </ModalContent>
       </Modal>
+      <div className="w-full flex justify-center">
+        Selected Data: {JSON.stringify(data?.data_id)}
+      </div>
       <Card>
         <CardHeader>
           <CardTitle>Nett Plant Heat Rate</CardTitle>

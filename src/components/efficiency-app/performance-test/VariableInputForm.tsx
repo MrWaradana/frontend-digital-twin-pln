@@ -150,7 +150,7 @@ export default function VariableInputForm({
 
         const response_data = await response.json();
 
-        toast.success("Data Created!");
+        toast.success("Data Submitted, wait for Thermoflow to Process Data!");
         setLoading(false);
         router.push(`/efficiency-app/${response_data.data.data_id}/output`);
 

@@ -119,7 +119,7 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={items}>
+        <TableBody items={items} emptyContent={`Data is not available yet!`}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (

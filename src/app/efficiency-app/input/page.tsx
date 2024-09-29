@@ -32,11 +32,18 @@ export default function Page() {
 
   if (isLoading)
     return (
-      <div className="flex justify-center mt-12">
-        <CircularProgress color="primary" />
-      </div>
+      <EfficiencyContentLayout title="Input Form">
+        <div className="flex justify-center mt-12">
+          <CircularProgress color="primary" />
+        </div>
+      </EfficiencyContentLayout>
     );
-  if (error) return <div>{error.message}</div>;
+  if (error)
+    return (
+      <EfficiencyContentLayout title="Input Form">
+        <div className="m-24">Error! : {error.message}</div>{" "}
+      </EfficiencyContentLayout>
+    );
 
   return (
     <EfficiencyContentLayout title="Input Form">

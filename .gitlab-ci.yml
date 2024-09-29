@@ -4,30 +4,20 @@
 stages: # Define the stages of the pipeline
   - deploy # Define a single deploy stage
 
-
 deploy:
   stage: deploy
   only:
-    - main  # Adjust this to your default branch
+    - main # Adjust this to your default branch
   before_script:
-    - mkdir -p ~/.ssh  # Create the .ssh directory if it doesn't exist
-    - chmod 700 ~/.ssh  # Set permissions for .ssh directory
-    - touch ~/.ssh/known_hosts  # Create the known_hosts file if it doesn't exist
-    - chmod 644 ~/.ssh/known_hosts  # Set permissions for known_hosts file
-    - ssh-keyscan -t rsa,ed25519 -v 36.68.222.50
+    - mkdir -p ~/.ssh # Create the .ssh directory if it doesn't exist
+    - chmod 700 ~/.ssh # Set permissions for .ssh directory
+    - touch ~/.ssh/known_hosts # Create the known_hosts file if it doesn't exist
+    - chmod 644 ~/.ssh/known_hosts # Set permissions for known_hosts file
+    - ssh-keyscan -p 23 -t rsa,ed25519 -v 192.168.1.51
   script:
-    - set -x  # Enable debug output
+    - set -x # Enable debug output
     - echo "Deploying to the server..."
-    # - echo "$SSH_KEY"
-    # - mkdir -p ~/.ssh
-    # - echo "$SSH_KEY" > ~/.ssh/id_rsa
-    # - chmod 600 ~/.ssh/id_rsa
-    # - ls -la ~/.ssh
-    # - ssh-keyscan -H 192.168.1.51 >> ~/.ssh/known_hosts
-    # - cat ~/.ssh/known_hosts
-    - ssh -p 23 aimo@36.68.222.50 'cd /home/aimo/fe-front-end && git pull ssh main && npm install && pm2 restart 0' 
-  only:
-    - main # This job will only run when changes are pushed to the 'main' branch (adjust this if needed)
+    - ssh -p 23 aimo@192.168.1.51 'cd /home/aimo/fe-front-end && git pull ssh main && npm install && pm2 restart 0'
 
 # Optional Cache for npm dependencies (improves speed)
 cache:
