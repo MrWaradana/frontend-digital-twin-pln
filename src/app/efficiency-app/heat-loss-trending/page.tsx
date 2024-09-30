@@ -14,14 +14,17 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
-import { HeatLossTrendingChart } from "@/components/efficiency-app/HeatLossTrendingChart";
-// import { HeatLossTrendingChartNew } from "@/components/efficiency-app/HeatLossTrendingChartNew";
+// import { HeatLossTrendingChart } from "@/components/efficiency-app/HeatLossTrendingChart";
+import { HeatLossTrendingChartNew } from "@/components/efficiency-app/HeatLossTrendingChartNew";
+
 import { TagValueChart } from "@/components/efficiency-app/TagValueChart";
+
 import { useGetVariables } from "@/lib/APIs/useGetVariables";
 import {
   // DataTrending,
   useGetDataTrending,
 } from "@/lib/APIs/useGetDataTrending";
+
 import { useGetTags } from "@/lib/APIs/useGetTags";
 import { useGetTagValue } from "@/lib/APIs/useGetTagValue";
 import { useSession } from "next-auth/react";
@@ -40,19 +43,23 @@ import { parseDate, getLocalTimeZone } from "@internationalized/date";
 import { useDateFormatter } from "@react-aria/i18n";
 import PeriodeDatePicker from "@/components/efficiency-app/PeriodeDatePicker";
 import { API_V1_LIVE_URL } from "@/lib/api-url";
+import { useExcelStore } from "@/store/excels";
 /** LATER IT WILL BE SEPARATE COMPONENT */
 
-const excelId = "add1cefb-1231-423c-8942-6bcd56998106";
+// const excelId = "add1cefb-1231-423c-8942-6bcd56998106";
+// const excelId = "5c220f24-b7e4-410a-b52e-8ffe25047fb6";
 const type = "out";
 
 export default function Page() {
   const session = useSession();
 
+  const excels = useExcelStore((state) => state.excels);
+  const excelId = excels[0].id;
+
   const formatDate = (date: Date | null) => {
     return date ? format(date, "yyyy-MM-dd") : "";
   };
-  //
-  console.log("API PFI", API_V1_LIVE_URL);
+
   /** Start & end date state */
   const [startDateValue, setStartDateValue] = useState<Date | null>(new Date());
   const [endDateValue, setEndDateValue] = useState<Date | null>(new Date());
@@ -153,6 +160,7 @@ export default function Page() {
     startDateValue,
     endDateValue,
     checkedVariables,
+
     mutateTrendingDatas,
     mutateTagValueDatas,
   ]);
@@ -195,21 +203,21 @@ export default function Page() {
           </div>
           {/* PeriodeDatePicker */}
 
-          <HeatLossTrendingChart
+          <HeatLossTrendingChartNew
             session={session}
             isLoadingTrendingDatas={isLoadingTrendingDatas}
             errorTrendingDatas={errorTrendingDatas}
             trendingDatas={trendingDatas || []}
-            isLoadingTagValueDatas={isLoadingTagValueDatas}
-            errorTagValueDatas={errorTagValueDatas}
-            tagValueDatas={tagValueDatas || []}
+            isLoadingTagValueDatas={[]}
+            errorTagValueDatas={[]}
+            tagValueDatas={[]}
             checkedVariables={checkedVariables}
             checkedTags={checkedTags}
             startDate={formatDate(startDateValue)}
             endDate={formatDate(endDateValue)}
             variableRawData={variableRawData}
             tagRawData={tagRawData}
-          ></HeatLossTrendingChart>
+          ></HeatLossTrendingChartNew>
 
           <TagValueChart
             session={session}

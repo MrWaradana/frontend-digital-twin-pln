@@ -7,28 +7,6 @@ const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 import { Variable } from "@/lib/APIs/useGetVariables";
 var randomColor = require("randomcolor");
 
-// import { Line } from "react-chartjs-2";
-// import {
-//   Chart as ChartJS,
-//   CategoryScale,
-//   LinearScale,
-//   PointElement,
-//   LineElement,
-//   Title,
-//   Tooltip,
-//   Legend,
-// } from "chart.js";
-
-// ChartJS.register(
-//   CategoryScale,
-//   LinearScale,
-//   PointElement,
-//   LineElement,
-//   Title,
-//   Tooltip,
-//   Legend
-// );
-
 import {
   Card,
   CardContent,
@@ -130,6 +108,7 @@ export function TagValueChart({
   // CREATE OPTION FOR LINE CHART
   const options = {
     responsive: true,
+    zoomEnabled: true,
     plugins: {
       legend: {
         position: "top" as const,
@@ -211,10 +190,8 @@ export function TagValueChart({
         {/* CARD TAG VALUE DATA */}
         <Card className="w-full max-w-4xl mx-auto">
           <CardHeader>
-            <CardTitle>Dynamic Multi-Line Chart with Time Range</CardTitle>
-            <CardDescription>
-              Add or remove datasets and adjust time range dynamically
-            </CardDescription>
+            <CardTitle>Tag Value Chart</CardTitle>
+            <CardDescription>{`${startDate} to ${endDate}`}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[500px]">
