@@ -62,12 +62,14 @@ export default function TableEfficiency({
   mutate,
   efficiencyLoading,
   isValidating,
+  thermoStatus,
 }: {
   tableData: any;
   addNewUrl?: string;
   mutate: any;
   efficiencyLoading: any;
   isValidating: boolean;
+  thermoStatus: any;
 }) {
   const [tableState, setTableState] = React.useState(tableData);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -381,6 +383,7 @@ export default function TableEfficiency({
             <Button
               as={Link}
               href={addNewUrl}
+              isDisabled={thermoStatus ? thermoStatus : false}
               color="primary"
               startContent={<PlusIcon />}
             >

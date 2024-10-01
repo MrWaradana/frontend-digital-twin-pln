@@ -18,7 +18,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { AUTH_API_URL, EFFICIENCY_API_URL } from "@/lib/api-url";
 import { useExcelStore } from "@/store/excels";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { error } from "console";
 import { useGetExcel } from "@/lib/APIs/useGetExcel";
 import { useGetData } from "@/lib/APIs/useGetData";
@@ -26,6 +26,7 @@ import { mutate } from "swr";
 import { access } from "fs";
 
 export default function Page() {
+  const pathname = usePathname();
   // const [isLoading, setLoading] = useState(true);
   // const [efficiencyData, setEfficiencyData] = useState([]);
   const router = useRouter();
@@ -50,7 +51,7 @@ export default function Page() {
   }
 
   if (error) {
-    console.log(error, "ERROOOOOOOR");
+    // console.log(error, "ERROOOOOOOR");
     fetch(`${AUTH_API_URL}/refresh-token`, {
       headers: {
         Authorization: `Bearer ${session?.user?.refresh_token}`, // Ensure refresh token exists
@@ -86,9 +87,30 @@ export default function Page() {
     isValidating: isValidatingEfficiency,
   } = useGetData(session?.user.access_token);
 
-  console.log(efficiencyData, "data efficiency");
+  // console.log(efficiencyData, "data efficiency");
 
+  const thermoStatus = efficiencyData?.thermo_status ?? false;
   const efficiency = efficiencyData?.transactions ?? [];
+
+  useEffect(() => {
+    const api = `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/stream`;
+    const es = new EventSource(api);
+    // @ts-ignore
+    es.addEventListener("data_outputs", (e) => {
+      toast.success(`Efficiency data has been processed!`);
+      // console.log(e, "DATA STREAM!");
+      if (pathname === "/efficiency-app") {
+        setTimeout(() => window.location.reload(), 3000);
+      }
+    });
+
+    // Handle SSE connection errors
+    es.onerror = (_) => {
+      toast.error(`Something went wrong!, ${_}`);
+      // Close the SSE connection
+      es.close();
+    };
+  }, []);
 
   if (isLoading && efficiencyLoading)
     return (
@@ -115,6 +137,7 @@ export default function Page() {
           {/* <h1>{excels[3].excel_filename}</h1> */}
           <TableEfficiency
             tableData={efficiency}
+            thermoStatus={thermoStatus}
             addNewUrl={`/efficiency-app/input`}
             efficiencyLoading={efficiencyLoading}
             mutate={mutateEfficiency}

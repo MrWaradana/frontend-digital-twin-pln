@@ -106,7 +106,7 @@ export default function VariableInputForm({
     // console.log(inputValues);
     setLoading(true);
 
-    // console.log(excel)
+    // Handle 'data_outputs' event
 
     const sendData = async () => {
       try {
@@ -132,15 +132,15 @@ export default function VariableInputForm({
         if (!response.ok) {
           toast.error(`Error: ${response.statusText}`);
           setLoading(false);
-
           return;
         }
 
         const response_data = await response.json();
 
-        toast.success("Data Created!");
+        toast.success("Data input received, wait for the to be processed!");
         setLoading(false);
-        router.push(`/efficiency-app/${response_data.data.data_id}/output`);
+        // router.push(`/efficiency-app/${response_data.data.data_id}/output`);
+        setTimeout(() => router.push(`/efficiency-app`), 3000);
 
         // if (response) {
         //   setLoading(false);

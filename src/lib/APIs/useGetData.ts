@@ -9,6 +9,7 @@ interface DataList {
   page_size: number;
   total_items: number;
   total_pages: number;
+  thermo_status: boolean;
   transactions: any;
 }
 
