@@ -61,7 +61,7 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
       console.log(item);
       return {
         id: item.id,
-        variable: item.variable.input_name,
+        variable: item.variable.excel_variable_name,
         value: item.nilai,
       };
     });

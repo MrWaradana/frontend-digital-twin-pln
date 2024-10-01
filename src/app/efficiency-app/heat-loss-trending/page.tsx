@@ -15,9 +15,9 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 // import { HeatLossTrendingChart } from "@/components/efficiency-app/HeatLossTrendingChart";
-import { HeatLossTrendingChartNew } from "@/components/efficiency-app/HeatLossTrendingChartNew";
+// import { HeatLossTrendingChartNew } from "@/components/efficiency-app/HeatLossTrendingChartNew";
 
-import { TagValueChart } from "@/components/efficiency-app/TagValueChart";
+// import { TagValueChart } from "@/components/efficiency-app/TagValueChart";
 
 import { useGetVariables } from "@/lib/APIs/useGetVariables";
 import {
@@ -44,15 +44,16 @@ import { useDateFormatter } from "@react-aria/i18n";
 import PeriodeDatePicker from "@/components/efficiency-app/PeriodeDatePicker";
 import { API_V1_LIVE_URL } from "@/lib/api-url";
 import { useExcelStore } from "@/store/excels";
+import dynamic from "next/dynamic";
 /** LATER IT WILL BE SEPARATE COMPONENT */
 
 // const excelId = "add1cefb-1231-423c-8942-6bcd56998106";
 // const excelId = "5c220f24-b7e4-410a-b52e-8ffe25047fb6";
 const type = "out";
-
+const HeatLossTrendingChartNew = dynamic(() => import('@/components/efficiency-app/HeatLossTrendingChartNew').then(mod => mod.HeatLossTrendingChartNew), { ssr: false });
+const TagValueChart = dynamic(() => import('@/components/efficiency-app/TagValueChart').then(mod => mod.TagValueChart), { ssr: false });
 export default function Page() {
   const session = useSession();
-
   const excels = useExcelStore((state) => state.excels);
   const excelId = excels[0].id;
 
@@ -189,7 +190,7 @@ export default function Page() {
               placeholder="Select start date"
               value={formatDate(startDateValue)}
               onChange={handleStartDateChange}
-              // startContent={<CalendarIcon className="text-gray-400" size={20} />}
+            // startContent={<CalendarIcon className="text-gray-400" size={20} />}
             />
             <Input
               type="date"

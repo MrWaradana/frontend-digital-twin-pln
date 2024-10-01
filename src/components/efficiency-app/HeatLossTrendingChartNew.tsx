@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import CanvasJSReact from "@canvasjs/react-charts";
-const CanvasJS = CanvasJSReact.CanvasJS;
-const CanvasJSChart = CanvasJSReact.CanvasJSChart;
+import CanvasJSReact from '@canvasjs/react-charts';
+var CanvasJS = CanvasJSReact.CanvasJS;
+var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 import { Variable } from "@/lib/APIs/useGetVariables";
 import {
   // DataTrending,
@@ -19,6 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import dynamic from "next/dynamic";
 // import { compareAsc, format, isAfter, isBefore, isValid } from "date-fns";
 
 const monthName = [
@@ -109,6 +110,10 @@ export function HeatLossTrendingChartNew({
   /**
    * (START): GET CHART TRENDING DATA========================================================================================
    */
+  // const CanvasJSChart = dynamic(
+  //   () => import("@canvasjs/react-charts").then((mod) => mod.CanvasJSChart),
+  //   { ssr: false }
+  // )
   const chartData = useMemo(() => {
     if (!trendingDatas) return [];
 
