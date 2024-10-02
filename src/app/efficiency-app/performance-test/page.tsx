@@ -5,6 +5,7 @@ import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { useGetData } from "../../../lib/APIs/useGetData";
 import { useSession } from "next-auth/react";
 import MultipleLineChart from "../../../components/efficiency-app/performance-test/MultipleLineChart";
+import EChartsStackedLine from "../../../components/efficiency-app/performance-test/EChartsStackedLine";
 
 export default function Page() {
   const session = useSession();
@@ -18,6 +19,7 @@ export default function Page() {
   return (
     <EfficiencyContentLayout title="Performance Test">
       <div className="flex flex-col gap-8">
+        {/* <EChartsStackedLine /> */}
         <section>
           <MultipleLineChart data={performanceData} />
         </section>

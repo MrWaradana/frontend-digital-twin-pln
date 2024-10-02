@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { useGetDataPareto } from "@/lib/APIs/useGetDataPareto";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import TableParetoTop from "@/components/efficiency-app/pareto/TableParetoTop";
 
 export default function Page({ params }: { params: { data_id: string } }) {
   const searchParams = useSearchParams();
@@ -141,14 +142,20 @@ export default function Page({ params }: { params: { data_id: string } }) {
                 <Spinner color="primary" label="validating..." />
               </div>
             ) : (
-              <TableParetoHeatloss
-                tableData={tableData}
-                summaryData={summaryData}
-                mutate={onMutate}
-                isValidating={isValidating}
-                data_id={params.data_id}
-                setIsMutating={setIsMutating}
-              />
+              <div className="flex flex-col gap-6">
+                <TableParetoTop
+                  tableData={tableData}
+                  summaryData={summaryData}
+                />
+                <TableParetoHeatloss
+                  tableData={tableData}
+                  summaryData={summaryData}
+                  mutate={onMutate}
+                  isValidating={isValidating}
+                  data_id={params.data_id}
+                  setIsMutating={setIsMutating}
+                />
+              </div>
             )}
           </div>
         )}
