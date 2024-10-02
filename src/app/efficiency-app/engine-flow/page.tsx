@@ -10,7 +10,7 @@ export default function Page() {
         as={Link}
         color="primary"
         startContent={<ChevronLeftIcon size={18} />}
-        href={`/efficiency-app`}
+        href={`#`}
         size="sm"
       >
         Back to all data
@@ -21,12 +21,7 @@ export default function Page() {
             <div className="px-1 py-2">
               <div className="text-small font-bold">Custom Content</div>
               <div className="text-tiny">This is a custom tooltip content</div>
-              <Button
-                as={Link}
-                href={`/efficiency-app`}
-                size="sm"
-                color="primary"
-              >
+              <Button as={Link} href={`#`} size="sm" color="primary">
                 Pareto Heat Loss
               </Button>
             </div>
@@ -45,12 +40,7 @@ export default function Page() {
             <div className="px-1 py-2">
               <div className="text-small font-bold">Custom Content</div>
               <div className="text-tiny">This is a custom tooltip content</div>
-              <Button
-                as={Link}
-                href={`/efficiency-app`}
-                size="sm"
-                color="primary"
-              >
+              <Button as={Link} href={`#`} size="sm" color="primary">
                 Pareto Heat Loss
               </Button>
             </div>
@@ -70,12 +60,7 @@ export default function Page() {
             <div className="px-1 py-2">
               <div className="text-small font-bold">Custom Content</div>
               <div className="text-tiny">This is a custom tooltip content</div>
-              <Button
-                as={Link}
-                href={`/efficiency-app`}
-                size="sm"
-                color="primary"
-              >
+              <Button as={Link} href={`#`} size="sm" color="primary">
                 Pareto Heat Loss
               </Button>
             </div>
@@ -97,7 +82,7 @@ export default function Page() {
               <div className="text-tiny">This is a custom tooltip content</div>
               <Button
                 as={Link}
-                href={`/efficiency-app`}
+                href={`#`}
                 size="sm"
                 color="primary"
               >
