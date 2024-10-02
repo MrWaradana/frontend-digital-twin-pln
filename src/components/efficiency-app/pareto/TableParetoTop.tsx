@@ -486,7 +486,7 @@ export default function TableParetoHeatloss({
         <table
           cellPadding="1"
           cellSpacing="0"
-          className="overflow-y-scroll relative"
+          className="overflow-y-scroll relative min-w-full"
           style={{
             ...columnSizeVars,
             width: table.getTotalSize(),

@@ -142,7 +142,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
                 <Spinner color="primary" label="validating..." />
               </div>
             ) : (
-              <div className="flex flex-col gap-6">
+              <div className="min-w-full flex flex-col gap-6">
                 <TableParetoTop
                   tableData={tableData}
                   summaryData={summaryData}
