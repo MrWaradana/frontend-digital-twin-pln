@@ -204,8 +204,8 @@ function ModalRootCause({
     rowId,
     headerId = undefined,
     isChecked = false,
-    is_repair = false,
-    biaya = 0,
+    is_repair,
+    biaya,
   }: {
     rowId: string;
     headerId: string | undefined;
@@ -227,10 +227,13 @@ function ModalRootCause({
                 }
               : {}),
           },
-          ...(biaya > 0 ? { biaya } : is_repair ? { is_repair } : {}),
+          // Always update both biaya and is_repair independently
+          ...(typeof biaya !== "undefined" ? { biaya } : {}),
+          ...(typeof is_repair !== "undefined" ? { is_repair } : {}),
         },
       };
     });
+    // console.log(checkRootHeaders, "check root heaeders");
   };
 
   // Handler to log or save the checked values

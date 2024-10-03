@@ -155,9 +155,14 @@ const TableRootCause: React.FC<{
             {isLastChild(node) && (
               <Checkbox
                 checked={header.isChecked}
-                onCheckedChange={(e) =>
-                  onCheckedChange(e as boolean, header.id)
-                }
+                onCheckedChange={(e) => {
+                  onCheckedChange(e as boolean, header.id);
+                  handleCheckBox({
+                    rowId: node.id,
+                    headerId: header.id,
+                    isChecked: e as boolean,
+                  });
+                }}
               />
             )}
           </TableCell>
@@ -165,10 +170,13 @@ const TableRootCause: React.FC<{
         <TableCell className="p-0">
           {isLastChild(node) && (
             <Checkbox
-              checked={checkRoot[node.id]?.is_repair || false}
-              onCheckedChange={(e: boolean) =>
-                handleCheckBox({ rowId: node.id, is_repair: e })
+              checked={
+                checkRoot[node.id] ? checkRoot[node.id].is_repair : false
               }
+              onCheckedChange={(e: boolean) => {
+                // onCheckedChange(e, header.id);
+                handleCheckBox({ rowId: node.id, is_repair: e as boolean });
+              }}
             />
           )}
         </TableCell>
