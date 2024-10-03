@@ -546,11 +546,12 @@ export default function TableParetoHeatloss({
       },
       {
         header: "Action",
+        size: 200,
         cell: ({ row }) => {
           // Only render the button if it's a subrow (depth > 0)
           if (row.depth > 0 && row.original.has_cause) {
             return (
-              <React.Fragment key={row.id}>
+              <div key={row.id} className="flex gap-1">
                 <Button
                   onPress={() => {
                     setSelectedModalId({
@@ -565,7 +566,21 @@ export default function TableParetoHeatloss({
                 >
                   Root Cause
                 </Button>
-              </React.Fragment>
+                <Button
+                  onPress={() => {
+                    setSelectedModalId({
+                      variableId: row.original.variable.id,
+                      detailId: row.original.id,
+                    });
+                    onOpen();
+                  }}
+                  color="primary"
+                  size="sm"
+                  className="m-2"
+                >
+                  Action
+                </Button>
+              </div>
             );
           }
 

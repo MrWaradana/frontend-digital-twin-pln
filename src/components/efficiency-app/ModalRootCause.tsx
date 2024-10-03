@@ -307,8 +307,8 @@ function ModalRootCause({
                           {variabelHeader.map((header) => (
                             <TableHead key={header.id}>{header.name}</TableHead>
                           ))}
-                          <TableHead>Repair</TableHead>
-                          <TableHead>Cost</TableHead>
+                          <TableHead>Need Repair</TableHead>
+                          {/* <TableHead>Cost</TableHead> */}
                         </TableRow>
                       </TableHeader>
                       <TableBody>

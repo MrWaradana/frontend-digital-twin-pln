@@ -144,7 +144,8 @@ export default function VariableInputForm({
 
         toast.success("Data Submitted, wait for Thermoflow to Process Data!");
         setLoading(false);
-        router.push(`/efficiency-app/${response_data.data.data_id}/output`);
+        // router.push(`/efficiency-app/${response_data.data.data_id}/output`);
+        router.push(`/efficiency-app/performance-test`);
 
         // if (response) {
         //   setLoading(false);

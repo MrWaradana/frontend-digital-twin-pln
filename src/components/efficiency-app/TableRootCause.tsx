@@ -180,7 +180,7 @@ const TableRootCause: React.FC<{
             />
           )}
         </TableCell>
-        <TableCell className="p-0">
+        {/* <TableCell className="p-0">
           {isLastChild(node) && (
             <Input
               type="number"
@@ -193,7 +193,7 @@ const TableRootCause: React.FC<{
               }
             />
           )}
-        </TableCell>
+        </TableCell> */}
       </TableRow>
 
       {/* Conditionally render children rows based on isExpanded */}

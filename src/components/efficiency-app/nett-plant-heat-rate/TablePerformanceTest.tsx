@@ -64,12 +64,14 @@ export default function TablePerformanceTest({
   mutate,
   isLoading,
   isValidating,
+  thermoStatus,
 }: {
   tableData: any;
   addNewUrl?: string;
   mutate?: any;
   isLoading: any;
   isValidating?: any;
+  thermoStatus: any;
 }) {
   const [tableState, setTableState] = React.useState(tableData);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -389,10 +391,14 @@ export default function TablePerformanceTest({
             <Button
               as={Link}
               href={addNewUrl}
+              isDisabled={thermoStatus ? thermoStatus : false}
+              isLoading={thermoStatus ? thermoStatus : false}
               color="primary"
-              startContent={<PlusIcon />}
+              startContent={
+                <PlusIcon className={`${thermoStatus ? "hidden" : ""}`} />
+              }
             >
-              Add New
+              {!thermoStatus ? "Add New" : "Processing Data..."}
             </Button>
           </div>
         </div>
