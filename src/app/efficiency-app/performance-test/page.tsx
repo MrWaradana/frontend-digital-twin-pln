@@ -16,13 +16,17 @@ export default function Page() {
 
   const performanceData = data?.transactions ?? [];
 
+  const chartData = data?.chart_data ?? [];
+
   return (
     <EfficiencyContentLayout title="Performance Test">
       <div className="flex flex-col gap-8">
-        {/* <EChartsStackedLine /> */}
         <section>
-          <MultipleLineChart data={performanceData} />
+          <EChartsStackedLine data={chartData} />
         </section>
+        {/* <section>
+          <MultipleLineChart data={chartData} />
+        </section> */}
         <section>
           <TablePerformanceTest
             tableData={performanceData}

@@ -11,6 +11,7 @@ interface DataList {
   total_pages: number;
   thermo_status: boolean;
   transactions: any;
+  chart_data?: any;
 }
 
 export function useGetData(
