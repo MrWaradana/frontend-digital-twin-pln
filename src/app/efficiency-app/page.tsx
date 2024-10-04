@@ -104,6 +104,16 @@ export default function Page() {
       }
     });
 
+    // @ts-ignore
+    es.addEventListener("error", (e) => {
+      // @ts-ignore
+      toast.error(`Error: ${e}`);
+      // console.log(e, "DATA STREAM!");
+      if (pathname === "/efficiency-app") {
+        setTimeout(() => window.location.reload(), 3000);
+      }
+    });
+
     // Handle SSE connection errors
     es.onerror = (_) => {
       toast.error(`Something went wrong!, ${_}`);

@@ -120,6 +120,10 @@ export default function TableEfficiency({
 
   const hasSearchFilter = Boolean(filterValue);
 
+  const nonPerformanceData = tableData.filter(
+    (item: any) => !item.is_performance_test
+  );
+
   const headerColumns = React.useMemo(() => {
     if (visibleColumns === "all") return columns;
 
@@ -396,7 +400,7 @@ export default function TableEfficiency({
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {tableData.length} data
+            Total {nonPerformanceData.length} data
           </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
@@ -508,6 +512,7 @@ export default function TableEfficiency({
           setSelectedKeys(value);
           useSelectedEfficiencyDataStore
             .getState()
+            //@ts-ignore
             .setSelectedEfficiencyData(value);
         }}
         onSortChange={setSortDescriptor}

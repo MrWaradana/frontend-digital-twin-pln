@@ -47,7 +47,7 @@ export default function Page() {
           href={`/efficiency-app`}
           color="primary"
           size="sm"
-          className="lg:absolute top-0 lg:left-72 mb-4"
+          className="mb-4"
         >
           <ChevronLeftIcon size={12} />
           Back to all

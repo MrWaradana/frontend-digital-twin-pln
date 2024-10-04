@@ -10,15 +10,19 @@ import {
   TableCell,
   Pagination,
   getKeyValue,
+  Input,
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import toast from "react-hot-toast";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
 export default function TableOutputs({ data_id }: { data_id: string }) {
   const [tableData, setTableData] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const session = useSession();
+  const [filterValue, setFilterValue] = React.useState("");
+  const hasSearchFilter = Boolean(filterValue);
 
   useEffect(() => {
     const fetchVariables = async () => {
@@ -56,20 +60,33 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
 
   const data = tableData ?? [];
 
+  const filteredItems = React.useMemo(() => {
+    let filteredData = [...tableData];
+    if (hasSearchFilter && filteredData.length != 0) {
+      filteredData = filteredData.filter((item) =>
+        // @ts-ignore
+        item.variable.excel_variable_name
+          .toLowerCase()
+          .includes(filterValue.toLowerCase())
+      );
+    }
+    return filteredData;
+  }, [tableData, filterValue]);
+
   const mappedData = useMemo(() => {
-    return data.map((item: any) => {
-      console.log(item);
+    return filteredItems.map((item: any) => {
+      // console.log(item);
       return {
         id: item.id,
         variable: item.variable.excel_variable_name,
         value: item.nilai,
       };
     });
-  }, [isLoading]);
+  }, [isLoading, filteredItems]);
 
-  console.log(mappedData);
+  // console.log(mappedData);
 
-  const rows = mappedData;
+  // const rows = mappedData;
 
   const columns = [
     {
@@ -94,11 +111,45 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
     return mappedData.slice(start, end);
   }, [page, mappedData]);
 
+  const onSearchChange = React.useCallback((value?: string) => {
+    if (value) {
+      setFilterValue(value);
+      setPage(1);
+    } else {
+      setFilterValue("");
+    }
+  }, []);
+
+  const onClear = React.useCallback(() => {
+    setFilterValue("");
+    setPage(1);
+  }, []);
+
+  const topContent = React.useMemo(() => {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between gap-3 items-end">
+          <Input
+            isClearable
+            className="w-full sm:max-w-[54%]"
+            placeholder="Search by output variable..."
+            startContent={<MagnifyingGlassIcon />}
+            value={filterValue}
+            onClear={() => onClear()}
+            onValueChange={onSearchChange}
+          />
+        </div>
+      </div>
+    );
+  }, [filterValue, onSearchChange, tableData.length, hasSearchFilter]);
+
   return (
     <>
-      {/* {JSON.stringify(filteredData)} */}
+      {/* {JSON.stringify(mappedData)} */}
       <Table
         aria-label="Example table with dynamic content"
+        topContent={topContent}
+        topContentPlacement="outside"
         bottomContent={
           <div className="flex w-full justify-center">
             <Pagination

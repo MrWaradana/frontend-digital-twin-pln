@@ -14,41 +14,46 @@ export default auth(async (req) => {
 
   // If user is authenticated but the token is expired
   if (req.auth?.user && req.auth?.user.token_expires * 1000 <= nowDate) {
-    const response = await fetch(`${AUTH_API_URL}/refresh-token`, {
-      headers: {
-        Authorization: `Bearer ${req.auth.user.refresh_token}`,
-      },
-    });
+    try {
+      const response = await fetch(`${AUTH_API_URL}/refresh-token`, {
+        headers: {
+          Authorization: `Bearer ${req.auth.user.refresh_token}`,
+        },
+      });
 
-    if (!response.ok) {
-      const newUrl = new URL("/login", req.nextUrl.origin);
-      return Response.redirect(newUrl);
+      if (!response.ok) {
+        const newUrl = new URL("/login", req.nextUrl.origin);
+        return Response.redirect(newUrl);
+      }
+
+      const res = await response.json();
+      // Verify the token and expiration
+      const resVerify = await fetch(`${AUTH_API_URL}/verify-token`, {
+        headers: {
+          Authorization: `Bearer ${req.auth.user.refresh_token}`,
+        },
+      });
+
+      // console.log(res);
+
+      if (resVerify.ok) {
+        console.log("verify test");
+        return NextResponse.next();
+      }
+
+      const newSessionToken = await encode({
+        //@ts-ignore
+        secret: process.env.AUTH_SECRET,
+        token: {
+          ...req.cookies.get("authjs.session-token"),
+          accessToken: res.data.access_token,
+        },
+        maxAge: 30 * 24 * 60 * 60, // 30 days, or get the previous token's exp
+        salt: "123",
+      });
+    } catch (e) {
+      console.log(e);
     }
-
-    const res = await response.json();
-    // Verify the token and expiration
-    const resVerify = await fetch(`${AUTH_API_URL}/verify-token`, {
-      headers: {
-        Authorization: `Bearer ${req.auth.user.refresh_token}`,
-      },
-    });
-
-    // console.log(res);
-
-    if (resVerify.ok) {
-      console.log("verify test");
-      return NextResponse.next();
-    }
-
-    const newSessionToken = await encode({
-      secret: process.env.AUTH_SECRET,
-      token: {
-        ...req.cookies.get("authjs.session-token"),
-        accessToken: res.data.access_token,
-      },
-      maxAge: 30 * 24 * 60 * 60, // 30 days, or get the previous token's exp
-      salt: "123",
-    });
 
     // console.log(
     //   req.cookies.get("authjs.session-token")?.value,
