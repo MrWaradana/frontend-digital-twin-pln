@@ -545,8 +545,8 @@ export default function TableParetoHeatloss({
         },
       },
       {
-        header: "Action",
-        size: 200,
+        header: "To Do Checklist",
+        size: 350,
         cell: ({ row }) => {
           // Only render the button if it's a subrow (depth > 0)
           if (row.depth > 0 && row.original.has_cause) {

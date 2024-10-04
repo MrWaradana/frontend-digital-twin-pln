@@ -42,31 +42,31 @@ export function useApiFetch<T, RawT = T>(
     });
   }
 
-  if (error) {
-    // console.log(error, "ERROOOOOOOR");
-    fetch(`${AUTH_API_URL}/refresh-token`, {
-      headers: {
-        Authorization: `Bearer ${session?.user?.refresh_token}`, // Ensure refresh token exists
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Failed to refresh token: ${response.statusText}`);
-        }
-        return response.json(); // Parse response JSON
-      })
-      .then((resData) => {
-        updateSessionToken(resData.data.access_token);
-        mutate();
-        toast.success("Token Refreshed!");
-        // console.log(session?.user.access_token, "token baru");
-      })
-      .catch((error) => {
-        console.error("Error refreshing token:", error);
-      });
-  }
-  // useGeneralErrorToast(error);
+  // if (error) {
+  //   // console.log(error, "ERROOOOOOOR");
+  //   fetch(`${AUTH_API_URL}/refresh-token`, {
+  //     headers: {
+  //       Authorization: `Bearer ${session?.user?.refresh_token}`, // Ensure refresh token exists
+  //       "Content-Type": "application/json",
+  //     },
+  //   })
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error(`Failed to refresh token: ${response.statusText}`);
+  //       }
+  //       return response.json(); // Parse response JSON
+  //     })
+  //     .then((resData) => {
+  //       updateSessionToken(resData.data.access_token);
+  //       mutate();
+  //       toast.success("Token Refreshed!");
+  //       // console.log(session?.user.access_token, "token baru");
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error refreshing token:", error);
+  //     });
+  // }
+  useGeneralErrorToast(error);
 
   // Must include the isReady check, otherwise isLoading is false, but there is no data or error
   const isLoading = !isReady || isDataLoading;

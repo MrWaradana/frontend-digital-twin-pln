@@ -33,6 +33,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
   // console.log(data?.pareto_result, "table data pareto");
 
   const tableData = data?.pareto_result ?? [];
+  // const tableIsPareto = filter flag is Pareto Hari Senen
   const chartRawData = data?.chart_result ?? [];
   const summaryData = data ?? [];
   const chartDataRef = useRef<any | null>(null);

@@ -8,6 +8,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  Spinner,
 } from "@nextui-org/react";
 
 import {
@@ -155,7 +156,7 @@ function ModalRootCause({
 
   const variableCauses = data ?? [];
   const variabelHeader = header ?? [];
-  const rootCauseData = rootCause ?? [];
+  const rootCauseData = [];
 
   // const formInit = useForm({
   //     mode: 'onChange',
@@ -170,70 +171,67 @@ function ModalRootCause({
     rootCauseData.map((root) => [root.cause_id, root])
   );
 
-  const [checkRootHeaders, setCheckRootHeaders] = useState<rootCheckBox>({});
+  const [checkRootHeaders, setCheckRootHeaders] = useState<any>({});
 
-  useEffect(() => {
-    if (rootCauseData.length > 0) {
-      const data = Object.fromEntries(
-        rootCauseData.map((root) => [
-          root.cause_id,
-          {
-            header_value: Object.fromEntries(
-              variabelHeader.map((header) => [
-                header.id,
-                root.variable_header_value?.[header.id] ?? false,
-              ])
-            ),
-            biaya: root.biaya,
-            is_repair: root.is_repair,
-          },
-        ])
-      );
+  // useEffect(() => {
+  //   if (rootCauseData.length > 0) {
+  //     const data = Object.fromEntries(
+  //       rootCauseData.map((root) => [
+  //         root.cause_id,
+  //         {
+  //           header_value: Object.fromEntries(
+  //             variabelHeader.map((header) => [
+  //               header.id,
+  //               root.variable_header_value?.[header.id] ?? false,
+  //             ])
+  //           ),
+  //           biaya: root.biaya,
+  //           is_repair: root.is_repair,
+  //         },
+  //       ])
+  //     );
 
-      setCheckRootHeaders((prev) => {
-        return {
-          ...prev,
-          ...data,
-        };
-      });
-    }
-  }, [rootCauseData, rootCauseValidating]);
+  //     setCheckRootHeaders((prev) => {
+  //       return {
+  //         ...prev,
+  //         ...data,
+  //       };
+  //     });
+  //   }
+  // }, [rootCauseData, rootCauseValidating]);
 
   // Handler for checkbox changes
   const handleCheckboxChange = ({
+    parentId,
     rowId,
-    headerId = undefined,
-    isChecked = false,
-    is_repair,
-    biaya,
+    headerId,
+    isChecked,
+    is_repair = false,
   }: {
-    rowId: string;
-    headerId: string | undefined;
-    isChecked: boolean;
-    is_repair: boolean;
-    biaya: number;
+    parentId: string;
+    rowId: string; // This represents the cause_id for either parent or child
+    headerId?: string; // Optional, for child nodes
+    isChecked: boolean; // The checked state of the checkbox
+    is_repair?: boolean; // Optional, for the repair status
   }) => {
     setCheckRootHeaders((prev) => {
+      const updatedRootCauses = {
+        ...prev[rowId]?.root_causes,
+        [rowId]: isChecked, // Use headerId for child, rowId for parent
+      };
+
       return {
         ...prev,
         [rowId]: {
           ...prev[rowId],
-          header_value: {
-            ...prev[rowId]?.header_value,
-            ...(headerId
-              ? {
-                  [headerId]:
-                    isChecked ?? prev[rowId].header_value?.[headerId] ?? false,
-                }
-              : {}),
-          },
-          // Always update both biaya and is_repair independently
-          ...(typeof biaya !== "undefined" ? { biaya } : {}),
-          ...(typeof is_repair !== "undefined" ? { is_repair } : {}),
+          updatedRootCauses,
+          parentId,
+          ...(typeof isChecked !== "undefined" ? { isChecked } : {}), // Set isChekced if provided
+          ...(typeof is_repair !== "undefined" ? { is_repair } : {}), // Set is_repair if provided
         },
       };
     });
-    // console.log(checkRootHeaders, "check root heaeders");
+    console.log(checkRootHeaders, "Check Root State");
   };
 
   // Handler to log or save the checked values
@@ -241,18 +239,54 @@ function ModalRootCause({
     // console.log(rootRepairCost);
     // You can save the checkedValues to a backend or local storage here
 
+    //   {
+    //     "data_root_causes": [
+    //         {
+    //             "parent_id": "c81e090a-090f-4508-83f1-424f4195a339",
+    //             "root_causes": {
+    //                 "c81e090a-090f-4508-83f1-424f4195a339": true,
+    //                 "5d71727a-28e8-4232-9a1f-4d4d9bed096c": true,
+    //                 "74cd8dff-a469-4c48-8c4f-4fc9534b49fd":true
+    //             },
+    //             "is_repair":true
+    //         }
+    //     ]
+    // }
+
+    // Create the payload
     const payload = {
-      data_root_causes: Object.entries(checkRootHeaders).map(
-        ([cause_id, value]) => {
-          return {
-            cause_id,
-            is_repair: value.is_repair,
-            biaya: value.biaya,
-            variable_header_value: value.header_value,
+      data_root_causes: Object.values(checkRootHeaders).reduce(
+        (acc: any, value: any) => {
+          // Create the root_causes object
+          const root_causes = {
+            ...value.updatedRootCauses,
           };
-        }
+
+          // Check if the parentId is already in the accumulator
+          const existingEntry = acc.find(
+            (entry) => entry.parent_id === value.parentId
+          );
+          if (existingEntry) {
+            existingEntry.root_causes = {
+              ...existingEntry.root_causes,
+              ...root_causes,
+            }; // Merge root causes
+            existingEntry.is_repair = value.is_repair ? value.is_repair : false;
+          } else {
+            acc.push({
+              parent_id: value.parentId,
+              root_causes,
+              is_repair: value.is_repair, // Add is_repair flag
+            });
+          }
+
+          return acc;
+        },
+        []
       ),
     };
+
+    console.log(JSON.stringify(payload, null, 2));
 
     try {
       const response = await fetch(
@@ -296,42 +330,45 @@ function ModalRootCause({
               </ModalHeader>
               <ModalBody>
                 {!isLoading &&
-                  !rootCauseLoading &&
-                  !headerLoading &&
-                  !rootCauseValidating && (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Heat Loss Caused</TableHead>
-                          {/* Dynamically generated headers */}
-                          {variabelHeader.map((header) => (
-                            <TableHead key={header.id}>{header.name}</TableHead>
-                          ))}
-                          <TableHead>Need Repair</TableHead>
-                          {/* <TableHead>Cost</TableHead> */}
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {/* <Form {...formInit}>
+                !rootCauseLoading &&
+                !headerLoading &&
+                !rootCauseValidating ? (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Heat Loss Caused</TableHead>
+                        {/* Dynamically generated headers */}
+                        {variabelHeader.map((header) => (
+                          <TableHead key={header.id}>{header.name}</TableHead>
+                        ))}
+                        <TableHead>Need Repair</TableHead>
+                        {/* <TableHead>Cost</TableHead> */}
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {/* <Form {...formInit}>
                                         <form
                                             onSubmit={formInit.handleSubmit(handleSave)}
                                         > */}
-                        {variableCauses.map((node) => (
-                          <TableRootCause
-                            key={node.id}
-                            node={node}
-                            headers={variabelHeader}
-                            level={0}
-                            handleCheckBox={handleCheckboxChange}
-                            rootCauseData={dataRootCauses}
-                            checkRoot={checkRootHeaders}
-                          />
-                        ))}
-                        {/* </form>
+                      {variableCauses.map((node) => (
+                        <TableRootCause
+                          key={node.id}
+                          parentId={node.id}
+                          node={node}
+                          headers={variabelHeader}
+                          level={0}
+                          handleCheckBox={handleCheckboxChange}
+                          rootCauseData={dataRootCauses}
+                          checkRoot={checkRootHeaders}
+                        />
+                      ))}
+                      {/* </form>
                                     </Form> */}
-                      </TableBody>
-                    </Table>
-                  )}
+                    </TableBody>
+                  </Table>
+                ) : (
+                  <Spinner label="Loading..." />
+                )}
 
                 {/* <NextTable
                                 aria-label="Root Cause Checkbox"

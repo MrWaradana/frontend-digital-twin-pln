@@ -160,7 +160,7 @@ export const MemoizedTableBody = React.memo(TableBody, (prev, next) => {
   return isSameData && hasExpandedStateChanged;
 }) as typeof TableBody;
 
-export default function TableParetoHeatloss({
+export default function TableParetoTop({
   tableData,
   summaryData,
   mutate,

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { SetStateAction, useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
@@ -69,27 +69,36 @@ interface rootCostData {
 // Recursive component to render each row and its children
 const TableRootCause: React.FC<{
   node: VariableCause;
+  parentId: any;
   level: number;
   headers: Array<VariableHeader>;
   handleCheckBox: any;
   rootCauseData: Map<string, DataRootCause>;
   checkRoot: any;
-}> = ({ node, level, headers, handleCheckBox, rootCauseData, checkRoot }) => {
+}> = ({
+  node,
+  parentId,
+  level,
+  headers,
+  handleCheckBox,
+  rootCauseData,
+  checkRoot,
+}) => {
   // const [rootCauseDataState, setRootCauseDataState] = React.useState<rootCostData | null>(null);
   const rootData = isLastChild(node)
     ? (rootCauseData.get(node.id) as DataRootCause)
     : null;
 
   // Convert rootCauseData to a lookup map for efficient access
-  const [headerCheck, setHeaderCheck] = React.useState(
-    headers.map((header) => {
-      return {
-        id: header.id,
-        name: header.name,
-        isChecked: rootData?.variable_header_value?.[header.id] ?? false,
-      };
-    })
-  );
+  // const [headerCheck, setHeaderCheck] = React.useState(
+  //   headers.map((header) => {
+  //     return {
+  //       id: header.id,
+  //       name: header.name,
+  //       isChecked: rootData?.variable_header_value?.[header.id] ?? false,
+  //     };
+  //   })
+  // );
 
   // setRootCauseDataState(rootData ? {
   //     is_repair: rootData.is_repair,
@@ -97,16 +106,9 @@ const TableRootCause: React.FC<{
   // } : null);
   // State to track whether the row is expanded (to show children)
   const [isExpanded, setIsExpanded] = useState(false);
+  const [parentCheckState, setParentCheckState] = useState([]);
 
-  const onCheckedChange = (e: boolean, headerId: string) => {
-    const newHeaderCheck = headerCheck.map((header) => {
-      if (header.id === headerId) {
-        header.isChecked = e;
-      }
-      return header;
-    });
-    setHeaderCheck(newHeaderCheck);
-
+  const onCheckedChange = (e: boolean) => {
     // If the checkbox is checked, expand the row to show children
     if (e && node.children && node.children.length > 0) {
       setIsExpanded(true);
@@ -116,16 +118,8 @@ const TableRootCause: React.FC<{
   };
 
   // New function to toggle the expansion state when the parent checkbox is checked/unchecked
-  const toggleExpand = (e: boolean) => {
+  const toggleExpand = (e: any) => {
     setIsExpanded(e);
-    // Optionally, if you want to check/uncheck all child headers as well
-    if (node.children && node.children.length > 0) {
-      const newHeaderCheck = headerCheck.map((header) => ({
-        ...header,
-        isChecked: e, // Check/uncheck all child headers
-      }));
-      setHeaderCheck(newHeaderCheck);
-    }
   };
 
   return (
@@ -146,27 +140,36 @@ const TableRootCause: React.FC<{
         {/* Checkbox Column - Only for non-last child nodes */}
         {!isLastChild(node) && (
           <TableCell className="p-0">
-            <Checkbox checked={isExpanded} onCheckedChange={toggleExpand} />
+            <Checkbox
+              checked={isExpanded && (checkRoot[node.id]?.isChecked ?? false)} // Combine both isExpanded and is_checked
+              onCheckedChange={(e) => {
+                toggleExpand(e);
+                handleCheckBox({
+                  parentId: parentId,
+                  rowId: node.id,
+                  isChecked: e as boolean, // The checkbox state
+                });
+              }}
+            />
           </TableCell>
         )}
 
-        {headerCheck.map((header) => (
-          <TableCell key={header.id} className="p-0">
-            {isLastChild(node) && (
-              <Checkbox
-                checked={header.isChecked}
-                onCheckedChange={(e) => {
-                  onCheckedChange(e as boolean, header.id);
-                  handleCheckBox({
-                    rowId: node.id,
-                    headerId: header.id,
-                    isChecked: e as boolean,
-                  });
-                }}
-              />
-            )}
-          </TableCell>
-        ))}
+        <TableCell className="p-0">
+          {isLastChild(node) && (
+            <Checkbox
+              checked={checkRoot[node.id]?.isChecked ?? false}
+              onCheckedChange={(e) => {
+                // onCheckedChange(e as boolean);
+                handleCheckBox({
+                  parentId: parentId,
+                  rowId: node.id,
+                  isChecked: e as boolean,
+                  is_repair: checkRoot[node.id]?.is_repair,
+                });
+              }}
+            />
+          )}
+        </TableCell>
         <TableCell className="p-0">
           {isLastChild(node) && (
             <Checkbox
@@ -175,7 +178,12 @@ const TableRootCause: React.FC<{
               }
               onCheckedChange={(e: boolean) => {
                 // onCheckedChange(e, header.id);
-                handleCheckBox({ rowId: node.id, is_repair: e as boolean });
+                handleCheckBox({
+                  parentId: parentId,
+                  rowId: node.id,
+                  isChecked: true,
+                  is_repair: e as boolean,
+                });
               }}
             />
           )}
@@ -203,6 +211,7 @@ const TableRootCause: React.FC<{
         node.children.map((child) => (
           <TableRootCause
             key={child.id}
+            parentId={parentId}
             node={child}
             level={level + 1}
             headers={headers}
