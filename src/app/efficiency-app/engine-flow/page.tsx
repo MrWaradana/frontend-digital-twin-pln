@@ -1,5 +1,5 @@
 import Image from "next/image";
-import EngineFlow from "../../../../public/gb_DIAGRAM_PLANT.jpg";
+import EngineFlow from "../../../../public/engine-flow.png";
 import { Tooltip, Button, Link } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import { EfficiencyContentLayout } from "../../../containers/EfficiencyContentLayout";
@@ -25,9 +25,9 @@ export default function Page() {
             <Button
               variant="solid"
               color="primary"
-              className="absolute top-[15rem] left-36"
+              className="absolute top-20 left-36"
             >
-              FGD
+              LPT
             </Button>
           </Tooltip>
           <Tooltip
