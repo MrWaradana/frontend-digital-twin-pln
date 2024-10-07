@@ -43,8 +43,8 @@ import { useSelectedEfficiencyDataStore } from "../../store/selectedEfficiencyDa
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   current: "success",
-  kpi: "primary",
-  target: "warning",
+  Niaga: "primary",
+  Commision: "warning",
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
@@ -144,7 +144,7 @@ export default function TableEfficiency({
       Array.from(parameterFilter).length !== parameterOptions.length
     ) {
       filteredData = filteredData.filter((item) =>
-        Array.from(parameterFilter).includes(item.jenis_parameter.toLowerCase())
+        Array.from(parameterFilter).includes(item.jenis_parameter)
       );
     }
     // filter non performance data
@@ -228,7 +228,7 @@ export default function TableEfficiency({
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[rowData.jenis_parameter.toLowerCase()]}
+              color={statusColorMap[rowData.jenis_parameter]}
               size="sm"
               variant="flat"
             >

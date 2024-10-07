@@ -5,13 +5,15 @@ import { Select, SelectSection, SelectItem } from "@nextui-org/react";
 
 const masterDataParameter = [
   { key: "current", label: "Current" },
-  { key: "kpi", label: "Key Performance Indicator" },
-  { key: "target", label: "Target" },
+  { key: "Niaga", label: "Niaga" },
+  { key: "Commision", label: "Commision" },
 ];
 
-
-export default function SelectMasterData({ onMasterDataChange }: { onMasterDataChange: any }) {
-
+export default function SelectMasterData({
+  onMasterDataChange,
+}: {
+  onMasterDataChange: any;
+}) {
   return (
     <Select
       isRequired
@@ -21,7 +23,7 @@ export default function SelectMasterData({ onMasterDataChange }: { onMasterDataC
       size="sm"
       className="max-w-xs"
       onChange={(e) => {
-        onMasterDataChange(e.target.value)
+        onMasterDataChange(e.target.value);
       }}
     >
       {masterDataParameter.map((item) => (

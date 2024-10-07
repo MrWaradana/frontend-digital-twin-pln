@@ -8,10 +8,9 @@ const columns = [
 ];
 
 const parameterOptions = [
-  { name: "Target", uid: "target" },
-  { name: "Key Performance Indicator (KPI)", uid: "kpi" },
+  { name: "Commision", uid: "Commision" },
+  { name: "Niaga", uid: "Niaga" },
   { name: "Current", uid: "current" },
 ];
 
-
-export { columns, parameterOptions};
+export { columns, parameterOptions };
