@@ -10,6 +10,7 @@ import { useGetDataPareto } from "@/lib/APIs/useGetDataPareto";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import TableParetoTop from "@/components/efficiency-app/pareto/TableParetoTop";
+import { Item } from "@radix-ui/react-dropdown-menu";
 
 export default function Page({ params }: { params: { data_id: string } }) {
   const searchParams = useSearchParams();
@@ -33,6 +34,9 @@ export default function Page({ params }: { params: { data_id: string } }) {
   // console.log(data?.pareto_result, "table data pareto");
 
   const tableData = data?.pareto_result ?? [];
+  const paretoTopData = tableData.filter((item) => item.category == null);
+  const paretoBottomData = tableData.filter((item) => item.category != null);
+
   // const tableIsPareto = filter flag is Pareto Hari Senen
   const chartRawData = data?.chart_result ?? [];
   const summaryData = data ?? [];
@@ -53,7 +57,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
           cum_frequency, // Add the accumulated frequency
         };
       })
-      .filter((item: any) => item.cum_frequency <= 100);
+      .filter((item: any) => item.cum_frequency <= 100 && item.category);
 
     // console.log(mapped_data, "mapped chart data");
     //   return mapped_data;
@@ -145,12 +149,12 @@ export default function Page({ params }: { params: { data_id: string } }) {
             ) : (
               <div className="min-w-full flex flex-col gap-1">
                 <TableParetoTop
-                  tableData={tableData}
+                  tableData={paretoTopData}
                   summaryData={summaryData}
                 />
                 <Divider />
                 <TableParetoHeatloss
-                  tableData={tableData}
+                  tableData={paretoBottomData}
                   summaryData={summaryData}
                   mutate={onMutate}
                   isValidating={isValidating}

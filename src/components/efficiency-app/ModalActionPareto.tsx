@@ -116,7 +116,7 @@ interface rootRepairCost {
   };
 }
 
-function ModalRootCause({
+function ModalActionPareto({
   isOpen,
   onOpenChange,
   selectedModalId,
@@ -148,15 +148,15 @@ function ModalRootCause({
     isOpen
   );
 
-  // const { data: header, isLoading: headerLoading } = useGetVariableHeaders(
-  //   session?.user.access_token,
-  //   selectedModalId.variableId,
-  //   isOpen
-  // );
+  const { data: header, isLoading: headerLoading } = useGetVariableHeaders(
+    session?.user.access_token,
+    selectedModalId.variableId,
+    isOpen
+  );
 
   const variableCauses = data ?? [];
-  const variabelHeader = [];
-  const rootCauseData = rootCause ?? [];
+  const variabelHeader = header ?? [];
+  const rootCauseData = [];
 
   // const formInit = useForm({
   //     mode: 'onChange',
@@ -166,45 +166,39 @@ function ModalRootCause({
   //         is_repair: root.is_repair
   //     }]))
   // })
-  // console.log(rootCauseData, "data root cause");
+
   const dataRootCauses: Map<string, DataRootCause> = new Map(
-    rootCauseData.map((root) => [root.id, root])
+    rootCauseData.map((root) => [root.cause_id, root])
   );
-  // console.log(dataRootCauses, "data root cause");
 
   const [checkRootHeaders, setCheckRootHeaders] = useState<any>({});
 
-  useEffect(() => {
-    if (rootCauseData.length > 0) {
-      const data = Object.fromEntries(
-        rootCauseData.map((root) => {
-          const stateRootCause = root.members.reduce((acc, member) => {
-            acc[member.cause_id] = {
-              isChecked: member.is_checked,
-              is_repair: member.is_repair,
-            };
-            return acc;
-          }, {});
+  // useEffect(() => {
+  //   if (rootCauseData.length > 0) {
+  //     const data = Object.fromEntries(
+  //       rootCauseData.map((root) => [
+  //         root.cause_id,
+  //         {
+  //           header_value: Object.fromEntries(
+  //             variabelHeader.map((header) => [
+  //               header.id,
+  //               root.variable_header_value?.[header.id] ?? false,
+  //             ])
+  //           ),
+  //           biaya: root.biaya,
+  //           is_repair: root.is_repair,
+  //         },
+  //       ])
+  //     );
 
-          return [
-            root.parent_cause_id,
-            {
-              updatedRootCauses: stateRootCause,
-              parentId: root.parent_cause_id,
-              is_repair: root.is_repair,
-            },
-          ];
-        })
-      );
-
-      setCheckRootHeaders((prev) => {
-        return {
-          ...prev,
-          ...data,
-        };
-      });
-    }
-  }, [rootCauseData, rootCauseValidating]);
+  //     setCheckRootHeaders((prev) => {
+  //       return {
+  //         ...prev,
+  //         ...data,
+  //       };
+  //     });
+  //   }
+  // }, [rootCauseData, rootCauseValidating]);
 
   // Handler for checkbox changes
   const handleCheckboxChange = ({
@@ -217,28 +211,27 @@ function ModalRootCause({
     parentId: string;
     rowId: string; // This represents the cause_id for either parent or child
     headerId?: string; // Optional, for child nodes
-    isChecked?: boolean; // The checked state of the checkbox
+    isChecked: boolean; // The checked state of the checkbox
     is_repair?: boolean; // Optional, for the repair status
   }) => {
     setCheckRootHeaders((prev) => {
       const updatedRootCauses = {
-        ...prev[parentId]?.updatedRootCauses,
-        // [rowId]: typeof isChecked !== "undefined" ? isChecked : false, // Use headerId for child, rowId for parent
-        [rowId]: {
-          ...prev[parentId]?.updatedRootCauses[rowId],
-          ...(typeof isChecked !== "undefined" ? { isChecked } : {}),
-          ...(typeof is_repair !== "undefined" ? { is_repair } : {}),
-        },
+        ...prev[rowId]?.root_causes,
+        [rowId]: isChecked, // Use headerId for child, rowId for parent
       };
+
       return {
         ...prev,
-        [parentId]: {
-          ...prev[parentId],
+        [rowId]: {
+          ...prev[rowId],
           updatedRootCauses,
           parentId,
+          ...(typeof isChecked !== "undefined" ? { isChecked } : {}), // Set isChekced if provided
+          ...(typeof is_repair !== "undefined" ? { is_repair } : {}), // Set is_repair if provided
         },
       };
     });
+    console.log(checkRootHeaders, "Check Root State");
   };
 
   // Handler to log or save the checked values
@@ -278,10 +271,12 @@ function ModalRootCause({
               ...existingEntry.root_causes,
               ...root_causes,
             }; // Merge root causes
+            existingEntry.is_repair = value.is_repair ? value.is_repair : false;
           } else {
             acc.push({
               parent_id: value.parentId,
               root_causes,
+              is_repair: value.is_repair, // Add is_repair flag
             });
           }
 
@@ -334,20 +329,18 @@ function ModalRootCause({
                 Root Cause Checkbox
               </ModalHeader>
               <ModalBody>
-                {/* {JSON.stringify(checkRootHeaders)} */}
                 {!isLoading &&
                 !rootCauseLoading &&
-                // !headerLoading &&
+                !headerLoading &&
                 !rootCauseValidating ? (
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead>Heat Loss Caused</TableHead>
                         {/* Dynamically generated headers */}
-                        {/* {variabelHeader.map((header) => (
+                        {variabelHeader.map((header) => (
                           <TableHead key={header.id}>{header.name}</TableHead>
-                        ))} */}
-                        <TableHead>Check</TableHead>
+                        ))}
                         <TableHead>Need Repair</TableHead>
                         {/* <TableHead>Cost</TableHead> */}
                       </TableRow>
@@ -376,6 +369,7 @@ function ModalRootCause({
                 ) : (
                   <Spinner label="Loading..." />
                 )}
+
                 {/* <NextTable
                                 aria-label="Root Cause Checkbox"
                                 className="h-[360px]"

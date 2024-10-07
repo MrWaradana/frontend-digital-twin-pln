@@ -84,9 +84,7 @@ export default function MultipleLineChart({
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) =>
-                value ? value.slice(0, 4) : "Uncategorized"
-              }
+              tickFormatter={(value) => (value ? value.slice(0, 4) : "Pareto")}
             />
             <YAxis domain={[0, 100]} allowDataOverflow={true} />
             <Legend className="dark:fill-slate-50" />

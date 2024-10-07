@@ -4,6 +4,7 @@ import { useApiFetch } from "./useApiFetch";
 
 export interface NPHRType {
   data_id: string;
+  name: string;
   chart_result: Array<ChartResult>;
   nphr_result: NPHRResult;
 }

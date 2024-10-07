@@ -137,75 +137,74 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                 )}
 
                 {/* Render summary row under specific columns */}
-                {row.original.total_nilai_losses &&
-                  row.original.total_persen_losses && (
-                    <tr
-                      key={`summary-${row.id}`}
-                      className="bg-neutral-100 dark:bg-neutral-900 border border-black"
-                    >
-                      {row.getVisibleCells().map((cell: any) => {
-                        // Render summary under the specific columns
-                        if (cell.column.id === "category") {
-                          return (
-                            <td
-                              key={cell.id}
-                              className="font-bold sticky left-0 bg-neutral-100 dark:bg-neutral-900 print-cell"
-                            >
-                              Summary
-                            </td>
-                          );
-                        }
-                        if (cell.column.id === "nilai_losses") {
-                          return (
-                            <td
-                              key={cell.id}
-                              className="font-bold border border-neutral-700 text-right"
-                            >
-                              {row.original.total_nilai_losses.toFixed(2)}
-                            </td>
-                          );
-                        }
-                        if (cell.column.id === "persen_losses") {
-                          return (
-                            <td
-                              key={cell.id}
-                              className="font-bold border border-neutral-700 text-right"
-                            >
-                              {row.original.total_persen_losses.toFixed(2)}
-                            </td>
-                          );
-                        }
-                        if (cell.column.id === "cost_benefit") {
-                          return (
-                            <td
-                              key={cell.id}
-                              className="font-bold border border-neutral-700 text-right"
-                            >
-                              Rp.
-                              {formatCurrency(
-                                row.original.total_cost_benefit.toFixed(0)
-                              )}
-                            </td>
-                          );
-                        }
-                        if (cell.column.id === "total_biaya") {
-                          return (
-                            <td
-                              key={cell.id}
-                              className="font-bold border border-neutral-700 text-right"
-                            >
-                              Rp.
-                              {formatCurrency(
-                                row.original.total_cost_gap.toFixed(0)
-                              )}
-                            </td>
-                          );
-                        }
-                        // Render empty cells for other columns
-                        return <td key={cell.id}></td>;
-                      })}
-                    </tr>
-                  )}
+                {
+                  <tr
+                    key={`summary-${row.id}`}
+                    className="bg-neutral-100 dark:bg-neutral-900 border border-black"
+                  >
+                    {row.getVisibleCells().map((cell: any) => {
+                      // Render summary under the specific columns
+                      if (cell.column.id === "category") {
+                        return (
+                          <td
+                            key={cell.id}
+                            className="font-bold sticky left-0 bg-neutral-100 dark:bg-neutral-900 print-cell"
+                          >
+                            Summary
+                          </td>
+                        );
+                      }
+                      if (cell.column.id === "nilai_losses") {
+                        return (
+                          <td
+                            key={cell.id}
+                            className="font-bold border border-neutral-700 text-right"
+                          >
+                            {row.original.total_nilai_losses.toFixed(2)}
+                          </td>
+                        );
+                      }
+                      if (cell.column.id === "persen_losses") {
+                        return (
+                          <td
+                            key={cell.id}
+                            className="font-bold border border-neutral-700 text-right"
+                          >
+                            {row.original.total_persen_losses.toFixed(2)}
+                          </td>
+                        );
+                      }
+                      if (cell.column.id === "cost_benefit") {
+                        return (
+                          <td
+                            key={cell.id}
+                            className="font-bold border border-neutral-700 text-right"
+                          >
+                            Rp.
+                            {formatCurrency(
+                              row.original.total_cost_benefit.toFixed(0)
+                            )}
+                          </td>
+                        );
+                      }
+                      if (cell.column.id === "total_biaya") {
+                        return (
+                          <td
+                            key={cell.id}
+                            className="font-bold border border-neutral-700 text-right"
+                          >
+                            Rp.
+                            {formatCurrency(
+                              row.original.total_cost_gap.toFixed(0)
+                            )}
+                          </td>
+                        );
+                      }
+                      // Render empty cells for other columns
+                      return <td key={cell.id}></td>;
+                    })}
+                  </tr>
+                }
               </>
             )
         )

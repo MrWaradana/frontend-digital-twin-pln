@@ -41,10 +41,16 @@ import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { useSession } from "next-auth/react";
 import { useSelectedEfficiencyDataStore } from "../../store/selectedEfficiencyData";
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
+const parameterColorMap: Record<string, ChipProps["color"]> = {
   current: "success",
   Niaga: "primary",
   Commision: "warning",
+};
+
+const statusColorMap: Record<string, ChipProps["color"]> = {
+  Done: "success",
+  Processing: "warning",
+  Failed: "danger",
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
@@ -52,6 +58,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "jenis_parameter",
   "is_performance_test",
   "periode",
+  "status",
   "actions",
 ];
 const INITIAL_VISIBLE_PARAMETER = ["current"];
@@ -84,6 +91,7 @@ export default function TableEfficiency({
     { name: "NAMA", uid: "name", sortable: true },
     { name: "JENIS PARAMETER", uid: "jenis_parameter", sortable: true },
     { name: "PERIODE", uid: "periode", sortable: true },
+    { name: "STATUS", uid: "status", sortable: true },
     { name: "ACTIONS", uid: "actions" },
   ];
 
@@ -228,7 +236,7 @@ export default function TableEfficiency({
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[rowData.jenis_parameter]}
+              color={parameterColorMap[rowData.jenis_parameter]}
               size="sm"
               variant="flat"
             >
@@ -237,6 +245,17 @@ export default function TableEfficiency({
           );
         case "periode":
           return cellValue;
+        case "status":
+          return (
+            <Chip
+              className="capitalize"
+              color={statusColorMap[rowData.jenis_parameter]}
+              size="sm"
+              variant="flat"
+            >
+              {cellValue ? cellValue : "No Data"}
+            </Chip>
+          );
         case "actions":
           return (
             <>

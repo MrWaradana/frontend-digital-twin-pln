@@ -26,6 +26,7 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
+  Spinner,
 } from "@nextui-org/react";
 
 import MultipleLineChart from "./MultipleLineChart";
@@ -33,6 +34,7 @@ import { useGetDataNPHR } from "@/lib/APIs/useGetDataNPHR";
 import { useSession } from "next-auth/react";
 import { useMemo, useRef } from "react";
 import { useSelectedEfficiencyDataStore } from "../../../store/selectedEfficiencyData";
+import React from "react";
 
 export const description = "A stacked bar chart with a legend";
 
@@ -118,6 +120,15 @@ export default function BarChartNPHR({ data_id }: any) {
       gap: nphrData.current - nphrData.target,
     },
   ];
+
+  if (isLoading || isValidating) {
+    return (
+      <div className="w-full mt-12 flex justify-center">
+        <Spinner label="Loading..." />
+      </div>
+    );
+  }
+
   return (
     <>
       <Modal
@@ -148,7 +159,7 @@ export default function BarChartNPHR({ data_id }: any) {
         </ModalContent>
       </Modal>
       <div className="w-full flex justify-center">
-        Selected Data: {JSON.stringify(data?.data_id)}
+        Selected Data: <span className="font-bold">{data?.name}</span>
       </div>
       <Card>
         <CardHeader>

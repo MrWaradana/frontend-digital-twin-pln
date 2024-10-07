@@ -226,7 +226,7 @@ export default function TableParetoTop({
               {" "}
               {props.getValue() || props.row.depth > 0
                 ? props.getValue()
-                : "Uncategorized"}
+                : "Pareto"}
             </span>
           </div>
         ),

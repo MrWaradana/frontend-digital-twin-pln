@@ -22,32 +22,44 @@ import { useApiFetch } from "./useApiFetch";
 //   total_biaya: number;
 // }
 
-
 export interface DataRootCause {
-    id: string,
-    data_detail_id: string
-    cause_id: string
-    is_repair: boolean
-    biaya: number
-    created_by: string
-    updated_by: string
-    created_at: string
-    updated_at: string
-    variable_header_value: {
-        [header_id: string]: boolean
-    }
+  id: string;
+  data_detail_id: string;
+  cause_id: string;
+  is_repair: boolean;
+  biaya: number;
+  parent_cause_id: string;
+  created_by: string;
+  updated_by: string;
+  created_at: string;
+  updated_at: string;
+  members: {
+    is_repair: boolean;
+    biaya: number;
+    cause_id: string;
+    created_at: string;
+    created_by: string;
+    id: string;
+    is_checked: boolean;
+    is_parent: boolean;
+    root_cause_id: string;
+    updated_at: string;
+    updated_by: null;
+  }[];
+  // variable_header_value: {
+  //     [header_id: string]: boolean
+  // }
 }
 
 export function useGetDataRootCauses(
-    token: string | undefined,
-    data_id: string | undefined,
-    detail_id: string | undefined,
-    isOpen: boolean
+  token: string | undefined,
+  data_id: string | undefined,
+  detail_id: string | undefined,
+  isOpen: boolean
 ): HookReply<Array<DataRootCause>> {
-
-    return useApiFetch(
-        `${EFFICIENCY_API_URL}/data/${data_id}/root/${detail_id}`,
-        !!token && !!isOpen,
-        token
-    );
+  return useApiFetch(
+    `${EFFICIENCY_API_URL}/data/${data_id}/root/${detail_id}`,
+    !!token && !!isOpen,
+    token
+  );
 }

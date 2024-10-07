@@ -18,6 +18,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { AUTH_API_URL, EFFICIENCY_API_URL } from "@/lib/api-url";
 import { useExcelStore } from "@/store/excels";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
+import { useStatusThermoflowStore } from "../../store/statusThermoflow";
 import { usePathname, useRouter } from "next/navigation";
 import { error } from "console";
 import { useGetExcel } from "@/lib/APIs/useGetExcel";
@@ -88,8 +89,15 @@ export default function Page() {
   } = useGetData(session?.user.access_token);
 
   // console.log(efficiencyData, "data efficiency");
+  const StatusThermoflow = useStatusThermoflowStore(
+    (state) => state.statusThermoflow
+  ); // Retrieve currentKey from Zustand
 
-  const thermoStatus = efficiencyData?.thermo_status ?? false;
+  const setStatusThermoflow = useStatusThermoflowStore(
+    (state) => state.setStatusThermoflow
+  ); // Retrieve currentKey from Zustand
+
+  const thermoStatus = efficiencyData?.thermo_status ?? StatusThermoflow;
   const efficiency = efficiencyData?.transactions ?? [];
 
   useEffect(() => {
@@ -99,6 +107,7 @@ export default function Page() {
     es.addEventListener("data_outputs", (e) => {
       toast.success(`Efficiency data has been processed!`);
       // console.log(e, "DATA STREAM!");
+      setStatusThermoflow(false);
       if (pathname === "/efficiency-app") {
         setTimeout(() => window.location.reload(), 3000);
       }
@@ -107,8 +116,8 @@ export default function Page() {
     // @ts-ignore
     es.addEventListener("error", (e) => {
       // @ts-ignore
-      toast.error(`Error: ${e}`);
-      // console.log(e, "DATA STREAM!");
+      // toast.error(`Error: ${e}`);
+      console.log(e, "DATA STREAM!");
       if (pathname === "/efficiency-app") {
         setTimeout(() => window.location.reload(), 3000);
       }
@@ -117,6 +126,7 @@ export default function Page() {
     // Handle SSE connection errors
     es.onerror = (_) => {
       toast.error(`Something went wrong!, ${_}`);
+      console.log(_, "Error");
       // Close the SSE connection
       es.close();
     };

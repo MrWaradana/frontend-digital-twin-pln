@@ -20,6 +20,7 @@ import { useState, Fragment } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useStatusThermoflowStore } from "../../store/statusThermoflow";
 interface Variable {
   category: string;
   input_name: string;
@@ -88,6 +89,10 @@ export default function VariableInputForm({
 
   const formError = formInput.formState.errors;
 
+  const setStatusThermoflow = useStatusThermoflowStore(
+    (state) => state.setStatusThermoflow
+  );
+
   // Handle input change to update state
   // const handleInputChange = (id: string, value: number) => {
   //   setInputValues((prevValues) => ({
@@ -138,6 +143,7 @@ export default function VariableInputForm({
         const response_data = await response.json();
 
         toast.success("Data input received, wait for the to be processed!");
+        setStatusThermoflow(true);
         setLoading(false);
         // router.push(`/efficiency-app/${response_data.data.data_id}/output`);
         setTimeout(() => router.push(`/efficiency-app`), 3000);

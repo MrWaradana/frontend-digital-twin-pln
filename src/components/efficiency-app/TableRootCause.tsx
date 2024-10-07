@@ -105,7 +105,9 @@ const TableRootCause: React.FC<{
   //     biaya: rootData.biaya
   // } : null);
   // State to track whether the row is expanded (to show children)
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(
+    checkRoot[parentId]?.updatedRootCauses[node.id] ?? false
+  );
   const [parentCheckState, setParentCheckState] = useState([]);
 
   const onCheckedChange = (e: boolean) => {
@@ -121,6 +123,8 @@ const TableRootCause: React.FC<{
   const toggleExpand = (e: any) => {
     setIsExpanded(e);
   };
+
+  // console.log(rootCauseData, "root cause data di table component");
 
   return (
     <>
@@ -141,7 +145,11 @@ const TableRootCause: React.FC<{
         {!isLastChild(node) && (
           <TableCell className="p-0">
             <Checkbox
-              checked={isExpanded && (checkRoot[node.id]?.isChecked ?? false)} // Combine both isExpanded and is_checked
+              checked={
+                (isExpanded ||
+                  checkRoot[parentId]?.updatedRootCauses[node.id]?.isChecked) ??
+                false
+              } // Combine both isExpanded and is_checked
               onCheckedChange={(e) => {
                 toggleExpand(e);
                 handleCheckBox({
@@ -157,14 +165,16 @@ const TableRootCause: React.FC<{
         <TableCell className="p-0">
           {isLastChild(node) && (
             <Checkbox
-              checked={checkRoot[node.id]?.isChecked ?? false}
+              checked={
+                checkRoot[parentId]?.updatedRootCauses[node.id]?.isChecked ??
+                false
+              }
               onCheckedChange={(e) => {
                 // onCheckedChange(e as boolean);
                 handleCheckBox({
                   parentId: parentId,
                   rowId: node.id,
                   isChecked: e as boolean,
-                  is_repair: checkRoot[node.id]?.is_repair,
                 });
               }}
             />
@@ -174,14 +184,14 @@ const TableRootCause: React.FC<{
           {isLastChild(node) && (
             <Checkbox
               checked={
-                checkRoot[node.id] ? checkRoot[node.id].is_repair : false
+                checkRoot[parentId]?.updatedRootCauses[node.id]?.is_repair ??
+                false
               }
               onCheckedChange={(e: boolean) => {
                 // onCheckedChange(e, header.id);
                 handleCheckBox({
                   parentId: parentId,
                   rowId: node.id,
-                  isChecked: true,
                   is_repair: e as boolean,
                 });
               }}
