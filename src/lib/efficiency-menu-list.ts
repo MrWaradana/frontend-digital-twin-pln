@@ -51,14 +51,14 @@ export function getMenuList(pathname: string): Group[] {
           icon: DiamondPlus,
           submenus: [],
         },
-        {
-          href: "/efficiency-app/heat-loss-trending",
-          label: "Heat Loss Trending",
-          active:
-            pathname === "/efficiency-app/heat-loss-trending" ? true : false,
-          icon: ThermometerSun,
-          submenus: [],
-        },
+        // {
+        //   href: "/efficiency-app/heat-loss-trending",
+        //   label: "Heat Loss Trending",
+        //   active:
+        //     pathname === "/efficiency-app/heat-loss-trending" ? true : false,
+        //   icon: ThermometerSun,
+        //   submenus: [],
+        // },
         {
           href: "/efficiency-app/nett-plant-heat-rate",
           label: "Nett Plant Heat Rate",
@@ -67,14 +67,14 @@ export function getMenuList(pathname: string): Group[] {
           icon: ChartCandlestick,
           submenus: [],
         },
-        {
-          href: "/efficiency-app/performance-test",
-          label: "Performance Test",
-          active:
-            pathname === "/efficiency-app/performance-test" ? true : false,
-          icon: Gauge,
-          submenus: [],
-        },
+        // {
+        //   href: "/efficiency-app/performance-test",
+        //   label: "Performance Test",
+        //   active:
+        //     pathname === "/efficiency-app/performance-test" ? true : false,
+        //   icon: Gauge,
+        //   submenus: [],
+        // },
       ],
     },
   ];

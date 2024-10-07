@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Link, Spinner } from "@nextui-org/react";
+import { Button, Divider, Link, Spinner } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import MultipleLineChart from "@/components/efficiency-app/pareto/MultipleLineChart";
 import TableParetoHeatloss from "@/components/efficiency-app/TableParetoHeatloss";
@@ -113,7 +113,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
   return (
     <EfficiencyContentLayout title="Pareto Heat Loss">
       <div
-        className="flex flex-col w-full items-center justify-center mt-6"
+        className="flex flex-col w-full items-center justify-center mt-2"
         id="root"
       >
         Pareto Page
@@ -121,7 +121,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
           as={Link}
           color="primary"
           startContent={<ChevronLeftIcon size={18} />}
-          className="my-6"
+          className="my-2"
           href={`/efficiency-app`}
           size="sm"
         >
@@ -137,17 +137,18 @@ export default function Page({ params }: { params: { data_id: string } }) {
         {isLoading ? (
           <Spinner color="primary" label="loading..." />
         ) : (
-          <div className="max-w-full mb-24 mt-12 overflow-hidden relative">
+          <div className="max-w-full mb-6 mt-4 overflow-hidden relative">
             {isValidating || isMutating ? (
-              <div className="h-36">
+              <div className="h-36 mt-4">
                 <Spinner color="primary" label="validating..." />
               </div>
             ) : (
-              <div className="min-w-full flex flex-col gap-6">
+              <div className="min-w-full flex flex-col gap-1">
                 <TableParetoTop
                   tableData={tableData}
                   summaryData={summaryData}
                 />
+                <Divider />
                 <TableParetoHeatloss
                   tableData={tableData}
                   summaryData={summaryData}

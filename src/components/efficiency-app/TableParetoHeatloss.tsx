@@ -562,7 +562,7 @@ export default function TableParetoHeatloss({
                   }}
                   color="warning"
                   size="sm"
-                  className="m-2"
+                  className="m-0 p-1"
                 >
                   Root Cause
                 </Button>
@@ -576,7 +576,7 @@ export default function TableParetoHeatloss({
                   }}
                   color="primary"
                   size="sm"
-                  className="m-2"
+                  className="m-0 p-1"
                 >
                   Action
                 </Button>
@@ -691,6 +691,7 @@ export default function TableParetoHeatloss({
     stickyCells.forEach((cell) => cell.classList.remove("sticky"));
 
     // Create PDF
+    //@ts-ignore
     const pdf = await html2PDF(table, {
       jsPDF: {
         format: "a4",
@@ -780,10 +781,11 @@ export default function TableParetoHeatloss({
         data_id={data_id}
         paretoMutate={mutate}
       />
-      <div className=" flex justify-end gap-6">
+      <div className=" flex justify-end gap-2">
         <Button
           onClick={() => handleExportExcel()}
           color="success"
+          size="sm"
           endContent={<DownloadIcon size={16} />}
         >
           Export to Excel
@@ -791,6 +793,7 @@ export default function TableParetoHeatloss({
         <Button
           onClick={() => handleExportData()}
           color="success"
+          size="sm"
           endContent={<DownloadIcon size={16} />}
         >
           Export to CSV
@@ -798,6 +801,7 @@ export default function TableParetoHeatloss({
         <Button
           onClick={() => handleExportPDFData()}
           color="danger"
+          size="sm"
           endContent={<DownloadIcon size={16} />}
         >
           Export to PDF
@@ -810,9 +814,9 @@ export default function TableParetoHeatloss({
           Print table
         </Button> */}
       </div>
-      <div className="max-w-full max-h-[568px] mb-24 mt-12 overflow-auto relative printable-table">
+      <div className="max-w-full max-h-[568px] mb-3 mt-1 overflow-auto relative printable-table">
         <table
-          cellPadding="1"
+          cellPadding=".25"
           cellSpacing="0"
           className="overflow-y-scroll relative"
           style={{

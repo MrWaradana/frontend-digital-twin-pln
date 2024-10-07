@@ -202,7 +202,7 @@ export default function VariableInputForm({
             />
           </div>
           <hr />
-          <h2 className="font-bold text-lg sticky top-16 bg-white z-50">
+          <h2 className="font-bold text-lg sticky top-16 bg-white p-1 rounded-md dark:bg-black z-50">
             Input Variables
           </h2>
 

@@ -482,7 +482,7 @@ export default function TableParetoTop({
 
   return (
     <>
-      <div className="max-w-full max-h-[568px] mb-24 mt-12 overflow-auto relative printable-table">
+      <div className="max-w-full max-h-[568px] mb-3 mt-1 overflow-auto relative printable-table">
         <table
           cellPadding="1"
           cellSpacing="0"
