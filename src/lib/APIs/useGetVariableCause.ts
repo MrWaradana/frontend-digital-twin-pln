@@ -11,11 +11,22 @@ export interface VariableCause {
     variable_id: string,
     children: Array<VariableCause>,
     root_causes: Array<any>,
+    actions: Array<VariableCauseAction>,
     variable: Variable
     created_at: string,
     created_by: string,
     updated_at: string,
     updated_by: string;
+}
+
+export interface VariableCauseAction {
+    cause_id: string,
+    created_at: string,
+    created_by: string,
+    id: string,
+    name: string,
+    updated_at: string,
+    updated_by: string
 }
 
 // ${EFFICIENCY_API_URL}/variables?excel_id=${selectedExcel.id}

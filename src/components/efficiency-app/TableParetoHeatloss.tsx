@@ -38,6 +38,7 @@ import { Box, DownloadIcon, PrinterIcon } from "lucide-react";
 import EditableCell from "./EditableCell";
 import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
 import ModalRootCause from "./ModalRootCause";
+import ModalRootCauseAction from "./ModalRootCauseAction";
 
 const formatCurrency = (number: any) => {
   // Convert to absolute value to handle negative numbers
@@ -246,7 +247,8 @@ export default function TableParetoHeatloss({
   data_id: string;
   setIsMutating: any;
 }) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen: modalRootCauseIsopen, onOpen: modalRootCauseOnopen, onOpenChange: modalRootCauseonOpenChange } = useDisclosure();
+  const { isOpen:modalRootActionIsopen, onOpen: modalRootActionOnopen, onOpenChange:modalRootActionOnOpenChange } = useDisclosure();
   const [data, setData] = React.useState(tableData);
   const [expanded, setExpanded] = React.useState<ExpandedState>(true);
   const [tableDataPrint, setTableDataPrint] = React.useState([tableData]);
@@ -557,7 +559,7 @@ export default function TableParetoHeatloss({
                       variableId: row.original.variable.id,
                       detailId: row.original.id,
                     });
-                    onOpen();
+                    modalRootCauseOnopen()
                   }}
                   color="warning"
                   size="sm"
@@ -571,7 +573,7 @@ export default function TableParetoHeatloss({
                       variableId: row.original.variable.id,
                       detailId: row.original.id,
                     });
-                    onOpen();
+                    modalRootActionOnopen()
                   }}
                   color="primary"
                   size="sm"
@@ -774,12 +776,22 @@ export default function TableParetoHeatloss({
   return (
     <>
       <ModalRootCause
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
+        isOpen={modalRootCauseIsopen}
+        onOpenChange={modalRootCauseonOpenChange}
         selectedModalId={selectecModalId}
         data_id={data_id}
         paretoMutate={mutate}
       />
+
+      <ModalRootCauseAction
+        isOpen={modalRootActionIsopen}
+        onOpenChange={modalRootActionOnOpenChange}
+        selectedModalId={selectecModalId}
+        data_id={data_id}
+        paretoMutate={mutate}
+      />
+
+
       <div className=" flex justify-end gap-2">
         <Button
           onClick={() => handleExportExcel()}
