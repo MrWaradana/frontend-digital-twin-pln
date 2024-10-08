@@ -37,6 +37,7 @@ import { set } from "lodash";
 import { useForm } from "react-hook-form";
 import { Form } from "../ui/form";
 import React from "react";
+import toast from "react-hot-toast";
 
 const checkboxColumn = [
   "Macrofouling",
@@ -315,6 +316,7 @@ function ModalRootCause({
       setCheckRootHeaders({});
       paretoMutate();
     } catch (error) {
+      toast.error(`Something wrong: ${error}`);
       console.error(error);
     }
   };
@@ -348,7 +350,7 @@ function ModalRootCause({
                           <TableHead key={header.id}>{header.name}</TableHead>
                         ))} */}
                         <TableHead>Check</TableHead>
-                        <TableHead>Need Repair</TableHead>
+                        <TableHead>Need Corrective Action</TableHead>
                         {/* <TableHead>Cost</TableHead> */}
                       </TableRow>
                     </TableHeader>
