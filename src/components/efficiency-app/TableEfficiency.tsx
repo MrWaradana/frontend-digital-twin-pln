@@ -48,7 +48,7 @@ const parameterColorMap: Record<string, ChipProps["color"]> = {
 };
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
-  Done: "success",
+  Done: "primary",
   Processing: "warning",
   Failed: "danger",
 };
@@ -249,7 +249,7 @@ export default function TableEfficiency({
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[rowData.jenis_parameter]}
+              color={statusColorMap[rowData.status]}
               size="sm"
               variant="flat"
             >
