@@ -61,7 +61,7 @@ export function UserNav() {
                       await signOut();
                       router.push("/login");
                     } catch (err) {
-                      toast.error("Unable to sign out!");
+                      console.error("Unable to sign out!");
                     }
                   }}
                 >

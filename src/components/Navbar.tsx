@@ -83,7 +83,7 @@ export default function Navbar() {
                       setIsLoading(false);
                       router.push("/login");
                     } catch (err) {
-                      toast.error("Unable to sign out!");
+                      console.error("Unable to sign out!");
                     }
                   }}
                   isLoading={isLoading}
