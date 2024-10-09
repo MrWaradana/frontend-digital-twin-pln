@@ -35,6 +35,7 @@ import { useSession } from "next-auth/react";
 import { useMemo, useRef } from "react";
 import { useSelectedEfficiencyDataStore } from "../../../store/selectedEfficiencyData";
 import React from "react";
+import TableParetoHeatloss from "../TableParetoHeatloss";
 
 export const description = "A stacked bar chart with a legend";
 
@@ -56,7 +57,7 @@ export default function BarChartNPHR({ data_id }: any) {
   const selectedEfficiencyData = useSelectedEfficiencyDataStore(
     (state) => state.selectedEfficiencyData
   );
-  console.log(selectedEfficiencyData, "selected");
+  // console.log(selectedEfficiencyData, "selected");
   const { data, mutate, isLoading, isValidating, error } = useGetDataNPHR(
     session?.data?.user.access_token,
     selectedEfficiencyData ? selectedEfficiencyData : data_id
@@ -80,7 +81,8 @@ export default function BarChartNPHR({ data_id }: any) {
           cum_frequency, // Add the accumulated frequency
         };
       })
-      .filter((item: any) => item.cum_frequency <= 300);
+      // .filter((item: any) => item.cum_frequency <= 300 && );
+      .filter((item: any) => item.category);
 
     // console.log(mapped_data, "mapped chart data");
     //   return mapped_data;
@@ -144,6 +146,7 @@ export default function BarChartNPHR({ data_id }: any) {
               <ModalBody className="flex justify-center items-center">
                 <div className="min-h-full min-w-[968px] overflow-hidden">
                   <MultipleLineChart data={chartParetoDataWithCumFeq} />
+                  {/* <TableParetoHeatloss /> */}
                 </div>
               </ModalBody>
               <ModalFooter>
@@ -158,9 +161,10 @@ export default function BarChartNPHR({ data_id }: any) {
           )}
         </ModalContent>
       </Modal>
-      <div className="w-full flex justify-center">
-        Selected Data: <span className="font-bold">{data?.name}</span>
-      </div>
+      <p className="w-full flex justify-center">
+        Selected Data:{" "}
+        <span className="font-bold pl-2"> {`${data?.name}`}</span>
+      </p>
       <Card>
         <CardHeader>
           <CardTitle>Nett Plant Heat Rate</CardTitle>

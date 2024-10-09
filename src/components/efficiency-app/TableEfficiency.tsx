@@ -548,7 +548,7 @@ export default function TableEfficiency({
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No data found"}
+          emptyContent={`No ${parameterFilter} data found`}
           isLoading={efficiencyLoading}
           loadingContent={
             <>

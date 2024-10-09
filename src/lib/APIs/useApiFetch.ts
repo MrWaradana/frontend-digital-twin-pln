@@ -66,10 +66,16 @@ export function useApiFetch<T, RawT = T>(
   //       console.error("Error refreshing token:", error);
   //     });
   // }
-  useGeneralErrorToast(error);
+  // useGeneralErrorToast(error);
+
+  if (error) {
+    return;
+  }
 
   // Must include the isReady check, otherwise isLoading is false, but there is no data or error
   const isLoading = !isReady || isDataLoading;
+
+  // useGeneralErrorToast(error);
 
   if (isLoading) {
     return {

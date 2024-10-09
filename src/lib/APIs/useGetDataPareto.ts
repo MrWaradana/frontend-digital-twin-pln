@@ -4,6 +4,7 @@ import { useApiFetch } from "./useApiFetch";
 
 export interface ParetoResultDataList {
   pareto_result: Array<DataParetoList>;
+  parett_uncategorized_result: Array<DataParetoList>;
   chart_result: Array<DataParetoList>;
   total_nilai: number;
   total_persen: number;

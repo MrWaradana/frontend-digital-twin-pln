@@ -67,7 +67,7 @@ export default function MultipleLineChart({ data, thresholdNumber }: any) {
     setSelectedCategory(data);
     onOpen();
   };
-
+  console.log(data, "data pareto chart heat loss");
   const renderValue = (key: string, value: unknown): ReactNode => {
     if (typeof value === "object" && value !== null) {
       return <pre>{JSON.stringify(value, null, 2)}</pre>; // For object rendering, stringify the object

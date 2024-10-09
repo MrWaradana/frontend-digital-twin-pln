@@ -29,9 +29,9 @@ import {
 } from "@/lib/APIs/useGetVariableHeaders";
 import PreviousMap from "postcss/lib/previous-map";
 import {
-  DataRootCause,
-  useGetDataRootCauses,
-} from "@/lib/APIs/useGetDataRootCause";
+  DataRootCauseAction,
+  useGetDataRootCausesAction,
+} from "@/lib/APIs/useGetDataRootCauseAction";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { set } from "lodash";
 import { useForm } from "react-hook-form";
@@ -132,18 +132,21 @@ function ModalRootCause({
   data_id: string;
   paretoMutate: any;
 }) {
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const { data: session } = useSession();
 
-  //   const {
-  //     data: rootCause,
-  //     isLoading: rootCauseLoading,
-  //     isValidating: rootCauseValidating,
-  //   } = useGetDataRootCauses(
-  //     session?.user.access_token,
-  //     data_id,
-  //     selectedModalId.detailId,
-  //     isOpen
-  //   );
+  const {
+    data: rootCauseAction,
+    isLoading: rootCauseActionLoading,
+    isValidating: rootCauseActionValidating,
+  } = useGetDataRootCausesAction(
+    session?.user.access_token,
+    data_id,
+    selectedModalId.detailId,
+    isOpen
+  );
+
+  // console.log(rootCauseAction, "action data");
 
   const { data, isLoading, isValidating, mutate } = useGetVariableCauseActions(
     session?.user.access_token,
@@ -159,6 +162,7 @@ function ModalRootCause({
   // );
 
   const variableCauseActions = data ?? [];
+  const dataRootCauseAction = rootCauseAction ?? [];
 
   // const formInit = useForm({
   //     mode: 'onChange',
@@ -176,37 +180,38 @@ function ModalRootCause({
 
   const [checkRootActions, setCheckRootActions] = useState<any>({});
 
-  //   useEffect(() => {
-  //     if (rootCauseData.length > 0) {
-  //       const data = Object.fromEntries(
-  //         rootCauseData.map((root) => {
-  //           const stateRootCause = root.members.reduce((acc, member) => {
-  //             acc[member.cause_id] = {
-  //               isChecked: member.is_checked,
-  //               is_repair: member.is_repair,
-  //             };
-  //             return acc;
-  //           }, {});
+  // console.log(checkRootActions, "check root state");
 
-  //           return [
-  //             root.parent_cause_id,
-  //             {
-  //               updatedRootCauses: stateRootCause,
-  //               parentId: root.parent_cause_id,
-  //               is_repair: root.is_repair,
-  //             },
-  //           ];
-  //         })
-  //       );
+  useEffect(() => {
+    if (dataRootCauseAction.length > 0) {
+      const data = Object.fromEntries(
+        dataRootCauseAction.map((root) => {
+          const stateRootCause = root.actions?.reduce((acc, action) => {
+            acc[action.action_id] = {
+              biaya: action.biaya,
+              isChecked: action.is_checked,
+            };
+            return acc;
+          }, {});
 
-  //       setCheckRootHeaders((prev) => {
-  //         return {
-  //           ...prev,
-  //           ...data,
-  //         };
-  //       });
-  //     }
-  //   }, [rootCauseData, rootCauseValidating]);
+          return [
+            root.parent_cause_id,
+            {
+              updatedRootCauses: stateRootCause,
+              parentId: root.parent_cause_id,
+            },
+          ];
+        })
+      );
+
+      setCheckRootActions((prev) => {
+        return {
+          ...prev,
+          ...data,
+        };
+      });
+    }
+  }, [rootCauseAction, rootCauseActionValidating]);
 
   //Handler for checkbox changes
   const handleCheckboxChange = ({
@@ -246,83 +251,87 @@ function ModalRootCause({
   };
 
   // Handler to log or save the checked values
-  //   const handleSave = async () => {
-  //     // console.log(rootRepairCost);
-  //     // You can save the checkedValues to a backend or local storage here
+  const handleSave = async () => {
+    // console.log(rootRepairCost);
+    // You can save the checkedValues to a backend or local storage here
 
-  //     //   {
-  //     //     "data_root_causes": [
-  //     //         {
-  //     //             "parent_id": "c81e090a-090f-4508-83f1-424f4195a339",
-  //     //             "root_causes": {
-  //     //                 "c81e090a-090f-4508-83f1-424f4195a339": true,
-  //     //                 "5d71727a-28e8-4232-9a1f-4d4d9bed096c": true,
-  //     //                 "74cd8dff-a469-4c48-8c4f-4fc9534b49fd":true
-  //     //             },
-  //     //             "is_repair":true
-  //     //         }
-  //     //     ]
-  //     // }
+    //   {
+    //     "data_root_causes": [
+    //         {
+    //             "parent_id": "c81e090a-090f-4508-83f1-424f4195a339",
+    //             "root_causes": {
+    //                 "c81e090a-090f-4508-83f1-424f4195a339": true,
+    //                 "5d71727a-28e8-4232-9a1f-4d4d9bed096c": true,
+    //                 "74cd8dff-a469-4c48-8c4f-4fc9534b49fd":true
+    //             },
+    //             "is_repair":true
+    //         }
+    //     ]
+    // }
 
-  //     // Create the payload
-  //     const payload = {
-  //       data_root_causes: Object.values(checkRootHeaders).reduce(
-  //         (acc: any, value: any) => {
-  //           // Create the root_causes object
-  //           const root_causes = {
-  //             ...value.updatedRootCauses,
-  //           };
+    // Create the payload
+    const payload = {
+      data_actions: Object.values(checkRootActions).reduce(
+        (acc: any, value: any) => {
+          // Create the root_causes object
+          const root_causes = {
+            ...value.updatedRootCauses,
+          };
 
-  //           // Check if the parentId is already in the accumulator
-  //           const existingEntry = acc.find(
-  //             (entry) => entry.parent_id === value.parentId
-  //           );
-  //           if (existingEntry) {
-  //             existingEntry.root_causes = {
-  //               ...existingEntry.root_causes,
-  //               ...root_causes,
-  //             }; // Merge root causes
-  //           } else {
-  //             acc.push({
-  //               parent_id: value.parentId,
-  //               root_causes,
-  //             });
-  //           }
+          // Check if the parentId is already in the accumulator
+          const existingEntry = acc.find(
+            (entry) => entry.parent_id === value.parentId
+          );
+          if (existingEntry) {
+            existingEntry.actions = {
+              ...existingEntry.root_causes,
+              ...root_causes,
+            }; // Merge root causes
+          } else {
+            acc.push({
+              parent_id: value.parentId,
+              actions: root_causes,
+            });
+          }
 
-  //           return acc;
-  //         },
-  //         []
-  //       ),
-  //     };
+          return acc;
+        },
+        []
+      ),
+    };
 
-  //     console.log(JSON.stringify(payload, null, 2));
+    // console.log(JSON.stringify(payload, null, 2));
+    setLoadingSubmit(true);
+    try {
+      const response = await fetch(
+        `${EFFICIENCY_API_URL}/data/${data_id}/root/${selectedModalId.detailId}/action`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.access_token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
-  //     try {
-  //       const response = await fetch(
-  //         `${EFFICIENCY_API_URL}/data/${data_id}/root/${selectedModalId.detailId}?is_bulk=1`,
-  //         {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Authorization: `Bearer ${session?.user.access_token}`,
-  //           },
-  //           body: JSON.stringify(payload),
-  //         }
-  //       );
+      if (!response.ok) {
+        throw new Error("Failed to save data");
+        setLoadingSubmit(false);
+      }
 
-  //       if (!response.ok) {
-  //         throw new Error("Failed to save data");
-  //       }
+      const resData = await response.json();
 
-  //       const resData = await response.json();
-
-  //       setCheckRootHeaders({});
-  //       paretoMutate();
-  //     } catch (error) {
-  //       toast.error(`Something wrong: ${error}`);
-  //       console.error(error);
-  //     }
-  //   };
+      toast.success("Data input succesfuly!");
+      setCheckRootActions({});
+      setLoadingSubmit(false);
+      paretoMutate();
+    } catch (error) {
+      toast.error(`Something wrong: ${error}`);
+      setLoadingSubmit(false);
+      console.error(error);
+    }
+  };
 
   return (
     <Modal
@@ -336,11 +345,11 @@ function ModalRootCause({
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Root Cause Checkbox
+                Corrective Action Checkbox
               </ModalHeader>
               <ModalBody>
                 {/* {JSON.stringify(checkRootHeaders)} */}
-                {!isLoading ? (
+                {!isLoading && !rootCauseActionLoading ? (
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -444,6 +453,7 @@ function ModalRootCause({
                   onPress={() => {
                     onClose();
                   }}
+                  isLoading={loadingSubmit}
                 >
                   Cancel
                 </Button>
@@ -451,9 +461,10 @@ function ModalRootCause({
                   color="success"
                   variant="light"
                   onClick={() => {
-                    // handleSave();
-                    onClose();
+                    handleSave();
+                    // onClose();
                   }}
+                  isLoading={loadingSubmit}
                 >
                   Submit
                 </Button>

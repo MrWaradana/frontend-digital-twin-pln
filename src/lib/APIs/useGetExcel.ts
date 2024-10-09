@@ -2,7 +2,6 @@ import { EFFICIENCY_API_URL } from "../api-url";
 import { HookReply } from "./types";
 import { useApiFetch } from "./useApiFetch";
 
-
 // interface Variable {
 //     id: string
 //     input_name: string,
@@ -22,12 +21,9 @@ import { useApiFetch } from "./useApiFetch";
 // }
 // ${EFFICIENCY_API_URL}/variables?excel_id=${selectedExcel.id}
 
-export function useGetExcel(
-    token: string | undefined
-): HookReply<Array<any>> {
-    return useApiFetch(
-        `${EFFICIENCY_API_URL}/excels`,
-        !!token,
-        token
-    )
+export function useGetExcel(token: string | undefined): HookReply<Array<any>> {
+  return useApiFetch(`${EFFICIENCY_API_URL}/excels`, !!token, token, {
+    shouldRetryOnError: false,
+    errorRetryInterval: 60000,
+  });
 }

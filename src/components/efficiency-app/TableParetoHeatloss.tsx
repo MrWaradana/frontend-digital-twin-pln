@@ -247,8 +247,16 @@ export default function TableParetoHeatloss({
   data_id: string;
   setIsMutating: any;
 }) {
-  const { isOpen: modalRootCauseIsopen, onOpen: modalRootCauseOnopen, onOpenChange: modalRootCauseonOpenChange } = useDisclosure();
-  const { isOpen:modalRootActionIsopen, onOpen: modalRootActionOnopen, onOpenChange:modalRootActionOnOpenChange } = useDisclosure();
+  const {
+    isOpen: modalRootCauseIsopen,
+    onOpen: modalRootCauseOnopen,
+    onOpenChange: modalRootCauseonOpenChange,
+  } = useDisclosure();
+  const {
+    isOpen: modalRootActionIsopen,
+    onOpen: modalRootActionOnopen,
+    onOpenChange: modalRootActionOnOpenChange,
+  } = useDisclosure();
   const [data, setData] = React.useState(tableData);
   const [expanded, setExpanded] = React.useState<ExpandedState>(true);
   const [tableDataPrint, setTableDataPrint] = React.useState([tableData]);
@@ -323,7 +331,7 @@ export default function TableParetoHeatloss({
         ),
       },
       {
-        header: "Reference Data",
+        header: "Reference Data (Commision)",
         meta: {
           className: "text-right",
         },
@@ -345,7 +353,7 @@ export default function TableParetoHeatloss({
         ),
       },
       {
-        header: "Existing Data",
+        header: "Existing Data (Current)",
         meta: {
           className: "text-right",
         },
@@ -559,7 +567,7 @@ export default function TableParetoHeatloss({
                       variableId: row.original.variable.id,
                       detailId: row.original.id,
                     });
-                    modalRootCauseOnopen()
+                    modalRootCauseOnopen();
                   }}
                   color="warning"
                   size="sm"
@@ -573,7 +581,7 @@ export default function TableParetoHeatloss({
                       variableId: row.original.variable.id,
                       detailId: row.original.id,
                     });
-                    modalRootActionOnopen()
+                    modalRootActionOnopen();
                   }}
                   color="primary"
                   size="sm"
@@ -790,7 +798,6 @@ export default function TableParetoHeatloss({
         data_id={data_id}
         paretoMutate={mutate}
       />
-
 
       <div className=" flex justify-end gap-2">
         <Button

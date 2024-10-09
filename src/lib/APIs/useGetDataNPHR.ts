@@ -36,6 +36,8 @@ export function useGetDataNPHR(
       revalidateOnReconnect: false,
       refreshWhenHidden: false,
       refreshWhenOffline: false,
+      errorRetryInterval: 60000,
+      shouldRetryOnError: false,
       // revalidateIfStale: false,
       // revalidateOnMount: false,
     }

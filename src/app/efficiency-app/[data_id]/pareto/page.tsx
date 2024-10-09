@@ -34,7 +34,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
   // console.log(data?.pareto_result, "table data pareto");
 
   const tableData = data?.pareto_result ?? [];
-  const paretoTopData = tableData.filter((item) => item.category == null);
+  const paretoTopData = data?.parett_uncategorized_result ?? [];
   const paretoBottomData = tableData.filter((item) => item.category != null);
 
   // const tableIsPareto = filter flag is Pareto Hari Senen

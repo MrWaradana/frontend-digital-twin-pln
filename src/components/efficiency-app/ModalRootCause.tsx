@@ -130,6 +130,7 @@ function ModalRootCause({
   data_id: string;
   paretoMutate: any;
 }) {
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const { data: session } = useSession();
 
   const {
@@ -294,6 +295,8 @@ function ModalRootCause({
 
     console.log(JSON.stringify(payload, null, 2));
 
+    setLoadingSubmit(true);
+
     try {
       const response = await fetch(
         `${EFFICIENCY_API_URL}/data/${data_id}/root/${selectedModalId.detailId}?is_bulk=1`,
@@ -309,14 +312,18 @@ function ModalRootCause({
 
       if (!response.ok) {
         throw new Error("Failed to save data");
+        setLoadingSubmit(false);
       }
 
       const resData = await response.json();
 
+      setLoadingSubmit(false);
+      toast.success("Data input succesfully!");
       setCheckRootHeaders({});
       paretoMutate();
     } catch (error) {
       toast.error(`Something wrong: ${error}`);
+      setLoadingSubmit(false);
       console.error(error);
     }
   };
@@ -438,6 +445,7 @@ function ModalRootCause({
                   onPress={() => {
                     onClose();
                   }}
+                  isLoading={loadingSubmit}
                 >
                   Cancel
                 </Button>
@@ -446,8 +454,9 @@ function ModalRootCause({
                   variant="light"
                   onClick={() => {
                     handleSave();
-                    onClose();
+                    // onClose();
                   }}
+                  isLoading={loadingSubmit}
                 >
                   Submit
                 </Button>
