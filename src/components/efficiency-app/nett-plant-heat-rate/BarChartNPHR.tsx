@@ -35,9 +35,6 @@ import { useSession } from "next-auth/react";
 import { useMemo, useRef } from "react";
 import { useSelectedEfficiencyDataStore } from "../../../store/selectedEfficiencyData";
 import React from "react";
-import TableParetoHeatloss from "../TableParetoHeatloss";
-
-export const description = "A stacked bar chart with a legend";
 
 const chartConfig = {
   nphr: {
