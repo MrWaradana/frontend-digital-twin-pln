@@ -138,7 +138,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                 )}
 
                 {/* Render summary row under specific columns */}
-                {
+                {!row.original.total_nilai_losses ? null : (
                   <tr
                     key={`summary-${row.id}`}
                     className="bg-neutral-100 dark:bg-neutral-900 border border-black"
@@ -161,7 +161,9 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                             key={cell.id}
                             className="font-bold border border-neutral-700 text-right"
                           >
-                            {row.original.total_nilai_losses.toFixed(2)}
+                            {row.original.total_nilai_losses
+                              ? row.original.total_nilai_losses.toFixed(2)
+                              : "0"}
                           </td>
                         );
                       }
@@ -171,7 +173,9 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                             key={cell.id}
                             className="font-bold border border-neutral-700 text-right"
                           >
-                            {row.original.total_persen_losses.toFixed(2)}
+                            {row.original.total_persen_losses
+                              ? row.original.total_persen_losses.toFixed(2)
+                              : "0"}
                           </td>
                         );
                       }
@@ -182,9 +186,11 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                             className="font-bold border border-neutral-700 text-right"
                           >
                             Rp.
-                            {formatCurrency(
-                              row.original.total_cost_benefit.toFixed(0)
-                            )}
+                            {row.original.total_cost_benefit
+                              ? formatCurrency(
+                                  row.original.total_cost_benefit.toFixed(0)
+                                )
+                              : 0}
                           </td>
                         );
                       }
@@ -195,9 +201,11 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                             className="font-bold border border-neutral-700 text-right"
                           >
                             Rp.
-                            {formatCurrency(
-                              row.original.total_cost_gap.toFixed(0)
-                            )}
+                            {row.original.total_cost_gap
+                              ? formatCurrency(
+                                  row.original.total_cost_gap.toFixed(0)
+                                )
+                              : "0"}
                           </td>
                         );
                       }
@@ -205,7 +213,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                       return <td key={cell.id}></td>;
                     })}
                   </tr>
-                }
+                )}
               </>
             )
         )
@@ -242,10 +250,10 @@ export default function TableParetoHeatloss({
 }: {
   tableData: any;
   summaryData: any;
-  mutate: any;
-  isValidating: any;
-  data_id: string;
-  setIsMutating: any;
+  mutate?: any;
+  isValidating?: any;
+  data_id?: string;
+  setIsMutating?: any;
 }) {
   const {
     isOpen: modalRootCauseIsopen,
@@ -305,9 +313,7 @@ export default function TableParetoHeatloss({
             )}{" "}
             <span className="text-base print-cell">
               {" "}
-              {props.getValue() || props.row.depth > 0
-                ? props.getValue()
-                : "Uncategorized"}
+              {props.getValue() || props.row.depth > 0 ? props.getValue() : ""}
             </span>
           </div>
         ),

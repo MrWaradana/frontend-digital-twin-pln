@@ -63,8 +63,10 @@ export default function BarChartNPHR({ data_id }: any) {
     selectedEfficiencyData ? selectedEfficiencyData : data_id
   );
 
+  const summaryData = data ?? [];
   const chartParetoData = data?.chart_result ?? [];
   const nphrData: any = data?.nphr_result ?? [];
+  const paretoData: any = data?.pareto_result ?? [];
   const chartDataRef = useRef<any | null>(null);
   const chartParetoDataWithCumFeq = useMemo(() => {
     const mapped_data = chartParetoData
@@ -145,7 +147,11 @@ export default function BarChartNPHR({ data_id }: any) {
               <ModalHeader className="flex flex-col gap-1"></ModalHeader>
               <ModalBody className="flex justify-center items-center">
                 <div className="min-h-full min-w-[968px] overflow-hidden">
-                  <MultipleLineChart data={chartParetoDataWithCumFeq} />
+                  <MultipleLineChart
+                    data={chartParetoDataWithCumFeq}
+                    summaryData={summaryData}
+                    paretoData={paretoData}
+                  />
                   {/* <TableParetoHeatloss /> */}
                 </div>
               </ModalBody>

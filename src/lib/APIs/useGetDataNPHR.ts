@@ -6,6 +6,7 @@ export interface NPHRType {
   data_id: string;
   name: string;
   chart_result: Array<ChartResult>;
+  pareto_result: any;
   nphr_result: NPHRResult;
 }
 

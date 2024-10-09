@@ -43,6 +43,7 @@ import {
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
 import { useRouter } from "next/navigation";
+import TableParetoHeatloss from "../TableParetoHeatloss";
 
 const chartConfig = {
   category: {
@@ -55,7 +56,12 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function MultipleLineChart({ data, thresholdNumber }: any) {
+export default function MultipleLineChart({
+  data,
+  summaryData,
+  thresholdNumber,
+  paretoData,
+}: any) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const router = useRouter();
@@ -64,10 +70,15 @@ export default function MultipleLineChart({ data, thresholdNumber }: any) {
     useState<SliderValue>(thresholdNumber); // Holds the immediate value
 
   const handleBarClick = (data: any) => {
-    setSelectedCategory(data);
+    // setSelectedBar(data.category);
+    const dataParetoShow = paretoData.filter(
+      (item) => item.category == data.category
+    );
+    setSelectedCategory(dataParetoShow[0]);
     onOpen();
   };
-  console.log(data, "data pareto chart heat loss");
+
+  // console.log(data, "data pareto chart heat loss");
   const renderValue = (key: string, value: unknown): ReactNode => {
     if (typeof value === "object" && value !== null) {
       return <pre>{JSON.stringify(value, null, 2)}</pre>; // For object rendering, stringify the object
@@ -92,15 +103,11 @@ export default function MultipleLineChart({ data, thresholdNumber }: any) {
                   : selectedCategory?.category}
               </ModalHeader>
               <ModalBody className="flex justify-center items-center">
-                <div className="min-h-full min-w-[968px] overflow-hidden">
-                  <p>
-                    Total Nilai Losses: {selectedCategory?.total_nilai_losses}
-                  </p>
-                  <p>
-                    Total Percent Losses:{" "}
-                    {selectedCategory?.total_persen_losses}
-                  </p>
-                  <p>Cumulative Frequency: {selectedCategory?.cum_frequency}</p>
+                <div className="max-w-full">
+                  <TableParetoHeatloss
+                    tableData={selectedCategory.data}
+                    summaryData={summaryData}
+                  />
                 </div>
               </ModalBody>
               <ModalFooter>
@@ -141,7 +148,7 @@ export default function MultipleLineChart({ data, thresholdNumber }: any) {
                   value ? value.slice(0, 4) : "Uncategorized"
                 }
               />
-              <YAxis domain={[0, 300]} />
+              <YAxis domain={[0, 100]} />
               <Legend className="dark:fill-slate-50" />
               <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
               <Bar
