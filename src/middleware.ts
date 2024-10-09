@@ -6,6 +6,15 @@ import { NextRequest, NextResponse } from "next/server";
 
 export default auth(async (req) => {
   if (!req.auth && req.nextUrl.pathname !== "/login") {
+    // Check if the current URL has any parameters or if the path is longer than '/login'
+    if (
+      req.nextUrl.pathname.startsWith("/login") &&
+      req.nextUrl.searchParams.toString()
+    ) {
+      const newUrl = new URL("/login", req.nextUrl.origin); // clean URL without parameters
+      return Response.redirect(newUrl);
+    }
+    console.log(req.nextUrl.searchParams.toString(), "params");
     const newUrl = new URL("/login", req.nextUrl.origin);
     return Response.redirect(newUrl);
   }
