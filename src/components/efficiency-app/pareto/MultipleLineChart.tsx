@@ -86,7 +86,7 @@ export default function MultipleLineChart({
               tickMargin={8}
               tickFormatter={(value) => (value ? value.slice(0, 4) : "Pareto")}
             />
-            <YAxis domain={[0, 100000000]} allowDataOverflow={true} />
+            <YAxis domain={[0, 500000]} allowDataOverflow={true} />
             {/* <YAxis allowDataOverflow={true} /> */}
             <Legend className="dark:fill-slate-50" />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
