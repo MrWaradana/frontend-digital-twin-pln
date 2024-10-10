@@ -491,7 +491,7 @@ export default function TableParetoTop({
             ...columnSizeVars,
             width: table.getTotalSize(),
           }}
-          id="table-pareto"
+          id="table-pareto-top"
         >
           <thead className="sticky top-0 z-50 border-2">
             {table.getHeaderGroups().map((headerGroup: any) => {

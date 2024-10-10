@@ -855,7 +855,7 @@ export default function TableParetoHeatlossNPHR({
             ...columnSizeVars,
             width: table.getTotalSize(),
           }}
-          id="table-pareto"
+          id="table-pareto-nphr"
         >
           <thead className="sticky top-0 z-50 border-2">
             {table.getHeaderGroups().map((headerGroup: any) => {
