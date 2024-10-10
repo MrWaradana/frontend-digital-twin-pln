@@ -396,44 +396,44 @@ export default function TableParetoHeatloss({
           </div>
         ),
       },
-      {
-        header: "% HR",
-        meta: {
-          className: "text-right",
-        },
-        // Access the correct UOM value for each row or sub-row
-        accessorFn: (row: any) => row.persen_hr || "",
-        cell: (props: any) =>
-          props.row.depth > 0 ? (
-            <EditableCell
-              {...props}
-              mutate={mutate}
-              isValidating={isValidating}
-              setIsMutating={setIsMutating}
-            />
-          ) : (
-            <div>{props.getValue()}</div>
-          ),
-      },
-      {
-        header: "Deviasi",
-        meta: {
-          className: "text-right",
-        },
-        // Access the correct UOM value for each row or sub-row
-        accessorFn: (row: any) => (row.data ? null : row.deviasi || ""),
-        cell: (props: any) =>
-          props.row.depth > 0 ? (
-            <EditableCell
-              {...props}
-              mutate={mutate}
-              isValidating={isValidating}
-              setIsMutating={setIsMutating}
-            />
-          ) : (
-            <div>{props.getValue()}</div>
-          ),
-      },
+      // {
+      //   header: "% HR",
+      //   meta: {
+      //     className: "text-right",
+      //   },
+      //   // Access the correct UOM value for each row or sub-row
+      //   accessorFn: (row: any) => row.persen_hr || "",
+      //   cell: (props: any) =>
+      //     props.row.depth > 0 ? (
+      //       <EditableCell
+      //         {...props}
+      //         mutate={mutate}
+      //         isValidating={isValidating}
+      //         setIsMutating={setIsMutating}
+      //       />
+      //     ) : (
+      //       <div>{props.getValue()}</div>
+      //     ),
+      // },
+      // {
+      //   header: "Deviasi",
+      //   meta: {
+      //     className: "text-right",
+      //   },
+      //   // Access the correct UOM value for each row or sub-row
+      //   accessorFn: (row: any) => (row.data ? null : row.deviasi || ""),
+      //   cell: (props: any) =>
+      //     props.row.depth > 0 ? (
+      //       <EditableCell
+      //         {...props}
+      //         mutate={mutate}
+      //         isValidating={isValidating}
+      //         setIsMutating={setIsMutating}
+      //       />
+      //     ) : (
+      //       <div>{props.getValue()}</div>
+      //     ),
+      // },
       {
         accessorKey: "persen_losses",
         meta: {
