@@ -35,6 +35,7 @@ import { useSession } from "next-auth/react";
 import { useMemo, useRef } from "react";
 import { useSelectedEfficiencyDataStore } from "../../../store/selectedEfficiencyData";
 import React from "react";
+import toast from "react-hot-toast";
 
 const chartConfig = {
   nphr: {
@@ -54,6 +55,11 @@ export default function BarChartNPHR({ data_id }: any) {
   const selectedEfficiencyData = useSelectedEfficiencyDataStore(
     (state) => state.selectedEfficiencyData
   );
+
+  const setSelectedEfficiencyData = useSelectedEfficiencyDataStore(
+    (state) => state.setSelectedEfficiencyData
+  );
+
   // console.log(selectedEfficiencyData, "selected");
   const { data, mutate, isLoading, isValidating, error } = useGetDataNPHR(
     session?.data?.user.access_token,
@@ -128,6 +134,11 @@ export default function BarChartNPHR({ data_id }: any) {
         <Spinner label="Calculating..." />
       </div>
     );
+  }
+
+  if (error) {
+    //@ts-ignore
+    setSelectedEfficiencyData("null");
   }
 
   return (
