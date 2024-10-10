@@ -521,13 +521,13 @@ export default function TableEfficiency({
     </Modal>
   );
 
-  if (isDeleteLoading) {
-    return (
-      <div>
-        <Spinner label="Validating..." />
-      </div>
-    );
-  }
+  // if (isDeleteLoading) {
+  //   return (
+  //     <div>
+  //       <Spinner label="Validating..." />
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
