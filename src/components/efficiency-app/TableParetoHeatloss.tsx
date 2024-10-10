@@ -902,12 +902,12 @@ export default function TableParetoHeatloss({
               <th className="sticky left-0 bg-blue-200 dark:bg-blue-600 pb-4">
                 Total Summary
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={6}></th>
+              <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
-                {formatCurrency(summaryData.total_persen.toFixed(2))}
+                {summaryData.total_persen.toFixed(2)}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
-                {formatCurrency(summaryData.total_nilai.toFixed(2))}
+                {summaryData.total_nilai.toFixed(2)}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
@@ -917,7 +917,7 @@ export default function TableParetoHeatloss({
               <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
                 Rp.{formatCurrency(summaryData.total_cost_gap.toFixed(2))}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={2}></th>
+              <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>
             </tr>
           </tfoot>
         </table>
