@@ -893,7 +893,7 @@ export default function TableParetoHeatloss({
           <MemoizedTableBody table={table} />
           {/* Initial Table Body for expanding row works */}
           {/* <TableBody table={table} /> */}
-          <tfoot className="sticky bottom-0 z-50 border-2">
+          <tfoot className="sticky bottom-0 z-50 border-2 print-cell">
             <tr className="text-left">
               <th className="sticky left-0 bg-blue-200 dark:bg-blue-600">
                 Total Summary

@@ -183,6 +183,11 @@ const TableRootCause: React.FC<{
         <TableCell className="p-0">
           {isLastChild(node) && (
             <Checkbox
+              className={`${
+                checkRoot[parentId]?.updatedRootCauses[node.id]?.isChecked
+                  ? ""
+                  : "hidden"
+              }`}
               checked={
                 checkRoot[parentId]?.updatedRootCauses[node.id]?.is_repair ??
                 false

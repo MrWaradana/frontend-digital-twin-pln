@@ -311,8 +311,8 @@ function ModalRootCause({
       );
 
       if (!response.ok) {
-        throw new Error("Failed to save data");
         setLoadingSubmit(false);
+        throw new Error("Failed to save data");
       }
 
       const resData = await response.json();
@@ -320,7 +320,7 @@ function ModalRootCause({
       setLoadingSubmit(false);
       toast.success("Data input succesfully!");
       setCheckRootHeaders({});
-      paretoMutate();
+      // paretoMutate();
     } catch (error) {
       toast.error(`Something wrong: ${error}`);
       setLoadingSubmit(false);
