@@ -40,6 +40,7 @@ import { capitalize } from "@/lib/utils";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { useSession } from "next-auth/react";
 import { useSelectedEfficiencyDataStore } from "../../store/selectedEfficiencyData";
+import toast from "react-hot-toast";
 
 const parameterColorMap: Record<string, ChipProps["color"]> = {
   current: "success",
@@ -79,6 +80,7 @@ export default function TableEfficiency({
   thermoStatus: any;
 }) {
   const [tableState, setTableState] = React.useState(tableData);
+  const [isDeleteLoading, setIsDeleteLoading] = React.useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedRowId, setSelectedRowId] = React.useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
@@ -190,6 +192,7 @@ export default function TableEfficiency({
   const handleDelete = async () => {
     if (!selectedRowId) return;
     setLoadingEfficiency(isValidating);
+    setIsDeleteLoading(true);
     try {
       const response = await fetch(
         `${EFFICIENCY_API_URL}/data/${selectedRowId}`,
@@ -208,12 +211,16 @@ export default function TableEfficiency({
         mutate();
         setLoadingEfficiency(isValidating);
         setTableState(updatedData);
+        toast.success("Data deleted succesfully!");
         setDeleteModalOpen(false); // Close the modal
       } else {
         console.error("Failed to delete");
+        toast.error("Failed to delete data, try again later...");
       }
     } catch (error) {
+      toast.error(`${error}`);
       console.error("Error deleting data:", error);
+      setIsDeleteLoading(false);
     }
   };
 
@@ -267,6 +274,7 @@ export default function TableEfficiency({
                       size="sm"
                       variant="solid"
                       color="primary"
+                      // isDisabled={!thermoStatus}
                     >
                       <DotsVerticalIcon className="text-white dark:text-black text-2xl" />
                     </Button>
@@ -496,7 +504,11 @@ export default function TableEfficiency({
               undone.
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" onPress={handleDelete}>
+              <Button
+                color="danger"
+                isLoading={isDeleteLoading}
+                onPress={handleDelete}
+              >
                 Delete
               </Button>
               <Button variant="light" onPress={onClose}>
@@ -508,6 +520,14 @@ export default function TableEfficiency({
       </ModalContent>
     </Modal>
   );
+
+  if (isDeleteLoading) {
+    return (
+      <div>
+        <Spinner label="Validating..." />
+      </div>
+    );
+  }
 
   return (
     <>

@@ -8,6 +8,18 @@ export default function Page() {
   return (
     <EfficiencyContentLayout title="Engine Flow">
       <div className="w-full flex flex-col gap-6 justify-center items-center m-2">
+        <div>
+          <Button
+            as={Link}
+            href={`/efficiency-app`}
+            className="mb-4"
+            color="primary"
+            size="sm"
+            startContent={<ChevronLeftIcon size={16} />}
+          >
+            Back to all
+          </Button>
+        </div>
         <div className="relative">
           {/* EG */}
           <Tooltip

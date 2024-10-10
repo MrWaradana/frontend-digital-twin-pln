@@ -11,6 +11,7 @@ import {
   Pagination,
   getKeyValue,
   Input,
+  Spinner,
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
@@ -147,7 +148,7 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
     <>
       {/* {JSON.stringify(filteredData)} */}
       <Table
-        aria-label="Example table with dynamic content"
+        aria-label="Input Table Efficiency"
         topContent={topContent}
         topContentPlacement="outside"
         color="success"
@@ -170,7 +171,16 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={items} emptyContent={`Data is not available yet!`}>
+        <TableBody
+          items={items}
+          isLoading={isLoading}
+          loadingContent={
+            <>
+              <Spinner label={`Loading...`} />
+            </>
+          }
+          emptyContent={`Data is not available yet, please wait...`}
+        >
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (

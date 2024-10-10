@@ -11,6 +11,7 @@ import {
   Pagination,
   getKeyValue,
   Input,
+  Spinner,
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
@@ -143,11 +144,19 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
     );
   }, [filterValue, onSearchChange, tableData.length, hasSearchFilter]);
 
+  // if (isLoading) {
+  //   return (
+  //     <div className="w-full flex justify-center">
+  //       <Spinner label="Loading..." />
+  //     </div>
+  //   );
+  // }
+
   return (
     <>
       {/* {JSON.stringify(mappedData)} */}
       <Table
-        aria-label="Example table with dynamic content"
+        aria-label="Output table efficiency"
         topContent={topContent}
         topContentPlacement="outside"
         bottomContent={
@@ -169,7 +178,16 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={items} emptyContent={`Data is not available yet!`}>
+        <TableBody
+          items={items}
+          isLoading={isLoading}
+          emptyContent={`Data is not available yet, please wait...`}
+          loadingContent={
+            <>
+              <Spinner label={`Loading...`} />
+            </>
+          }
+        >
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (

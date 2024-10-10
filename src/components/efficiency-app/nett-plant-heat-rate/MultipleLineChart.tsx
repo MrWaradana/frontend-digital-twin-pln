@@ -43,7 +43,7 @@ import {
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
 import { useRouter } from "next/navigation";
-import TableParetoHeatloss from "../TableParetoHeatloss";
+import TableParetoHeatlossNPHR from "./TableParetoHeatlossNPHR";
 
 const chartConfig = {
   category: {
@@ -104,7 +104,7 @@ export default function MultipleLineChart({
               </ModalHeader>
               <ModalBody className="flex justify-center items-center">
                 <div className="max-w-full">
-                  <TableParetoHeatloss
+                  <TableParetoHeatlossNPHR
                     tableData={selectedCategory.data}
                     summaryData={summaryData}
                   />

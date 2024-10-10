@@ -51,7 +51,15 @@ export default function Page() {
     });
   }
 
-  if (error) {
+  const {
+    data: efficiencyData,
+    isLoading: efficiencyLoading,
+    mutate: mutateEfficiency,
+    isValidating: isValidatingEfficiency,
+    error: errorEfficiency,
+  } = useGetData(session?.user.access_token);
+
+  if (error || errorEfficiency) {
     // console.log(error, "ERROOOOOOOR");
     fetch(`${AUTH_API_URL}/refresh-token`, {
       headers: {
@@ -80,13 +88,6 @@ export default function Page() {
   if (!isLoading) {
     useExcelStore.getState().setExcels(excel);
   }
-
-  const {
-    data: efficiencyData,
-    isLoading: efficiencyLoading,
-    mutate: mutateEfficiency,
-    isValidating: isValidatingEfficiency,
-  } = useGetData(session?.user.access_token);
 
   // console.log(efficiencyData, "data efficiency");
   const StatusThermoflow = useStatusThermoflowStore(
