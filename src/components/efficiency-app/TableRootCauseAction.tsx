@@ -119,9 +119,9 @@ const TableRootCause: React.FC<{
         <TableCell className="p-0">
           {isAction && (
             <Input
-              type="number"
+              type="text"
               value={
-                checkRoot[parentId]?.updatedRootCauses[node.id]?.biaya || 0
+                checkRoot[parentId]?.updatedRootCauses[node.id]?.biaya || "0"
               }
               onChange={(e) =>
                 handleCheckBox({
