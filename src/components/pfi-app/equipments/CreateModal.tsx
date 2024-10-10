@@ -20,18 +20,24 @@ import { useSession } from "next-auth/react";
 
 const CreateModal = ({
   categories,
+  eqTrees,
   mutate,
   parent_id,
 }: {
   categories: any;
+  eqTrees: any;
   mutate: any;
   parent_id?: string | null;
 }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [loading, setLoading] = React.useState(false);
+
   const [name, setName] = React.useState("");
-  const [description, setDescription] = React.useState("");
   const [categoryId, setCategoryId] = React.useState("");
+  const [eqTreeId, setEqTreeId] = React.useState("");
+  const [systemTag, setSystemTag] = React.useState("");
+  const [assetNum, setAssetNum] = React.useState("");
+  const [locationTag, setLocationTag] = React.useState("");
 
   const session = useSession();
 
@@ -42,9 +48,12 @@ const CreateModal = ({
     try {
       const payload = {
         name,
-        description,
         category_id: categoryId,
         parent_id: parent_id,
+        equipment_tree_id: eqTreeId,
+        system_tag: systemTag,
+        assetnum: assetNum,
+        location_tag: locationTag,
       };
 
       const response = await fetch(
@@ -63,8 +72,11 @@ const CreateModal = ({
         mutate();
 
         setName("");
-        setDescription("");
         setCategoryId("");
+        setEqTreeId("");
+        setSystemTag("");
+        setAssetNum("");
+        setLocationTag("");
         onOpenChange();
         setLoading(false);
       } else {
@@ -119,12 +131,48 @@ const CreateModal = ({
                     </Select>
                   </div>
                   <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-                    <Textarea
-                      label="Deskripsi"
-                      placeholder="Masukkan deskripsi equipment"
+                    <Select
+                      label="Equipment Level"
                       labelPlacement="outside"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Pilih Equipment Level"
+                      value={eqTreeId}
+                      onChange={(e) => setEqTreeId(e.target.value)}
+                    >
+                      {eqTrees.map((eq: any) => (
+                        <SelectItem key={eq.id} value={eq.id}>
+                          {eq.name}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                    <Input
+                      type="text"
+                      label="System Tag"
+                      placeholder="Masukkan System Tag"
+                      labelPlacement="outside"
+                      value={systemTag}
+                      onChange={(e) => setSystemTag(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                    <Input
+                      type="text"
+                      label="Asset Number"
+                      placeholder="Masukkan Asset Number"
+                      labelPlacement="outside"
+                      value={assetNum}
+                      onChange={(e) => setAssetNum(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                    <Input
+                      type="text"
+                      label="Location Tag" // Corrected label here
+                      placeholder="Masukkan Location Tag"
+                      labelPlacement="outside"
+                      value={locationTag}
+                      onChange={(e) => setLocationTag(e.target.value)}
                     />
                   </div>
                 </ModalBody>

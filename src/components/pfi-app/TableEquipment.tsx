@@ -17,6 +17,7 @@ import {
   DotsVerticalIcon,
   Pencil1Icon,
   TrashIcon,
+  EyeOpenIcon,
 } from "@radix-ui/react-icons";
 import CreateModal from "./equipments/CreateModal";
 import UpdateModal from "./equipments/UpdateModal";
@@ -27,12 +28,14 @@ import { useSession } from "next-auth/react";
 const TableEquipment = ({
   dataRow,
   categories,
+  eqTrees,
   mutate,
   isValidating,
   parent_id,
 }: {
   dataRow: any;
   categories: any;
+  eqTrees: any;
   mutate: any;
   isValidating: boolean;
   parent_id?: string | null;
@@ -88,6 +91,7 @@ const TableEquipment = ({
           <div className="flex gap-3">
             <CreateModal
               categories={categories}
+              eqTrees={eqTrees}
               mutate={mutate}
               parent_id={parent_id}
             />
@@ -95,7 +99,7 @@ const TableEquipment = ({
         </div>
       </div>
     );
-  }, [categories, mutate, parent_id]);
+  }, [categories, mutate, parent_id, eqTrees]);
 
   return (
     <>
@@ -107,7 +111,7 @@ const TableEquipment = ({
       >
         <TableHeader>
           <TableColumn>Name</TableColumn>
-          <TableColumn>Description</TableColumn>
+          <TableColumn>Level Equipment</TableColumn>
           <TableColumn>Category</TableColumn>
           <TableColumn>Status</TableColumn>
           <TableColumn>Actions</TableColumn>
@@ -123,7 +127,7 @@ const TableEquipment = ({
           {dataRow.map((row: any) => (
             <TableRow key={row.id}>
               <TableCell>{row.name}</TableCell>
-              <TableCell>{row.description}</TableCell>
+              <TableCell>{row.equipment_tree.name}</TableCell>
               <TableCell>{row.category.name}</TableCell>
               <TableCell>Normal</TableCell>
               <TableCell>
@@ -141,10 +145,10 @@ const TableEquipment = ({
                     </DropdownTrigger>
                     <DropdownMenu>
                       <DropdownItem
-                        startContent={<Pencil1Icon />}
+                        startContent={<EyeOpenIcon />}
                         href={`/pfi-app/${row.id}`}
                       >
-                        View Sub Equipment
+                        View
                       </DropdownItem>
                       <DropdownItem
                         startContent={<Pencil1Icon />}

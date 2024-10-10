@@ -3,10 +3,9 @@
 import TableEquipment from "@/components/pfi-app/TableEquipment";
 import { PFIContentLayout } from "@/containers/PFIContentLayout";
 import { useGetCategories } from "@/lib/APIs/useGetCategoryPfi";
+import { useGetEqTrees } from "@/lib/APIs/useGetEqTree";
 import { useGetEquipments } from "@/lib/APIs/useGetEquipments";
-import { CircularProgress } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
 
 export default function Page() {
   const { data: session } = useSession();
@@ -19,9 +18,11 @@ export default function Page() {
   } = useGetEquipments(session?.user.access_token);
 
   const { data: categoriesData } = useGetCategories(session?.user.access_token);
+  const { data: eqTreesData } = useGetEqTrees(session?.user.access_token);
 
   const equipments = equipmentsData ?? [];
   const categories = categoriesData ?? [];
+  const eqTrees = eqTreesData ?? [];
 
   return (
     <PFIContentLayout title="All PFI Data">
@@ -41,6 +42,7 @@ export default function Page() {
           <TableEquipment
             dataRow={equipments}
             categories={categories}
+            eqTrees={eqTrees}
             mutate={mutate}
             isValidating={isValidating}
             parent_id={null}

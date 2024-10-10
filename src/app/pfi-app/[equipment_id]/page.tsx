@@ -6,6 +6,7 @@ import { PFIContentLayout } from "@/containers/PFIContentLayout";
 import { useSession } from "next-auth/react";
 import { useGetEquipment } from "@/lib/APIs/useGetEquipments";
 import { useGetCategories } from "@/lib/APIs/useGetCategoryPfi";
+import { useGetEqTrees } from "@/lib/APIs/useGetEqTree";
 import { CircularProgress, Button, Link } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import TableEquipment from "@/components/pfi-app/TableEquipment";
@@ -23,6 +24,7 @@ const Page = ({ params }: { params: { equipment_id: string } }) => {
   } = useGetEquipment(session?.user.access_token, id);
 
   const { data: categoriesData } = useGetCategories(session?.user.access_token);
+  const { data: eqTreesData } = useGetEqTrees(session?.user.access_token);
 
   if (isLoading && equipmentLoading) {
     return (
@@ -35,6 +37,7 @@ const Page = ({ params }: { params: { equipment_id: string } }) => {
 
   const childrens = equipmentsData?.children ?? [];
   const categories = categoriesData ?? [];
+  const eqTrees = eqTreesData ?? [];
 
   return (
     <PFIContentLayout title="All PFI Data">
@@ -67,6 +70,7 @@ const Page = ({ params }: { params: { equipment_id: string } }) => {
           <TableEquipment
             dataRow={childrens}
             categories={categories}
+            eqTrees={eqTrees}
             mutate={mutate}
             isValidating={isValidating}
             parent_id={id}
