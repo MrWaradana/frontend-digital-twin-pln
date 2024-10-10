@@ -7,6 +7,7 @@ import { fetcher } from "../fetcher";
 import { AUTH_API_URL } from "../api-url";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export function useApiFetch<T, RawT = T>(
   fetchUrl: string,
@@ -15,6 +16,7 @@ export function useApiFetch<T, RawT = T>(
   swrConfig?: SWRConfiguration<RawT | T, Error>,
   customFetcher?: ([url, token]: [string, string]) => Promise<RawT | T>
 ): HookReply<RawT | T> {
+  const router = useRouter();
   const { data: session, status, update } = useSession();
   const isReady = isReadyCondition;
 
@@ -66,10 +68,11 @@ export function useApiFetch<T, RawT = T>(
   //       console.error("Error refreshing token:", error);
   //     });
   // }
-  // useGeneralErrorToast(error);
+  useGeneralErrorToast(error);
 
-  if (error) {
-    return;
+  // Check if token invalid, force user to login again
+  if (error?.message === "token is invalid") {
+    router.push("/login");
   }
 
   // Must include the isReady check, otherwise isLoading is false, but there is no data or error

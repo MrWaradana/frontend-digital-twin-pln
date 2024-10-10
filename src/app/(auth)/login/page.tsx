@@ -93,13 +93,13 @@ export default function Component() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="password">Password</Label>
-              <Link
+              {/* <Link
                 href="#"
                 className="text-sm font-medium underline text-primary-foreground hover:text-primary"
                 prefetch={false}
               >
                 Forgot password?
-              </Link>
+              </Link> */}
             </div>
             <Input
               id="password"
@@ -111,11 +111,11 @@ export default function Component() {
               value={credentials.password}
             />
           </div>
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <Label htmlFor="remember" className="ml-2 text-sm font-medium">
               Remember me
             </Label>
-          </div>
+          </div> */}
           <Button
             type="submit"
             className="w-full"

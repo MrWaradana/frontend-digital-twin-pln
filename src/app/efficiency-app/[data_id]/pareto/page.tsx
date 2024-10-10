@@ -57,7 +57,8 @@ export default function Page({ params }: { params: { data_id: string } }) {
           cum_frequency, // Add the accumulated frequency
         };
       })
-      .filter((item: any) => item.cum_frequency <= 100 && item.category);
+      // .filter((item: any) => item.cum_frequency <= 100 && item.category);
+      .filter((item: any) => item.category);
 
     // console.log(mapped_data, "mapped chart data");
     //   return mapped_data;
