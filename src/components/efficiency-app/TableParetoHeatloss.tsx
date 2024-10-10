@@ -669,6 +669,7 @@ export default function TableParetoHeatloss({
     fieldSeparator: ",",
     decimalSeparator: ".",
     useKeysAsHeaders: true,
+    filename: `Pareto Heat Loss - ${new Date().toLocaleString("id")}`,
   });
 
   const handleExportData = () => {
@@ -776,7 +777,10 @@ export default function TableParetoHeatloss({
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
     //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-    return XLSX.writeFile(workbook, "ParetoData.xlsx");
+    return XLSX.writeFile(
+      workbook,
+      `ParetoData-${new Date().toLocaleString("id")}.xlsx`
+    );
   };
 
   const handlePrint = () => {
