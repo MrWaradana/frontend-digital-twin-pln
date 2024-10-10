@@ -125,7 +125,7 @@ export default function BarChartNPHR({ data_id }: any) {
   if (isLoading || isValidating) {
     return (
       <div className="w-full mt-12 flex justify-center">
-        <Spinner label="Loading..." />
+        <Spinner label="Calculating..." />
       </div>
     );
   }

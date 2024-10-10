@@ -468,11 +468,13 @@ export default function TableParetoHeatloss({
         header: "Symptoms",
         cell: (props: any) => (
           <>
-            {props.row.depth > 0 && ( // Only render if it's a subrow
+            {(props.row.depth > 0 ||
+              !props.row.original.total_nilai_losses) && ( // Only render if it's a subrow
               <div
                 style={{
                   paddingLeft: `${props.cell.row.depth * 2}rem`,
                 }}
+                className="flex justify-center"
               >
                 {props.row.original.gap < 0 ? (
                   <span className="py-1 px-3 bg-red-400 rounded-md">Lower</span>
@@ -494,7 +496,10 @@ export default function TableParetoHeatloss({
         accessorKey: "cost_benefit",
         cell: (props: any) => {
           const value = props.getValue();
-          if (props.row.depth > 0) {
+          if (
+            (props.row.depth > 0 || !props.row.original.total_nilai_losses) &&
+            value
+          ) {
             return `Rp.${formatCurrency(value.toFixed(2))}`;
           }
           return "";
@@ -513,7 +518,10 @@ export default function TableParetoHeatloss({
         header: "Biaya Untuk Closing Gap",
         cell: (props: any) => {
           const value = props.getValue();
-          if (props.row.depth > 0) {
+          if (
+            (props.row.depth > 0 || !props.row.original.total_nilai_losses) &&
+            value
+          ) {
             return `Rp.${formatCurrency(value.toFixed(0))}`;
           }
           return "";

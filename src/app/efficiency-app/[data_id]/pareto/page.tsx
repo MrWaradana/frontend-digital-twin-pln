@@ -139,7 +139,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
           />
         </div>
         {isLoading ? (
-          <Spinner color="primary" label="loading..." />
+          <Spinner color="primary" label="Calculating pareto..." />
         ) : (
           <div className="max-w-full mb-6 mt-4 overflow-hidden relative">
             {isValidating || isMutating ? (

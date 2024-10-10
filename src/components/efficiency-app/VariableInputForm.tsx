@@ -134,13 +134,15 @@ export default function VariableInputForm({
           }
         );
 
+        const response_data = await response.json();
+
         if (!response.ok) {
-          toast.error(`Error: ${response.statusText}`);
+          toast.error(
+            `${response_data.message}, check VPN or connection to PI server`
+          );
           setLoading(false);
           return;
         }
-
-        const response_data = await response.json();
 
         toast.success("Data input received, wait for the to be processed!");
         setStatusThermoflow(true);
@@ -157,6 +159,7 @@ export default function VariableInputForm({
 
         // }, 1000);
       } catch (error) {
+        // @ts-ignore
         toast.error(`Error: ${error}`);
         setLoading(false);
         console.error("Error:", error);
