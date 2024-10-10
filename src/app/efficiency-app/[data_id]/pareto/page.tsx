@@ -132,11 +132,12 @@ export default function Page({ params }: { params: { data_id: string } }) {
         >
           Back to all data
         </Button>
-        <div className="min-w-full">
+        <div className="min-w-full h-full overflow-hidden">
           <MultipleLineChart
             data={chartData}
             onThresholdChange={setPercentageThreshold}
             thresholdNumber={percentageThreshold}
+            totalPersen={summaryData.total_persen}
           />
         </div>
         {isLoading ? (

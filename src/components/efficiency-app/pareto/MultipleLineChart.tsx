@@ -46,6 +46,7 @@ export default function MultipleLineChart({
   onThresholdChange,
   thresholdNumber,
   onBarClick,
+  totalPersen,
 }: any) {
   const [sliderValue, setSliderValue] = useState<SliderValue>(thresholdNumber);
   const [internalSliderValue, setInternalSliderValue] =
@@ -86,7 +87,7 @@ export default function MultipleLineChart({
               tickMargin={8}
               tickFormatter={(value) => (value ? value.slice(0, 4) : "Pareto")}
             />
-            <YAxis domain={[0, 500000]} allowDataOverflow={true} />
+            <YAxis domain={[0, totalPersen]} allowDataOverflow={true} />
             {/* <YAxis allowDataOverflow={true} /> */}
             <Legend className="dark:fill-slate-50" />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
@@ -144,7 +145,7 @@ export default function MultipleLineChart({
             label="Persentase"
             step={1}
             onChange={setInternalSliderValue}
-            maxValue={100}
+            maxValue={totalPersen}
             minValue={0}
             formatOptions={{ style: "decimal" }}
             orientation="vertical"

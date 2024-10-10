@@ -319,7 +319,7 @@ function ModalRootCause({
 
       setLoadingSubmit(false);
       toast.success("Data input succesfully!");
-      setCheckRootHeaders({});
+      // setCheckRootHeaders({});
       // paretoMutate();
     } catch (error) {
       toast.error(`Something wrong: ${error}`);
