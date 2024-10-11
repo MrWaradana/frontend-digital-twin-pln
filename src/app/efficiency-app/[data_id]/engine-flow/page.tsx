@@ -21,18 +21,18 @@ export default function Page({ params }: { params: { data_id: string } }) {
 
   const positions = {
     // Top row - turbines
-    EG: { top: "13%", left: "6%", unit: "MW" },
-    LPT: { top: "7%", left: "19%", unit: "%" },
-    IPT: { top: "9%", left: "44%", unit: "%" },
-    HPT: { top: "12%", left: "69%", unit: "%" },
+    EG: { name: "Output Generator:", top: "13%", left: "6%", unit: "MW" },
+    LPT: { name: "Efficiency:", top: "7%", left: "19%", unit: "%" },
+    IPT: { name: "Efficiency:", top: "9%", left: "44%", unit: "%" },
+    HPT: { name: "Efficiency:", top: "12%", left: "69%", unit: "%" },
 
     // Bottom row - RH components
-    RH7: { top: "83%", left: "17.7%", unit: "°C" },
-    RH6: { top: "83%", left: "26.6%", unit: "°C" },
-    RH5: { top: "83%", left: "35.5%", unit: "°C" },
-    RH3: { top: "83%", left: "51.6%", unit: "°C" },
-    RH2: { top: "83%", left: "61%", unit: "°C" },
-    RH1: { top: "83%", left: "70%", unit: "°C" },
+    RH7: { name: "TTD:", top: "83%", left: "17.7%", unit: "°C" },
+    RH6: { name: "TTD:", top: "83%", left: "26.6%", unit: "°C" },
+    RH5: { name: "TTD:", top: "83%", left: "35.5%", unit: "°C" },
+    RH3: { name: "TTD:", top: "83%", left: "51.6%", unit: "°C" },
+    RH2: { name: "TTD:", top: "83%", left: "61%", unit: "°C" },
+    RH1: { name: "TTD:", top: "83%", left: "70%", unit: "°C" },
   };
   const formatIDNumber = (value: any) =>
     new Intl.NumberFormat("id-ID").format(value);
@@ -645,7 +645,10 @@ export default function Page({ params }: { params: { data_id: string } }) {
                          transition-all duration-200 ease-in-out cursor-pointer
                          transform origin-center"
               >
-                <div className="font-semibold text-gray-700">{key}</div>
+                <div className="font-semibold text-gray-700">
+                  {" "}
+                  {positions[key].name}
+                </div>
                 <div className="text-blue-600">
                   {formatValue(engineFlowData[key], positions[key].unit)}
                 </div>
