@@ -195,7 +195,14 @@ export default function BarChartNPHR({ data_id }: any) {
                 axisLine={false}
                 tickFormatter={(value) => value.slice(0, 12)}
               />
-              <YAxis />
+              <YAxis
+                label={{
+                  value: "Nett Plant Heat Rate",
+                  angle: -90,
+                  position: "outsideLeft",
+                  dx: -20,
+                }}
+              />
               <ChartTooltip content={<ChartTooltipContent />} />
               <ChartLegend content={<ChartLegendContent />} />
               <Bar
