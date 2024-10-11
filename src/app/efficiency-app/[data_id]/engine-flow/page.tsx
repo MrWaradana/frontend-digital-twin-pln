@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
 import Image from "next/image";
-import EngineFlow from "../../../../../public/engine-flow.png";
+import EngineFlow from "../../../../../public/engine-flow.jpg";
 import { Tooltip, Button, Link, CircularProgress } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import { EfficiencyContentLayout } from "../../../../containers/EfficiencyContentLayout";
@@ -10,7 +10,6 @@ import { useSession } from "next-auth/react";
 
 export default function Page({ params }: { params: { data_id: string } }) {
   const { data: session, status } = useSession();
-
 
   const {
     data: engineFlow,
@@ -22,26 +21,25 @@ export default function Page({ params }: { params: { data_id: string } }) {
 
   const positions = {
     // Top row - turbines
-    EG: { top: '13%', left: '6%' },
-    LPT: { top: '7%', left: '19%' },
-    IPT: { top: '9%', left: '44%' },
-    HPT: { top: '12%', left: '69%' },
+    EG: { top: "13%", left: "6%" },
+    LPT: { top: "7%", left: "19%" },
+    IPT: { top: "9%", left: "44%" },
+    HPT: { top: "12%", left: "69%" },
 
     // Bottom row - RH components
-    RH7: { top: '83%', left: '17.7%' },
-    RH6: { top: '83%', left: '26.6%' },
-    RH5: { top: '83%', left: '35.5%' },
-    RH3: { top: '83%', left: '51.6%' },
-    RH2: { top: '83%', left: '61%' },
-    RH1: { top: '83%', left: '70%' }
+    RH7: { top: "83%", left: "17.7%" },
+    RH6: { top: "83%", left: "26.6%" },
+    RH5: { top: "83%", left: "35.5%" },
+    RH3: { top: "83%", left: "51.6%" },
+    RH2: { top: "83%", left: "61%" },
+    RH1: { top: "83%", left: "70%" },
   };
   const formatValue = (value) => {
-    if (value === undefined || value === null) return '-';
+    if (value === undefined || value === null) return "-";
     return Number(value).toLocaleString(undefined, {
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     });
   };
-
 
   if (isLoading)
     return (
@@ -51,7 +49,6 @@ export default function Page({ params }: { params: { data_id: string } }) {
         </div>
       </EfficiencyContentLayout>
     );
-
 
   return (
     <EfficiencyContentLayout title="Engine Flow">
@@ -68,7 +65,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
             Back to all
           </Button>
         </div>
-        <div className="relative">
+        <div className="relative min-w-full">
           {/* EG */}
           {/* <Tooltip
             content={
@@ -346,7 +343,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
               size="md"
               className="absolute top-[5.5rem] right-64 "
             ></Button>
-          </Tooltip> */} 
+          </Tooltip> */}
           {/* Valve 1 */}
           {/* <Tooltip
             content={
@@ -507,7 +504,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
               variant="light"
               size="lg"
               className="absolute bottom-5 right-6 " */}
-            {/* ></Button>
+          {/* ></Button>
           </Tooltip> */}
           {/* Furnace */}
           {/* <Tooltip
@@ -636,18 +633,21 @@ export default function Page({ params }: { params: { data_id: string } }) {
               style={{
                 top: positions[key].top,
                 left: positions[key].left,
-                transform: 'translate(-50%, -50%)'
+                transform: "translate(-50%, -50%)",
               }}
               className="absolute z-10"
             >
-              <div className="bg-white/5 backdrop-blur-sm px-1.5 py-0.5 rounded-sm 
-                         text-[14px] shadow-sm border border-gray-200/50 whitespace-nowrap
+              <div
+                className="bg-white/5 backdrop-blur-sm px-1.5 py-0.5 rounded-sm 
+                         md:text-[18px] text-xs shadow-sm border border-gray-200/50 whitespace-nowrap
                          hover:scale-125 hover:bg-white/80 hover:shadow-md
                          transition-all duration-200 ease-in-out cursor-pointer
-                         transform origin-center" >
-
+                         transform origin-center"
+              >
                 <div className="font-semibold text-gray-700">{key}</div>
-                <div className="text-blue-600">{formatValue(engineFlowData[key])}</div>
+                <div className="text-blue-600">
+                  {formatValue(engineFlowData[key])}
+                </div>
               </div>
             </div>
           ))}
