@@ -283,7 +283,7 @@ export default function TableEfficiency({
                     {/* <DropdownItem href={`/efficiency-app/heat-rate`}>
                   Heat Rate
                 </DropdownItem> */}
-                    <DropdownItem href={`/efficiency-app/engine-flow`}>
+                    <DropdownItem href={`/efficiency-app/${rowData.id}/engine-flow`}>
                       Engine Flow
                     </DropdownItem>
                     <DropdownItem
