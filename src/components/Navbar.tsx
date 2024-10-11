@@ -54,7 +54,7 @@ export default function Navbar() {
     "My Settings",
     "Team Settings",
     "Help & Feedback",
-    "Log Out",
+    "Sign Out",
   ];
 
   return (
@@ -65,10 +65,10 @@ export default function Navbar() {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Log Out Confirmation
+                Sign Out Confirmation
               </ModalHeader>
               <ModalBody>
-                <p>Are you sure you want to Log Out?</p>
+                <p>Are you sure you want to Sign Out?</p>
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
@@ -88,7 +88,7 @@ export default function Navbar() {
                   }}
                   isLoading={isLoading}
                 >
-                  Yes, Log Out
+                  Yes, Sign Out
                 </Button>
               </ModalFooter>
             </>
@@ -154,7 +154,7 @@ export default function Navbar() {
           </NavbarItem>
           <NavbarItem>
             <Button onPress={onOpen} color="danger" variant="flat">
-              Log Out
+              Sign Out
             </Button>
           </NavbarItem>
         </NavbarContent>

@@ -40,10 +40,14 @@ import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
 import ModalRootCause from "./ModalRootCause";
 import ModalRootCauseAction from "./ModalRootCauseAction";
 
+const formattedNumber = (value: any) =>
+  new Intl.NumberFormat("id-ID").format(value);
+
 const formatCurrency = (number: any) => {
   // Convert to absolute value to handle negative numbers
   const absNumber = Math.abs(number);
-
+  const formatIDNumber = (value: any) =>
+    new Intl.NumberFormat("id-ID").format(value);
   // Determine the appropriate suffix based on the value
   let formattedNumber;
   let suffix = "";
@@ -69,7 +73,7 @@ const formatCurrency = (number: any) => {
     formattedNumber = number.toLocaleString("id-ID");
   }
 
-  return formattedNumber + suffix;
+  return formatIDNumber(formattedNumber) + suffix;
 };
 
 //un-memoized normal table body component - see memoized version below
@@ -155,7 +159,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                           </td>
                         );
                       }
-                      if (cell.column.id === "nilai_losses") {
+                      if (cell.column.id === "nilaiLosses") {
                         return (
                           <td
                             key={cell.id}
@@ -167,7 +171,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                           </td>
                         );
                       }
-                      if (cell.column.id === "persen_losses") {
+                      if (cell.column.id === "persenLosses") {
                         return (
                           <td
                             key={cell.id}
@@ -179,7 +183,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                           </td>
                         );
                       }
-                      if (cell.column.id === "cost_benefit") {
+                      if (cell.column.id === "costBenefit") {
                         return (
                           <td
                             key={cell.id}
@@ -194,7 +198,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                           </td>
                         );
                       }
-                      if (cell.column.id === "total_biaya") {
+                      if (cell.column.id === "biayaClosingGap") {
                         return (
                           <td
                             key={cell.id}
@@ -348,7 +352,7 @@ export default function TableParetoHeatloss({
           row.depth === 0
             ? null
             : (row.reference_data != null
-                ? row.reference_data.toFixed(2)
+                ? formattedNumber(row.reference_data.toFixed(2))
                 : 0) || "",
         cell: (props: any) => (
           <div
@@ -356,7 +360,7 @@ export default function TableParetoHeatloss({
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
-            {props.getValue()}
+            {formattedNumber(props.getValue())}
           </div>
         ),
       },
@@ -383,7 +387,7 @@ export default function TableParetoHeatloss({
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
-            {props.getValue()}
+            {formattedNumber(props.getValue())}
           </div>
         ),
       },
@@ -402,7 +406,7 @@ export default function TableParetoHeatloss({
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
-            {props.getValue()}
+            {formattedNumber(props.getValue())}
           </div>
         ),
       },
@@ -461,7 +465,7 @@ export default function TableParetoHeatloss({
           if (!value) {
             return;
           }
-          return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
+          return formattedNumber(Number(value).toFixed(2)); // Ensures the value is formatted with 2 decimal places
         },
         footer: (props: any) => props.column.id,
       },
@@ -482,7 +486,7 @@ export default function TableParetoHeatloss({
           if (!value) {
             return;
           }
-          return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
+          return formattedNumber(Number(value).toFixed(2)); // Ensures the value is formatted with 2 decimal places
         },
         footer: (props: any) => props.column.id,
       },
@@ -495,9 +499,11 @@ export default function TableParetoHeatloss({
               !props.row.original.total_nilai_losses) && ( // Only render if it's a subrow
               <div className="flex justify-center">
                 {props.row.original.gap < 0 ? (
-                  <span className="py-1 px-3 bg-red-400 rounded-md">Lower</span>
+                  <span className="py-1 px-3 bg-orange-400 rounded-md text-white">
+                    Lower
+                  </span>
                 ) : (
-                  <span className="py-1 px-3 bg-blue-400 rounded-md">
+                  <span className="py-1 px-3 bg-red-500 rounded-md text-white">
                     Higher
                   </span>
                 )}
@@ -509,7 +515,7 @@ export default function TableParetoHeatloss({
       {
         id: "potentialBenefit",
         header: () => <div className="text-center">Potential Benefit</div>,
-        size: 105,
+        size: 125,
         meta: {
           className: "text-right",
         },
@@ -525,12 +531,12 @@ export default function TableParetoHeatloss({
           return "";
         },
       },
-      {
-        header: "Action Menutup Gap",
-        size: 45,
-        cell: (props: any) =>
-          props.row.depth > 0 ? <div>{props.getValue()}</div> : "",
-      },
+      // {
+      //   header: "Action Menutup Gap",
+      //   size: 45,
+      //   cell: (props: any) =>
+      //     props.row.depth > 0 ? <div>{props.getValue()}</div> : "",
+      // },
       {
         id: "biayaClosingGap",
         accessorKey: "total_biaya",
@@ -540,7 +546,7 @@ export default function TableParetoHeatloss({
         header: () => (
           <div className="text-center">Biaya untuk Closing Gap</div>
         ),
-        size: 55,
+        size: 105,
         cell: (props: any) => {
           const value = props.getValue();
           if (
@@ -580,10 +586,12 @@ export default function TableParetoHeatloss({
             <>
               {props.row.depth > 0 && ( // Only render if it's a subrow
                 <div>
-                  {`${roundedCostBenefit} : ${roundedTotalBiaya} | ${
+                  {`${formattedNumber(roundedCostBenefit)} : ${formattedNumber(
+                    roundedTotalBiaya
+                  )} | ${
                     totalBiaya == 0
                       ? "-"
-                      : (costBenefit / totalBiaya).toFixed(2)
+                      : formattedNumber((costBenefit / totalBiaya).toFixed(2))
                   }`}
                 </div>
               )}

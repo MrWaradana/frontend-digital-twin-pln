@@ -35,8 +35,11 @@ import {
   Checkbox,
 } from "@nextui-org/react";
 import { Box, DownloadIcon, PrinterIcon } from "lucide-react";
-import EditableCell from "./EditableCell";
+// import EditableCell from "./EditableCell";
 import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
+
+const formatIDNumber = (value: any) =>
+  new Intl.NumberFormat("id-ID").format(value);
 
 const formatCurrency = (number: any) => {
   // Convert to absolute value to handle negative numbers
@@ -49,25 +52,25 @@ const formatCurrency = (number: any) => {
   if (absNumber >= 1_000_000_000_000) {
     // Trillions
     formattedNumber = (number / 1_000_000_000_000).toFixed(0);
-    suffix = " triliun";
+    suffix = " T";
   } else if (absNumber >= 1_000_000_000) {
     // Billions
     formattedNumber = (number / 1_000_000_000).toFixed(0);
-    suffix = " miliar";
+    suffix = " M";
   } else if (absNumber >= 1_000_000) {
     // Millions
     formattedNumber = (number / 1_000_000).toFixed(0);
-    suffix = " juta";
+    suffix = " Jt";
   } else if (absNumber >= 1_000) {
     // Millions
     formattedNumber = (number / 1_000).toFixed(0);
-    suffix = " ribu";
+    suffix = " Rb";
   } else {
     // Thousands separator for smaller numbers
     formattedNumber = number.toLocaleString("id-ID");
   }
 
-  return formattedNumber + suffix;
+  return formatIDNumber(formattedNumber) + suffix;
 };
 
 //un-memoized normal table body component - see memoized version below
@@ -274,7 +277,7 @@ export default function TableParetoTop({
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
-            {props.getValue()}
+            {formatIDNumber(props.getValue())}
           </div>
         ),
       },
@@ -301,7 +304,7 @@ export default function TableParetoTop({
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
-            {props.getValue()}
+            {formatIDNumber(props.getValue())}
           </div>
         ),
       },
@@ -319,7 +322,7 @@ export default function TableParetoTop({
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
-            {props.getValue()}
+            {formatIDNumber(props.getValue())}
           </div>
         ),
       },

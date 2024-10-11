@@ -137,6 +137,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
             data={chartData}
             onThresholdChange={setPercentageThreshold}
             thresholdNumber={percentageThreshold}
+            // @ts-ignore
             totalPersen={summaryData.total_persen}
           />
         </div>

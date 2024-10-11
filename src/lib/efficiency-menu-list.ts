@@ -5,6 +5,7 @@ import {
   ChartCandlestick,
   DiamondPlus,
   Gauge,
+  CircleDollarSign,
 } from "lucide-react";
 import path from "path";
 
@@ -65,6 +66,14 @@ export function getMenuList(pathname: string): Group[] {
           active:
             pathname === "/efficiency-app/nett-plant-heat-rate" ? true : false,
           icon: ChartCandlestick,
+          submenus: [],
+        },
+        {
+          href: "/efficiency-app/cost-benefit-analysis",
+          label: "Cost Benefit Analysis",
+          active:
+            pathname === "/efficiency-app/cost-benefit-analysis" ? true : false,
+          icon: CircleDollarSign,
           submenus: [],
         },
         // {

@@ -40,14 +40,10 @@ import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
 import ModalRootCause from "../ModalRootCause";
 import ModalRootCauseAction from "../ModalRootCauseAction";
 
-const formattedNumber = (value: any) =>
-  new Intl.NumberFormat("id-ID").format(value);
-
 const formatCurrency = (number: any) => {
   // Convert to absolute value to handle negative numbers
   const absNumber = Math.abs(number);
-  const formatIDNumber = (value: any) =>
-    new Intl.NumberFormat("id-ID").format(value);
+
   // Determine the appropriate suffix based on the value
   let formattedNumber;
   let suffix = "";
@@ -73,7 +69,7 @@ const formatCurrency = (number: any) => {
     formattedNumber = number.toLocaleString("id-ID");
   }
 
-  return formatIDNumber(formattedNumber) + suffix;
+  return formattedNumber + suffix;
 };
 
 //un-memoized normal table body component - see memoized version below
@@ -364,7 +360,7 @@ export default function TableParetoHeatlossNPHR({
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
-            {formattedNumber(props.getValue())}
+            {props.getValue()}
           </div>
         ),
       },
@@ -404,7 +400,7 @@ export default function TableParetoHeatlossNPHR({
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
-            {formattedNumber(props.getValue())}
+            {props.getValue()}
           </div>
         ),
       },
@@ -463,7 +459,7 @@ export default function TableParetoHeatlossNPHR({
           if (!value) {
             return;
           }
-          return formattedNumber(Number(value).toFixed(2)); // Ensures the value is formatted with 2 decimal places
+          return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
         },
         footer: (props: any) => props.column.id,
       },
@@ -484,7 +480,7 @@ export default function TableParetoHeatlossNPHR({
           if (!value) {
             return;
           }
-          return formattedNumber(Number(value).toFixed(2)); // Ensures the value is formatted with 2 decimal places
+          return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
         },
         footer: (props: any) => props.column.id,
       },

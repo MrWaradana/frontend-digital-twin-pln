@@ -88,7 +88,7 @@ export default function MultipleLineChart({
               tickFormatter={(value) => (value ? value.slice(0, 4) : "Pareto")}
             />
             <YAxis
-              domain={[0, totalPersen]}
+              domain={[0, 100]}
               orientation="right"
               allowDataOverflow={true}
               label={{
@@ -133,6 +133,7 @@ export default function MultipleLineChart({
               strokeDasharray={5}
               strokeWidth={2}
               strokeDashoffset={1}
+              yAxisId={"total_persen_losses"}
             />
             <ReferenceLine
               y={Number(internalSliderValue)}
@@ -141,6 +142,7 @@ export default function MultipleLineChart({
               strokeDasharray={5}
               strokeWidth={2}
               strokeDashoffset={1}
+              yAxisId={"total_persen_losses"}
             />
             <Line
               name={"Total Persen Loss"}
@@ -149,6 +151,7 @@ export default function MultipleLineChart({
               stroke="var(--color-category)"
               strokeWidth={2}
               dot={true}
+              yAxisId={"total_persen_losses"}
             />
             <Line
               name={`Cummulative Frequency`}
@@ -157,6 +160,7 @@ export default function MultipleLineChart({
               stroke="#f1c232"
               strokeWidth={2}
               dot={true}
+              yAxisId={"total_persen_losses"}
             />
           </ComposedChart>
         </ChartContainer>
@@ -166,7 +170,7 @@ export default function MultipleLineChart({
             label="Persentase"
             step={1}
             onChange={setInternalSliderValue}
-            maxValue={totalPersen}
+            maxValue={100}
             minValue={0}
             formatOptions={{ style: "decimal" }}
             orientation="vertical"

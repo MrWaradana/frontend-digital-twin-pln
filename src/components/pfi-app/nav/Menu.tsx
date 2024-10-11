@@ -48,10 +48,10 @@ export function Menu({ isListOpen }: MenuProps) {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Log Out Confirmation
+                Sign Out Confirmation
               </ModalHeader>
               <ModalBody>
-                <p>Are you sure you want to Log Out?</p>
+                <p>Are you sure you want to Sign Out?</p>
               </ModalBody>
               <ModalFooter>
                 <NextButton color="danger" variant="light" onPress={onClose}>
@@ -71,7 +71,7 @@ export function Menu({ isListOpen }: MenuProps) {
                   }}
                   isLoading={isLoading}
                 >
-                  Yes, Log Out
+                  Yes, Sign Out
                 </NextButton>
               </ModalFooter>
             </>
