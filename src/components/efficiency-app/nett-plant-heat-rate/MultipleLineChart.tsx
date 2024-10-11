@@ -106,7 +106,7 @@ export default function MultipleLineChart({
                 <div className="max-w-full">
                   <TableParetoHeatlossNPHR
                     tableData={selectedCategory.data}
-                    summaryData={summaryData}
+                    summaryData={selectedCategory}
                   />
                 </div>
               </ModalBody>
@@ -149,13 +149,13 @@ export default function MultipleLineChart({
                 }
               />
               <YAxis domain={[0, 100]} />
-              <Legend className="dark:fill-slate-50" />
+              <Legend />
               <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
               <Bar
                 dataKey={"total_persen_losses"}
                 name={"Total Persen Loss"}
                 fill="#ffcaaf"
-                className="dark:fill-slate-50 dark:stroke-slate-50 hover:cursor-pointer"
+                className="hover:cursor-pointer"
                 barSize={20}
                 onClick={(e) => handleBarClick(e)}
               />
@@ -163,7 +163,7 @@ export default function MultipleLineChart({
                 dataKey={"total_nilai_losses"}
                 name={"Total Nilai Loss"}
                 fill="#a7bed3"
-                className="dark:fill-slate-50 dark:stroke-slate-50 hover:cursor-pointer"
+                className="hover:cursor-pointer"
                 barSize={20}
                 onClick={(e) => handleBarClick(e)}
               />

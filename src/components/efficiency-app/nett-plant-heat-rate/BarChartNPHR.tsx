@@ -35,6 +35,7 @@ import { useSession } from "next-auth/react";
 import { useMemo, useRef } from "react";
 import { useSelectedEfficiencyDataStore } from "../../../store/selectedEfficiencyData";
 import React from "react";
+import toast from "react-hot-toast";
 
 const chartConfig = {
   nphr: {
@@ -54,6 +55,11 @@ export default function BarChartNPHR({ data_id }: any) {
   const selectedEfficiencyData = useSelectedEfficiencyDataStore(
     (state) => state.selectedEfficiencyData
   );
+
+  const setSelectedEfficiencyData = useSelectedEfficiencyDataStore(
+    (state) => state.setSelectedEfficiencyData
+  );
+
   // console.log(selectedEfficiencyData, "selected");
   const { data, mutate, isLoading, isValidating, error } = useGetDataNPHR(
     session?.data?.user.access_token,
@@ -130,6 +136,11 @@ export default function BarChartNPHR({ data_id }: any) {
     );
   }
 
+  if (error) {
+    //@ts-ignore
+    setSelectedEfficiencyData("null");
+  }
+
   return (
     <>
       <Modal
@@ -165,8 +176,8 @@ export default function BarChartNPHR({ data_id }: any) {
         </ModalContent>
       </Modal>
       <p className="w-full flex justify-center">
-        Selected Data:{" "}
-        <span className="font-bold pl-2"> {`${data?.name}`}</span>
+        Showing <span className="font-bold px-2"> {`${data?.name}`}</span>
+        Nett Plant Heat Rate Data
       </p>
       <Card>
         <CardHeader>
@@ -204,13 +215,21 @@ export default function BarChartNPHR({ data_id }: any) {
             </BarChart>
           </ChartContainer>
         </CardContent>
-        <CardFooter className="flex-col items-start gap-2 text-sm">
-          <div className="flex gap-2 font-medium leading-none">
-            Nett Plant Heat Rate Gap reached 250
+        <CardFooter className="flex-row items-start justify-between gap-2 text-sm">
+          <div>
+            <div className="flex gap-2 font-medium leading-none">
+              Nett Plant Heat Rate Gap reached{" "}
+              <span className="italic color-[#FF6961]">
+                {chartData[2].gap.toFixed(0)}
+              </span>
+            </div>
+            <div className="leading-none text-muted-foreground">
+              Showing {`${data?.name}`} Nett Plant Heat Rate Data
+            </div>
           </div>
-          <div className="leading-none text-muted-foreground">
-            Showing latest Nett Plant Heat Rate Data
-          </div>
+          <Button onClick={onOpen} className="bg-[#FF6961]">
+            Open Pareto Heat Loss
+          </Button>
         </CardFooter>
       </Card>
     </>

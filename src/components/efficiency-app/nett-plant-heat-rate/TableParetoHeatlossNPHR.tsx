@@ -396,44 +396,44 @@ export default function TableParetoHeatlossNPHR({
           </div>
         ),
       },
-      {
-        header: "% HR",
-        meta: {
-          className: "text-right",
-        },
-        // Access the correct UOM value for each row or sub-row
-        accessorFn: (row: any) => row.persen_hr || "",
-        cell: (props: any) =>
-          props.row.depth > 0 ? (
-            <EditableCell
-              {...props}
-              mutate={mutate}
-              isValidating={isValidating}
-              setIsMutating={setIsMutating}
-            />
-          ) : (
-            <div>{props.getValue()}</div>
-          ),
-      },
-      {
-        header: "Deviasi",
-        meta: {
-          className: "text-right",
-        },
-        // Access the correct UOM value for each row or sub-row
-        accessorFn: (row: any) => (row.data ? null : row.deviasi || ""),
-        cell: (props: any) =>
-          props.row.depth > 0 ? (
-            <EditableCell
-              {...props}
-              mutate={mutate}
-              isValidating={isValidating}
-              setIsMutating={setIsMutating}
-            />
-          ) : (
-            <div>{props.getValue()}</div>
-          ),
-      },
+      // {
+      //   header: "% HR",
+      //   meta: {
+      //     className: "text-right",
+      //   },
+      //   // Access the correct UOM value for each row or sub-row
+      //   accessorFn: (row: any) => row.persen_hr || "",
+      //   cell: (props: any) =>
+      //     props.row.depth > 0 ? (
+      //       <EditableCell
+      //         {...props}
+      //         mutate={mutate}
+      //         isValidating={isValidating}
+      //         setIsMutating={setIsMutating}
+      //       />
+      //     ) : (
+      //       <div>{props.getValue()}</div>
+      //     ),
+      // },
+      // {
+      //   header: "Deviasi",
+      //   meta: {
+      //     className: "text-right",
+      //   },
+      //   // Access the correct UOM value for each row or sub-row
+      //   accessorFn: (row: any) => (row.data ? null : row.deviasi || ""),
+      //   cell: (props: any) =>
+      //     props.row.depth > 0 ? (
+      //       <EditableCell
+      //         {...props}
+      //         mutate={mutate}
+      //         isValidating={isValidating}
+      //         setIsMutating={setIsMutating}
+      //       />
+      //     ) : (
+      //       <div>{props.getValue()}</div>
+      //     ),
+      // },
       {
         accessorKey: "persen_losses",
         meta: {
@@ -555,6 +555,7 @@ export default function TableParetoHeatlossNPHR({
                   style={{
                     paddingLeft: `${props.cell.row.depth * 2}rem`,
                   }}
+                  className="pr-4"
                 >
                   {`${roundedCostBenefit} : ${roundedTotalBiaya} | ${
                     totalBiaya == 0
@@ -567,50 +568,50 @@ export default function TableParetoHeatlossNPHR({
           );
         },
       },
-      {
-        header: "To Do Checklist",
-        size: 350,
-        cell: ({ row }) => {
-          // Only render the button if it's a subrow (depth > 0)
-          if (row.depth > 0 && row.original.has_cause) {
-            return (
-              <div key={row.id} className="flex gap-1">
-                <Button
-                  onPress={() => {
-                    setSelectedModalId({
-                      variableId: row.original.variable.id,
-                      detailId: row.original.id,
-                    });
-                    modalRootCauseOnopen();
-                  }}
-                  color="warning"
-                  size="sm"
-                  className="m-0 p-1"
-                >
-                  Root Cause
-                </Button>
-                <Button
-                  onPress={() => {
-                    setSelectedModalId({
-                      variableId: row.original.variable.id,
-                      detailId: row.original.id,
-                    });
-                    modalRootActionOnopen();
-                  }}
-                  color="primary"
-                  size="sm"
-                  className="m-0 p-1"
-                >
-                  Action
-                </Button>
-              </div>
-            );
-          }
+      // {
+      //   header: "To Do Checklist",
+      //   size: 350,
+      //   cell: ({ row }) => {
+      //     // Only render the button if it's a subrow (depth > 0)
+      //     if (row.depth > 0 && row.original.has_cause) {
+      //       return (
+      //         <div key={row.id} className="flex gap-1">
+      //           <Button
+      //             onPress={() => {
+      //               setSelectedModalId({
+      //                 variableId: row.original.variable.id,
+      //                 detailId: row.original.id,
+      //               });
+      //               modalRootCauseOnopen();
+      //             }}
+      //             color="warning"
+      //             size="sm"
+      //             className="m-0 p-1"
+      //           >
+      //             Root Cause
+      //           </Button>
+      //           <Button
+      //             onPress={() => {
+      //               setSelectedModalId({
+      //                 variableId: row.original.variable.id,
+      //                 detailId: row.original.id,
+      //               });
+      //               modalRootActionOnopen();
+      //             }}
+      //             color="primary"
+      //             size="sm"
+      //             className="m-0 p-1"
+      //           >
+      //             Action
+      //           </Button>
+      //         </div>
+      //       );
+      //     }
 
-          // Return null or an empty fragment if it's not a subrow
-          return null;
-        },
-      },
+      //     // Return null or an empty fragment if it's not a subrow
+      //     return null;
+      //   },
+      // },
 
       // {
       //   accessorKey: "data",
@@ -669,31 +670,29 @@ export default function TableParetoHeatlossNPHR({
     fieldSeparator: ",",
     decimalSeparator: ".",
     useKeysAsHeaders: true,
+    filename: `Pareto-${summaryData.category}-${new Date().toLocaleString(
+      "id"
+    )}`,
   });
 
   const handleExportData = () => {
-    const flattenedData = data.flatMap((entry: any) =>
-      entry.data.map((dataItem: any) => ({
-        id: dataItem.id,
-        category: entry.category,
-        parameter: dataItem.variable.input_name,
-        existing_data: dataItem.existing_data,
-        reference_data: dataItem.reference_data,
-        gap: dataItem.gap,
-        nilai_losses: dataItem.nilai_losses,
-        persen_losses: dataItem.persen_losses,
-        persen_hr: dataItem.persen_hr,
-        deviasi: dataItem.deviasi,
-        symptoms: dataItem.symptoms,
-        total_biaya: dataItem.total_biaya,
-        total_nilai_losses: entry.total_nilai_losses,
-        total_persen_losses: entry.total_persen_losses,
-        total_cost_benefit: entry.total_cost_benefit,
-        total_cost_gap: entry.total_cost_gap,
-      }))
-    );
+    const flattenedData = data.flatMap((entry: any) => entry);
+    const csvData = flattenedData.map((dataItem: any) => ({
+      id: dataItem.id,
+      category: dataItem.variable.category,
+      parameter: dataItem.variable.input_name,
+      existing_data: dataItem.existing_data,
+      reference_data: dataItem.reference_data,
+      gap: dataItem.gap,
+      nilai_losses: dataItem.nilai_losses,
+      persen_losses: dataItem.persen_losses,
+      persen_hr: dataItem.persen_hr,
+      deviasi: dataItem.deviasi,
+      symptoms: dataItem.symptoms,
+      total_biaya: dataItem.total_biaya,
+    }));
     // Generate CSV using flattened data
-    const csv = generateCsv(csvConfig)(flattenedData);
+    const csv = generateCsv(csvConfig)(csvData);
     download(csvConfig)(csv);
   };
 
@@ -751,32 +750,32 @@ export default function TableParetoHeatlossNPHR({
   };
 
   const handleExportExcel = () => {
-    const flattenedData = data.flatMap((entry: any) =>
-      entry.data.map((dataItem: any) => ({
-        id: dataItem.id,
-        category: entry.category,
-        parameter: dataItem.variable.input_name,
-        existing_data: dataItem.existing_data,
-        reference_data: dataItem.reference_data,
-        gap: dataItem.gap,
-        nilai_losses: dataItem.nilai_losses,
-        persen_losses: dataItem.persen_losses,
-        persen_hr: dataItem.persen_hr,
-        deviasi: dataItem.deviasi,
-        symptoms: dataItem.symptoms,
-        total_biaya: dataItem.total_biaya,
-        total_nilai_losses: entry.total_nilai_losses,
-        total_persen_losses: entry.total_persen_losses,
-        total_cost_benefit: entry.total_cost_benefit,
-        total_cost_gap: entry.total_cost_gap,
-      }))
-    );
-    const worksheet = XLSX.utils.json_to_sheet(flattenedData);
+    const flattenedData = data.flatMap((entry: any) => entry);
+    const excelData = flattenedData.map((dataItem: any) => ({
+      id: dataItem.id,
+      category: dataItem.variable.category,
+      parameter: dataItem.variable.input_name,
+      existing_data: dataItem.existing_data,
+      reference_data: dataItem.reference_data,
+      gap: dataItem.gap,
+      nilai_losses: dataItem.nilai_losses,
+      persen_losses: dataItem.persen_losses,
+      persen_hr: dataItem.persen_hr,
+      deviasi: dataItem.deviasi,
+      symptoms: dataItem.symptoms,
+      total_biaya: dataItem.total_biaya,
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
     //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-    return XLSX.writeFile(workbook, "ParetoData.xlsx");
+    return XLSX.writeFile(
+      workbook,
+      `ParetoData-${summaryData.category}-${new Date().toLocaleString(
+        "id"
+      )}.xlsx`
+    );
   };
 
   const handlePrint = () => {
@@ -814,7 +813,7 @@ export default function TableParetoHeatlossNPHR({
       /> */}
 
       <div className=" flex justify-end gap-2">
-        {/* <Button
+        <Button
           onClick={() => handleExportExcel()}
           color="success"
           size="sm"
@@ -829,7 +828,7 @@ export default function TableParetoHeatlossNPHR({
           endContent={<DownloadIcon size={16} />}
         >
           Export to CSV
-        </Button> */}
+        </Button>
         <Button
           onClick={() => handleExportPDFData()}
           color="danger"
@@ -898,12 +897,12 @@ export default function TableParetoHeatlossNPHR({
               <th className="sticky left-0 bg-blue-200 dark:bg-blue-600">
                 Total Summary
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={6}></th>
+              <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
-                {formatCurrency(summaryData.total_persen.toFixed(2))}
+                {formatCurrency(summaryData.total_persen_losses.toFixed(2))}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
-                {formatCurrency(summaryData.total_nilai.toFixed(2))}
+                {summaryData.total_nilai_losses.toFixed(2)}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">

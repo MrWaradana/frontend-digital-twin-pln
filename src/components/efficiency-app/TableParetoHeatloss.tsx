@@ -141,7 +141,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                 {!row.original.total_nilai_losses ? null : (
                   <tr
                     key={`summary-${row.id}`}
-                    className="bg-neutral-100 dark:bg-neutral-900 border border-black"
+                    className="bg-neutral-100 dark:bg-neutral-900 border border-black py-8"
                   >
                     {row.getVisibleCells().map((cell: any) => {
                       // Render summary under the specific columns
@@ -159,7 +159,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right"
+                            className="font-bold border border-neutral-700 text-right pb-4"
                           >
                             {row.original.total_nilai_losses
                               ? row.original.total_nilai_losses.toFixed(2)
@@ -171,7 +171,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right"
+                            className="font-bold border border-neutral-700 text-right pb-4"
                           >
                             {row.original.total_persen_losses
                               ? row.original.total_persen_losses.toFixed(2)
@@ -183,7 +183,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right"
+                            className="font-bold border border-neutral-700 text-right pb-4"
                           >
                             Rp.
                             {row.original.total_cost_benefit
@@ -198,7 +198,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right"
+                            className="font-bold border border-neutral-700 text-right pb-4"
                           >
                             Rp.
                             {row.original.total_cost_gap
@@ -396,44 +396,44 @@ export default function TableParetoHeatloss({
           </div>
         ),
       },
-      {
-        header: "% HR",
-        meta: {
-          className: "text-right",
-        },
-        // Access the correct UOM value for each row or sub-row
-        accessorFn: (row: any) => row.persen_hr || "",
-        cell: (props: any) =>
-          props.row.depth > 0 ? (
-            <EditableCell
-              {...props}
-              mutate={mutate}
-              isValidating={isValidating}
-              setIsMutating={setIsMutating}
-            />
-          ) : (
-            <div>{props.getValue()}</div>
-          ),
-      },
-      {
-        header: "Deviasi",
-        meta: {
-          className: "text-right",
-        },
-        // Access the correct UOM value for each row or sub-row
-        accessorFn: (row: any) => (row.data ? null : row.deviasi || ""),
-        cell: (props: any) =>
-          props.row.depth > 0 ? (
-            <EditableCell
-              {...props}
-              mutate={mutate}
-              isValidating={isValidating}
-              setIsMutating={setIsMutating}
-            />
-          ) : (
-            <div>{props.getValue()}</div>
-          ),
-      },
+      // {
+      //   header: "% HR",
+      //   meta: {
+      //     className: "text-right",
+      //   },
+      //   // Access the correct UOM value for each row or sub-row
+      //   accessorFn: (row: any) => row.persen_hr || "",
+      //   cell: (props: any) =>
+      //     props.row.depth > 0 ? (
+      //       <EditableCell
+      //         {...props}
+      //         mutate={mutate}
+      //         isValidating={isValidating}
+      //         setIsMutating={setIsMutating}
+      //       />
+      //     ) : (
+      //       <div>{props.getValue()}</div>
+      //     ),
+      // },
+      // {
+      //   header: "Deviasi",
+      //   meta: {
+      //     className: "text-right",
+      //   },
+      //   // Access the correct UOM value for each row or sub-row
+      //   accessorFn: (row: any) => (row.data ? null : row.deviasi || ""),
+      //   cell: (props: any) =>
+      //     props.row.depth > 0 ? (
+      //       <EditableCell
+      //         {...props}
+      //         mutate={mutate}
+      //         isValidating={isValidating}
+      //         setIsMutating={setIsMutating}
+      //       />
+      //     ) : (
+      //       <div>{props.getValue()}</div>
+      //     ),
+      // },
       {
         accessorKey: "persen_losses",
         meta: {
@@ -669,6 +669,7 @@ export default function TableParetoHeatloss({
     fieldSeparator: ",",
     decimalSeparator: ".",
     useKeysAsHeaders: true,
+    filename: `Pareto Heat Loss - ${new Date().toLocaleString("id")}`,
   });
 
   const handleExportData = () => {
@@ -728,7 +729,7 @@ export default function TableParetoHeatloss({
       },
       html2canvas: {
         scrollX: 0,
-        scrollY: -window.scrollY,
+        scrollY: -6 * window.scrollY,
         scale: 2, // Increase scale for better resolution
         useCORS: true, // Use CORS for external images if required
         backgroundColor: "#ffffff", // Set a white background to avoid transparency issues
@@ -776,7 +777,10 @@ export default function TableParetoHeatloss({
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
     //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-    return XLSX.writeFile(workbook, "ParetoData.xlsx");
+    return XLSX.writeFile(
+      workbook,
+      `ParetoData-${new Date().toLocaleString("id")}.xlsx`
+    );
   };
 
   const handlePrint = () => {
@@ -857,7 +861,7 @@ export default function TableParetoHeatloss({
           }}
           id="table-pareto"
         >
-          <thead className="sticky top-0 z-50 border-2">
+          <thead className="sticky top-0 z-50 border-2 print-cell">
             {table.getHeaderGroups().map((headerGroup: any) => {
               return (
                 <tr key={`${headerGroup.id}`}>
@@ -893,27 +897,27 @@ export default function TableParetoHeatloss({
           <MemoizedTableBody table={table} />
           {/* Initial Table Body for expanding row works */}
           {/* <TableBody table={table} /> */}
-          <tfoot className="sticky bottom-0 z-50 border-2">
-            <tr className="text-left">
-              <th className="sticky left-0 bg-blue-200 dark:bg-blue-600">
+          <tfoot className="sticky bottom-0 z-50 border-2 print-cell">
+            <tr className="text-left pb-8">
+              <th className="sticky left-0 bg-blue-200 dark:bg-blue-600 pb-4">
                 Total Summary
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={6}></th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right">
-                {formatCurrency(summaryData.total_persen.toFixed(2))}
+              <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>
+              <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
+                {summaryData.total_persen.toFixed(2)}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right">
-                {formatCurrency(summaryData.total_nilai.toFixed(2))}
+              <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
+                {summaryData.total_nilai.toFixed(2)}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right">
+              <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
                 Rp.{formatCurrency(summaryData.total_cost_benefit.toFixed(2))}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right">
+              <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
                 Rp.{formatCurrency(summaryData.total_cost_gap.toFixed(2))}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={2}></th>
+              <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>
             </tr>
           </tfoot>
         </table>
