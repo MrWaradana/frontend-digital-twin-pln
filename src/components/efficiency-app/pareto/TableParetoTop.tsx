@@ -244,13 +244,20 @@ export default function TableParetoTop({
             style={{
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
+            className="text-center"
           >
             {props.getValue() != "NaN" ? props.getValue() : ""}
           </div>
         ),
       },
       {
-        header: "Reference Data",
+        id: "referenceData",
+        header: () => (
+          <div className="text-center">
+            Reference Data <br />
+            (Commision)
+          </div>
+        ),
         meta: {
           className: "text-right",
         },
@@ -272,7 +279,13 @@ export default function TableParetoTop({
         ),
       },
       {
-        header: "Existing Data",
+        id: "existingData",
+        header: () => (
+          <div className="text-center">
+            Existing Data <br />
+            (Niaga)
+          </div>
+        ),
         meta: {
           className: "text-right",
         },
@@ -293,7 +306,8 @@ export default function TableParetoTop({
         ),
       },
       {
-        header: "Gap",
+        id: "gap",
+        header: () => <div className="text-center">Gap</div>,
         meta: {
           className: "text-right",
         },
@@ -400,6 +414,7 @@ export default function TableParetoTop({
     stickyCells.forEach((cell) => cell.classList.remove("sticky"));
 
     // Create PDF
+    // @ts-ignore
     const pdf = await html2PDF(table, {
       jsPDF: {
         format: "a4",
@@ -501,7 +516,7 @@ export default function TableParetoTop({
                     return (
                       <th
                         key={header.id}
-                        className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 ${
+                        className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 border-r-1 border-neutral-800 ${
                           header.column.columnDef.meta?.className ?? ""
                         } `}
                         style={{
@@ -517,7 +532,10 @@ export default function TableParetoTop({
                           onMouseDown={header.getResizeHandler()}
                           onTouchStart={header.getResizeHandler()}
                         ></div>
-                        {header.column.columnDef.header}
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                       </th>
                     );
                   })}

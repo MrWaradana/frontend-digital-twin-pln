@@ -227,7 +227,7 @@ export default function BarChartNPHR({ data_id }: any) {
               Showing {`${data?.name}`} Nett Plant Heat Rate Data
             </div>
           </div>
-          <Button onClick={onOpen} className="bg-[#FF6961]">
+          <Button onClick={onOpen} className="bg-[#FF6961] text-white">
             Open Pareto Heat Loss
           </Button>
         </CardFooter>

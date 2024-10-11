@@ -87,23 +87,44 @@ export default function MultipleLineChart({
               tickMargin={8}
               tickFormatter={(value) => (value ? value.slice(0, 4) : "Pareto")}
             />
-            <YAxis domain={[0, totalPersen]} allowDataOverflow={true} />
-            {/* <YAxis allowDataOverflow={true} /> */}
-            <Legend className="dark:fill-slate-50" />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <Bar
-              dataKey={"total_persen_losses"}
-              name={"Total Persen Loss"}
-              fill="#1b85b8"
-              className="dark:fill-slate-50 dark:stroke-slate-50"
-              barSize={20}
+            <YAxis
+              domain={[0, totalPersen]}
+              orientation="right"
+              allowDataOverflow={true}
+              label={{
+                value: "Persen Losses",
+                angle: 90,
+                position: "outsideLeft",
+                dx: 20,
+              }}
+              yAxisId={"total_persen_losses"}
             />
+            <YAxis
+              orientation="left"
+              label={{
+                value: "Nilai Losses",
+                angle: -90,
+                dx: -10,
+              }}
+              allowDataOverflow={true}
+            />
+            {/* <YAxis allowDataOverflow={true} /> */}
+            <Legend className="" />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Bar
               dataKey={"total_nilai_losses"}
               name={"Total Nilai Loss"}
               fill="#559e83"
-              className="dark:fill-slate-50 dark:stroke-slate-50"
+              className=""
               barSize={20}
+            />
+            <Bar
+              dataKey={"total_persen_losses"}
+              name={"Total Persen Loss"}
+              fill="#1b85b8"
+              className=""
+              barSize={20}
+              yAxisId={"total_persen_losses"}
             />
             <ReferenceLine
               x="Miscellaneous auxiliary load"

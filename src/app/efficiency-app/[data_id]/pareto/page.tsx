@@ -154,7 +154,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
                   tableData={paretoTopData}
                   summaryData={summaryData}
                 />
-                <Divider />
+                <Divider className="h-1 bg-neutral-500 rounded-xl" />
                 <TableParetoHeatloss
                   tableData={paretoBottomData}
                   summaryData={summaryData}

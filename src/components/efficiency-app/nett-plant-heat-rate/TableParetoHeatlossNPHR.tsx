@@ -50,20 +50,20 @@ const formatCurrency = (number: any) => {
 
   if (absNumber >= 1_000_000_000_000) {
     // Trillions
-    formattedNumber = (number / 1_000_000_000_000).toFixed(0);
-    suffix = " triliun";
+    formattedNumber = (number / 1_000_000_000_000).toFixed(2);
+    suffix = " T";
   } else if (absNumber >= 1_000_000_000) {
     // Billions
-    formattedNumber = (number / 1_000_000_000).toFixed(0);
-    suffix = " miliar";
+    formattedNumber = (number / 1_000_000_000).toFixed(2);
+    suffix = " M";
   } else if (absNumber >= 1_000_000) {
     // Millions
-    formattedNumber = (number / 1_000_000).toFixed(0);
-    suffix = " juta";
+    formattedNumber = (number / 1_000_000).toFixed(2);
+    suffix = " Jt";
   } else if (absNumber >= 1_000) {
     // Millions
-    formattedNumber = (number / 1_000).toFixed(0);
-    suffix = " ribu";
+    formattedNumber = (number / 1_000).toFixed(2);
+    suffix = " Rb";
   } else {
     // Thousands separator for smaller numbers
     formattedNumber = number.toLocaleString("id-ID");
@@ -282,7 +282,7 @@ export default function TableParetoHeatlossNPHR({
         accessorKey: "category",
         header: "Parameter",
         minSize: 60,
-        size: 550,
+        size: 250,
         maxSize: 800,
         meta: {
           className:
@@ -337,7 +337,13 @@ export default function TableParetoHeatlossNPHR({
         ),
       },
       {
-        header: "Reference Data (Commision)",
+        id: "referenceData",
+        size: 45,
+        header: () => (
+          <div className="text-center">
+            Reference Data <br /> (Commission)
+          </div>
+        ),
         meta: {
           className: "text-right",
         },
@@ -359,7 +365,13 @@ export default function TableParetoHeatlossNPHR({
         ),
       },
       {
-        header: "Existing Data (Current)",
+        id: "existingData", // Add a unique id for the column
+        size: 45,
+        header: () => (
+          <div className="text-center">
+            Existing Data <br /> (Current)
+          </div>
+        ),
         meta: {
           className: "text-right",
         },
@@ -370,17 +382,13 @@ export default function TableParetoHeatlossNPHR({
             : (row.existing_data != null ? row.existing_data.toFixed(2) : 0) ||
               "",
         cell: (props: any) => (
-          <div
-            style={{
-              paddingLeft: `${props.cell.row.depth * 1}rem`,
-            }}
-          >
-            {props.getValue()}
-          </div>
+          <div className="text-center">{props.getValue()}</div>
         ),
       },
       {
-        header: "Gap",
+        id: "gap",
+        header: () => <div className="text-center">Gap</div>,
+        size: 45,
         meta: {
           className: "text-right",
         },
@@ -435,11 +443,17 @@ export default function TableParetoHeatlossNPHR({
       //     ),
       // },
       {
+        id: "persenLosses",
         accessorKey: "persen_losses",
+        size: 45,
         meta: {
           className: "text-right",
         },
-        header: "Persen Losses",
+        header: () => (
+          <div className="text-center">
+            Persen Losses <br /> (%)
+          </div>
+        ),
         cell: (props: any) => {
           const value = props.getValue();
           if (!value) {
@@ -450,11 +464,17 @@ export default function TableParetoHeatlossNPHR({
         footer: (props: any) => props.column.id,
       },
       {
+        id: "nilaiLosses",
         accessorKey: "nilai_losses",
+        size: 45,
         meta: {
           className: "text-right",
         },
-        header: "Nilai Losses",
+        header: () => (
+          <div className="text-center">
+            Nilai Losses <br /> (kCal/kWh)
+          </div>
+        ),
         cell: (props: any) => {
           const value = props.getValue();
           if (!value) {
@@ -466,16 +486,12 @@ export default function TableParetoHeatlossNPHR({
       },
       {
         header: "Symptoms",
+        size: 45,
         cell: (props: any) => (
           <>
             {(props.row.depth > 0 ||
               !props.row.original.total_nilai_losses) && ( // Only render if it's a subrow
-              <div
-                style={{
-                  paddingLeft: `${props.cell.row.depth * 2}rem`,
-                }}
-                className="flex justify-center"
-              >
+              <div className="flex justify-center">
                 {props.row.original.gap < 0 ? (
                   <span className="py-1 px-3 bg-red-400 rounded-md">Lower</span>
                 ) : (
@@ -489,7 +505,9 @@ export default function TableParetoHeatlossNPHR({
         ),
       },
       {
-        header: "Potential Benefit",
+        id: "potentialBenefit",
+        header: () => <div className="text-center">Potential Benefit</div>,
+        size: 105,
         meta: {
           className: "text-right",
         },
@@ -507,15 +525,20 @@ export default function TableParetoHeatlossNPHR({
       },
       {
         header: "Action Menutup Gap",
+        size: 45,
         cell: (props: any) =>
           props.row.depth > 0 ? <div>{props.getValue()}</div> : "",
       },
       {
+        id: "biayaClosingGap",
         accessorKey: "total_biaya",
         meta: {
           className: "text-right",
         },
-        header: "Biaya Untuk Closing Gap",
+        header: () => (
+          <div className="text-center">Biaya untuk Closing Gap</div>
+        ),
+        size: 55,
         cell: (props: any) => {
           const value = props.getValue();
           if (
@@ -528,15 +551,18 @@ export default function TableParetoHeatlossNPHR({
         },
       },
       {
-        header: "Ratio Benefit to Cost",
+        id: "ratioBenefitCost",
+        header: () => <div className="text-center">Ratio Benefit to Cost</div>,
+        size: 105,
         meta: {
-          className: "text-right",
+          className: "text-right pr-1",
         },
         cell: (props: any) => {
           const costBenefit = props.row.original.cost_benefit;
           const totalBiaya = props.row.original.total_biaya;
           if (totalBiaya === 0) {
-            return `${costBenefit.toFixed(0)} : 0 | -`;
+            // return `${costBenefit.toFixed(0)} : 0 | -`;
+            return `-`;
           }
 
           // Calculate the ratio
@@ -551,12 +577,7 @@ export default function TableParetoHeatlossNPHR({
           return (
             <>
               {props.row.depth > 0 && ( // Only render if it's a subrow
-                <div
-                  style={{
-                    paddingLeft: `${props.cell.row.depth * 2}rem`,
-                  }}
-                  className="pr-4"
-                >
+                <div>
                   {`${roundedCostBenefit} : ${roundedTotalBiaya} | ${
                     totalBiaya == 0
                       ? "-"
@@ -569,8 +590,9 @@ export default function TableParetoHeatlossNPHR({
         },
       },
       // {
+      //   id: "toDoChecklist",
       //   header: "To Do Checklist",
-      //   size: 350,
+      //   size: 280,
       //   cell: ({ row }) => {
       //     // Only render the button if it's a subrow (depth > 0)
       //     if (row.depth > 0 && row.original.has_cause) {
@@ -880,7 +902,10 @@ export default function TableParetoHeatlossNPHR({
                           onMouseDown={header.getResizeHandler()}
                           onTouchStart={header.getResizeHandler()}
                         ></div>
-                        {header.column.columnDef.header}
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                       </th>
                     );
                   })}
