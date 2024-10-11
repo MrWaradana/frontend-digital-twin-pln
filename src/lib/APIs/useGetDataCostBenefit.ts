@@ -4,6 +4,10 @@ import { useApiFetch } from "./useApiFetch";
 
 export interface CostBenefitDataType {
   cost_benefit_result: CostBenefitType[];
+  total_biaya: string | number;
+  total_cost_benefit: string | number;
+  total_nilai: string | number;
+  total_persen: string | number;
 }
 
 export interface CostBenefitType {
