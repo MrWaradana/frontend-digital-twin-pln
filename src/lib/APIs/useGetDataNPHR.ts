@@ -27,7 +27,7 @@ export function useGetDataNPHR(
   data_id: string | undefined
 ): HookReply<NPHRType> {
   return useApiFetch(
-    `${EFFICIENCY_API_URL}/data/${data_id ? data_id : "null"}/nphr`,
+    `${EFFICIENCY_API_URL}/data/${data_id ? data_id : "new"}/nphr`,
     !!token,
     token,
     {

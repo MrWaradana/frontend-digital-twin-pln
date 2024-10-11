@@ -360,7 +360,7 @@ export default function TableParetoHeatloss({
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
-            {formattedNumber(props.getValue())}
+            {props.row.depth > 0 ? formattedNumber(props.getValue()) : ""}
           </div>
         ),
       },
@@ -387,7 +387,7 @@ export default function TableParetoHeatloss({
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
-            {formattedNumber(props.getValue())}
+            {props.row.depth > 0 ? formattedNumber(props.getValue()) : ""}
           </div>
         ),
       },
@@ -406,7 +406,7 @@ export default function TableParetoHeatloss({
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
-            {formattedNumber(props.getValue())}
+            {props.row.depth > 0 ? formattedNumber(props.getValue()) : ""}
           </div>
         ),
       },
