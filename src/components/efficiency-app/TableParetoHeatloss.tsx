@@ -183,7 +183,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                           </td>
                         );
                       }
-                      if (cell.column.id === "costBenefit") {
+                      if (cell.column.id === "potentialBenefit") {
                         return (
                           <td
                             key={cell.id}
@@ -949,7 +949,7 @@ export default function TableParetoHeatloss({
               <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
                 Rp.{formatCurrency(summaryData.total_cost_benefit.toFixed(2))}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
+              {/* <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th> */}
               <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
                 Rp.{formatCurrency(summaryData.total_cost_gap.toFixed(2))}
               </th>

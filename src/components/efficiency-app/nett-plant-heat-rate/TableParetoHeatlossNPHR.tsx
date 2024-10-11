@@ -159,7 +159,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                           </td>
                         );
                       }
-                      if (cell.column.id === "nilai_losses") {
+                      if (cell.column.id === "nilaiLosses") {
                         return (
                           <td
                             key={cell.id}
@@ -171,7 +171,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                           </td>
                         );
                       }
-                      if (cell.column.id === "persen_losses") {
+                      if (cell.column.id === "persenLosses") {
                         return (
                           <td
                             key={cell.id}
@@ -183,7 +183,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                           </td>
                         );
                       }
-                      if (cell.column.id === "cost_benefit") {
+                      if (cell.column.id === "potentialBenefit") {
                         return (
                           <td
                             key={cell.id}
@@ -198,7 +198,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                           </td>
                         );
                       }
-                      if (cell.column.id === "total_biaya") {
+                      if (cell.column.id === "biayaClosingGap") {
                         return (
                           <td
                             key={cell.id}
@@ -497,9 +497,11 @@ export default function TableParetoHeatlossNPHR({
               !props.row.original.total_nilai_losses) && ( // Only render if it's a subrow
               <div className="flex justify-center">
                 {props.row.original.gap < 0 ? (
-                  <span className="py-1 px-3 bg-red-400 rounded-md">Lower</span>
+                  <span className="py-1 px-3 bg-orange-400 rounded-md text-white">
+                    Lower
+                  </span>
                 ) : (
-                  <span className="py-1 px-3 bg-blue-400 rounded-md">
+                  <span className="py-1 px-3 bg-red-500 rounded-md text-white">
                     Higher
                   </span>
                 )}
@@ -511,7 +513,7 @@ export default function TableParetoHeatlossNPHR({
       {
         id: "potentialBenefit",
         header: () => <div className="text-center">Potential Benefit</div>,
-        size: 105,
+        size: 125,
         meta: {
           className: "text-right",
         },
@@ -527,12 +529,12 @@ export default function TableParetoHeatlossNPHR({
           return "";
         },
       },
-      {
-        header: "Action Menutup Gap",
-        size: 45,
-        cell: (props: any) =>
-          props.row.depth > 0 ? <div>{props.getValue()}</div> : "",
-      },
+      // {
+      //   header: "Action Menutup Gap",
+      //   size: 45,
+      //   cell: (props: any) =>
+      //     props.row.depth > 0 ? <div>{props.getValue()}</div> : "",
+      // },
       {
         id: "biayaClosingGap",
         accessorKey: "total_biaya",
@@ -542,7 +544,7 @@ export default function TableParetoHeatlossNPHR({
         header: () => (
           <div className="text-center">Biaya untuk Closing Gap</div>
         ),
-        size: 55,
+        size: 125,
         cell: (props: any) => {
           const value = props.getValue();
           if (
@@ -937,7 +939,7 @@ export default function TableParetoHeatlossNPHR({
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
                 Rp.{formatCurrency(summaryData.total_cost_benefit.toFixed(2))}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
+              {/* <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th> */}
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
                 Rp.{formatCurrency(summaryData.total_cost_gap.toFixed(2))}
               </th>
