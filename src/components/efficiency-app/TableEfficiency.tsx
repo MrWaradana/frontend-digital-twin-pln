@@ -379,15 +379,20 @@ export default function TableEfficiency({
                 selectedKeys={parameterFilter}
                 selectionMode="multiple"
                 onSelectionChange={setParameterFilter}
+                disabledKeys={["Commision", "Niaga"]}
               >
-                {parameterOptions.map((parameter: any) => (
-                  <DropdownItem key={parameter.uid} className="capitalize">
-                    {capitalize(parameter.name)}
-                  </DropdownItem>
-                ))}
+                {parameterOptions.map((parameter: any) => {
+                  
+                    return (
+                      <DropdownItem key={parameter.uid} className="capitalize">
+                        {capitalize(parameter.name)}
+                      </DropdownItem>
+                    );
+
+                })}      
               </DropdownMenu>
             </Dropdown>
-            <Dropdown>
+            {/* <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
@@ -410,7 +415,7 @@ export default function TableEfficiency({
                   </DropdownItem>
                 ))}
               </DropdownMenu>
-            </Dropdown>
+            </Dropdown> */}
             <Button
               as={Link}
               href={addNewUrl}
