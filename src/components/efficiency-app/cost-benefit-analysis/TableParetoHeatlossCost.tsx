@@ -719,7 +719,7 @@ export default function TableParetoHeatlossCost({
   };
 
   const handleExportPDFData = async () => {
-    const table = document.getElementById("table-pareto");
+    const table = document.getElementById("table-pareto-cost");
     const tableContainer = document.querySelector(".printable-table");
     const stickyColumns = document.querySelectorAll(".print-column");
     const stickyCells = document.querySelectorAll(".print-cell");
