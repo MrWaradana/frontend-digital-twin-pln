@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useMemo, useEffect } from "react";
 import {
@@ -41,6 +41,9 @@ import ModalRootCause from "../ModalRootCause";
 import ModalRootCauseAction from "../ModalRootCauseAction";
 import { CostBenefitDataType } from "../../../lib/APIs/useGetDataCostBenefit";
 
+const formattedNumber = (value: any) =>
+  new Intl.NumberFormat("id-ID").format(value);
+
 const formatCurrency = (number: any) => {
   // Convert to absolute value to handle negative numbers
   const absNumber = Math.abs(number);
@@ -70,7 +73,7 @@ const formatCurrency = (number: any) => {
     formattedNumber = number.toLocaleString("id-ID");
   }
 
-  return formattedNumber + suffix;
+  return formattedNumber(formattedNumber) + suffix;
 };
 
 //un-memoized normal table body component - see memoized version below
@@ -354,7 +357,7 @@ export default function TableParetoHeatlossCost({
           row.depth === 0
             ? null
             : (row.reference_data != null
-                ? row.reference_data.toFixed(2)
+                ? formattedNumber(row.reference_data.toFixed(2))
                 : 0) || "",
         cell: (props: any) => (
           <div
@@ -381,8 +384,9 @@ export default function TableParetoHeatlossCost({
         accessorFn: (row: any) =>
           row.depth === 0
             ? null
-            : (row.existing_data != null ? row.existing_data.toFixed(2) : 0) ||
-              "",
+            : (row.existing_data != null
+                ? formattedNumber(row.existing_data.toFixed(2))
+                : 0) || "",
         cell: (props: any) => (
           <div className="text-center">{props.getValue()}</div>
         ),
@@ -396,15 +400,31 @@ export default function TableParetoHeatlossCost({
         },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) => (row.data ? null : row.gap.toFixed(2) || ""),
-        cell: (props: any) => (
-          <div
-            style={{
-              paddingLeft: `${props.cell.row.depth * 1}rem`,
-            }}
-          >
-            {props.getValue()}
-          </div>
-        ),
+        cell: (props: any) => {
+          const value = props.getValue();
+
+          // Function to handle very small numbers and convert them to scientific notation
+          const formatSmallNumber = (num: number) => {
+            if (Math.abs(num) < 0.0001 && num !== 0) {
+              const exponentialForm = num.toExponential(1); // Format to exponential notation
+              const [coefficient, exponent] = exponentialForm.split("e");
+              return `${coefficient}x10^${exponent}`;
+            }
+            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+          };
+
+          return (
+            <div
+              style={{
+                paddingLeft: `${props.cell.row.depth * 1}rem`,
+              }}
+            >
+              {props.row.depth > 0 && value
+                ? formatSmallNumber(Number(value))
+                : ""}
+            </div>
+          );
+        },
       },
       // {
       //   header: "% HR",
@@ -461,7 +481,7 @@ export default function TableParetoHeatlossCost({
           if (!value) {
             return;
           }
-          return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
+          return formattedNumber(Number(value).toFixed(2)); // Ensures the value is formatted with 2 decimal places
         },
         footer: (props: any) => props.column.id,
       },
@@ -482,7 +502,7 @@ export default function TableParetoHeatlossCost({
           if (!value) {
             return;
           }
-          return Number(value).toFixed(2); // Ensures the value is formatted with 2 decimal places
+          return formattedNumber(Number(value).toFixed(2)); // Ensures the value is formatted with 2 decimal places
         },
         footer: (props: any) => props.column.id,
       },
@@ -495,9 +515,11 @@ export default function TableParetoHeatlossCost({
               !props.row.original.total_nilai_losses) && ( // Only render if it's a subrow
               <div className="flex justify-center">
                 {props.row.original.gap < 0 ? (
-                  <span className="py-1 px-3 bg-red-400 rounded-md">Lower</span>
+                  <span className="py-1 px-3 bg-orange-400 rounded-md">
+                    Lower
+                  </span>
                 ) : (
-                  <span className="py-1 px-3 bg-blue-400 rounded-md">
+                  <span className="py-1 px-3 bg-red-500 rounded-md">
                     Higher
                   </span>
                 )}

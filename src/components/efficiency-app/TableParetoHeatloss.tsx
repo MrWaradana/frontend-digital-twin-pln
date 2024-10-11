@@ -870,6 +870,7 @@ export default function TableParetoHeatloss({
         isOpen={modalRootCauseIsopen}
         onOpenChange={modalRootCauseonOpenChange}
         selectedModalId={selectecModalId}
+        // @ts-ignore
         data_id={data_id}
         paretoMutate={mutate}
       />
@@ -878,6 +879,7 @@ export default function TableParetoHeatloss({
         isOpen={modalRootActionIsopen}
         onOpenChange={modalRootActionOnOpenChange}
         selectedModalId={selectecModalId}
+        // @ts-ignore
         data_id={data_id}
         paretoMutate={mutate}
       />
