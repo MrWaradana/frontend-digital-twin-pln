@@ -25,6 +25,7 @@ import { useGetExcel } from "@/lib/APIs/useGetExcel";
 import { useGetData } from "@/lib/APIs/useGetData";
 import { mutate } from "swr";
 import { access } from "fs";
+import { useSelectedEfficiencyDataStore } from "@/store/selectedEfficiencyData";
 
 export default function Page() {
   const pathname = usePathname();
@@ -85,10 +86,6 @@ export default function Page() {
 
   const excel = excelData ?? [];
 
-  if (!isLoading) {
-    useExcelStore.getState().setExcels(excel);
-  }
-
   // console.log(efficiencyData, "data efficiency");
   const StatusThermoflow = useStatusThermoflowStore(
     (state) => state.statusThermoflow
@@ -101,37 +98,46 @@ export default function Page() {
   const thermoStatus = efficiencyData?.thermo_status ?? StatusThermoflow;
   const efficiency = efficiencyData?.transactions ?? [];
 
-  // useEffect(() => {
-  //   const api = `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/stream`;
-  //   const es = new EventSource(api);
-  //   // @ts-ignore
-  //   es.addEventListener("data_outputs", (e) => {
-  //     toast.success(`Efficiency data has been processed!`);
-  //     // console.log(e, "DATA STREAM!");
-  //     setStatusThermoflow(false);
-  //     if (pathname === "/efficiency-app") {
-  //       setTimeout(() => window.location.reload(), 3000);
-  //     }
-  //   });
+  if (!isLoading && !efficiencyLoading) {
+    useExcelStore.getState().setExcels(excel);
 
-  //   // @ts-ignore
-  //   es.addEventListener("error", (e) => {
-  //     // @ts-ignore
-  //     // toast.error(`Error: ${e}`);
-  //     console.log(e, "DATA STREAM!");
-  //     if (pathname === "/efficiency-app") {
-  //       setTimeout(() => window.location.reload(), 3000);
-  //     }
-  //   });
+    useSelectedEfficiencyDataStore
+      .getState()
+      //@ts-ignore
+      .setSelectedEfficiencyData(efficiency[0]);
+  }
 
-  //   // Handle SSE connection errors
-  //   es.onerror = (_) => {
-  //     toast.error(`Something went wrong!, ${_}`);
-  //     console.log(_, "Error");
-  //     // Close the SSE connection
-  //     es.close();
-  //   };
-  // }, []);
+  useEffect(() => {
+    const api = `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/stream`;
+    const es = new EventSource(api);
+    // @ts-ignore
+    es.addEventListener("data_outputs", (e) => {
+      toast.success(`Efficiency data has been processed!`);
+      setStatusThermoflow(false);
+      mutateEfficiency();
+      // if (pathname === "/efficiency-app") {
+      //   setTimeout(() => window.location.reload(), 3000);
+      // }
+    });
+
+    // @ts-ignore
+    // es.addEventListener("error", (e) => {
+    //   // @ts-ignore
+    //   // toast.error(`Error: ${e}`);
+    //   console.log(e, "DATA STREAM!");
+    //   if (pathname === "/efficiency-app") {
+    //     setTimeout(() => window.location.reload(), 3000);
+    //   }
+    // });
+
+    // // Handle SSE connection errors
+    // es.onerror = (_) => {
+    //   toast.error(`Something went wrong!, ${_}`);
+    //   console.log(_, "Error");
+    //   // Close the SSE connection
+    //   es.close();
+    // };
+  }, []);
 
   if (isLoading && efficiencyLoading)
     return (
