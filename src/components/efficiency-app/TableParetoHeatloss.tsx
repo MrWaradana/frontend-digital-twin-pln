@@ -43,37 +43,52 @@ import ModalRootCauseAction from "./ModalRootCauseAction";
 const formattedNumber = (value: any) =>
   new Intl.NumberFormat("id-ID").format(value);
 
+// const formatCurrency = (number: any) => {
+//   // Convert to absolute value to handle negative numbers
+//   const absNumber = Math.abs(number);
+//   const formatIDNumber = (value: any) =>
+//     new Intl.NumberFormat("id-ID").format(value);
+//   // Determine the appropriate suffix based on the value
+//   let formattedNumber;
+//   let suffix = "";
+
+//   if (absNumber >= 1_000_000_000_000) {
+//     // Trillions
+//     formattedNumber = (number / 1_000_000_000_000).toFixed(2);
+//     suffix = " T";
+//   } else if (absNumber >= 1_000_000_000) {
+//     // Billions
+//     formattedNumber = (number / 1_000_000_000).toFixed(2);
+//     suffix = " M";
+//   } else if (absNumber >= 1_000_000) {
+//     // Millions
+//     formattedNumber = (number / 1_000_000).toFixed(2);
+//     suffix = " Jt";
+//   } else if (absNumber >= 1_000) {
+//     // Millions
+//     formattedNumber = (number / 1_000).toFixed(2);
+//     suffix = " Rb";
+//   } else {
+//     // Thousands separator for smaller numbers
+//     formattedNumber = number.toLocaleString("id-ID");
+//   }
+
+//   return formatIDNumber(formattedNumber) + suffix;
+// };
+
 const formatCurrency = (number: any) => {
   // Convert to absolute value to handle negative numbers
   const absNumber = Math.abs(number);
+
+  // Always convert to juta (millions)
+  const formattedNumber = (number / 1_000_000).toFixed(2); // Convert to juta
+
+  // Formatter for Indonesian locale
   const formatIDNumber = (value: any) =>
     new Intl.NumberFormat("id-ID").format(value);
-  // Determine the appropriate suffix based on the value
-  let formattedNumber;
-  let suffix = "";
 
-  if (absNumber >= 1_000_000_000_000) {
-    // Trillions
-    formattedNumber = (number / 1_000_000_000_000).toFixed(2);
-    suffix = " T";
-  } else if (absNumber >= 1_000_000_000) {
-    // Billions
-    formattedNumber = (number / 1_000_000_000).toFixed(2);
-    suffix = " M";
-  } else if (absNumber >= 1_000_000) {
-    // Millions
-    formattedNumber = (number / 1_000_000).toFixed(2);
-    suffix = " Jt";
-  } else if (absNumber >= 1_000) {
-    // Millions
-    formattedNumber = (number / 1_000).toFixed(2);
-    suffix = " Rb";
-  } else {
-    // Thousands separator for smaller numbers
-    formattedNumber = number.toLocaleString("id-ID");
-  }
-
-  return formatIDNumber(formattedNumber) + suffix;
+  // Append the "Jt" (Juta) suffix for all values
+  return formatIDNumber(formattedNumber) + " Jt";
 };
 
 //un-memoized normal table body component - see memoized version below
@@ -345,15 +360,13 @@ export default function TableParetoHeatloss({
           </div>
         ),
         meta: {
-          className: "text-right",
+          className: "text-right pr-1",
         },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) =>
           row.depth === 0
             ? null
-            : (row.reference_data != null
-                ? formattedNumber(row.reference_data.toFixed(2))
-                : 0) || "",
+            : (row.reference_data != null ? row.reference_data : 0) || "",
         cell: (props: any) => (
           <div
             style={{
@@ -373,14 +386,13 @@ export default function TableParetoHeatloss({
           </div>
         ),
         meta: {
-          className: "text-right",
+          className: "text-right pr-1",
         },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) =>
           row.depth === 0
             ? null
-            : (row.existing_data != null ? row.existing_data.toFixed(2) : 0) ||
-              "",
+            : (row.existing_data != null ? row.existing_data : 0) || "",
         cell: (props: any) => (
           <div
             style={{
@@ -396,19 +408,35 @@ export default function TableParetoHeatloss({
         header: () => <div className="text-center">Gap</div>,
         size: 45,
         meta: {
-          className: "text-right",
+          className: "text-right pr-1",
         },
         // Access the correct UOM value for each row or sub-row
-        accessorFn: (row: any) => (row.data ? null : row.gap.toFixed(2) || ""),
-        cell: (props: any) => (
-          <div
-            style={{
-              paddingLeft: `${props.cell.row.depth * 1}rem`,
-            }}
-          >
-            {props.row.depth > 0 ? formattedNumber(props.getValue()) : ""}
-          </div>
-        ),
+        accessorFn: (row: any) => (row.data ? null : row.gap || ""),
+        cell: (props: any) => {
+          const value = props.getValue();
+
+          // Function to handle very small numbers and convert them to scientific notation
+          const formatSmallNumber = (num: number) => {
+            if (Math.abs(num) < 0.0001 && num !== 0) {
+              const exponentialForm = num.toExponential(1); // Format to exponential notation
+              const [coefficient, exponent] = exponentialForm.split("e");
+              return `${coefficient}x10^${exponent}`;
+            }
+            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+          };
+
+          return (
+            <div
+              style={{
+                paddingLeft: `${props.cell.row.depth * 1}rem`,
+              }}
+            >
+              {props.row.depth > 0 && value
+                ? formatSmallNumber(Number(value))
+                : ""}
+            </div>
+          );
+        },
       },
       // {
       //   header: "% HR",
@@ -453,7 +481,7 @@ export default function TableParetoHeatloss({
         accessorKey: "persen_losses",
         size: 45,
         meta: {
-          className: "text-right",
+          className: "text-right pr-1",
         },
         header: () => (
           <div className="text-center">
@@ -474,7 +502,7 @@ export default function TableParetoHeatloss({
         accessorKey: "nilai_losses",
         size: 45,
         meta: {
-          className: "text-right",
+          className: "text-right pr-1",
         },
         header: () => (
           <div className="text-center">
@@ -514,10 +542,14 @@ export default function TableParetoHeatloss({
       },
       {
         id: "potentialBenefit",
-        header: () => <div className="text-center">Potential Benefit</div>,
+        header: () => (
+          <div className="text-center">
+            Potential Benefit <br /> (Juta)
+          </div>
+        ),
         size: 125,
         meta: {
-          className: "text-right",
+          className: "text-right pr-1",
         },
         accessorKey: "cost_benefit",
         cell: (props: any) => {
@@ -541,7 +573,7 @@ export default function TableParetoHeatloss({
         id: "biayaClosingGap",
         accessorKey: "total_biaya",
         meta: {
-          className: "text-right",
+          className: "text-right pr-1",
         },
         header: () => (
           <div className="text-center">Biaya untuk Closing Gap</div>

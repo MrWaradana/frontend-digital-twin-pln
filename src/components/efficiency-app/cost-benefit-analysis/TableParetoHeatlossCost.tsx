@@ -39,6 +39,7 @@ import EditableCell from "../EditableCell";
 import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
 import ModalRootCause from "../ModalRootCause";
 import ModalRootCauseAction from "../ModalRootCauseAction";
+import { CostBenefitDataType } from "../../../lib/APIs/useGetDataCostBenefit";
 
 const formatCurrency = (number: any) => {
   // Convert to absolute value to handle negative numbers
@@ -73,7 +74,7 @@ const formatCurrency = (number: any) => {
 };
 
 //un-memoized normal table body component - see memoized version below
-function TableBody({ table }: { table: Table<ParetoType> }) {
+function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
   return (
     <tbody>
       {table.getRowModel().rows.length === 0 ? (
@@ -240,7 +241,7 @@ export const MemoizedTableBody = React.memo(TableBody, (prev, next) => {
   return isSameData && hasExpandedStateChanged;
 }) as typeof TableBody;
 
-export default function TableParetoHeatlossNPHR({
+export default function TableParetoHeatlossCost({
   tableData,
   summaryData,
   mutate,
@@ -249,7 +250,7 @@ export default function TableParetoHeatlossNPHR({
   setIsMutating,
 }: {
   tableData: any;
-  summaryData: any;
+  summaryData?: any;
   mutate?: any;
   isValidating?: any;
   data_id?: string;
@@ -279,7 +280,8 @@ export default function TableParetoHeatlossNPHR({
   const columns = useMemo(
     () => [
       {
-        accessorKey: "category",
+        accessorFn: (row: any) =>
+          row.depth != 0 ? null : row.variable?.excel_variable_name || "",
         header: "Parameter",
         minSize: 60,
         size: 250,
@@ -692,9 +694,7 @@ export default function TableParetoHeatlossNPHR({
     fieldSeparator: ",",
     decimalSeparator: ".",
     useKeysAsHeaders: true,
-    filename: `Pareto-${summaryData.category}-${new Date().toLocaleString(
-      "id"
-    )}`,
+    filename: `Cost-Benefit-Analysis-${new Date().toLocaleString("id")}`,
   });
 
   const handleExportData = () => {
@@ -756,7 +756,7 @@ export default function TableParetoHeatlossNPHR({
       },
       imageType: "image/jpeg",
       autoResize: true,
-      output: "./pdf/pareto-generated.pdf",
+      output: "./pdf/Cost-Benefit-Analysis-generated.pdf",
     });
 
     // Restore classes after generating the PDF
@@ -794,9 +794,7 @@ export default function TableParetoHeatlossNPHR({
     //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
     return XLSX.writeFile(
       workbook,
-      `ParetoData-${summaryData.category}-${new Date().toLocaleString(
-        "id"
-      )}.xlsx`
+      `Cost-Benefit-Analysis-${new Date().toLocaleString("id")}.xlsx`
     );
   };
 
@@ -871,12 +869,12 @@ export default function TableParetoHeatlossNPHR({
         <table
           cellPadding=".25"
           cellSpacing="0"
-          className="overflow-y-scroll relative"
+          className="overflow-y-scroll relative min-w-full"
           style={{
             ...columnSizeVars,
             width: table.getTotalSize(),
           }}
-          id="table-pareto-nphr"
+          id="table-pareto-cost"
         >
           <thead className="sticky top-0 z-50 border-2">
             {table.getHeaderGroups().map((headerGroup: any) => {
@@ -924,10 +922,10 @@ export default function TableParetoHeatlossNPHR({
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
-                {formatCurrency(summaryData.total_persen_losses.toFixed(2))}
+                {formatCurrency(summaryData.total_persen.toFixed(2))}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
-                {summaryData.total_nilai_losses.toFixed(2)}
+                {summaryData.total_nilai.toFixed(2)}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
@@ -935,7 +933,7 @@ export default function TableParetoHeatlossNPHR({
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
-                Rp.{formatCurrency(summaryData.total_cost_gap.toFixed(2))}
+                Rp.{formatCurrency(summaryData.total_biaya.toFixed(2))}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={2}></th>
             </tr>

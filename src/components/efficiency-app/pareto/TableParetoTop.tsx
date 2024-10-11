@@ -227,9 +227,7 @@ export default function TableParetoTop({
             )}{" "}
             <span className="text-base print-cell">
               {" "}
-              {props.getValue() || props.row.depth > 0
-                ? props.getValue()
-                : "Pareto"}
+              {props.getValue() || props.row.depth > 0 ? props.getValue() : ""}
             </span>
           </div>
         ),
@@ -286,7 +284,7 @@ export default function TableParetoTop({
         header: () => (
           <div className="text-center">
             Existing Data <br />
-            (Niaga)
+            (Current)
           </div>
         ),
         meta: {

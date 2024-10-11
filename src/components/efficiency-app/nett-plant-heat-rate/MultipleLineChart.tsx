@@ -148,17 +148,26 @@ export default function MultipleLineChart({
                   value ? value.slice(0, 4) : "Uncategorized"
                 }
               />
-              <YAxis domain={[0, 100]} />
+              <YAxis
+                orientation="left"
+                label={{
+                  value: "Nilai Losses",
+                  angle: -90,
+                  dx: -20,
+                }}
+              />
+              <YAxis
+                domain={[0, 100]}
+                orientation="right"
+                label={{
+                  value: "Persen Losses",
+                  angle: 90,
+                  dx: 20,
+                }}
+                yAxisId={"persenLosses"}
+              />
               <Legend />
               <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-              <Bar
-                dataKey={"total_persen_losses"}
-                name={"Total Persen Loss"}
-                fill="#ffcaaf"
-                className="hover:cursor-pointer"
-                barSize={20}
-                onClick={(e) => handleBarClick(e)}
-              />
               <Bar
                 dataKey={"total_nilai_losses"}
                 name={"Total Nilai Loss"}
@@ -167,6 +176,15 @@ export default function MultipleLineChart({
                 barSize={20}
                 onClick={(e) => handleBarClick(e)}
               />
+              <Bar
+                dataKey={"total_persen_losses"}
+                name={"Total Persen Loss"}
+                fill="#1b85b8"
+                className="hover:cursor-pointer"
+                barSize={20}
+                onClick={(e) => handleBarClick(e)}
+              />
+
               <ReferenceLine
                 x="Miscellaneous auxiliary load"
                 stroke="#00b0f0"
@@ -190,6 +208,7 @@ export default function MultipleLineChart({
                 stroke="var(--color-category)"
                 strokeWidth={2}
                 dot={true}
+                yAxisId={"persenLosses"}
               />
               <Line
                 name={`Cummulative Frequency`}
@@ -198,6 +217,7 @@ export default function MultipleLineChart({
                 stroke="var(--color-cum_frequency)"
                 strokeWidth={2}
                 dot={true}
+                yAxisId={"persenLosses"}
               />
             </ComposedChart>
           </ChartContainer>

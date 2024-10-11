@@ -68,14 +68,14 @@ export function getMenuList(pathname: string): Group[] {
           icon: ChartCandlestick,
           submenus: [],
         },
-        // {
-        //   href: "/efficiency-app/cost-benefit-analysis",
-        //   label: "Cost Benefit Analysis",
-        //   active:
-        //     pathname === "/efficiency-app/cost-benefit-analysis" ? true : false,
-        //   icon: CircleDollarSign,
-        //   submenus: [],
-        // },
+        {
+          href: "/efficiency-app/cost-benefit-analysis",
+          label: "Cost Benefit Analysis",
+          active:
+            pathname === "/efficiency-app/cost-benefit-analysis" ? true : false,
+          icon: CircleDollarSign,
+          submenus: [],
+        },
         // {
         //   href: "/efficiency-app/performance-test",
         //   label: "Performance Test",
