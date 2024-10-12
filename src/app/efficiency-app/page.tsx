@@ -112,7 +112,7 @@ export default function Page() {
     const es = new EventSource(api);
     // @ts-ignore
     es.addEventListener("data_outputs", (e) => {
-      toast.success(`Efficiency data has been processed!`, { duration: 5000 });
+      toast.success(`Efficiency data has been processed!`, { duration: 3000 });
       setStatusThermoflow(false);
       mutateEfficiency();
       // if (pathname === "/efficiency-app") {
