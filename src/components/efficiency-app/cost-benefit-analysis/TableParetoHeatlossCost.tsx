@@ -47,6 +47,8 @@ const formattedNumber = (value: any) =>
 const formatCurrency = (number: any) => {
   // Convert to absolute value to handle negative numbers
   const absNumber = Math.abs(number);
+  const formattedNumberID = (value: any) =>
+    new Intl.NumberFormat("id-ID").format(value);
 
   // Determine the appropriate suffix based on the value
   let formattedNumber;
@@ -73,7 +75,7 @@ const formatCurrency = (number: any) => {
     formattedNumber = number.toLocaleString("id-ID");
   }
 
-  return formattedNumber(formattedNumber) + suffix;
+  return formattedNumberID(formattedNumber) + suffix;
 };
 
 //un-memoized normal table body component - see memoized version below
@@ -387,9 +389,7 @@ export default function TableParetoHeatlossCost({
             : (row.existing_data != null
                 ? formattedNumber(row.existing_data.toFixed(2))
                 : 0) || "",
-        cell: (props: any) => (
-          <div className="text-center">{props.getValue()}</div>
-        ),
+        cell: (props: any) => <div>{props.getValue()}</div>,
       },
       {
         id: "gap",
