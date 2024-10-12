@@ -104,7 +104,7 @@ export default function Page() {
     useSelectedEfficiencyDataStore
       .getState()
       //@ts-ignore
-      .setSelectedEfficiencyData(efficiency[0]);
+      .setSelectedEfficiencyData(efficiency[0] ?? "");
   }
 
   useEffect(() => {

@@ -209,17 +209,17 @@ export default function TableEfficiency({
           (item: TransactionsType) => item.id !== selectedRowId
         );
         mutate();
-        setLoadingEfficiency(isValidating);
         setTableState(updatedData);
-        toast.success("Data deleted succesfully!");
+        toast.success("Data deleted successfully!");
         setDeleteModalOpen(false); // Close the modal
       } else {
         console.error("Failed to delete");
         toast.error("Failed to delete data, try again later...");
       }
     } catch (error) {
-      toast.error(`${error}`);
       console.error("Error deleting data:", error);
+      toast.error(`Error: ${error || "Unknown error occurred"}`);
+    } finally {
       setIsDeleteLoading(false);
     }
   };
@@ -283,7 +283,9 @@ export default function TableEfficiency({
                     {/* <DropdownItem href={`/efficiency-app/heat-rate`}>
                   Heat Rate
                 </DropdownItem> */}
-                    <DropdownItem href={`/efficiency-app/${rowData.id}/engine-flow`}>
+                    <DropdownItem
+                      href={`/efficiency-app/${rowData.id}/engine-flow`}
+                    >
                       Engine Flow
                     </DropdownItem>
                     <DropdownItem
@@ -382,14 +384,12 @@ export default function TableEfficiency({
                 disabledKeys={["Commision", "Niaga"]}
               >
                 {parameterOptions.map((parameter: any) => {
-                  
-                    return (
-                      <DropdownItem key={parameter.uid} className="capitalize">
-                        {capitalize(parameter.name)}
-                      </DropdownItem>
-                    );
-
-                })}      
+                  return (
+                    <DropdownItem key={parameter.uid} className="capitalize">
+                      {capitalize(parameter.name)}
+                    </DropdownItem>
+                  );
+                })}
               </DropdownMenu>
             </Dropdown>
             {/* <Dropdown>
