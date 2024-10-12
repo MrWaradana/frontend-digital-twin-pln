@@ -424,14 +424,16 @@ export default function TableEfficiency({
             <Button
               as={Link}
               href={addNewUrl}
-              isDisabled={thermoStatus ?? false}
-              isLoading={thermoStatus ?? false}
+              // isDisabled={thermoStatus ?? false}
+              // isLoading={thermoStatus ?? false}
               color="primary"
               startContent={
-                <PlusIcon className={`${thermoStatus ? "hidden" : ""}`} />
+                // <PlusIcon className={`${thermoStatus ? "hidden" : ""}`} />
+                <PlusIcon />
               }
             >
-              {!thermoStatus ? "Add New" : "Processing Data..."}
+              Add New
+              {/* {!thermoStatus ? "Add New" : "Processing Data..."} */}
             </Button>
           </div>
         </div>
