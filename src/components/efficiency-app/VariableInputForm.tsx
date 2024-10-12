@@ -323,11 +323,11 @@ export default function VariableInputForm({
             color="primary"
             size="md"
             //@ts-ignore
-            isDisabled={thermoStatusData}
+            isDisabled={thermoStatusData?.thermo_status}
             isLoading={loading}
             className="flex min-w-full translate-y-4"
           >
-            {thermoStatusData
+            {thermoStatusData?.thermo_status
               ? "Thermolink is processing data, please wait..."
               : "Submit Data"}
             {/* Submit Data */}

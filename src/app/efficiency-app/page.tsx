@@ -112,7 +112,7 @@ export default function Page() {
     const es = new EventSource(api);
     // @ts-ignore
     es.addEventListener("data_outputs", (e) => {
-      toast.success(`Efficiency data has been processed!`);
+      toast.success(`Efficiency data has been processed!`, { duration: 5000 });
       setStatusThermoflow(false);
       mutateEfficiency();
       // if (pathname === "/efficiency-app") {
@@ -139,7 +139,7 @@ export default function Page() {
     // };
   }, []);
 
-  if (isLoading || isValidating )
+  if (isLoading || isValidating)
     return (
       <div className="w-full mt-24 flex justify-center items-center">
         <CircularProgress

@@ -41,6 +41,7 @@ import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { useSession } from "next-auth/react";
 import { useSelectedEfficiencyDataStore } from "../../store/selectedEfficiencyData";
 import toast from "react-hot-toast";
+import { useStatusThermoflowStore } from "../../store/statusThermoflow";
 
 const parameterColorMap: Record<string, ChipProps["color"]> = {
   current: "success",
@@ -116,6 +117,9 @@ export default function TableEfficiency({
     direction: "ascending",
   });
 
+  const StatusThermoflow = useStatusThermoflowStore(
+    (state) => state.statusThermoflow
+  );
   const selectedEfficiencyData = useSelectedEfficiencyDataStore(
     (state) => state.selectedEfficiencyData
   ); // Retrieve currentKey from Zustand
@@ -420,8 +424,8 @@ export default function TableEfficiency({
             <Button
               as={Link}
               href={addNewUrl}
-              isDisabled={thermoStatus ?? true}
-              isLoading={thermoStatus ?? true}
+              isDisabled={thermoStatus ?? false}
+              isLoading={thermoStatus ?? false}
               color="primary"
               startContent={
                 <PlusIcon className={`${thermoStatus ? "hidden" : ""}`} />
@@ -574,7 +578,7 @@ export default function TableEfficiency({
           )}
         </TableHeader>
         <TableBody
-          emptyContent={`No ${parameterFilter} data found`}
+          emptyContent={`No data found`}
           isLoading={(efficiencyLoading ?? false) || (isValidating ?? false)}
           loadingContent={
             <>

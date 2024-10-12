@@ -54,18 +54,21 @@ export default function Page({ params }: { params: { data_id: string } }) {
 
   const positions = {
     // Top row - turbines
-    EG: { name: "Output Generator:", top: "15%", left: "92%", unit: "MW" },
-    LPT: { name: "Efficiency:", top: "19%", left: "76%", unit: "%" },
-    IPT: { name: "Efficiency:", top: "18%", left: "53%", unit: "%" },
-    HPT: { name: "Efficiency:", top: "19%", left: "29.8%", unit: "%" },
+    EG: { name: "Output Generator:", top: "14%", left: "91%", unit: "MW" },
+    LPT: { name: "Efficiency:", top: "12%", left: "76%", unit: "%" },
+    IPT: { name: "Efficiency:", top: "14%", left: "53%", unit: "%" },
+    HPT: { name: "Efficiency:", top: "15%", left: "29.8%", unit: "%" },
 
     // Bottom row - RH components
-    RH7: { name: "TTD:", top: "75%", left: "28.7%", unit: "°C" },
-    RH6: { name: "TTD:", top: "75%", left: "36.6%", unit: "°C" },
-    RH5: { name: "TTD:", top: "75%", left: "45.5%", unit: "°C" },
-    RH3: { name: "TTD:", top: "75%", left: "61.5%", unit: "°C" },
-    RH2: { name: "TTD:", top: "75%", left: "70.5%", unit: "°C" },
-    RH1: { name: "TTD:", top: "75%", left: "79.5%", unit: "°C" },
+    RH7: { name: "TTD:", top: "74%", left: "28.7%", unit: "°C" },
+    RH6: { name: "TTD:", top: "74%", left: "36.6%", unit: "°C" },
+    RH5: { name: "TTD:", top: "74%", left: "45.5%", unit: "°C" },
+    RH3: { name: "TTD:", top: "74%", left: "61.5%", unit: "°C" },
+    RH2: { name: "TTD:", top: "74%", left: "70.5%", unit: "°C" },
+    RH1: { name: "TTD:", top: "74%", left: "79.5%", unit: "°C" },
+
+    // Condensor
+    Condensor: { name: "Condensor:", top: "80%", left: "90%", unit: "" },
   };
   const formatIDNumber = (value: any) =>
     new Intl.NumberFormat("id-ID").format(value);

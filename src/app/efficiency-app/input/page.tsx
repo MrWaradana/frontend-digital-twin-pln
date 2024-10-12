@@ -41,7 +41,7 @@ export default function Page() {
 
   const variable = variableData ?? [];
 
-  if (thermoStatusData) {
+  if (thermoStatusData?.thermo_status ) {
     setTimeout(() => router.push("/efficiency-app"), 2000);
     return (
       <EfficiencyContentLayout title="Input Form">
