@@ -36,6 +36,14 @@ export function useGetData(
         // Retry after 5 seconds.
         setTimeout(() => revalidate({ retryCount }), 5000);
       },
+      keepPreviousData: true,
+      refreshInterval: 7200000,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      refreshWhenHidden: false,
+      refreshWhenOffline: false,
+      errorRetryInterval: 60000,
+      shouldRetryOnError: false,
     }
   );
 }

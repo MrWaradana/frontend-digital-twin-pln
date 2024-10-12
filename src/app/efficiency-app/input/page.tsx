@@ -15,12 +15,23 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { useGetVariables } from "@/lib/APIs/useGetVariables";
+import { useGetThermoStatus } from "@/lib/APIs/useGetThermoStatus";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
+  const router = useRouter();
   const { data: session, status } = useSession();
   const excels = useExcelStore((state) => state.excels);
   const [selectedMasterData, setSelectedMasterData] =
     useState<string>("current");
+
+  const {
+    data: thermoStatusData,
+    isLoading: isLoadingThermoStatus,
+    isValidating: isValidatingThermoStatus,
+    error: errorThermoStatus,
+    mutate: mutateThermoStatus,
+  } = useGetThermoStatus();
 
   const {
     data: variableData,
@@ -29,6 +40,20 @@ export default function Page() {
   } = useGetVariables(session?.user.access_token, excels[0].id, "in");
 
   const variable = variableData ?? [];
+
+  if (thermoStatusData) {
+    setTimeout(() => router.push("/efficiency-app"), 2000);
+    return (
+      <EfficiencyContentLayout title="Input Form">
+        <div className="flex justify-center mt-12">
+          <CircularProgress
+            color="primary"
+            label="Thermoflow is processing data, redirecting to all efficiency data..."
+          />
+        </div>
+      </EfficiencyContentLayout>
+    );
+  }
 
   if (isLoading)
     return (

@@ -530,6 +530,10 @@ export default function TableParetoHeatloss({
                   <span className="py-1 px-3 bg-orange-400 rounded-md text-white">
                     Lower
                   </span>
+                ) : props.row.original.gap === 0 ? (
+                  <span className="py-1 px-3 bg-green-400 dark:bg-green-700 rounded-md">
+                    Normal
+                  </span>
                 ) : (
                   <span className="py-1 px-3 bg-red-500 rounded-md text-white">
                     Higher

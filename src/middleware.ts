@@ -46,8 +46,9 @@ export default auth(async (req) => {
       // console.log(res);
 
       if (resVerify.ok) {
-        console.log("verify test");
-        return NextResponse.next();
+        console.log("Token verified");
+      } else {
+        throw new Error("Token verification failed");
       }
 
       const newSessionToken = await encode({
@@ -60,25 +61,23 @@ export default auth(async (req) => {
         maxAge: 30 * 24 * 60 * 60, // 30 days, or get the previous token's exp
         salt: "123",
       });
+
+      const resp = NextResponse.next();
+      resp.cookies.set("authjs.session-token", newSessionToken, {
+        httpOnly: true,
+      });
+
+      return resp;
     } catch (e) {
-      console.log(e);
+      console.error("Error in auth middleware:", e);
+      const newUrl = new URL("/login", req.nextUrl.origin);
+      return Response.redirect(newUrl);
     }
-
-    // console.log(
-    //   req.cookies.get("authjs.session-token")?.value,
-    //   "session cookie token"
-    // );
-    // console.log(newSessionToken, "session2");
-    const resp = NextResponse.next();
-
-    // resp.cookies.set(
-    //   req.cookies.get("authjs.session-token").value,
-    //   newSessionToken
-    // );
-    // console.log(resp, "resp");
-    return resp;
   }
 
+  // const setStatusThermoflow = useStatusThermoflowStore(
+  //   (state) => state.setStatusThermoflow
+  // ); // Retrieve currentKey from Zustand
   // Proceed if the request is authenticated or is for the login page
   return;
 });

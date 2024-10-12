@@ -21,6 +21,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useStatusThermoflowStore } from "../../store/statusThermoflow";
+import { useGetThermoStatus } from "../../lib/APIs/useGetThermoStatus";
 interface Variable {
   category: string;
   input_name: string;
@@ -46,6 +47,14 @@ export default function VariableInputForm({
   const [inputValues, setInputValues] = useState(
     Object.fromEntries(variableData.map((v: any) => [v.id, v.base_case]))
   );
+
+  const {
+    data: thermoStatusData,
+    isLoading,
+    isValidating,
+    error,
+    mutate,
+  } = useGetThermoStatus();
 
   const categorizedData = variableData.reduce((acc: any, variable: any) => {
     if (!acc[variable.category]) {
@@ -172,6 +181,15 @@ export default function VariableInputForm({
     console.log(formError);
   }
   // console.log(categorizedData);
+
+  // if (isLoading) {
+  //   return (
+  //     <div>
+  //       <Spinner color="primary" label="Loading..." />
+  //     </div>
+  //   );
+  // }
+
   return (
     <div className="flex flex-col gap-4 mx-2 min-w-full">
       <Toaster />
@@ -304,10 +322,15 @@ export default function VariableInputForm({
             type="submit"
             color="primary"
             size="md"
+            //@ts-ignore
+            isDisabled={thermoStatusData}
             isLoading={loading}
             className="flex min-w-full translate-y-4"
           >
-            Submit Data
+            {thermoStatusData
+              ? "Thermolink is processing data, please wait..."
+              : "Submit Data"}
+            {/* Submit Data */}
           </Button>
         </form>
       </Form>

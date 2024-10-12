@@ -3,7 +3,7 @@ import useSWR, { KeyedMutator, SWRConfiguration } from "swr";
 
 import { HookReply } from "./types";
 import { useGeneralErrorToast } from "./useGeneralErrorToast";
-import { fetcher } from "../fetcher";
+import { fetcher, fetcherNoToken } from "../fetcher";
 import { AUTH_API_URL } from "../api-url";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
@@ -20,7 +20,7 @@ export function useApiFetch<T, RawT = T>(
   const { data: session, status, update } = useSession();
   const isReady = isReadyCondition;
 
-  const fetcherToUse = customFetcher ? customFetcher : fetcher;
+  const fetcherToUse = token ? fetcher : fetcherNoToken;
 
   const {
     data,

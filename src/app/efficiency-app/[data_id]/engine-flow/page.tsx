@@ -2,11 +2,18 @@
 
 import Image from "next/image";
 import EngineFlow from "../../../../../public/engine-flow-v2.jpg";
-import { Tooltip, Button, Link, CircularProgress } from "@nextui-org/react";
+import {
+  Tooltip,
+  Button,
+  Link,
+  CircularProgress,
+  Spinner,
+} from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import { EfficiencyContentLayout } from "../../../../containers/EfficiencyContentLayout";
 import { useGetDataEngineFlow } from "@/lib/APIs/useGetDataEngineFlow";
 import { useSession } from "next-auth/react";
+import { useGetDataPareto } from "@/lib/APIs/useGetDataPareto";
 
 export default function Page({ params }: { params: { data_id: string } }) {
   const { data: session, status } = useSession();
@@ -16,6 +23,32 @@ export default function Page({ params }: { params: { data_id: string } }) {
     isLoading,
     error,
   } = useGetDataEngineFlow(session?.user.access_token, params.data_id);
+
+  const {
+    data,
+    mutate,
+    isLoading: isLoadingPareto,
+    error: errorPareto,
+    isValidating: isValidatingPareto,
+  } = useGetDataPareto(session?.user.access_token, params.data_id, 100);
+
+  const tableData = data?.pareto_result ?? [];
+  const paretoTopData = data?.parett_uncategorized_result ?? [];
+  const paretoBottomData = tableData.filter((item) => item.category != null);
+
+  const coalData = paretoTopData
+    //@ts-ignore
+    .filter((item) => item.variable.excel_variable_name === "Total Coal Flow")
+    //@ts-ignore
+    .map((item) => item.existing_data);
+
+  const nphrData = paretoTopData
+    .filter(
+      //@ts-ignore
+      (item) => item.variable.excel_variable_name === "Plant Net Heat Rate"
+    )
+    //@ts-ignore
+    .map((item) => item.existing_data);
 
   const engineFlowData = engineFlow ?? {};
 
@@ -44,7 +77,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
 
   if (isLoading)
     return (
-      <EfficiencyContentLayout title="Input Form">
+      <EfficiencyContentLayout title="Engine Flow">
         <div className="flex justify-center mt-12">
           <CircularProgress color="primary" />
         </div>
@@ -65,6 +98,42 @@ export default function Page({ params }: { params: { data_id: string } }) {
           >
             Back to all
           </Button>
+        </div>
+        {/* {JSON.stringify(paretoTopData)} */}
+        <div className="grid grid-cols-3 gap-4 text-md md:text-lg">
+          <div className="text-center bg-blue-300 px-2 py-1 rounded-sm">
+            <p className="font-bold">Coal Consumption</p>
+            {isLoadingPareto ? (
+              <Spinner />
+            ) : (
+              <p>
+                {formatIDNumber(Number(coalData).toFixed(2)) ?? "No data"} Kg/h
+              </p>
+            )}
+          </div>
+          <div className="text-center bg-blue-300 px-2 py-1 rounded-sm">
+            <p className="font-bold">Net Plant Heat Rate</p>
+            {isLoadingPareto ? (
+              <Spinner />
+            ) : (
+              <p>
+                {formatIDNumber(Number(nphrData).toFixed(2)) ?? "No data"}{" "}
+                kCal/kWh
+              </p>
+            )}
+          </div>
+          <div className="text-center bg-blue-300 px-2 py-1 rounded-sm">
+            <p className="font-bold">Total Heat Loss</p>
+            {isLoadingPareto ? (
+              <Spinner />
+            ) : (
+              <p>
+                {formatIDNumber(Number(data?.total_nilai).toFixed(2)) ??
+                  "No data"}{" "}
+                kCal/kWh
+              </p>
+            )}
+          </div>
         </div>
         <div className="relative min-w-full">
           <Image src={EngineFlow} alt="engine-flow" className="w-full" />

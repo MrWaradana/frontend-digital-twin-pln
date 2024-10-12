@@ -131,7 +131,8 @@ export default function TableEfficiency({
   const hasSearchFilter = Boolean(filterValue);
 
   const nonPerformanceData = tableData.filter(
-    (item: any) => !item.is_performance_test
+    (item: any) =>
+      !item.is_performance_test && item.jenis_parameter === "current"
   );
 
   const headerColumns = React.useMemo(() => {
@@ -419,8 +420,8 @@ export default function TableEfficiency({
             <Button
               as={Link}
               href={addNewUrl}
-              isDisabled={thermoStatus ? thermoStatus : false}
-              isLoading={thermoStatus ? thermoStatus : false}
+              isDisabled={thermoStatus ?? true}
+              isLoading={thermoStatus ?? true}
               color="primary"
               startContent={
                 <PlusIcon className={`${thermoStatus ? "hidden" : ""}`} />
@@ -574,7 +575,7 @@ export default function TableEfficiency({
         </TableHeader>
         <TableBody
           emptyContent={`No ${parameterFilter} data found`}
-          isLoading={efficiencyLoading}
+          isLoading={(efficiencyLoading ?? false) || (isValidating ?? false)}
           loadingContent={
             <>
               <Spinner color="primary" label="loading..." />

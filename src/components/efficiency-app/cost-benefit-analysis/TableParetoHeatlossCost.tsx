@@ -518,6 +518,10 @@ export default function TableParetoHeatlossCost({
                   <span className="py-1 px-3 bg-orange-400 rounded-md">
                     Lower
                   </span>
+                ) : props.row.original.gap === 0 ? (
+                  <span className="py-1 px-3 bg-green-400 dark:bg-green-700 rounded-md">
+                    Normal
+                  </span>
                 ) : (
                   <span className="py-1 px-3 bg-red-500 rounded-md">
                     Higher
@@ -943,11 +947,11 @@ export default function TableParetoHeatlossCost({
                 Total Summary
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right">
-                {formatCurrency(summaryData.total_persen.toFixed(2))}
+              <th className="bg-blue-200 dark:bg-blue-600 text-right pr-2">
+                {formattedNumber(summaryData.total_persen.toFixed(2))}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right">
-                {summaryData.total_nilai.toFixed(2)}
+              <th className="bg-blue-200 dark:bg-blue-600 text-right pr-2">
+                {formattedNumber(summaryData.total_nilai.toFixed(2))}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
