@@ -8,6 +8,7 @@ export interface CostBenefitDataType {
   total_cost_benefit: string | number;
   total_nilai: string | number;
   total_persen: string | number;
+  cost_threshold: string | number;
 }
 
 export interface CostBenefitType {
@@ -58,11 +59,12 @@ interface VariableType {
 // }
 
 export function useGetDataCostBenefit(
-  token: string | undefined
+  token: string | undefined,
+  costThreshold: string
   // data_id: string | undefined
 ): HookReply<CostBenefitDataType> {
   return useApiFetch(
-    `${EFFICIENCY_API_URL}/data/cost-benefit`,
+    `${EFFICIENCY_API_URL}/data/cost-benefit?cost_threshold=${costThreshold}`,
     !!token,
     token,
     {

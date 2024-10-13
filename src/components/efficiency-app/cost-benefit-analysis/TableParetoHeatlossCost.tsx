@@ -34,7 +34,7 @@ import {
   TableRow,
   Checkbox,
 } from "@nextui-org/react";
-import { Box, DownloadIcon, PrinterIcon } from "lucide-react";
+import { Box, DownloadIcon, PrinterIcon, FilterIcon } from "lucide-react";
 import EditableCell from "../EditableCell";
 import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
 import ModalRootCause from "../ModalRootCause";
@@ -100,9 +100,8 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
                   {row.getVisibleCells().map((cell: any) => (
                     <td
                       key={cell.id}
-                      className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${
-                        cell.column.columnDef.meta?.className ?? ""
-                      }`}
+                      className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${cell.column.columnDef.meta?.className ?? ""
+                        }`}
                       style={{
                         width: `calc(var(--col-${cell.column.id}-size) * 1px)`,
                         maxWidth: "100px",
@@ -124,9 +123,8 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
                         {subRow.getVisibleCells().map((cell: any) => (
                           <td
                             key={cell.id}
-                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border border-neutral-500 print-cell ${
-                              cell.column.columnDef.meta?.className ?? ""
-                            }`}
+                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border border-neutral-500 print-cell ${cell.column.columnDef.meta?.className ?? ""
+                              }`}
                             style={{
                               width: `calc(var(--col-${cell.column.id}-size) * 1px)`,
                               maxWidth: "100px",
@@ -194,8 +192,8 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
                             Rp.
                             {row.original.total_cost_benefit
                               ? formatCurrency(
-                                  row.original.total_cost_benefit.toFixed(0)
-                                )
+                                row.original.total_cost_benefit.toFixed(0)
+                              )
                               : 0}
                           </td>
                         );
@@ -209,8 +207,8 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
                             Rp.
                             {row.original.total_cost_gap
                               ? formatCurrency(
-                                  row.original.total_cost_gap.toFixed(0)
-                                )
+                                row.original.total_cost_gap.toFixed(0)
+                              )
                               : "0"}
                           </td>
                         );
@@ -253,6 +251,8 @@ export default function TableParetoHeatlossCost({
   isValidating,
   data_id,
   setIsMutating,
+  costThreshold,
+  setCostThreshold
 }: {
   tableData: any;
   summaryData?: any;
@@ -260,6 +260,8 @@ export default function TableParetoHeatlossCost({
   isValidating?: any;
   data_id?: string;
   setIsMutating?: any;
+  costThreshold: string;
+  setCostThreshold:any;
 }) {
   const {
     isOpen: modalRootCauseIsopen,
@@ -359,8 +361,8 @@ export default function TableParetoHeatlossCost({
           row.depth === 0
             ? null
             : (row.reference_data != null
-                ? formattedNumber(row.reference_data.toFixed(2))
-                : 0) || "",
+              ? formattedNumber(row.reference_data.toFixed(2))
+              : 0) || "",
         cell: (props: any) => (
           <div
             style={{
@@ -387,8 +389,8 @@ export default function TableParetoHeatlossCost({
           row.depth === 0
             ? null
             : (row.existing_data != null
-                ? formattedNumber(row.existing_data.toFixed(2))
-                : 0) || "",
+              ? formattedNumber(row.existing_data.toFixed(2))
+              : 0) || "",
         cell: (props: any) => <div>{props.getValue()}</div>,
       },
       {
@@ -513,22 +515,22 @@ export default function TableParetoHeatlossCost({
           <>
             {(props.row.depth > 0 ||
               !props.row.original.total_nilai_losses) && ( // Only render if it's a subrow
-              <div className="flex justify-center">
-                {props.row.original.gap < 0 ? (
-                  <span className="py-1 px-3 bg-orange-400 rounded-md">
-                    Lower
-                  </span>
-                ) : props.row.original.gap === 0 ? (
-                  <span className="py-1 px-3 bg-green-400 dark:bg-green-700 rounded-md">
-                    Normal
-                  </span>
-                ) : (
-                  <span className="py-1 px-3 bg-red-500 rounded-md">
-                    Higher
-                  </span>
-                )}
-              </div>
-            )}
+                <div className="flex justify-center">
+                  {props.row.original.gap < 0 ? (
+                    <span className="py-1 px-3 bg-orange-400 rounded-md">
+                      Lower
+                    </span>
+                  ) : props.row.original.gap === 0 ? (
+                    <span className="py-1 px-3 bg-green-400 dark:bg-green-700 rounded-md">
+                      Normal
+                    </span>
+                  ) : (
+                    <span className="py-1 px-3 bg-red-500 rounded-md">
+                      Higher
+                    </span>
+                  )}
+                </div>
+              )}
           </>
         ),
       },
@@ -606,11 +608,10 @@ export default function TableParetoHeatlossCost({
             <>
               {props.row.depth > 0 && ( // Only render if it's a subrow
                 <div>
-                  {`${roundedCostBenefit} : ${roundedTotalBiaya} | ${
-                    totalBiaya == 0
+                  {`${roundedCostBenefit} : ${roundedTotalBiaya} | ${totalBiaya == 0
                       ? "-"
                       : (costBenefit / totalBiaya).toFixed(2)
-                  }`}
+                    }`}
                 </div>
               )}
             </>
@@ -690,9 +691,9 @@ export default function TableParetoHeatlossCost({
           prev.map((row: any, index: any) =>
             index === rowIndex
               ? {
-                  ...prev[rowIndex],
-                  [columnId]: value,
-                }
+                ...prev[rowIndex],
+                [columnId]: value,
+              }
               : row
           )
         );
@@ -858,38 +859,53 @@ export default function TableParetoHeatlossCost({
         paretoMutate={mutate}
       /> */}
 
-      <div className=" flex justify-end gap-2">
-        <Button
-          onClick={() => handleExportExcel()}
-          color="success"
-          size="sm"
-          endContent={<DownloadIcon size={16} />}
-        >
-          Export to Excel
-        </Button>
-        <Button
-          onClick={() => handleExportData()}
-          color="success"
-          size="sm"
-          endContent={<DownloadIcon size={16} />}
-        >
-          Export to CSV
-        </Button>
-        <Button
-          onClick={() => handleExportPDFData()}
-          color="danger"
-          size="sm"
-          endContent={<DownloadIcon size={16} />}
-        >
-          Export to PDF
-        </Button>
-        {/* <Button
-          onClick={() => handlePrint()}
-          color="secondary"
-          endContent={<PrinterIcon size={16} />}
-        >
-          Print table
-        </Button> */}
+      <div className="flex justify-between items-center w-full">
+        <div className="flex gap-2 items-center">
+          <Input
+            label="Cost Threshol"
+            placeholder="Enter cost threshold for filter"
+            value={costThreshold}
+            onChange={(e) => setCostThreshold(e.target.value)}
+            type="number"
+            step="0.01"
+            min="0"
+          />
+          <Button
+            // onClick={handleFilter}
+            color="primary"
+            size="sm"
+            onPress={() => mutate()}
+            endContent={<FilterIcon size={16} />}
+          >
+            Filter
+          </Button>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleExportExcel}
+            color="success"
+            size="sm"
+            endContent={<DownloadIcon size={16} />}
+          >
+            Export to Excel
+          </Button>
+          <Button
+            onClick={handleExportData}
+            color="success"
+            size="sm"
+            endContent={<DownloadIcon size={16} />}
+          >
+            Export to CSV
+          </Button>
+          <Button
+            onClick={handleExportPDFData}
+            color="danger"
+            size="sm"
+            endContent={<DownloadIcon size={16} />}
+          >
+            Export to PDF
+          </Button>
+        </div>
       </div>
       <div className="max-w-full max-h-[568px] mb-3 mt-1 overflow-auto relative printable-table">
         <table
@@ -910,19 +926,17 @@ export default function TableParetoHeatlossCost({
                     return (
                       <th
                         key={header.id}
-                        className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 ${
-                          header.column.columnDef.meta?.className ?? ""
-                        } `}
+                        className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 ${header.column.columnDef.meta?.className ?? ""
+                          } `}
                         style={{
                           width: `calc(var(--header-${header?.id}-size) * 1px)`,
                         }}
                       >
                         <div
-                          className={`absolute top-0 right-0 h-full w-[6px] hover:cursor-col-resize ${
-                            header.column.getIsResizing()
+                          className={`absolute top-0 right-0 h-full w-[6px] hover:cursor-col-resize ${header.column.getIsResizing()
                               ? "bg-red-700"
                               : "group-hover:bg-red-500 group-focus:bg-red-500"
-                          }`}
+                            }`}
                           onMouseDown={header.getResizeHandler()}
                           onTouchStart={header.getResizeHandler()}
                         ></div>
