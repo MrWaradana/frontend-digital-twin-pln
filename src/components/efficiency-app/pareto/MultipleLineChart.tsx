@@ -148,7 +148,7 @@ export default function MultipleLineChart({
               name={"Total Persen Loss"}
               dataKey="total_persen_losses"
               type="monotone"
-              stroke="var(--color-category)"
+              stroke="#F8719D"
               strokeWidth={2}
               dot={true}
               yAxisId={"total_persen_losses"}

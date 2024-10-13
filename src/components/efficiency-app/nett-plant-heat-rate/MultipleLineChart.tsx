@@ -183,7 +183,7 @@ export default function MultipleLineChart({
               <Bar
                 dataKey={"total_nilai_losses"}
                 name={"Total Nilai Loss"}
-                fill="#a7bed3"
+                fill="#559e83"
                 className="hover:cursor-pointer"
                 barSize={20}
                 onClick={(e) => handleBarClick(e)}
@@ -217,7 +217,7 @@ export default function MultipleLineChart({
                 name={"Total Persen Loss"}
                 dataKey="total_persen_losses"
                 type="monotone"
-                stroke="var(--color-category)"
+                stroke="#F8719D"
                 strokeWidth={2}
                 dot={true}
                 className="cursor-pointer"
@@ -232,7 +232,7 @@ export default function MultipleLineChart({
                 name={`Cummulative Frequency`}
                 dataKey="cum_frequency"
                 type="monotone"
-                stroke="var(--color-cum_frequency)"
+                stroke="#f1c232"
                 strokeWidth={2}
                 dot={true}
                 yAxisId={"persenLosses"}

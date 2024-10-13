@@ -33,6 +33,7 @@ import {
   TableHeader,
   TableRow,
   Checkbox,
+  Spinner,
 } from "@nextui-org/react";
 import { Box, DownloadIcon, PrinterIcon, FilterIcon } from "lucide-react";
 import EditableCell from "../EditableCell";
@@ -100,8 +101,9 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
                   {row.getVisibleCells().map((cell: any) => (
                     <td
                       key={cell.id}
-                      className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${cell.column.columnDef.meta?.className ?? ""
-                        }`}
+                      className={`text-sm font-normal bg-neutral-50 border-r-1 border-black dark:bg-neutral-700 ${
+                        cell.column.columnDef.meta?.className ?? ""
+                      }`}
                       style={{
                         width: `calc(var(--col-${cell.column.id}-size) * 1px)`,
                         maxWidth: "100px",
@@ -123,8 +125,9 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
                         {subRow.getVisibleCells().map((cell: any) => (
                           <td
                             key={cell.id}
-                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border border-neutral-500 print-cell ${cell.column.columnDef.meta?.className ?? ""
-                              }`}
+                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border border-neutral-500 print-cell ${
+                              cell.column.columnDef.meta?.className ?? ""
+                            }`}
                             style={{
                               width: `calc(var(--col-${cell.column.id}-size) * 1px)`,
                               maxWidth: "100px",
@@ -192,8 +195,8 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
                             Rp.
                             {row.original.total_cost_benefit
                               ? formatCurrency(
-                                row.original.total_cost_benefit.toFixed(0)
-                              )
+                                  row.original.total_cost_benefit.toFixed(0)
+                                )
                               : 0}
                           </td>
                         );
@@ -207,8 +210,8 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
                             Rp.
                             {row.original.total_cost_gap
                               ? formatCurrency(
-                                row.original.total_cost_gap.toFixed(0)
-                              )
+                                  row.original.total_cost_gap.toFixed(0)
+                                )
                               : "0"}
                           </td>
                         );
@@ -252,7 +255,12 @@ export default function TableParetoHeatlossCost({
   data_id,
   setIsMutating,
   costThreshold,
-  setCostThreshold
+  setCostThreshold,
+  setInitialCostThreshold,
+  costInitialThreshold,
+  handleFilterClick,
+  costThresholdData,
+  isLoading,
 }: {
   tableData: any;
   summaryData?: any;
@@ -261,7 +269,12 @@ export default function TableParetoHeatlossCost({
   data_id?: string;
   setIsMutating?: any;
   costThreshold: string;
-  setCostThreshold:any;
+  setCostThreshold: any;
+  setInitialCostThreshold: any;
+  costInitialThreshold: any;
+  handleFilterClick: any;
+  costThresholdData: any;
+  isLoading: any;
 }) {
   const {
     isOpen: modalRootCauseIsopen,
@@ -361,8 +374,8 @@ export default function TableParetoHeatlossCost({
           row.depth === 0
             ? null
             : (row.reference_data != null
-              ? formattedNumber(row.reference_data.toFixed(2))
-              : 0) || "",
+                ? formattedNumber(row.reference_data.toFixed(2))
+                : 0) || "",
         cell: (props: any) => (
           <div
             style={{
@@ -389,8 +402,8 @@ export default function TableParetoHeatlossCost({
           row.depth === 0
             ? null
             : (row.existing_data != null
-              ? formattedNumber(row.existing_data.toFixed(2))
-              : 0) || "",
+                ? formattedNumber(row.existing_data.toFixed(2))
+                : 0) || "",
         cell: (props: any) => <div>{props.getValue()}</div>,
       },
       {
@@ -401,19 +414,25 @@ export default function TableParetoHeatlossCost({
           className: "text-right",
         },
         // Access the correct UOM value for each row or sub-row
-        accessorFn: (row: any) => (row.data ? null : row.gap.toFixed(2) || ""),
+        accessorFn: (row: any) => (row.data ? null : row.gap),
         cell: (props: any) => {
           const value = props.getValue();
 
           // Function to handle very small numbers and convert them to scientific notation
           const formatSmallNumber = (num: number) => {
-            if (Math.abs(num) < 0.0001 && num !== 0) {
+            if (num === 0) {
+              return "0.00"; // Explicitly return '0.00' for zero
+            }
+            if (Math.abs(num) < 0.01 && num !== 0) {
               const exponentialForm = num.toExponential(1); // Format to exponential notation
               const [coefficient, exponent] = exponentialForm.split("e");
-              return `${coefficient}x10^${exponent}`;
+              return `${coefficient}x10^${exponent}`; // Custom format with x10^
             }
             return num.toFixed(2); // For normal-sized numbers, show two decimal places
           };
+
+          // Ensure the value is a number or 0 before formatting
+          const numericValue = Number(value);
 
           return (
             <div
@@ -421,9 +440,9 @@ export default function TableParetoHeatlossCost({
                 paddingLeft: `${props.cell.row.depth * 1}rem`,
               }}
             >
-              {props.row.depth > 0 && value
-                ? formatSmallNumber(Number(value))
-                : ""}
+              {value !== null && value !== undefined && !isNaN(numericValue)
+                ? formatSmallNumber(numericValue)
+                : "-"}
             </div>
           );
         },
@@ -480,10 +499,34 @@ export default function TableParetoHeatlossCost({
         ),
         cell: (props: any) => {
           const value = props.getValue();
-          if (!value) {
-            return;
-          }
-          return formattedNumber(Number(value).toFixed(2)); // Ensures the value is formatted with 2 decimal places
+
+          // Function to handle very small numbers and convert them to scientific notation
+          const formatSmallNumber = (num: number) => {
+            if (num === 0) {
+              return "0.00"; // Explicitly return '0.00' for zero
+            }
+            if (Math.abs(num) < 0.01 && num !== 0) {
+              const exponentialForm = num.toExponential(1); // Format to exponential notation
+              const [coefficient, exponent] = exponentialForm.split("e");
+              return `${coefficient}x10^${exponent}`; // Custom format with x10^
+            }
+            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+          };
+
+          // Ensure the value is a number or 0 before formatting
+          const numericValue = Number(value);
+
+          return (
+            <div
+              style={{
+                paddingLeft: `${props.cell.row.depth * 1}rem`,
+              }}
+            >
+              {value !== null && value !== undefined && !isNaN(numericValue)
+                ? formatSmallNumber(numericValue)
+                : "-"}
+            </div>
+          );
         },
         footer: (props: any) => props.column.id,
       },
@@ -501,10 +544,34 @@ export default function TableParetoHeatlossCost({
         ),
         cell: (props: any) => {
           const value = props.getValue();
-          if (!value) {
-            return;
-          }
-          return formattedNumber(Number(value).toFixed(2)); // Ensures the value is formatted with 2 decimal places
+
+          // Function to handle very small numbers and convert them to scientific notation
+          const formatSmallNumber = (num: number) => {
+            if (num === 0) {
+              return "0.00"; // Explicitly return '0.00' for zero
+            }
+            if (Math.abs(num) < 0.01 && num !== 0) {
+              const exponentialForm = num.toExponential(1); // Format to exponential notation
+              const [coefficient, exponent] = exponentialForm.split("e");
+              return `${coefficient}x10^${exponent}`; // Custom format with x10^
+            }
+            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+          };
+
+          // Ensure the value is a number or 0 before formatting
+          const numericValue = Number(value);
+
+          return (
+            <div
+              style={{
+                paddingLeft: `${props.cell.row.depth * 1}rem`,
+              }}
+            >
+              {value !== null && value !== undefined && !isNaN(numericValue)
+                ? formatSmallNumber(numericValue)
+                : "-"}
+            </div>
+          );
         },
         footer: (props: any) => props.column.id,
       },
@@ -515,22 +582,22 @@ export default function TableParetoHeatlossCost({
           <>
             {(props.row.depth > 0 ||
               !props.row.original.total_nilai_losses) && ( // Only render if it's a subrow
-                <div className="flex justify-center">
-                  {props.row.original.gap < 0 ? (
-                    <span className="py-1 px-3 bg-orange-400 rounded-md">
-                      Lower
-                    </span>
-                  ) : props.row.original.gap === 0 ? (
-                    <span className="py-1 px-3 bg-green-400 dark:bg-green-700 rounded-md">
-                      Normal
-                    </span>
-                  ) : (
-                    <span className="py-1 px-3 bg-red-500 rounded-md">
-                      Higher
-                    </span>
-                  )}
-                </div>
-              )}
+              <div className="flex justify-center">
+                {props.row.original.gap < 0 ? (
+                  <span className="py-1 px-3 bg-orange-400 text-white rounded-md">
+                    Lower
+                  </span>
+                ) : props.row.original.gap === 0 ? (
+                  <span className="py-1 px-3 bg-green-400 text-white dark:bg-green-700 rounded-md">
+                    Normal
+                  </span>
+                ) : (
+                  <span className="py-1 px-3 bg-red-500 text-white rounded-md">
+                    Higher
+                  </span>
+                )}
+              </div>
+            )}
           </>
         ),
       },
@@ -550,7 +617,7 @@ export default function TableParetoHeatlossCost({
           ) {
             return `Rp.${formatCurrency(value.toFixed(2))}`;
           }
-          return "";
+          return "Rp.0";
         },
       },
       {
@@ -577,7 +644,7 @@ export default function TableParetoHeatlossCost({
           ) {
             return `Rp.${formatCurrency(value.toFixed(0))}`;
           }
-          return "";
+          return "-";
         },
       },
       {
@@ -608,10 +675,11 @@ export default function TableParetoHeatlossCost({
             <>
               {props.row.depth > 0 && ( // Only render if it's a subrow
                 <div>
-                  {`${roundedCostBenefit} : ${roundedTotalBiaya} | ${totalBiaya == 0
+                  {`${roundedCostBenefit} : ${roundedTotalBiaya} | ${
+                    totalBiaya == 0
                       ? "-"
                       : (costBenefit / totalBiaya).toFixed(2)
-                    }`}
+                  }`}
                 </div>
               )}
             </>
@@ -691,9 +759,9 @@ export default function TableParetoHeatlossCost({
           prev.map((row: any, index: any) =>
             index === rowIndex
               ? {
-                ...prev[rowIndex],
-                [columnId]: value,
-              }
+                  ...prev[rowIndex],
+                  [columnId]: value,
+                }
               : row
           )
         );
@@ -841,6 +909,18 @@ export default function TableParetoHeatlossCost({
     return colSizes;
   }, [table.getState().columnSizingInfo, table.getState().columnSizing]);
 
+  // Function to format number (add thousands separators)
+  const formatThousandsNumber = (num) => {
+    const parts = num.toString().split(".");
+    const integerPart = new Intl.NumberFormat("id-ID").format(Number(parts[0]));
+    return parts.length > 1 ? `${integerPart},${parts[1]}` : integerPart;
+  };
+
+  // Function to unformat the number for internal processing (remove separators)
+  const unformatNumber = (formattedValue) => {
+    return formattedValue.replace(/\./g, "").replace(",", ".");
+  };
+
   return (
     <>
       {/* <ModalRootCause
@@ -860,22 +940,31 @@ export default function TableParetoHeatlossCost({
       /> */}
 
       <div className="flex justify-between items-center w-full">
+        {/* Input for cost threshold */}
         <div className="flex gap-2 items-center">
           <Input
-            label="Cost Threshol"
+            label="Budget Closing Gap Threshold"
             placeholder="Enter cost threshold for filter"
-            value={costThreshold}
-            onChange={(e) => setCostThreshold(e.target.value)}
-            type="number"
-            step="0.01"
+            startContent={`Rp.`}
+            value={formatThousandsNumber(costInitialThreshold)} // Display formatted value
+            onChange={(e) => {
+              const value = e.target.value;
+
+              // Validate the input using regex
+              const numberPattern = /^\d*\.?\d*$/;
+              if (numberPattern.test(unformatNumber(value))) {
+                setInitialCostThreshold(unformatNumber(value)); // Update state if valid
+              }
+            }}
+            type="text" // Changed to "text" so we can handle formatted values
             min="0"
+            pattern="\d*\.?\d*" // Correct use of pattern for numbers only (including decimals)
           />
           <Button
-            // onClick={handleFilter}
             color="primary"
-            size="sm"
-            onPress={() => mutate()}
-            endContent={<FilterIcon size={16} />}
+            size="md"
+            onPress={() => handleFilterClick()} // Apply filter on button click
+            endContent={<FilterIcon size={36} />}
           >
             Filter
           </Button>
@@ -926,17 +1015,19 @@ export default function TableParetoHeatlossCost({
                     return (
                       <th
                         key={header.id}
-                        className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 ${header.column.columnDef.meta?.className ?? ""
-                          } `}
+                        className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 ${
+                          header.column.columnDef.meta?.className ?? ""
+                        } `}
                         style={{
                           width: `calc(var(--header-${header?.id}-size) * 1px)`,
                         }}
                       >
                         <div
-                          className={`absolute top-0 right-0 h-full w-[6px] hover:cursor-col-resize ${header.column.getIsResizing()
+                          className={`absolute top-0 right-0 h-full w-[6px] hover:cursor-col-resize ${
+                            header.column.getIsResizing()
                               ? "bg-red-700"
                               : "group-hover:bg-red-500 group-focus:bg-red-500"
-                            }`}
+                          }`}
                           onMouseDown={header.getResizeHandler()}
                           onTouchStart={header.getResizeHandler()}
                         ></div>
@@ -962,18 +1053,19 @@ export default function TableParetoHeatlossCost({
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right pr-2">
-                {formattedNumber(summaryData.total_persen.toFixed(2))}
+                {formattedNumber(summaryData.total_persen.toFixed(2) ?? 0)}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right pr-2">
-                {formattedNumber(summaryData.total_nilai.toFixed(2))}
+                {formattedNumber(summaryData.total_nilai.toFixed(2) ?? 0)}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
-                Rp.{formatCurrency(summaryData.total_cost_benefit.toFixed(2))}
+                Rp.
+                {formatCurrency(summaryData.total_cost_benefit.toFixed(2) ?? 0)}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
-                Rp.{formatCurrency(summaryData.total_biaya.toFixed(2))}
+                Rp.{formatCurrency(summaryData.total_biaya.toFixed(2) ?? 0)}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={2}></th>
             </tr>

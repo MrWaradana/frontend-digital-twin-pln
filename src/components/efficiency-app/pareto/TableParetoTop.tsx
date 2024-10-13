@@ -333,9 +333,7 @@ export default function TableParetoTop({
                 paddingLeft: `${props.cell.row.depth * 1}rem`,
               }}
             >
-              {value
-                ? formatSmallNumber(Number(value))
-                : "0"}
+              {value ? formatSmallNumber(Number(value)) : "0"}
             </div>
           );
         },
