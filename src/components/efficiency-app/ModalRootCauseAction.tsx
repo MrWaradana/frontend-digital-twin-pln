@@ -340,6 +340,9 @@ function ModalRootCause({
       size="5xl"
       scrollBehavior={"inside"}
       onOpenChange={onOpenChange}
+      onClose={() => {
+        setCheckRootActions({})
+      }}
     >
       {
         <ModalContent>
@@ -350,7 +353,7 @@ function ModalRootCause({
               </ModalHeader>
               <ModalBody>
                 {/* {JSON.stringify(checkRootHeaders)} */}
-                {!isLoading && !rootCauseActionLoading ? (
+                {(!isLoading && !rootCauseActionLoading && !rootCauseActionValidating && !isValidating) ? (
                   <Table>
                     <TableHeader>
                       <TableRow>

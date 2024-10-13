@@ -334,6 +334,9 @@ function ModalRootCause({
       size="5xl"
       scrollBehavior={"inside"}
       onOpenChange={onOpenChange}
+      onClose={() => {
+        setCheckRootHeaders({})
+      }}
     >
       {
         <ModalContent>

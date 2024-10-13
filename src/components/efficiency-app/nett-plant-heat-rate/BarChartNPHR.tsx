@@ -48,7 +48,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function BarChartNPHR({ data_id }: any) {
+export default function BarChartNPHR({ data_id, niagaLoading, niagaNPHR }: any) {
   const session = useSession();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -119,7 +119,7 @@ export default function BarChartNPHR({ data_id }: any) {
   }, [chartParetoData]);
 
   const chartData = [
-    { month: "Niaga", nphr: nphrData.kpi, gap: 0 },
+    { month: "Niaga", nphr: niagaNPHR, gap: 0 },
     { month: "Current", nphr: nphrData.current, gap: 0 },
     {
       month: "Commission",
@@ -128,7 +128,7 @@ export default function BarChartNPHR({ data_id }: any) {
     },
   ];
 
-  if (isLoading || isValidating) {
+  if (isLoading || isValidating || niagaLoading) {
     return (
       <div className="w-full mt-12 flex justify-center">
         <Spinner label="Calculating..." />
