@@ -324,7 +324,7 @@ function ModalRootCause({
       setLoadingSubmit(false);
       toast.success("Data input succesfully!");
       // setCheckRootHeaders({});
-      // paretoMutate();
+      paretoMutate();
     } catch (error) {
       toast.error(`Something wrong: ${error}`);
       setLoadingSubmit(false);
@@ -344,7 +344,12 @@ function ModalRootCause({
             <ModalHeader>Confirm Submission</ModalHeader>
             <ModalBody>Are you sure you want to submit this data?</ModalBody>
             <ModalFooter>
-              <Button variant="light" color="danger" isLoading={loadingSubmit} onPress={onClose}>
+              <Button
+                variant="light"
+                color="danger"
+                isLoading={loadingSubmit}
+                onPress={onClose}
+              >
                 Cancel
               </Button>
               <Button
