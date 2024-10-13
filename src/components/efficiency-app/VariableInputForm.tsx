@@ -254,7 +254,11 @@ export default function VariableInputForm({
                                 size="md"
                                 className={`justify-between max-w-xs lg:max-w-full  border-b-1 pb-1 pt-4`}
                                 labelPlacement="outside"
-                                type="text"
+                                type={
+                                  v.base_case.toString() === "N/A"
+                                    ? "hidden"
+                                    : "text"
+                                }
                                 required
                                 {...field}
                                 // value={inputValues[v.id]} // Controlled input
