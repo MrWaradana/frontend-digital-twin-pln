@@ -398,15 +398,31 @@ export default function TableParetoHeatlossNPHR({
         },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) => (row.data ? null : row.gap.toFixed(2) || ""),
-        cell: (props: any) => (
-          <div
-            style={{
-              paddingLeft: `${props.cell.row.depth * 1}rem`,
-            }}
-          >
-            {formattedNumber(props.getValue())}
-          </div>
-        ),
+        cell: (props: any) => {
+          const value = props.getValue();
+
+          // Function to handle very small numbers and convert them to scientific notation
+          const formatSmallNumber = (num: number) => {
+            if (Math.abs(num) < 0.01 && num !== 0) {
+              const exponentialForm = num.toExponential(1); // Format to exponential notation
+              const [coefficient, exponent] = exponentialForm.split("e");
+              return `${coefficient}x10^${exponent}`;
+            }
+            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+          };
+
+          return (
+            <div
+              style={{
+                paddingLeft: `${props.cell.row.depth * 1}rem`,
+              }}
+            >
+              {value
+                ? formatSmallNumber(Number(value))
+                : ""}
+            </div>
+          );
+        },
       },
       // {
       //   header: "% HR",
@@ -460,10 +476,26 @@ export default function TableParetoHeatlossNPHR({
         ),
         cell: (props: any) => {
           const value = props.getValue();
-          if (!value) {
-            return;
-          }
-          return formattedNumber(Number(value).toFixed(2)); // Ensures the value is formatted with 2 decimal places
+
+          // Function to handle very small numbers and convert them to scientific notation
+          const formatSmallNumber = (num: number) => {
+            if (Math.abs(num) < 0.01 && num !== 0) {
+              const exponentialForm = num.toExponential(1); // Format to exponential notation
+              const [coefficient, exponent] = exponentialForm.split("e");
+              return `${coefficient}x10^${exponent}`;
+            }
+            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+          };
+
+          return (
+            <div
+              style={{
+                paddingLeft: `${props.cell.row.depth * 1}rem`,
+              }}
+            >
+              {value ? formatSmallNumber(Number(value)) : ""}
+            </div>
+          );
         },
         footer: (props: any) => props.column.id,
       },
@@ -481,10 +513,26 @@ export default function TableParetoHeatlossNPHR({
         ),
         cell: (props: any) => {
           const value = props.getValue();
-          if (!value) {
-            return;
-          }
-          return formattedNumber(Number(value).toFixed(2)); // Ensures the value is formatted with 2 decimal places
+
+          // Function to handle very small numbers and convert them to scientific notation
+          const formatSmallNumber = (num: number) => {
+            if (Math.abs(num) < 0.01 && num !== 0) {
+              const exponentialForm = num.toExponential(1); // Format to exponential notation
+              const [coefficient, exponent] = exponentialForm.split("e");
+              return `${coefficient}x10^${exponent}`;
+            }
+            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+          };
+
+          return (
+            <div
+              style={{
+                paddingLeft: `${props.cell.row.depth * 1}rem`,
+              }}
+            >
+              {value ? formatSmallNumber(Number(value)) : ""}
+            </div>
+          );
         },
         footer: (props: any) => props.column.id,
       },
@@ -557,7 +605,7 @@ export default function TableParetoHeatlossNPHR({
           ) {
             return `Rp.${formatCurrency(value.toFixed(0))}`;
           }
-          return "";
+          return "Rp.0";
         },
       },
       {

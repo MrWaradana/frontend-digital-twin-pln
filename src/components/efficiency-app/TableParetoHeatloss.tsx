@@ -43,53 +43,53 @@ import ModalRootCauseAction from "./ModalRootCauseAction";
 const formattedNumber = (value: any) =>
   new Intl.NumberFormat("id-ID").format(value);
 
-// const formatCurrency = (number: any) => {
-//   // Convert to absolute value to handle negative numbers
-//   const absNumber = Math.abs(number);
-//   const formatIDNumber = (value: any) =>
-//     new Intl.NumberFormat("id-ID").format(value);
-//   // Determine the appropriate suffix based on the value
-//   let formattedNumber;
-//   let suffix = "";
-
-//   if (absNumber >= 1_000_000_000_000) {
-//     // Trillions
-//     formattedNumber = (number / 1_000_000_000_000).toFixed(2);
-//     suffix = " T";
-//   } else if (absNumber >= 1_000_000_000) {
-//     // Billions
-//     formattedNumber = (number / 1_000_000_000).toFixed(2);
-//     suffix = " M";
-//   } else if (absNumber >= 1_000_000) {
-//     // Millions
-//     formattedNumber = (number / 1_000_000).toFixed(2);
-//     suffix = " Jt";
-//   } else if (absNumber >= 1_000) {
-//     // Millions
-//     formattedNumber = (number / 1_000).toFixed(2);
-//     suffix = " Rb";
-//   } else {
-//     // Thousands separator for smaller numbers
-//     formattedNumber = number.toLocaleString("id-ID");
-//   }
-
-//   return formatIDNumber(formattedNumber) + suffix;
-// };
-
 const formatCurrency = (number: any) => {
   // Convert to absolute value to handle negative numbers
   const absNumber = Math.abs(number);
-
-  // Always convert to juta (millions)
-  const formattedNumber = (number / 1_000_000).toFixed(2); // Convert to juta
-
-  // Formatter for Indonesian locale
   const formatIDNumber = (value: any) =>
     new Intl.NumberFormat("id-ID").format(value);
+  // Determine the appropriate suffix based on the value
+  let formattedNumber;
+  let suffix = "";
 
-  // Append the "Jt" (Juta) suffix for all values
-  return formatIDNumber(formattedNumber) + " Jt";
+  if (absNumber >= 1_000_000_000_000) {
+    // Trillions
+    formattedNumber = (number / 1_000_000_000_000).toFixed(2);
+    suffix = " T";
+  } else if (absNumber >= 1_000_000_000) {
+    // Billions
+    formattedNumber = (number / 1_000_000_000).toFixed(2);
+    suffix = " M";
+  } else if (absNumber >= 1_000_000) {
+    // Millions
+    formattedNumber = (number / 1_000_000).toFixed(2);
+    suffix = " Jt";
+  } else if (absNumber >= 1_000) {
+    // Millions
+    formattedNumber = (number / 1_000).toFixed(2);
+    suffix = " Rb";
+  } else {
+    // Thousands separator for smaller numbers
+    formattedNumber = number.toLocaleString("id-ID");
+  }
+
+  return formatIDNumber(formattedNumber) + suffix;
 };
+
+// const formatCurrency = (number: any) => {
+//   // Convert to absolute value to handle negative numbers
+//   const absNumber = Math.abs(number);
+
+//   // Always convert to juta (millions)
+//   const formattedNumber = (number / 1_000_000).toFixed(2); // Convert to juta
+
+//   // Formatter for Indonesian locale
+//   const formatIDNumber = (value: any) =>
+//     new Intl.NumberFormat("id-ID").format(value);
+
+//   // Append the "Jt" (Juta) suffix for all values
+//   return formatIDNumber(formattedNumber) + " Jt";
+// };
 
 //un-memoized normal table body component - see memoized version below
 function TableBody({ table }: { table: Table<ParetoType> }) {
@@ -207,7 +207,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                             Rp.
                             {row.original.total_cost_benefit
                               ? formatCurrency(
-                                  row.original.total_cost_benefit.toFixed(0)
+                                  row.original.total_cost_benefit.toFixed(2)
                                 )
                               : 0}
                           </td>
@@ -222,7 +222,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                             Rp.
                             {row.original.total_cost_gap
                               ? formatCurrency(
-                                  row.original.total_cost_gap.toFixed(0)
+                                  row.original.total_cost_gap.toFixed(2)
                                 )
                               : "0"}
                           </td>
@@ -417,7 +417,7 @@ export default function TableParetoHeatloss({
 
           // Function to handle very small numbers and convert them to scientific notation
           const formatSmallNumber = (num: number) => {
-            if (Math.abs(num) < 0.0001 && num !== 0) {
+            if (Math.abs(num) < 0.01 && num !== 0) {
               const exponentialForm = num.toExponential(1); // Format to exponential notation
               const [coefficient, exponent] = exponentialForm.split("e");
               return `${coefficient}x10^${exponent}`;
@@ -433,7 +433,7 @@ export default function TableParetoHeatloss({
             >
               {props.row.depth > 0 && value
                 ? formatSmallNumber(Number(value))
-                : ""}
+                : props.row.depth > 0 ? "-" : ""}
             </div>
           );
         },
@@ -490,10 +490,28 @@ export default function TableParetoHeatloss({
         ),
         cell: (props: any) => {
           const value = props.getValue();
-          if (!value) {
-            return;
-          }
-          return formattedNumber(Number(value).toFixed(2)); // Ensures the value is formatted with 2 decimal places
+
+          // Function to handle very small numbers and convert them to scientific notation
+          const formatSmallNumber = (num: number) => {
+            if (Math.abs(num) < 0.01 && num !== 0) {
+              const exponentialForm = num.toExponential(1); // Format to exponential notation
+              const [coefficient, exponent] = exponentialForm.split("e");
+              return `${coefficient}x10^${exponent}`;
+            }
+            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+          };
+
+          return (
+            <div
+              style={{
+                paddingLeft: `${props.cell.row.depth * 1}rem`,
+              }}
+            >
+              {props.row.depth > 0 && value
+                ? formatSmallNumber(Number(value))
+                : props.row.depth > 0 ? "-" : ""}
+            </div>
+          );
         },
         footer: (props: any) => props.column.id,
       },
@@ -511,10 +529,28 @@ export default function TableParetoHeatloss({
         ),
         cell: (props: any) => {
           const value = props.getValue();
-          if (!value) {
-            return;
-          }
-          return formattedNumber(Number(value).toFixed(2)); // Ensures the value is formatted with 2 decimal places
+
+          // Function to handle very small numbers and convert them to scientific notation
+          const formatSmallNumber = (num: number) => {
+            if (Math.abs(num) < 0.01 && num !== 0) {
+              const exponentialForm = num.toExponential(1); // Format to exponential notation
+              const [coefficient, exponent] = exponentialForm.split("e");
+              return `${coefficient}x10^${exponent}`;
+            }
+            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+          };
+
+          return (
+            <div
+              style={{
+                paddingLeft: `${props.cell.row.depth * 1}rem`,
+              }}
+            >
+              {props.row.depth > 0 && value
+                ? formatSmallNumber(Number(value))
+                : props.row.depth > 0 ? "-" : ""}
+            </div>
+          );
         },
         footer: (props: any) => props.column.id,
       },
@@ -563,7 +599,10 @@ export default function TableParetoHeatloss({
             value
           ) {
             return `Rp.${formatCurrency(value.toFixed(2))}`;
+          } else if (props.row.depth > 0) {
+            return `Rp.0`;
           }
+
           return "";
         },
       },
@@ -582,7 +621,7 @@ export default function TableParetoHeatloss({
         header: () => (
           <div className="text-center">Biaya untuk Closing Gap</div>
         ),
-        size: 105,
+        size: 125,
         cell: (props: any) => {
           const value = props.getValue();
           if (
@@ -590,6 +629,8 @@ export default function TableParetoHeatloss({
             value
           ) {
             return `Rp.${formatCurrency(value.toFixed(0))}`;
+          } else if (props.row.depth > 0) {
+            return `-`;
           }
           return "";
         },

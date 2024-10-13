@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,7 +16,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Accordion, AccordionItem, Input, Button } from "@nextui-org/react";
+import {
+  Accordion,
+  AccordionItem,
+  Input,
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@nextui-org/react";
 import { useState, Fragment } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -42,6 +53,8 @@ export default function VariableInputForm({
   const router = useRouter();
   const session = useSession();
   const [variableData, setVariableData] = useState(variables);
+  const [confirmationModalOpen, setConfirmationModalOpen] =
+    React.useState(false);
   // const [unitsData, setUnitsData] = useState(units.data);
   // State to store input values
   const [inputValues, setInputValues] = useState(
@@ -69,6 +82,7 @@ export default function VariableInputForm({
   const filteredVariableData = variableData.filter(
     (v: any) => v.in_out === "in"
   );
+  const formRef = useRef<HTMLFormElement>(null);
 
   const formSchemaInput = z.object({
     name: z.string({ message: "Name is required!" }), // Adjust validation as needed
@@ -190,154 +204,156 @@ export default function VariableInputForm({
   //   );
   // }
 
+  // The modal that shows up when attempting to delete an item
+  const ConfirmationModal = (
+    <Modal
+      isOpen={confirmationModalOpen}
+      onOpenChange={setConfirmationModalOpen}
+    >
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader>Confirm Submission</ModalHeader>
+            <ModalBody>Are you sure you want to submit this data?</ModalBody>
+            <ModalFooter>
+              <Button variant="light" color="danger" onPress={onClose}>
+                Cancel
+              </Button>
+              <Button
+                color="success"
+                // type="submit" // This submits the form
+                isLoading={loading}
+                onPress={() => {
+                  formRef.current?.requestSubmit(); // Programmatically submit the form
+                  onClose(); // Close modal after submission
+                }}
+              >
+                Confirm Submit
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
+  );
+
   return (
-    <div className="flex flex-col gap-4 mx-2 min-w-full">
-      <Toaster />
-      {/* {JSON.stringify(categorizedData)} */}
-
-      <Form {...formInput}>
-        <form
-          onSubmit={formInput.handleSubmit(onSubmit, onError)}
-          className="space-y-1"
-        >
-          {/* Name Input Field */}
-          <div className="mb-4">
-            <FormField
-              control={formInput.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter name"
-                      label="Name"
-                      size="md"
-                      className="max-w-xs lg:max-w-full border-b-1 pb-1"
-                      labelPlacement="outside"
-                      type="text"
-                      required
-                      {...field}
-                      onChange={async ({ target: { value } }) => {
-                        field.onChange(value);
-                        await formInput.trigger("name");
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <hr />
-          <h2 className="font-bold text-lg sticky top-16 bg-white p-1 rounded-md dark:bg-black z-50">
-            Input Variables
-          </h2>
-
-          <Accordion className="min-w-full" selectionMode="multiple" isCompact>
-            {Object.entries(categorizedData).map(
-              ([category, variables]: any) => (
-                <AccordionItem
-                  key={category}
-                  title={category == "null" ? "Tidak Ada Kategori" : category}
-                >
-                  {variables.map((v: any) => (
-                    <Fragment key={v.id}>
-                      <FormField
-                        control={formInput.control}
-                        name={`inputs.${v.id}`} // Ensure correct nesting in form data
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input
-                                placeholder={`${""}`}
-                                label={v.input_name}
-                                size="md"
-                                className={`justify-between max-w-xs lg:max-w-full  border-b-1 pb-1 pt-4`}
-                                labelPlacement="outside"
-                                type={
-                                  v.base_case.toString() === "N/A"
-                                    ? "hidden"
-                                    : "text"
-                                }
-                                required
-                                {...field}
-                                // value={inputValues[v.id]} // Controlled input
-                                onChange={async ({ target: { value } }) => {
-                                  field.onChange(value.toString());
-                                  await formInput.trigger(`inputs.${v.id}`);
-                                }}
-                                endContent={
-                                  <p className="text-sm">
-                                    {" "}
-                                    {v.satuan == "NaN" ? "" : v.satuan}
-                                  </p>
-                                }
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </Fragment>
-                  ))}
-                </AccordionItem>
-              )
-            )}
-          </Accordion>
-          {/* {variableData.map((v: any) => {
-            if (v.in_out == "in")
-              return (
-                <Fragment key={v.id}>
-                  <FormField
-                    control={formInput.control}
-                    name={v.id}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder={`${""}`}
-                            label={v.input_name}
-                            size="md"
-                            className={`justify-between max-w-xs lg:max-w-full  border-b-1 pb-1`}
-                            labelPlacement="outside"
-                            type="number"
-                            required
-                            {...field}
-                            value={inputValues[v.id]} // Controlled input
-                            onChange={(e) =>
-                              handleInputChange(v.id, Number(e.target.value))
-                            }
-                            endContent={
-                              <p className="text-sm">
-                                {" "}
-                                {v.satuan == "NaN" ? "" : v.satuan}
-                              </p>
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </Fragment>
-              );
-          })} */}
-          <Button
-            type="submit"
-            color="primary"
-            size="md"
-            //@ts-ignore
-            isDisabled={thermoStatusData?.thermo_status}
-            isLoading={loading}
-            className="flex min-w-full translate-y-4"
+    <>
+      <div className="flex flex-col gap-4 mx-2 min-w-full">
+        <Toaster />
+        <Form {...formInput}>
+          <form
+            ref={formRef}
+            onSubmit={formInput.handleSubmit(onSubmit, onError)} // Handles form submission
+            className="space-y-1"
           >
-            {thermoStatusData?.thermo_status
-              ? "Thermolink is processing data, please wait..."
-              : "Submit Data"}
-            {/* Submit Data */}
-          </Button>
-        </form>
-      </Form>
-    </div>
+            {/* Name Input Field */}
+            <div className="mb-4">
+              <FormField
+                control={formInput.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter name"
+                        label="Name"
+                        size="md"
+                        className="max-w-xs lg:max-w-full border-b-1 pb-1"
+                        labelPlacement="outside"
+                        type="text"
+                        required
+                        {...field}
+                        onChange={async ({ target: { value } }) => {
+                          field.onChange(value);
+                          await formInput.trigger("name");
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <hr />
+            <h2 className="font-bold text-lg sticky top-16 bg-white p-1 rounded-md dark:bg-black z-50">
+              Input Variables
+            </h2>
+            <Accordion
+              className="min-w-full"
+              selectionMode="multiple"
+              isCompact
+            >
+              {Object.entries(categorizedData).map(
+                ([category, variables]: any) => (
+                  <AccordionItem
+                    key={category}
+                    title={category == "null" ? "Tidak Ada Kategori" : category}
+                  >
+                    {variables.map((v: any) => (
+                      <Fragment key={v.id}>
+                        <FormField
+                          control={formInput.control}
+                          name={`inputs.${v.id}`} // Ensure correct nesting in form data
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Input
+                                  placeholder={`${""}`}
+                                  label={v.input_name}
+                                  size="md"
+                                  className={`justify-between max-w-xs lg:max-w-full  border-b-1 pb-1 pt-4`}
+                                  labelPlacement="outside"
+                                  type={
+                                    v.base_case.toString() === "N/A"
+                                      ? "hidden"
+                                      : "text"
+                                  }
+                                  required
+                                  {...field}
+                                  onChange={async ({ target: { value } }) => {
+                                    field.onChange(value.toString());
+                                    await formInput.trigger(`inputs.${v.id}`);
+                                  }}
+                                  endContent={
+                                    <p className="text-sm">
+                                      {v.satuan == "NaN" ? "" : v.satuan}
+                                    </p>
+                                  }
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </Fragment>
+                    ))}
+                  </AccordionItem>
+                )
+              )}
+            </Accordion>
+            {/* Submit Button */}
+            <Button
+              type="button"
+              color="primary"
+              size="md"
+              //@ts-ignore
+              isDisabled={thermoStatusData?.thermo_status}
+              isLoading={loading}
+              onClick={() => {
+                setConfirmationModalOpen(true); // Open modal to confirm submission
+              }}
+              className="flex min-w-full translate-y-4"
+            >
+              {thermoStatusData?.thermo_status
+                ? "Thermolink is processing data, please wait..."
+                : "Submit Data"}
+            </Button>
+            {/* Confirmation Modal */}
+            {ConfirmationModal} {/* Modal should be part of the form */}
+          </form>
+        </Form>
+      </div>
+    </>
   );
 }

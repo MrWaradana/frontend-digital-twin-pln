@@ -22,7 +22,7 @@ import {
 import TableRootCause from "./TableRootCause";
 import { useGetVariableCauses } from "@/lib/APIs/useGetVariableCause";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   useGetVariableHeaders,
   VariableHeader,
@@ -132,6 +132,10 @@ function ModalRootCause({
 }) {
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const { data: session } = useSession();
+  const [confirmationModalOpen, setConfirmationModalOpen] =
+    React.useState(false);
+
+  const formRef = useRef<HTMLFormElement>(null);
 
   const {
     data: rootCause,
@@ -328,67 +332,100 @@ function ModalRootCause({
     }
   };
 
-  return (
+  // The modal that shows up when attempting to submit an item
+  const ConfirmationModal = (
     <Modal
-      isOpen={isOpen}
-      size="5xl"
-      scrollBehavior={"inside"}
-      onOpenChange={onOpenChange}
-      onClose={() => {
-        setCheckRootHeaders({})
-      }}
+      isOpen={confirmationModalOpen}
+      onOpenChange={setConfirmationModalOpen}
     >
-      {
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Root Cause Checkbox
-              </ModalHeader>
-              <ModalBody>
-                {/* {JSON.stringify(checkRootHeaders)} */}
-                {!isLoading &&
-                !rootCauseLoading &&
-                // !headerLoading &&
-                !rootCauseValidating ? (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Heat Loss Caused</TableHead>
-                        {/* Dynamically generated headers */}
-                        {/* {variabelHeader.map((header) => (
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader>Confirm Submission</ModalHeader>
+            <ModalBody>Are you sure you want to submit this data?</ModalBody>
+            <ModalFooter>
+              <Button variant="light" color="danger" isLoading={loadingSubmit} onPress={onClose}>
+                Cancel
+              </Button>
+              <Button
+                color="success"
+                // type="submit" // This submits the form
+                isLoading={loadingSubmit}
+                onPress={() => {
+                  handleSave();
+                  // formRef.current?.requestSubmit(); // Programmatically submit the form
+                  // onClose(); // Close modal after submission
+                }}
+              >
+                Confirm Submit
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
+  );
+
+  return (
+    <>
+      {ConfirmationModal}
+      <Modal
+        isOpen={isOpen}
+        size="5xl"
+        scrollBehavior={"inside"}
+        onOpenChange={onOpenChange}
+      >
+        {
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Root Cause Checkbox
+                </ModalHeader>
+                <ModalBody>
+                  {/* {JSON.stringify(checkRootHeaders)} */}
+                  {!isLoading &&
+                  !rootCauseLoading &&
+                  // !headerLoading &&
+                  !rootCauseValidating ? (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Heat Loss Caused</TableHead>
+                          {/* Dynamically generated headers */}
+                          {/* {variabelHeader.map((header) => (
                           <TableHead key={header.id}>{header.name}</TableHead>
                         ))} */}
-                        <TableHead>Check</TableHead>
-                        <TableHead>Need Corrective Action</TableHead>
-                        {/* <TableHead>Cost</TableHead> */}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {/* <Form {...formInit}>
+                          <TableHead>Check</TableHead>
+                          <TableHead>Need Corrective Action</TableHead>
+                          {/* <TableHead>Cost</TableHead> */}
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {/* <Form {...formInit}>
                                         <form
                                             onSubmit={formInit.handleSubmit(handleSave)}
                                         > */}
-                      {variableCauses.map((node) => (
-                        <TableRootCause
-                          key={node.id}
-                          parentId={node.id}
-                          node={node}
-                          headers={variabelHeader}
-                          level={0}
-                          handleCheckBox={handleCheckboxChange}
-                          rootCauseData={dataRootCauses}
-                          checkRoot={checkRootHeaders}
-                        />
-                      ))}
-                      {/* </form>
+                        {variableCauses.map((node) => (
+                          <TableRootCause
+                            key={node.id}
+                            parentId={node.id}
+                            node={node}
+                            headers={variabelHeader}
+                            level={0}
+                            handleCheckBox={handleCheckboxChange}
+                            rootCauseData={dataRootCauses}
+                            checkRoot={checkRootHeaders}
+                          />
+                        ))}
+                        {/* </form>
                                     </Form> */}
-                    </TableBody>
-                  </Table>
-                ) : (
-                  <Spinner label="Loading..." />
-                )}
-                {/* <NextTable
+                      </TableBody>
+                    </Table>
+                  ) : (
+                    <Spinner label="Loading..." />
+                  )}
+                  {/* <NextTable
                                 aria-label="Root Cause Checkbox"
                                 className="h-[360px]"
                             >
@@ -440,35 +477,37 @@ function ModalRootCause({
                                     ))}
                                 </TableBody>
                             </NextTable> */}
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  color="danger"
-                  variant="light"
-                  onPress={() => {
-                    onClose();
-                  }}
-                  isLoading={loadingSubmit}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  color="success"
-                  variant="light"
-                  onClick={() => {
-                    handleSave();
-                    // onClose();
-                  }}
-                  isLoading={loadingSubmit}
-                >
-                  Submit
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      }
-    </Modal>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    color="danger"
+                    variant="light"
+                    onPress={() => {
+                      onClose();
+                    }}
+                    isLoading={loadingSubmit}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    color="success"
+                    variant="light"
+                    onClick={() => {
+                      // handleSave();
+                      setConfirmationModalOpen(true);
+                      // onClose();
+                    }}
+                    isLoading={loadingSubmit}
+                  >
+                    Submit
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        }
+      </Modal>
+    </>
   );
 }
 

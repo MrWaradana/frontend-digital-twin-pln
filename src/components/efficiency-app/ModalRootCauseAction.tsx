@@ -134,6 +134,8 @@ function ModalRootCause({
 }) {
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const { data: session } = useSession();
+  const [confirmationModalOpen, setConfirmationModalOpen] =
+    React.useState(false);
 
   const {
     data: rootCauseAction,
@@ -334,70 +336,108 @@ function ModalRootCause({
     }
   };
 
-  return (
+  // The modal that shows up when attempting to submit an item
+  const ConfirmationModal = (
     <Modal
-      isOpen={isOpen}
-      size="5xl"
-      scrollBehavior={"inside"}
-      onOpenChange={onOpenChange}
-      onClose={() => {
-        setCheckRootActions({})
-      }}
+      isOpen={confirmationModalOpen}
+      onOpenChange={setConfirmationModalOpen}
     >
-      {
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Corrective Action Checkbox
-              </ModalHeader>
-              <ModalBody>
-                {/* {JSON.stringify(checkRootHeaders)} */}
-                {(!isLoading && !rootCauseActionLoading && !rootCauseActionValidating && !isValidating) ? (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Heat Loss Caused</TableHead>
-                        {/* Dynamically generated headers */}
-                        {/* {variabelHeader.map((header) => (
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader>Confirm Submission</ModalHeader>
+            <ModalBody>Are you sure you want to submit this data?</ModalBody>
+            <ModalFooter>
+              <Button
+                variant="light"
+                color="danger"
+                isLoading={loadingSubmit}
+                onPress={onClose}
+              >
+                Cancel
+              </Button>
+              <Button
+                color="success"
+                // type="submit" // This submits the form
+                isLoading={loadingSubmit}
+                onPress={() => {
+                  handleSave();
+                  // formRef.current?.requestSubmit(); // Programmatically submit the form
+                  // onClose(); // Close modal after submission
+                }}
+              >
+                Confirm Submit
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
+  );
+
+  return (
+    <>
+      {ConfirmationModal}
+      <Modal
+        isOpen={isOpen}
+        size="5xl"
+        scrollBehavior={"inside"}
+        onOpenChange={onOpenChange}
+      >
+        {
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Corrective Action Checkbox
+                </ModalHeader>
+                <ModalBody>
+                  {/* {JSON.stringify(checkRootHeaders)} */}
+                  {!isLoading && !rootCauseActionLoading ? (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Heat Loss Caused</TableHead>
+                          {/* Dynamically generated headers */}
+                          {/* {variabelHeader.map((header) => (
                           <TableHead key={header.id}>{header.name}</TableHead>
                         ))} */}
-                        <TableHead>Corrective Action</TableHead>
-                        <TableHead>Cost</TableHead>
-                        {/* <TableHead>Need Corrective Action</TableHead> */}
-                        {/* <TableHead>Cost</TableHead> */}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {/* <Form {...formInit}>
+                          <TableHead>Corrective Action</TableHead>
+                          <TableHead>Cost</TableHead>
+                          {/* <TableHead>Need Corrective Action</TableHead> */}
+                          {/* <TableHead>Cost</TableHead> */}
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {/* <Form {...formInit}>
                                         <form
                                             onSubmit={formInit.handleSubmit(handleSave)}
                                         > */}
-                      {variableCauseActions.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={2} className="text-center py-4">
-                            There is no corrective action needed.
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        variableCauseActions.map((node) => (
-                          <TableRootCauseAction
-                            key={node.id}
-                            parentId={node.id}
-                            node={node}
-                            level={0}
-                            checkRoot={checkRootActions}
-                            handleCheckBox={handleCheckboxChange}
-                            isAction={false}
-                          />
-                        ))
-                      )}
-                    </TableBody>
-                  </Table>
-                ) : (
-                  <Spinner label="Loading..." />
-                )}
-                {/* <NextTable
+                        {variableCauseActions.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={2} className="text-center py-4">
+                              There is no corrective action needed.
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          variableCauseActions.map((node) => (
+                            <TableRootCauseAction
+                              key={node.id}
+                              parentId={node.id}
+                              node={node}
+                              level={0}
+                              checkRoot={checkRootActions}
+                              handleCheckBox={handleCheckboxChange}
+                              isAction={false}
+                            />
+                          ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  ) : (
+                    <Spinner label="Loading..." />
+                  )}
+                  {/* <NextTable
                                 aria-label="Root Cause Checkbox"
                                 className="h-[360px]"
                             >
@@ -449,35 +489,37 @@ function ModalRootCause({
                                     ))}
                                 </TableBody>
                             </NextTable> */}
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  color="danger"
-                  variant="light"
-                  onPress={() => {
-                    onClose();
-                  }}
-                  isLoading={loadingSubmit}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  color="success"
-                  variant="light"
-                  onClick={() => {
-                    handleSave();
-                    // onClose();
-                  }}
-                  isLoading={loadingSubmit}
-                >
-                  Submit
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      }
-    </Modal>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    color="danger"
+                    variant="light"
+                    onPress={() => {
+                      onClose();
+                    }}
+                    isLoading={loadingSubmit}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    color="success"
+                    variant="light"
+                    onClick={() => {
+                      // handleSave();
+                      setConfirmationModalOpen(true);
+                      // onClose();
+                    }}
+                    isLoading={loadingSubmit}
+                  >
+                    Submit
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        }
+      </Modal>
+    </>
   );
 }
 

@@ -78,6 +78,15 @@ export default function MultipleLineChart({
     onOpen();
   };
 
+  const handleDotLineClick = (data: any) => {
+    // setSelectedBar(data.category);
+    const dataParetoShow = paretoData.filter(
+      (item) => item.category == data.payload.category
+    );
+    setSelectedCategory(dataParetoShow[0]);
+    onOpen();
+  };
+
   // console.log(data, "data pareto chart heat loss");
   const renderValue = (key: string, value: unknown): ReactNode => {
     if (typeof value === "object" && value !== null) {
@@ -128,7 +137,10 @@ export default function MultipleLineChart({
           <CardDescription>{new Date().getFullYear()}</CardDescription>
         </CardHeader>
         <CardContent className="grid grid-cols-1">
-          <ChartContainer config={chartConfig} className="col-span-2">
+          <ChartContainer
+            config={chartConfig}
+            className="col-span-2 h-[328px] min-w-full"
+          >
             <ComposedChart
               accessibilityLayer
               data={data}
@@ -208,6 +220,12 @@ export default function MultipleLineChart({
                 stroke="var(--color-category)"
                 strokeWidth={2}
                 dot={true}
+                className="cursor-pointer"
+                activeDot={{
+                  onClick: (e, payload) =>
+                    // @ts-ignore
+                    handleDotLineClick(payload),
+                }}
                 yAxisId={"persenLosses"}
               />
               <Line

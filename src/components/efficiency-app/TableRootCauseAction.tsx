@@ -16,7 +16,8 @@ import {
 } from "@/lib/APIs/useGetVariableCause";
 import { VariableHeader } from "@/lib/APIs/useGetVariableHeaders";
 import { DataRootCause } from "@/lib/APIs/useGetDataRootCause";
-import { Input } from "../ui/input";
+// import { Input } from "../ui/input";
+import { Input } from "@nextui-org/react";
 import { CheckedState } from "@radix-ui/react-checkbox";
 
 // // Define the structure of our tree data
@@ -69,6 +70,19 @@ interface rootCostData {
   biaya: number | undefined;
 }
 
+const formatNumber = (num: number | string) => {
+  // Convert the input number to a string to avoid rounding off decimals
+  const parts = num.toString().split("."); // Use '.' to handle decimals correctly
+  const integerPart = new Intl.NumberFormat("id-ID").format(Number(parts[0]));
+
+  // Return the formatted number with a decimal part if present
+  return parts.length > 1 ? `${integerPart},${parts[1]}` : integerPart;
+};
+
+const unformatNumber = (formattedValue: string) => {
+  // Remove thousands separators (commas) and replace decimal commas with periods
+  return formattedValue.replace(/\./g, "").replace(",", ".");
+};
 // Recursive component to render each row and its children
 const TableRootCause: React.FC<{
   node: any;
@@ -120,16 +134,22 @@ const TableRootCause: React.FC<{
           {isAction && (
             <Input
               type="text"
+              startContent={`Rp.`}
               value={
-                checkRoot[parentId]?.updatedRootCauses[node.id]?.biaya || "0"
+                checkRoot[parentId]?.updatedRootCauses[node.id]?.biaya
+                  ? formatNumber(
+                      checkRoot[parentId]?.updatedRootCauses[node.id]?.biaya
+                    )
+                  : "0"
               }
-              onChange={(e) =>
+              onChange={(e) => {
+                const unformattedValue = unformatNumber(e.target.value);
                 handleCheckBox({
                   parentId: parentId,
                   rowId: node.id,
-                  biaya: parseInt(e.target.value) || 0,
-                })
-              }
+                  biaya: parseInt(unformattedValue) || 0,
+                });
+              }}
             />
           )}
         </TableCell>

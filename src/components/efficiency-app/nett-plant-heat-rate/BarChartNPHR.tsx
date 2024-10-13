@@ -33,7 +33,7 @@ import MultipleLineChart from "./MultipleLineChart";
 import { useGetDataNPHR } from "@/lib/APIs/useGetDataNPHR";
 import { useSession } from "next-auth/react";
 import { useMemo, useRef } from "react";
-import { useSelectedEfficiencyDataStore } from "../../../store/selectedEfficiencyData";
+
 import React from "react";
 import toast from "react-hot-toast";
 
@@ -48,23 +48,23 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function BarChartNPHR({ data_id, niagaLoading, niagaNPHR }: any) {
+export default function BarChartNPHR({
+  data,
+  data_id,
+  niagaLoading,
+  isLoading,
+  isValidating,
+  error,
+  niagaNPHR,
+}: any) {
   const session = useSession();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const selectedEfficiencyData = useSelectedEfficiencyDataStore(
-    (state) => state.selectedEfficiencyData
-  );
-
-  const setSelectedEfficiencyData = useSelectedEfficiencyDataStore(
-    (state) => state.setSelectedEfficiencyData
-  );
-
   // console.log(selectedEfficiencyData, "selected");
-  const { data, mutate, isLoading, isValidating, error } = useGetDataNPHR(
-    session?.data?.user.access_token,
-    selectedEfficiencyData ? selectedEfficiencyData : data_id
-  );
+  // const { data, mutate, isLoading, isValidating, error } = useGetDataNPHR(
+  //   session?.data?.user.access_token,
+  //   selectedEfficiencyData ? selectedEfficiencyData : data_id
+  // );
 
   const summaryData = data ?? [];
   const chartParetoData = data?.chart_result ?? [];

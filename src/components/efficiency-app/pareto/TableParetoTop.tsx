@@ -314,15 +314,31 @@ export default function TableParetoTop({
         },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) => (row.data ? null : row.gap.toFixed(2) || ""),
-        cell: (props: any) => (
-          <div
-            style={{
-              paddingLeft: `${props.cell.row.depth * 1}rem`,
-            }}
-          >
-            {formatIDNumber(props.getValue())}
-          </div>
-        ),
+        cell: (props: any) => {
+          const value = props.getValue();
+
+          // Function to handle very small numbers and convert them to scientific notation
+          const formatSmallNumber = (num: number) => {
+            if (Math.abs(num) < 0.01 && num !== 0) {
+              const exponentialForm = num.toExponential(1); // Format to exponential notation
+              const [coefficient, exponent] = exponentialForm.split("e");
+              return `${coefficient}x10^${exponent}`;
+            }
+            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+          };
+
+          return (
+            <div
+              style={{
+                paddingLeft: `${props.cell.row.depth * 1}rem`,
+              }}
+            >
+              {value
+                ? formatSmallNumber(Number(value))
+                : "0"}
+            </div>
+          );
+        },
       },
     ],
     []

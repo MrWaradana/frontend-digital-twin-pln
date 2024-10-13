@@ -94,21 +94,21 @@ export default function Page({ params }: { params: { data_id: string } }) {
 
   return (
     <EfficiencyContentLayout title="Engine Flow">
-      <div className="w-full flex flex-col gap-6 justify-center items-center m-2">
-        <div>
-          <Button
-            as={Link}
-            href={`/efficiency-app`}
-            className="mb-4"
-            color="primary"
-            size="sm"
-            startContent={<ChevronLeftIcon size={16} />}
-          >
-            Back to all
-          </Button>
-        </div>
+      <div className="w-full flex flex-col justify-center items-center">
         {/* {JSON.stringify(paretoTopData)} */}
-        <div className="grid grid-cols-3 gap-4 text-md md:text-lg">
+        <div className="grid grid-cols-4 gap-4 text-md md:text-lg">
+          <div>
+            <Button
+              as={Link}
+              href={`/efficiency-app`}
+              className="mb-4"
+              color="primary"
+              size="sm"
+              startContent={<ChevronLeftIcon size={16} />}
+            >
+              Back to all
+            </Button>
+          </div>
           <div className="text-center bg-blue-300 px-2 py-1 rounded-sm">
             <p className="font-bold">Coal Consumption</p>
             {isLoadingPareto ? (
@@ -143,7 +143,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
             )}
           </div>
         </div>
-        <div className="relative min-w-full">
+        <div className="relative w-5/6">
           <Image src={EngineFlow} alt="engine-flow" className="w-full" />
           {Object.keys(positions).map((key) => (
             <div
@@ -157,7 +157,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
             >
               <div
                 className="bg-blue-600 backdrop-blur-sm px-1.5 py-0.5 rounded-sm 
-                         md:text-[18px] text-xs shadow-sm border border-gray-200/50 whitespace-nowrap
+                         md:text-[16px] text-xs shadow-sm border border-gray-200/50 whitespace-nowrap
                          hover:scale-105 hover:bg-blue-500/80 hover:shadow-md
                          transition-all duration-200 ease-in-out
                          transform origin-center"
