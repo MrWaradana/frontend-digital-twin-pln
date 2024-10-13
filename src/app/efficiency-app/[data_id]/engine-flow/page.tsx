@@ -68,7 +68,12 @@ export default function Page({ params }: { params: { data_id: string } }) {
     RH1: { name: "TTD:", top: "74%", left: "79.5%", unit: "°C" },
 
     // Condensor
-    Condensor: { name: "Condensor:", top: "80%", left: "90%", unit: "" },
+    Condensor_Value: {
+      name: "Pressure:",
+      top: "80%",
+      left: "90%",
+      unit: "mbara",
+    },
   };
   const formatIDNumber = (value: any) =>
     new Intl.NumberFormat("id-ID").format(value);
