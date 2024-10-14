@@ -105,10 +105,12 @@ const TableRootCause: React.FC<{
   //     biaya: rootData.biaya
   // } : null);
   // State to track whether the row is expanded (to show children)
-  const [isExpanded, setIsExpanded] = useState(
-    checkRoot[parentId]?.updatedRootCauses[node.id]?.isChecked ?? false
-  );
+  const [isExpanded, setIsExpanded] = useState(false);
   const [parentCheckState, setParentCheckState] = useState([]);
+
+  useEffect(() => {
+    setIsExpanded(checkRoot[parentId]?.updatedRootCauses[node.id]?.isChecked)
+  }, [checkRoot])
 
   const onCheckedChange = (e: boolean) => {
     // If the checkbox is checked, expand the row to show children
@@ -146,7 +148,7 @@ const TableRootCause: React.FC<{
           <TableCell className="p-0">
             <Checkbox
               checked={
-                (isExpanded ||
+                (isExpanded &&
                   checkRoot[parentId]?.updatedRootCauses[node.id]?.isChecked) ??
                 false
               } // Combine both isExpanded and is_checked
