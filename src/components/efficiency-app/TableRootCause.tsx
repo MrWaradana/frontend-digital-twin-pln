@@ -106,7 +106,7 @@ const TableRootCause: React.FC<{
   // } : null);
   // State to track whether the row is expanded (to show children)
   const [isExpanded, setIsExpanded] = useState(
-    checkRoot[parentId]?.updatedRootCauses[node.id] ?? false
+    checkRoot[parentId]?.updatedRootCauses[node.id].isChecked ?? false
   );
   const [parentCheckState, setParentCheckState] = useState([]);
 
