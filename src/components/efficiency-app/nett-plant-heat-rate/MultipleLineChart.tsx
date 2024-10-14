@@ -112,7 +112,7 @@ export default function MultipleLineChart({
                   : selectedCategory?.category}
               </ModalHeader>
               <ModalBody className="flex justify-center items-center">
-                <div className="max-w-full">
+                <div className="max-w-full min-h-full">
                   <TableParetoHeatlossNPHR
                     tableData={selectedCategory.data}
                     summaryData={selectedCategory}
