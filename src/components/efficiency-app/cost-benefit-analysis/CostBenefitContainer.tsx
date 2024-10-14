@@ -10,11 +10,12 @@ import { useDebouncedCallback } from "use-debounce";
 
 export default function CostBenefitContainer() {
   const { data: session } = useSession();
-  const [costThreshold, setCostThreshold] = useState("0");
-  const [costInitialThreshold, setInitialCostThreshold] = useState("0");
+  const [costThreshold, setCostThreshold] = useState("");
 
   const { data, error, mutate, isLoading, isValidating } =
     useGetDataCostBenefit(session?.user.access_token, costThreshold);
+
+  const [costInitialThreshold, setInitialCostThreshold] = useState("");
 
   const costData = data?.cost_benefit_result ?? [];
   const costThresholdData = data?.cost_threshold ?? 0;
@@ -29,11 +30,19 @@ export default function CostBenefitContainer() {
   //   500
   // );
 
+  // Effect to update the costInitialThreshold once data is fetched
   useEffect(() => {
-    if (costData) {
-      setInitialCostThreshold(String(costInitialThreshold));
+    if (data) {
+      setCostThreshold(String(data.cost_threshold));
+      setInitialCostThreshold(String(data.cost_threshold));
     }
-  }, [costData]);
+  }, [data]);
+
+  // useEffect(() => {
+  //   if (costData) {
+  //     setInitialCostThreshold(String(costInitialThreshold));
+  //   }
+  // }, [costData]);
 
   if (error) {
     toast.error(`${JSON.stringify(error)}`);

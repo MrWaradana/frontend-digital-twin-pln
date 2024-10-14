@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import TableParetoTop from "@/components/efficiency-app/pareto/TableParetoTop";
 import { Item } from "@radix-ui/react-dropdown-menu";
+import { useGetRootCauseCount } from "../../../../lib/APIs/useGetRootCauseCount";
 
 export default function Page({ params }: { params: { data_id: string } }) {
   const searchParams = useSearchParams();
@@ -24,6 +25,14 @@ export default function Page({ params }: { params: { data_id: string } }) {
 
   const [percentageThreshold, setPercentageThreshold] =
     useState(percent_threshold);
+
+  const {
+    data: dataRootCauseCount,
+    mutate: mutateRootCauseCount,
+    isLoading: isLoadingRootCauseCount,
+    error: errorRootCauseCount,
+    isValidating: isValidatingRootCauseCount,
+  } = useGetRootCauseCount(session?.data?.user.access_token, params.data_id);
 
   const { data, mutate, isLoading, error, isValidating } = useGetDataPareto(
     session?.data?.user.access_token,
@@ -91,6 +100,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
 
   const onMutate = () => {
     setIsMutating(true);
+    mutateRootCauseCount();
     mutate();
     setIsMutating(false);
   };
@@ -157,6 +167,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
                 />
                 <Divider className="h-1 bg-neutral-500 rounded-xl" />
                 <TableParetoHeatloss
+                  rootCauseCount={dataRootCauseCount}
                   tableData={paretoBottomData}
                   summaryData={summaryData}
                   mutate={onMutate}

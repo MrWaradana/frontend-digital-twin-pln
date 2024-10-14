@@ -32,9 +32,11 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  Tooltip,
   Checkbox,
+  Badge,
 } from "@nextui-org/react";
-import { Box, DownloadIcon, PrinterIcon } from "lucide-react";
+import { Box, CircleHelp, DownloadIcon, PrinterIcon } from "lucide-react";
 import EditableCell from "./EditableCell";
 import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
 import ModalRootCause from "./ModalRootCause";
@@ -266,6 +268,7 @@ export default function TableParetoHeatloss({
   isValidating,
   data_id,
   setIsMutating,
+  rootCauseCount,
 }: {
   tableData: any;
   summaryData: any;
@@ -273,6 +276,7 @@ export default function TableParetoHeatloss({
   isValidating?: any;
   data_id?: string;
   setIsMutating?: any;
+  rootCauseCount: any;
 }) {
   const {
     isOpen: modalRootCauseIsopen,
@@ -287,11 +291,15 @@ export default function TableParetoHeatloss({
   const [data, setData] = React.useState(tableData);
   const [expanded, setExpanded] = React.useState<ExpandedState>(true);
   const [tableDataPrint, setTableDataPrint] = React.useState([tableData]);
-
+  const [rootCauseCountState, setRootCauseCountState] = React.useState([]);
   const [selectecModalId, setSelectedModalId] = React.useState<any>({
     variableId: "",
     detailId: "",
   });
+
+  useEffect(() => {
+    setRootCauseCountState(rootCauseCount);
+  }, [rootCauseCount]);
 
   // console.log(summaryData, "summaryData");
 
@@ -433,7 +441,9 @@ export default function TableParetoHeatloss({
             >
               {props.row.depth > 0 && value
                 ? formatSmallNumber(Number(value))
-                : props.row.depth > 0 ? "-" : ""}
+                : props.row.depth > 0
+                ? "-"
+                : ""}
             </div>
           );
         },
@@ -484,9 +494,24 @@ export default function TableParetoHeatloss({
           className: "text-right pr-1",
         },
         header: () => (
-          <div className="text-center">
-            Persen Losses <br /> (%)
-          </div>
+          <Tooltip
+            content={
+              <span>
+                Rumus Persen Losses: <br />
+                <strong>
+                  absolute( (gap/deviasi) * <em>persen_hr</em> )
+                </strong>
+                <br />
+              </span>
+            }
+          >
+            <div className="text-center flex flex-row gap-1">
+              <p>
+                Persen Losses <br /> (%)
+              </p>
+              <CircleHelp size={16} />
+            </div>
+          </Tooltip>
         ),
         cell: (props: any) => {
           const value = props.getValue();
@@ -509,7 +534,9 @@ export default function TableParetoHeatloss({
             >
               {props.row.depth > 0 && value
                 ? formatSmallNumber(Number(value))
-                : props.row.depth > 0 ? "-" : ""}
+                : props.row.depth > 0
+                ? "-"
+                : ""}
             </div>
           );
         },
@@ -523,9 +550,22 @@ export default function TableParetoHeatloss({
           className: "text-right pr-1",
         },
         header: () => (
-          <div className="text-center">
-            Nilai Losses <br /> (kCal/kWh)
-          </div>
+          <Tooltip
+            content={
+              <span>
+                Rumus Nilai Losses: <br />
+                <strong>(persen_losses/100)*1000</strong>
+                <br />
+              </span>
+            }
+          >
+            <div className="text-center flex flex-row gap-1">
+              <p>
+                Nilai Losses <br /> (kWh/kCal)
+              </p>
+              <CircleHelp size={12} />
+            </div>
+          </Tooltip>
         ),
         cell: (props: any) => {
           const value = props.getValue();
@@ -548,7 +588,9 @@ export default function TableParetoHeatloss({
             >
               {props.row.depth > 0 && value
                 ? formatSmallNumber(Number(value))
-                : props.row.depth > 0 ? "-" : ""}
+                : props.row.depth > 0
+                ? "-"
+                : ""}
             </div>
           );
         },
@@ -681,38 +723,60 @@ export default function TableParetoHeatloss({
         header: "To Do Checklist",
         size: 280,
         cell: ({ row }) => {
+          let countData;
+          if (rootCauseCount) {
+            countData = rootCauseCount.find(
+              // @ts-ignore
+              (item) => item.id === row.original.id
+            );
+          }
           // Only render the button if it's a subrow (depth > 0)
           if (row.depth > 0 && row.original.has_cause) {
+            const done = countData?.done || 0; // Default to 0 if countData is undefined
+            const total = countData?.total || 0; // Default to 0 if countData is undefined
             return (
               <div key={row.id} className="flex gap-1">
-                <Button
-                  onPress={() => {
-                    setSelectedModalId({
-                      variableId: row.original.variable.id,
-                      detailId: row.original.id,
-                    });
-                    modalRootCauseOnopen();
-                  }}
-                  color="warning"
-                  size="sm"
-                  className="m-0 p-1"
+                <Badge
+                  content={`${done}/${total}`}
+                  // content={`1`}
+                  color={
+                    countData.done === countData.total || countData.done != 0
+                      ? "success"
+                      : "danger"
+                  }
+                  className="text-white"
                 >
-                  Root Cause
-                </Button>
-                <Button
-                  onPress={() => {
-                    setSelectedModalId({
-                      variableId: row.original.variable.id,
-                      detailId: row.original.id,
-                    });
-                    modalRootActionOnopen();
-                  }}
-                  color="primary"
-                  size="sm"
-                  className="m-0 p-1"
-                >
-                  Action
-                </Button>
+                  <Button
+                    onPress={() => {
+                      setSelectedModalId({
+                        variableId: row.original.variable.id,
+                        detailId: row.original.id,
+                      });
+                      modalRootCauseOnopen();
+                    }}
+                    color="warning"
+                    size="sm"
+                    className="m-0 p-1"
+                  >
+                    Root Cause
+                  </Button>
+                </Badge>
+                <Badge content="!" color="danger">
+                  <Button
+                    onPress={() => {
+                      setSelectedModalId({
+                        variableId: row.original.variable.id,
+                        detailId: row.original.id,
+                      });
+                      modalRootActionOnopen();
+                    }}
+                    color="primary"
+                    size="sm"
+                    className="m-0 p-1"
+                  >
+                    Action
+                  </Button>
+                </Badge>
               </div>
             );
           }

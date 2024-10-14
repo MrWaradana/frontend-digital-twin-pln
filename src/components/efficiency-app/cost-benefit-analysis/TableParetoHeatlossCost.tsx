@@ -353,6 +353,7 @@ export default function TableParetoHeatlossCost({
             style={{
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
+            className="text-center"
           >
             {props.getValue() != "NaN" ? props.getValue() : ""}
           </div>
@@ -623,8 +624,7 @@ export default function TableParetoHeatlossCost({
       {
         header: "Action Menutup Gap",
         size: 45,
-        cell: (props: any) =>
-          props.row.depth > 0 ? <div>{props.getValue()}</div> : "",
+        cell: (props: any) => <div>{props.getValue()}</div>,
       },
       {
         id: "biayaClosingGap",
@@ -638,11 +638,8 @@ export default function TableParetoHeatlossCost({
         size: 55,
         cell: (props: any) => {
           const value = props.getValue();
-          if (
-            (props.row.depth > 0 || !props.row.original.total_nilai_losses) &&
-            value
-          ) {
-            return `Rp.${formatCurrency(value.toFixed(0))}`;
+          if (value) {
+            return `Rp.${formatCurrency(value.toFixed(2))}`;
           }
           return "-";
         },

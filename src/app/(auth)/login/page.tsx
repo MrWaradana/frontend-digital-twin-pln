@@ -19,6 +19,7 @@ import useCaptcha from "use-offline-captcha";
 
 export default function Component() {
   const captchaRef = useRef<HTMLElement | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const [captchaValue, setValue] = useState("");
   const [isCaptchaValidated, setIsCaptchaValidated] = useState(false);
   const { data: session } = useSession();
@@ -32,7 +33,7 @@ export default function Component() {
   const userOpt = {
     type: "mixed", // "mixed"(default) | "numeric" | "alpha"
     length: 5, // 4 to 8 number. default is 5
-    sensitive: false, // Case sensitivity. default is false
+    sensitive: true, // Case sensitivity. default is false
     width: 200, // Canvas width. default is 200
     height: 50, // Canvas height. default is 50
     fontColor: "#000",
@@ -75,18 +76,19 @@ export default function Component() {
       router.replace("/");
     } catch (error) {
       toast.error(`error: ${error}`);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const handleValidate = () => {
+    setIsLoading(true);
     const isValid = validate(captchaValue);
     if (isValid) {
       toast.success("Captcha is validated, you can sign in!");
       setIsCaptchaValidated(true);
+      formRef.current?.requestSubmit();
     } else {
       toast.error("Captcha is wrong!");
+      setIsLoading(false);
     }
   };
 
@@ -111,7 +113,7 @@ export default function Component() {
           </h1>
           {/* <p className="text-muted-foreground">Enter your credentials to access the PLN performance dashboard.</p> */}
         </div>
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <form ref={formRef} className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <Label htmlFor="username">Username</Label>
             <Input
@@ -151,10 +153,10 @@ export default function Component() {
           </div> */}
 
           <div className="flex flex-col gap-2">
-            {/* @ts-ignore */}
             <div className="flex flex-row gap-3 items-end">
               <div>
                 <p className="text-xs">Captcha</p>
+                {/* @ts-ignore */}
                 <div ref={captchaRef} />
               </div>
               <Button onClick={handleRefresh} color="secondary" size="sm">
@@ -165,20 +167,21 @@ export default function Component() {
             <Input
               onChange={(e) => setValue(e.target.value)}
               value={captchaValue}
+              isDisabled={isCaptchaValidated}
               maxLength={5}
-              endContent={
-                <>
-                  <Button onClick={handleValidate} color="success" size="sm">
-                    Validate
-                  </Button>
-                </>
-              }
+              // endContent={
+              //   <>
+              //     <Button onClick={handleValidate} color="success" size="sm">
+              //       Validate
+              //     </Button>
+              //   </>
+              // }
             />
           </div>
           <Button
-            type="submit"
+            type="button"
+            onClick={handleValidate}
             className="w-full"
-            isDisabled={!isCaptchaValidated}
             color="primary"
             disabled={isLoading ? true : false}
             isLoading={isLoading}

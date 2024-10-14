@@ -26,6 +26,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Badge,
 } from "@nextui-org/react";
 import { useState, Fragment } from "react";
 import Link from "next/link";
@@ -288,7 +289,34 @@ export default function VariableInputForm({
                 ([category, variables]: any) => (
                   <AccordionItem
                     key={category}
-                    title={category == "null" ? "Tidak Ada Kategori" : category}
+                    textValue={
+                      category === "null"
+                        ? "Tidak Ada Kategori"
+                        : `${category}${
+                            variables.some((v: any) => v.web_id)
+                              ? " => PI SERVER"
+                              : ""
+                          }`
+                    }
+                    title={
+                      <span
+                        style={{
+                          color: variables.some((v: any) => v.web_id)
+                            ? "white"
+                            : "inherit",
+                          backgroundColor: variables.some((v: any) => v.web_id)
+                            ? "green"
+                            : "inherit",
+                          padding: "2px",
+                        }}
+                      >
+                        {category === "null"
+                          ? "Tidak Ada Kategori"
+                          : variables.some((v: any) => v.web_id)
+                          ? `${category} => PI SERVER`
+                          : `${category}`}
+                      </span>
+                    }
                   >
                     {variables.map((v: any) => (
                       <Fragment key={v.id}>
@@ -300,14 +328,20 @@ export default function VariableInputForm({
                               <FormControl>
                                 <Input
                                   placeholder={`${""}`}
-                                  label={v.input_name}
+                                  label={
+                                    v.web_id
+                                      ? `${v.input_name} => PI Server`
+                                      : v.input_name
+                                  }
+                                  color={`${v.web_id ? "success" : "default"}`}
                                   size="md"
                                   className={`justify-between max-w-xs lg:max-w-full  border-b-1 pb-1 pt-4`}
                                   labelPlacement="outside"
                                   type={
-                                    v.base_case.toString() === "N/A"
-                                      ? "hidden"
-                                      : "text"
+                                    // v.base_case.toString() === "N/A"
+                                    //   ? "hidden"
+                                    //   : "text"
+                                    "text"
                                   }
                                   required
                                   {...field}

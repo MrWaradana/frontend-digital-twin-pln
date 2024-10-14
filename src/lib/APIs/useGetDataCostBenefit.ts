@@ -63,21 +63,17 @@ export function useGetDataCostBenefit(
   costThreshold: string
   // data_id: string | undefined
 ): HookReply<CostBenefitDataType> {
-  return useApiFetch(
-    `${EFFICIENCY_API_URL}/data/cost-benefit?cost_threshold=${costThreshold}`,
-    !!token,
-    token,
-    {
-      keepPreviousData: true,
-      refreshInterval: 7200000,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      refreshWhenHidden: false,
-      refreshWhenOffline: false,
-      errorRetryInterval: 60000,
-      shouldRetryOnError: false,
-      // revalidateIfStale: false,
-      // revalidateOnMount: false,
-    }
-  );
+  const url = `${EFFICIENCY_API_URL}/data/cost-benefit${
+    costThreshold ? `?cost_threshold=${costThreshold}` : ""
+  }`;
+  return useApiFetch(url, !!token, token, {
+    keepPreviousData: true,
+    refreshInterval: 7200000,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    refreshWhenHidden: false,
+    refreshWhenOffline: false,
+    errorRetryInterval: 60000,
+    shouldRetryOnError: false,
+  });
 }
