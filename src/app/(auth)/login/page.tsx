@@ -7,17 +7,20 @@
  */
 import Image from "next/image";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { Button } from "@nextui-org/react";
-import { useState, useEffect } from "react";
+import { Button, Input } from "@nextui-org/react";
+import { useState, useEffect, useRef } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import PlnLogo from "../../../../public/Logo_PLN.svg";
 import { useSession } from "next-auth/react";
+import useCaptcha from "use-offline-captcha";
 
 export default function Component() {
+  const captchaRef = useRef<HTMLElement | null>(null);
+  const [captchaValue, setValue] = useState("");
+  const [isCaptchaValidated, setIsCaptchaValidated] = useState(false);
   const { data: session } = useSession();
   const [credentials, setCredentials] = useState({
     username: "",
@@ -25,6 +28,19 @@ export default function Component() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  const userOpt = {
+    type: "mixed", // "mixed"(default) | "numeric" | "alpha"
+    length: 5, // 4 to 8 number. default is 5
+    sensitive: false, // Case sensitivity. default is false
+    width: 200, // Canvas width. default is 200
+    height: 50, // Canvas height. default is 50
+    fontColor: "#000",
+    background: "rgba(255, 255, 255, .2)",
+  };
+
+  //@ts-ignore
+  const { gen, validate } = useCaptcha(captchaRef, userOpt);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -64,9 +80,26 @@ export default function Component() {
     }
   };
 
+  const handleValidate = () => {
+    const isValid = validate(captchaValue);
+    if (isValid) {
+      toast.success("Captcha is validated, you can sign in!");
+      setIsCaptchaValidated(true);
+    } else {
+      toast.error("Captcha is wrong!");
+    }
+  };
+
+  const handleRefresh = () => gen();
+
+  useEffect(() => {
+    if (gen) gen();
+  }, [gen]);
+
   return (
     <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
       <Toaster />
+
       <div className="mx-auto w-full max-w-md space-y-6">
         <div className="space-y-2 text-center items-center flex flex-col gap-4">
           <Image src={PlnLogo} alt="Logo PLN" width={124} />
@@ -116,9 +149,36 @@ export default function Component() {
               Remember me
             </Label>
           </div> */}
+
+          <div className="flex flex-col gap-2">
+            {/* @ts-ignore */}
+            <div className="flex flex-row gap-3 items-end">
+              <div>
+                <p className="text-xs">Captcha</p>
+                <div ref={captchaRef} />
+              </div>
+              <Button onClick={handleRefresh} color="secondary" size="sm">
+                Refresh Captcha
+              </Button>
+            </div>
+            <p className="text-xs">Fill the captcha above before sign in!</p>
+            <Input
+              onChange={(e) => setValue(e.target.value)}
+              value={captchaValue}
+              maxLength={5}
+              endContent={
+                <>
+                  <Button onClick={handleValidate} color="success" size="sm">
+                    Validate
+                  </Button>
+                </>
+              }
+            />
+          </div>
           <Button
             type="submit"
             className="w-full"
+            isDisabled={!isCaptchaValidated}
             color="primary"
             disabled={isLoading ? true : false}
             isLoading={isLoading}
