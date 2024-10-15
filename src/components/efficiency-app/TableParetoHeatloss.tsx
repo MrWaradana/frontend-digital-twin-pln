@@ -554,7 +554,7 @@ export default function TableParetoHeatloss({
             content={
               <span>
                 Rumus Nilai Losses: <br />
-                <strong>(persen_losses/100)*1000</strong>
+                <strong>(persen_losses/100)*(NPHR Commisioning)</strong>
                 <br />
               </span>
             }
@@ -739,11 +739,7 @@ export default function TableParetoHeatloss({
                 <Badge
                   content={`${done}/${total}`}
                   // content={`1`}
-                  color={
-                    countData.done === countData.total || countData.done != 0
-                      ? "success"
-                      : "danger"
-                  }
+                  color={done === total || done != 0 ? "success" : "danger"}
                   className="text-white"
                 >
                   <Button
