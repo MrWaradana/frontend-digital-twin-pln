@@ -71,7 +71,7 @@ export function useApiFetch<T, RawT = T>(
   useGeneralErrorToast(error);
 
   // Check if token invalid, force user to login again
-  if (error?.message === "token is invalid") {
+  if (error?.message.toLocaleLowerCase() === "token is invalid") {
     router.push("/login");
   }
 
