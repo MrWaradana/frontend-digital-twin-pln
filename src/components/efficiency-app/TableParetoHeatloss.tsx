@@ -770,9 +770,9 @@ export default function TableParetoHeatloss({
                     modalRootActionOnopen();
                   }}
                   isLoading={isValidatingRootCauseCount}
-                  color="primary"
+                  color={done != 0 ? "success" : "primary"}
                   size="sm"
-                  className="m-0 p-1"
+                  className={`m-0 p-1 ${done != 0 ? "text-white" : ""}`}
                 >
                   Action
                 </Button>
@@ -948,7 +948,7 @@ export default function TableParetoHeatloss({
     );
     const worksheet = XLSX.utils.json_to_sheet(flattenedData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Pareto_Heat_Loss");
     //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
     //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
     return XLSX.writeFile(
