@@ -35,7 +35,7 @@ import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
 } from "@radix-ui/react-icons";
-import { parameterOptions } from "@/lib/efficiency-data";
+import { parameterOptions, statusOptions } from "@/lib/efficiency-data";
 import { capitalize } from "@/lib/utils";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { useSession } from "next-auth/react";
@@ -63,7 +63,9 @@ const INITIAL_VISIBLE_COLUMNS = [
   "status",
   "actions",
 ];
+
 const INITIAL_VISIBLE_PARAMETER = ["current"];
+const INITIAL_VISIBLE_STATUS = ["Done", "Pending", "Processing"];
 
 export default function TableEfficiency({
   tableData,
@@ -107,6 +109,9 @@ export default function TableEfficiency({
   );
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
+  );
+  const [statusFilter, setStatusFilter] = React.useState<Selection>(
+    new Set(INITIAL_VISIBLE_STATUS)
   );
   const [parameterFilter, setParameterFilter] = React.useState<Selection>(
     new Set(INITIAL_VISIBLE_PARAMETER)
@@ -162,13 +167,21 @@ export default function TableEfficiency({
         Array.from(parameterFilter).includes(item.jenis_parameter)
       );
     }
+    if (
+      statusFilter !== "all" &&
+      Array.from(statusFilter).length !== statusOptions.length
+    ) {
+      filteredData = filteredData.filter((item) =>
+        Array.from(statusFilter).includes(item.status)
+      );
+    }
     // filter non performance data
     filteredData = filteredData.filter((item) => {
       return item.is_performance_test !== true;
     });
 
     return filteredData;
-  }, [tableData, filterValue, parameterFilter]);
+  }, [tableData, filterValue, parameterFilter, statusFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -376,6 +389,32 @@ export default function TableEfficiency({
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
+                  Status
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Statuses"
+                closeOnSelect={false}
+                selectedKeys={statusFilter}
+                selectionMode="multiple"
+                onSelectionChange={setStatusFilter}
+              >
+                {statusOptions.map((status: any) => {
+                  return (
+                    <DropdownItem key={status.uid} className="capitalize">
+                      {capitalize(status.name)}
+                    </DropdownItem>
+                  );
+                })}
+              </DropdownMenu>
+            </Dropdown>
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  endContent={<ChevronDownIcon className="text-small" />}
+                  variant="flat"
+                >
                   Parameter
                 </Button>
               </DropdownTrigger>
@@ -458,6 +497,7 @@ export default function TableEfficiency({
   }, [
     filterValue,
     parameterFilter,
+    statusFilter,
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,

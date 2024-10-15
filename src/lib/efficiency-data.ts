@@ -12,5 +12,11 @@ const parameterOptions = [
   { name: "Niaga", uid: "Niaga" },
   { name: "Current", uid: "current" },
 ];
+const statusOptions = [
+  { name: "Pending", uid: "Pending" },
+  { name: "Done", uid: "Done" },
+  { name: "Processing", uid: "Processing" },
+  { name: "Failed", uid: "Failed" },
+];
 
-export { columns, parameterOptions };
+export { columns, parameterOptions, statusOptions };
