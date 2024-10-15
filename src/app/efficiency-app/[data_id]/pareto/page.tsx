@@ -172,6 +172,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
                   summaryData={summaryData}
                   mutate={onMutate}
                   isValidating={isValidating}
+                  isValidatingRootCauseCount={isValidatingRootCauseCount}
                   data_id={params.data_id}
                   setIsMutating={setIsMutating}
                 />

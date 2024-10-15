@@ -268,6 +268,7 @@ export default function TableParetoHeatloss({
   isValidating,
   data_id,
   setIsMutating,
+  isValidatingRootCauseCount,
   rootCauseCount,
 }: {
   tableData: any;
@@ -276,6 +277,7 @@ export default function TableParetoHeatloss({
   isValidating?: any;
   data_id?: string;
   setIsMutating?: any;
+  isValidatingRootCauseCount: any;
   rootCauseCount: any;
 }) {
   const {
@@ -736,43 +738,45 @@ export default function TableParetoHeatloss({
             const total = countData?.total || 0; // Default to 0 if countData is undefined
             return (
               <div key={row.id} className="flex gap-1">
-                <Badge
+                {/* <Badge
                   content={`${done}/${total}`}
                   // content={`1`}
                   color={done === total || done != 0 ? "success" : "danger"}
                   className="text-white"
+                > */}
+                <Button
+                  onPress={() => {
+                    setSelectedModalId({
+                      variableId: row.original.variable.id,
+                      detailId: row.original.id,
+                    });
+                    modalRootCauseOnopen();
+                  }}
+                  isLoading={isValidatingRootCauseCount}
+                  color={done != 0 ? "success" : "warning"}
+                  size="sm"
+                  className={`m-0 p-1 ${done != 0 ? "text-white" : ""}`}
                 >
-                  <Button
-                    onPress={() => {
-                      setSelectedModalId({
-                        variableId: row.original.variable.id,
-                        detailId: row.original.id,
-                      });
-                      modalRootCauseOnopen();
-                    }}
-                    color="warning"
-                    size="sm"
-                    className="m-0 p-1"
-                  >
-                    Root Cause
-                  </Button>
-                </Badge>
-                <Badge content="!" color="danger">
-                  <Button
-                    onPress={() => {
-                      setSelectedModalId({
-                        variableId: row.original.variable.id,
-                        detailId: row.original.id,
-                      });
-                      modalRootActionOnopen();
-                    }}
-                    color="primary"
-                    size="sm"
-                    className="m-0 p-1"
-                  >
-                    Action
-                  </Button>
-                </Badge>
+                  Root Cause
+                </Button>
+                {/* </Badge> */}
+                {/* <Badge content="!" color="danger"> */}
+                <Button
+                  onPress={() => {
+                    setSelectedModalId({
+                      variableId: row.original.variable.id,
+                      detailId: row.original.id,
+                    });
+                    modalRootActionOnopen();
+                  }}
+                  isLoading={isValidatingRootCauseCount}
+                  color="primary"
+                  size="sm"
+                  className="m-0 p-1"
+                >
+                  Action
+                </Button>
+                {/* </Badge> */}
               </div>
             );
           }
