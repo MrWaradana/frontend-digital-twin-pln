@@ -41,19 +41,19 @@ export default function Page() {
 
   const variable = variableData ?? [];
 
-  if (thermoStatusData?.thermo_status ) {
-    setTimeout(() => router.push("/efficiency-app"), 2000);
-    return (
-      <EfficiencyContentLayout title="Input Form">
-        <div className="flex justify-center mt-12">
-          <CircularProgress
-            color="primary"
-            label="Thermoflow is processing data, redirecting to all efficiency data..."
-          />
-        </div>
-      </EfficiencyContentLayout>
-    );
-  }
+  // if (thermoStatusData?.thermo_status ) {
+  //   setTimeout(() => router.push("/efficiency-app"), 2000);
+  //   return (
+  //     <EfficiencyContentLayout title="Input Form">
+  //       <div className="flex justify-center mt-12">
+  //         <CircularProgress
+  //           color="primary"
+  //           label="Thermoflow is processing data, redirecting to all efficiency data..."
+  //         />
+  //       </div>
+  //     </EfficiencyContentLayout>
+  //   );
+  // }
 
   if (isLoading)
     return (

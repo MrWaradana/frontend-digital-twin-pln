@@ -33,6 +33,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useStatusThermoflowStore } from "../../store/statusThermoflow";
+import AsyncSelect from "react-select/async";
 import { useGetThermoStatus } from "../../lib/APIs/useGetThermoStatus";
 interface Variable {
   category: string;
@@ -87,6 +88,7 @@ export default function VariableInputForm({
 
   const formSchemaInput = z.object({
     name: z.string({ message: "Name is required!" }), // Adjust validation as needed
+    date: z.string({ message: "Date is required!" }),
     inputs: z.object(
       Object.fromEntries(
         filteredVariableData.map((v: any) => [
@@ -192,6 +194,26 @@ export default function VariableInputForm({
     sendData();
   }
 
+  // Date Select for PI data
+
+  const DateOptions = [
+    { value: "12-12-2024", label: "12-12-2024", date: "12-12-2024" },
+    { value: "13-12-2024", label: "13-12-2024", date: "13-12-2024" },
+    { value: "14-12-2024", label: "14-12-2024", date: "14-12-2024" },
+  ];
+
+  const filterDates = (inputValue: string) => {
+    return DateOptions.filter((i) =>
+      i.label.toLowerCase().includes(inputValue.toLowerCase())
+    );
+  };
+
+  const loadOptions = (inputValue: string, callback: (options) => void) => {
+    setTimeout(() => {
+      callback(filterDates(inputValue));
+    }, 1000);
+  };
+
   function onError(formError: any) {
     console.log(formError);
   }
@@ -277,7 +299,15 @@ export default function VariableInputForm({
               />
             </div>
             <hr />
-            <h2 className="font-bold text-lg sticky top-16 bg-white p-1 rounded-md dark:bg-black z-50">
+            <p>Date PI Data</p>
+            <AsyncSelect
+              cacheOptions
+              loadOptions={loadOptions}
+              defaultOptions
+              isDisabled={true}
+            />
+            <hr />
+            <h2 className="font-bold text-lg sticky top-16 bg-white p-1 rounded-md dark:bg-black ">
               Input Variables
             </h2>
             <Accordion
@@ -302,12 +332,13 @@ export default function VariableInputForm({
                       <span
                         style={{
                           color: variables.some((v: any) => v.web_id)
-                            ? "white"
+                            ? "black"
                             : "inherit",
                           backgroundColor: variables.some((v: any) => v.web_id)
-                            ? "green"
+                            ? "rgba(205, 254, 194,0.8)"
                             : "inherit",
                           padding: "2px",
+                          borderRadius: "8px",
                         }}
                       >
                         {category === "null"

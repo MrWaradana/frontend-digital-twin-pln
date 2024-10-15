@@ -7,6 +7,7 @@ import TableParetoHeatlossCost from "@/components/efficiency-app/cost-benefit-an
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDebouncedCallback } from "use-debounce";
+import AsyncSelect from "react-select/async";
 
 export default function CostBenefitContainer() {
   const { data: session } = useSession();
@@ -20,6 +21,25 @@ export default function CostBenefitContainer() {
   const costData = data?.cost_benefit_result ?? [];
   const costThresholdData = data?.cost_threshold ?? 0;
   // const costData = data ?? [];
+
+  // Dummy Data
+  const DateOptions = [
+    { value: "12-12-2024", label: "12-12-2024", date: "12-12-2024" },
+    { value: "13-12-2024", label: "13-12-2024", date: "13-12-2024" },
+    { value: "14-12-2024", label: "14-12-2024", date: "14-12-2024" },
+  ];
+
+  const filterDates = (inputValue: string) => {
+    return DateOptions.filter((i) =>
+      i.label.toLowerCase().includes(inputValue.toLowerCase())
+    );
+  };
+
+  const loadOptions = (inputValue: string, callback: (options) => void) => {
+    setTimeout(() => {
+      callback(filterDates(inputValue));
+    }, 1000);
+  };
 
   // const debounced = useDebouncedCallback(
   //   // function
@@ -54,7 +74,20 @@ export default function CostBenefitContainer() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-4">
+      <div>
+        <p>Select Data</p>
+        <AsyncSelect
+          cacheOptions
+          loadOptions={loadOptions}
+          placeholder={"Select Cost Benefit Data..."}
+          defaultOptions
+          defaultValue={"12-12-2024"}
+          className="z-[100]"
+          isDisabled={true}
+        />
+        <hr />
+      </div>
       {isLoading || isValidating ? (
         <div className="w-full flex justify-center">
           <Spinner label={`Loading...`} />
