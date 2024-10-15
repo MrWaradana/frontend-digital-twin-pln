@@ -5,7 +5,7 @@ import { Select, SelectSection, SelectItem } from "@nextui-org/react";
 
 const masterDataParameter = [
   { key: "current", label: "Current" },
-  { key: "Niaga", label: "Niaga" },
+  // { key: "Niaga", label: "Niaga" },
   { key: "Commision", label: "Commision" },
 ];
 
