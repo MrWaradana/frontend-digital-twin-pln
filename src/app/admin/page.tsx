@@ -63,6 +63,7 @@ const columns = [
 ];
 
 export default function Page() {
+
   return (
     <ContentLayout title="Digital Twin">
       <section className="relative"></section>

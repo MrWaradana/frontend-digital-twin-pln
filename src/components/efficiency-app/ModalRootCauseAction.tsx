@@ -213,7 +213,7 @@ function ModalRootCause({
         };
       });
     }
-    console.log(checkRootActions);
+    // console.log(checkRootActions);
   }, [dataRootCauseAction, rootCauseAction, rootCauseActionValidating]);
 
   //Handler for checkbox changes

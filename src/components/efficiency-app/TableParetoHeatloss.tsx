@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import {
   Column,
   Table,
@@ -41,6 +41,7 @@ import EditableCell from "./EditableCell";
 import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
 import ModalRootCause from "./ModalRootCause";
 import ModalRootCauseAction from "./ModalRootCauseAction";
+import { useSession } from "next-auth/react";
 
 const formattedNumber = (value: any) =>
   new Intl.NumberFormat("id-ID").format(value);
@@ -270,6 +271,7 @@ export default function TableParetoHeatloss({
   setIsMutating,
   isValidatingRootCauseCount,
   rootCauseCount,
+  isLoadingRootCauseCount,
 }: {
   tableData: any;
   summaryData: any;
@@ -279,7 +281,9 @@ export default function TableParetoHeatloss({
   setIsMutating?: any;
   isValidatingRootCauseCount: any;
   rootCauseCount: any;
+  isLoadingRootCauseCount: any;
 }) {
+  const { data: session } = useSession();
   const {
     isOpen: modalRootCauseIsopen,
     onOpen: modalRootCauseOnopen,
@@ -305,9 +309,24 @@ export default function TableParetoHeatloss({
 
   // console.log(summaryData, "summaryData");
 
+  const [columnVisibility, setColumnVisibility] = React.useState({
+    category: true,
+    uom: true, //hide this column by default
+    referenceData: true,
+    existingData: true,
+    gap: true,
+    persenLosses: true,
+    nilaiLosses: true,
+    symptomps: true,
+    potentialBenefit: true,
+    biayaClosingGap: true,
+    toDoChecklist: session?.user.user.role === "Management" ? false : true,
+  });
+
   const columns = useMemo(
     () => [
       {
+        id: "category",
         accessorKey: "category",
         header: "Parameter",
         minSize: 60,
@@ -350,6 +369,7 @@ export default function TableParetoHeatloss({
         footer: (props: any) => props.column.id,
       },
       {
+        id: "uom",
         header: "UOM",
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) =>
@@ -599,6 +619,7 @@ export default function TableParetoHeatloss({
         footer: (props: any) => props.column.id,
       },
       {
+        id: "symptomps",
         header: "Symptoms",
         size: 45,
         cell: (props: any) => (
@@ -725,12 +746,16 @@ export default function TableParetoHeatloss({
         header: "To Do Checklist",
         size: 280,
         cell: ({ row }) => {
+          if (session?.user.user.role === "Management") {
+            return null; // Hide the column for management role
+          }
           let countData;
           if (rootCauseCount) {
-            countData = rootCauseCount.find(
-              // @ts-ignore
-              (item) => item.id === row.original.id
-            );
+            // countData = rootCauseCount.find(
+            //   // @ts-ignore
+            //   (item) => item.id === row.original.id
+            // );
+            countData = rootCauseCount[row.original.id];
           }
           // Only render the button if it's a subrow (depth > 0)
           if (row.depth > 0 && row.original.has_cause) {
@@ -752,8 +777,8 @@ export default function TableParetoHeatloss({
                     });
                     modalRootCauseOnopen();
                   }}
-                  isLoading={isValidatingRootCauseCount}
-                  color={done != 0 ? "success" : "warning"}
+                  // isLoading={isValidatingRootCauseCount}
+                  color={done != 0 ? "success" : "danger"}
                   size="sm"
                   className={`m-0 p-1 ${done != 0 ? "text-white" : ""}`}
                 >
@@ -769,8 +794,8 @@ export default function TableParetoHeatloss({
                     });
                     modalRootActionOnopen();
                   }}
-                  isLoading={isValidatingRootCauseCount}
-                  color={done != 0 ? "success" : "primary"}
+                  // isLoading={isValidatingRootCauseCount}
+                  color={"primary"}
                   size="sm"
                   className={`m-0 p-1 ${done != 0 ? "text-white" : ""}`}
                 >
@@ -806,6 +831,7 @@ export default function TableParetoHeatloss({
     columns,
     state: {
       expanded,
+      columnVisibility,
     },
     meta: {
       updateData: (rowIndex, columnId, value) => {
@@ -947,8 +973,10 @@ export default function TableParetoHeatloss({
       }))
     );
     const worksheet = XLSX.utils.json_to_sheet(flattenedData);
+    // const worksheet_root_cause = XLSX.utils.json_to_sheet(flattenedData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Pareto_Heat_Loss");
+    // XLSX.utils.book_append_sheet(workbook, worksheet_root_cause, "Root_Cause_Actions");
     //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
     //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
     return XLSX.writeFile(
@@ -1030,7 +1058,9 @@ export default function TableParetoHeatloss({
         <table
           cellPadding=".25"
           cellSpacing="0"
-          className="overflow-y-scroll relative"
+          className={`overflow-y-scroll relative ${
+            session?.user.user.role === "Management" ? "min-w-full" : ""
+          }`}
           style={{
             ...columnSizeVars,
             width: table.getTotalSize(),
@@ -1047,6 +1077,11 @@ export default function TableParetoHeatloss({
                         key={header.id}
                         className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 border-r-1 border-neutral-800 ${
                           header.column.columnDef.meta?.className ?? ""
+                        } ${
+                          header.column.id === "toDoChecklist" &&
+                          session?.user.user.role === "Management"
+                            ? "hidden"
+                            : ""
                         } `}
                         style={{
                           width: `calc(var(--header-${header?.id}-size) * 1px)`,

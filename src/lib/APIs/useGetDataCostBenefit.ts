@@ -63,7 +63,7 @@ export function useGetDataCostBenefit(
   costThreshold: string
   // data_id: string | undefined
 ): HookReply<CostBenefitDataType> {
-  const url = `${EFFICIENCY_API_URL}/data/cost-benefit${
+  const url = `${EFFICIENCY_API_URL}/data/${`new`}/cost-benefit${
     costThreshold ? `?cost_threshold=${costThreshold}` : ""
   }`;
   return useApiFetch(url, !!token, token, {

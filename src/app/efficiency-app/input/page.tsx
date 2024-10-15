@@ -16,9 +16,10 @@ import { useSession } from "next-auth/react";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { useGetVariables } from "@/lib/APIs/useGetVariables";
 import { useGetThermoStatus } from "@/lib/APIs/useGetThermoStatus";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Page() {
+  const params = useSearchParams();
   const router = useRouter();
   const { data: session, status } = useSession();
   const excels = useExcelStore((state) => state.excels);
@@ -33,11 +34,20 @@ export default function Page() {
     mutate: mutateThermoStatus,
   } = useGetThermoStatus();
 
+  const parameter = params.get("parameter") ?? "";
+  const date = params.get("date") ?? "";
+
   const {
     data: variableData,
     isLoading,
     error,
-  } = useGetVariables(session?.user.access_token, excels[0].id, "in");
+  } = useGetVariables(
+    session?.user.access_token,
+    excels[0].id,
+    "in",
+    parameter,
+    date
+  );
 
   const variable = variableData ?? [];
 

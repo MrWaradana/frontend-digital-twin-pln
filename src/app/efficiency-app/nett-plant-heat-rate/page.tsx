@@ -60,6 +60,9 @@ export default function Page({ params }: { params: { data_id: string } }) {
           </>
         }
         onPress={onOpen}
+        className={`${
+          session?.user.user.role === "Management" ? "hidden" : ""
+        }`}
       >
         Input Niaga
       </Button>

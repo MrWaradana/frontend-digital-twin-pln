@@ -417,9 +417,7 @@ export default function TableParetoHeatlossNPHR({
                 paddingLeft: `${props.cell.row.depth * 1}rem`,
               }}
             >
-              {value
-                ? formatSmallNumber(Number(value))
-                : ""}
+              {value ? formatSmallNumber(Number(value)) : ""}
             </div>
           );
         },
@@ -846,8 +844,10 @@ export default function TableParetoHeatlossNPHR({
       total_biaya: dataItem.total_biaya,
     }));
     const worksheet = XLSX.utils.json_to_sheet(excelData);
+    // const worksheet_root_cause = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Pareto Heat Loss");
+    // XLSX.utils.book_append_sheet(workbook, worksheet_root_cause, "Pareto Heat Loss");
     //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
     //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
     return XLSX.writeFile(
@@ -863,6 +863,7 @@ export default function TableParetoHeatlossNPHR({
     window.print();
   };
 
+  // For resizing optimization
   const columnSizeVars = React.useMemo(() => {
     const headers = table.getFlatHeaders();
     const colSizes: { [key: string]: number } = {};

@@ -28,6 +28,7 @@ import {
   SortDescriptor,
   Link,
   Spinner,
+  DatePicker,
 } from "@nextui-org/react";
 import {
   DotsVerticalIcon,
@@ -42,6 +43,9 @@ import { useSession } from "next-auth/react";
 import { useSelectedEfficiencyDataStore } from "../../store/selectedEfficiencyData";
 import toast from "react-hot-toast";
 import { useStatusThermoflowStore } from "../../store/statusThermoflow";
+import { getLocalTimeZone, today, parseDate } from "@internationalized/date";
+import { Route } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const parameterColorMap: Record<string, ChipProps["color"]> = {
   current: "success",
@@ -82,6 +86,7 @@ export default function TableEfficiency({
   isValidating: boolean;
   thermoStatus: any;
 }) {
+  const router = useRouter();
   const [tableState, setTableState] = React.useState(tableData);
   const [isDeleteLoading, setIsDeleteLoading] = React.useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -102,6 +107,10 @@ export default function TableEfficiency({
 
   type TransactionsType = (typeof tableData)[0];
 
+  const [periodValue, setPeriodValue] = React.useState(
+    today(getLocalTimeZone())
+  );
+  const [modalChoosePeriod, setModalChoosePeriod] = React.useState(false);
   const [loadingEfficiency, setLoadingEfficiency] = React.useState(false);
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
@@ -240,6 +249,11 @@ export default function TableEfficiency({
     } finally {
       setIsDeleteLoading(false);
     }
+  };
+
+  const handlePeriod = () => {
+    const url = `${addNewUrl}?parameter=periodic&date=${periodValue}`;
+    router.push(url);
   };
 
   const renderCell = React.useCallback(
@@ -460,20 +474,42 @@ export default function TableEfficiency({
                 ))}
               </DropdownMenu>
             </Dropdown> */}
-            <Button
-              as={Link}
-              href={addNewUrl}
-              // isDisabled={thermoStatus ?? false}
-              // isLoading={thermoStatus ?? false}
-              color="primary"
-              startContent={
-                // <PlusIcon className={`${thermoStatus ? "hidden" : ""}`} />
-                <PlusIcon />
-              }
-            >
-              Add New
-              {/* {!thermoStatus ? "Add New" : "Processing Data..."} */}
-            </Button>
+
+            <Dropdown>
+              <DropdownTrigger>
+                <Button
+                  as={Link}
+                  // isDisabled={thermoStatus ?? false}
+                  // isLoading={thermoStatus ?? false}
+                  color="primary"
+                  startContent={
+                    // <PlusIcon className={`${thermoStatus ? "hidden" : ""}`} />
+                    <PlusIcon />
+                  }
+                  className={`${
+                    session?.data?.user.user.role === "Management"
+                      ? "hidden"
+                      : ""
+                  } `}
+                >
+                  Add New
+                  {/* {!thermoStatus ? "Add New" : "Processing Data..."} */}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu aria-label="Actions">
+                <DropdownItem key="new" href={`${addNewUrl}?parameter=current`}>
+                  Current
+                </DropdownItem>
+                <DropdownItem
+                  key="new"
+                  onClick={() => {
+                    setModalChoosePeriod(true);
+                  }}
+                >
+                  Periodic
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -573,6 +609,40 @@ export default function TableEfficiency({
     </Modal>
   );
 
+  const choosePeriodicModal = (
+    <Modal isOpen={modalChoosePeriod} onOpenChange={setModalChoosePeriod}>
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader>Confirm Deletion</ModalHeader>
+            <ModalBody>
+              <DatePicker
+                label="Birth date"
+                className="max-w-[284px]"
+                maxValue={today(getLocalTimeZone())}
+                defaultValue={today(getLocalTimeZone())}
+                //@ts-ignore
+                onChange={setPeriodValue}
+              />
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                color="success"
+                // isLoading={isDeleteLoading}
+                onPress={handlePeriod}
+              >
+                Submit
+              </Button>
+              <Button variant="light" onPress={onClose}>
+                Cancel
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
+  );
+
   // if (isDeleteLoading) {
   //   return (
   //     <div>
@@ -584,6 +654,7 @@ export default function TableEfficiency({
   return (
     <>
       {deleteConfirmationModal}
+      {choosePeriodicModal}
       <Table
         aria-label="Efficiency Data Table"
         isHeaderSticky

@@ -88,7 +88,7 @@ export default function VariableInputForm({
 
   const formSchemaInput = z.object({
     name: z.string({ message: "Name is required!" }), // Adjust validation as needed
-    date: z.string({ message: "Date is required!" }),
+    // date: z.string({ message: "Date is required!" }),
     inputs: z.object(
       Object.fromEntries(
         filteredVariableData.map((v: any) => [
@@ -299,14 +299,14 @@ export default function VariableInputForm({
               />
             </div>
             <hr />
-            <p>Date PI Data</p>
+            {/* <p>Date PI Data</p>
             <AsyncSelect
               cacheOptions
               loadOptions={loadOptions}
               defaultOptions
               isDisabled={true}
             />
-            <hr />
+            <hr /> */}
             <h2 className="font-bold text-lg sticky top-16 bg-white p-1 rounded-md dark:bg-black ">
               Input Variables
             </h2>

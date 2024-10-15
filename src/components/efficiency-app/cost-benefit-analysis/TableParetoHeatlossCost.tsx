@@ -622,9 +622,13 @@ export default function TableParetoHeatlossCost({
         },
       },
       {
+        id: "actionMenutupGap",
         header: "Action Menutup Gap",
+        accessorFn: (row: any) => row.action_menutup_gap.join("\n"),
         size: 45,
-        cell: (props: any) => <div>{props.getValue()}</div>,
+        cell: (props: any) => (
+          <div style={{ whiteSpace: "pre-wrap" }}>{props.getValue()}</div>
+        ),
       },
       {
         id: "biayaClosingGap",
@@ -804,6 +808,7 @@ export default function TableParetoHeatlossCost({
       persen_hr: dataItem.persen_hr,
       deviasi: dataItem.deviasi,
       symptoms: dataItem.symptoms,
+      potential_benefit: dataItem.cost_benefit,
       total_biaya: dataItem.total_biaya,
     }));
     // Generate CSV using flattened data
@@ -878,11 +883,14 @@ export default function TableParetoHeatlossCost({
       persen_hr: dataItem.persen_hr,
       deviasi: dataItem.deviasi,
       symptoms: dataItem.symptoms,
+      potential_benefit: dataItem.cost_benefit,
       total_biaya: dataItem.total_biaya,
     }));
     const worksheet = XLSX.utils.json_to_sheet(excelData);
+    // const worksheet_root_cause = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Pareto Heat Loss");
+    // XLSX.utils.book_append_sheet(workbook, worksheet_root_cause, "Pareto Heat Loss");
     //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
     //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
     return XLSX.writeFile(

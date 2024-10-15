@@ -36,10 +36,12 @@ export default function Navbar() {
   const linkItems = [
     {
       name: "All Apps",
+      role: ["Admin", "Engineer", "Management"],
       url: "/",
     },
     {
       name: "Admin",
+      role: ["Admin"],
       url: "/admin/users",
     },
   ];
@@ -135,7 +137,15 @@ export default function Navbar() {
           </NavbarBrand>
           {linkItems.map((item, index) => (
             <NavbarItem key={`${item}-${index}`}>
-              <Link color="foreground" href={item.url}>
+              <Link
+                color="foreground"
+                href={item.url}
+                className={
+                  item.name != "Admin" && session?.user.user.role != "Admin"
+                    ? "hidden"
+                    : ""
+                }
+              >
                 {item.name}
               </Link>
             </NavbarItem>

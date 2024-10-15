@@ -151,11 +151,11 @@ export default function Page({ params }: { params: { data_id: string } }) {
             totalPersen={summaryData.total_persen}
           />
         </div>
-        {isLoading ? (
+        {isLoading || isLoadingRootCauseCount ? (
           <Spinner color="primary" label="Calculating pareto..." />
         ) : (
           <div className="max-w-full mb-6 mt-4 overflow-hidden relative">
-            {isValidating || isMutating ? (
+            {isValidating || isMutating || isValidatingRootCauseCount ? (
               <div className="h-36 mt-4">
                 <Spinner color="primary" label="validating..." />
               </div>
@@ -172,6 +172,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
                   summaryData={summaryData}
                   mutate={onMutate}
                   isValidating={isValidating}
+                  isLoadingRootCauseCount={isLoadingRootCauseCount}
                   isValidatingRootCauseCount={isValidatingRootCauseCount}
                   data_id={params.data_id}
                   setIsMutating={setIsMutating}

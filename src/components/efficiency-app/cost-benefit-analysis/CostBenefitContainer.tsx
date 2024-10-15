@@ -75,7 +75,7 @@ export default function CostBenefitContainer() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
+      <div className="flex flex-col w-1/4">
         <p>Select Data</p>
         <AsyncSelect
           cacheOptions
