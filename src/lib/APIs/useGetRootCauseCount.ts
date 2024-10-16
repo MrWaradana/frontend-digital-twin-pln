@@ -2,11 +2,20 @@ import { EFFICIENCY_API_URL } from "../api-url";
 import { HookReply } from "./types";
 import { useApiFetch } from "./useApiFetch";
 
+// export interface RootCauseCountDataType {
+//   done: string | number;
+//   id: string | number;
+//   total: string | number;
+// }
+
 export interface RootCauseCountDataType {
-  done: string | number;
-  id: string | number;
-  total: string | number;
+  [data_detail_id:string]:{
+    actions: string[];
+    root_causes: string[];
+  }
 }
+
+
 
 export function useGetRootCauseCount(
   token: string | undefined,

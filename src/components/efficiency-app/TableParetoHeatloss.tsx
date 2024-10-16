@@ -116,9 +116,8 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                   {row.getVisibleCells().map((cell: any) => (
                     <td
                       key={cell.id}
-                      className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${
-                        cell.column.columnDef.meta?.className ?? ""
-                      }`}
+                      className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${cell.column.columnDef.meta?.className ?? ""
+                        }`}
                       style={{
                         width: `calc(var(--col-${cell.column.id}-size) * 1px)`,
                         maxWidth: "100px",
@@ -140,9 +139,8 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         {subRow.getVisibleCells().map((cell: any) => (
                           <td
                             key={cell.id}
-                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border border-neutral-500 print-cell ${
-                              cell.column.columnDef.meta?.className ?? ""
-                            }`}
+                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border border-neutral-500 print-cell ${cell.column.columnDef.meta?.className ?? ""
+                              }`}
                             style={{
                               width: `calc(var(--col-${cell.column.id}-size) * 1px)`,
                               maxWidth: "100px",
@@ -210,8 +208,8 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                             Rp.
                             {row.original.total_cost_benefit
                               ? formatCurrency(
-                                  row.original.total_cost_benefit.toFixed(2)
-                                )
+                                row.original.total_cost_benefit.toFixed(2)
+                              )
                               : 0}
                           </td>
                         );
@@ -225,8 +223,8 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                             Rp.
                             {row.original.total_cost_gap
                               ? formatCurrency(
-                                  row.original.total_cost_gap.toFixed(2)
-                                )
+                                row.original.total_cost_gap.toFixed(2)
+                              )
                               : "0"}
                           </td>
                         );
@@ -464,8 +462,8 @@ export default function TableParetoHeatloss({
               {props.row.depth > 0 && value
                 ? formatSmallNumber(Number(value))
                 : props.row.depth > 0
-                ? "-"
-                : ""}
+                  ? "-"
+                  : ""}
             </div>
           );
         },
@@ -557,8 +555,8 @@ export default function TableParetoHeatloss({
               {props.row.depth > 0 && value
                 ? formatSmallNumber(Number(value))
                 : props.row.depth > 0
-                ? "-"
-                : ""}
+                  ? "-"
+                  : ""}
             </div>
           );
         },
@@ -611,8 +609,8 @@ export default function TableParetoHeatloss({
               {props.row.depth > 0 && value
                 ? formatSmallNumber(Number(value))
                 : props.row.depth > 0
-                ? "-"
-                : ""}
+                  ? "-"
+                  : ""}
             </div>
           );
         },
@@ -626,22 +624,39 @@ export default function TableParetoHeatloss({
           <>
             {(props.row.depth > 0 ||
               !props.row.original.total_nilai_losses) && ( // Only render if it's a subrow
-              <div className="flex justify-center">
-                {props.row.original.gap < 0 ? (
-                  <span className="py-1 px-3 bg-orange-400 rounded-md text-white">
-                    Lower
-                  </span>
-                ) : props.row.original.gap === 0 ? (
-                  <span className="py-1 px-3 bg-green-400 dark:bg-green-700 rounded-md">
-                    Normal
-                  </span>
-                ) : (
-                  <span className="py-1 px-3 bg-red-500 rounded-md text-white">
-                    Higher
-                  </span>
-                )}
-              </div>
-            )}
+                <div className="flex justify-center">
+                  {(() => {
+                    const gap = props.row.original.gap;
+                    const goodIndicator = props.row.original.good_indicator;
+
+                    if (goodIndicator === "minus" && gap < 0) {
+                      return (
+                        <span className="py-1 px-3 bg-green-500 rounded-md text-white">
+                          Lower
+                        </span>
+                      );
+                    } else if (goodIndicator === "plus" && gap > 0) {
+                      return (
+                        <span className="py-1 px-3 bg-green-500 rounded-md text-white">
+                          Higher 
+                        </span>
+                      );
+                    } else if (gap === 0) {
+                      return (
+                        <span className="py-1 px-3 bg-yellow-400 dark:bg-yellow-600 rounded-md text-white">
+                          Normal
+                        </span>
+                      );
+                    } else {
+                      return (
+                        <span className="py-1 px-3 bg-red-500 rounded-md text-white">
+                          {gap < 0 ? "Lower" : "Higher"}
+                        </span>
+                      );
+                    }
+                  })()}
+                </div>
+              )}
           </>
         ),
       },
@@ -730,11 +745,10 @@ export default function TableParetoHeatloss({
                 <div>
                   {`${formattedNumber(roundedCostBenefit)} : ${formattedNumber(
                     roundedTotalBiaya
-                  )} | ${
-                    totalBiaya == 0
+                  )} | ${totalBiaya == 0
                       ? "-"
                       : formattedNumber((costBenefit / totalBiaya).toFixed(2))
-                  }`}
+                    }`}
                 </div>
               )}
             </>
@@ -759,8 +773,8 @@ export default function TableParetoHeatloss({
           }
           // Only render the button if it's a subrow (depth > 0)
           if (row.depth > 0 && row.original.has_cause) {
-            const done = countData?.done || 0; // Default to 0 if countData is undefined
-            const total = countData?.total || 0; // Default to 0 if countData is undefined
+            const done = countData?.root_causes.length || 0; // Default to 0 if countData is undefined
+            // const total = countData?.total || 0; // Default to 0 if countData is undefined
             return (
               <div key={row.id} className="flex gap-1">
                 {/* <Badge
@@ -839,9 +853,9 @@ export default function TableParetoHeatloss({
           prev.map((row: any, index: any) =>
             index === rowIndex
               ? {
-                  ...prev[rowIndex],
-                  [columnId]: value,
-                }
+                ...prev[rowIndex],
+                [columnId]: value,
+              }
               : row
           )
         );
@@ -1088,11 +1102,10 @@ export default function TableParetoHeatloss({
                         }}
                       >
                         <div
-                          className={`absolute top-0 right-0 h-full w-[6px] hover:cursor-col-resize ${
-                            header.column.getIsResizing()
+                          className={`absolute top-0 right-0 h-full w-[6px] hover:cursor-col-resize ${header.column.getIsResizing()
                               ? "bg-red-700"
                               : "group-hover:bg-red-500 group-focus:bg-red-500"
-                          }`}
+                            }`}
                           onMouseDown={header.getResizeHandler()}
                           onTouchStart={header.getResizeHandler()}
                         ></div>
