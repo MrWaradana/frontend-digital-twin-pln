@@ -773,7 +773,7 @@ export default function TableParetoHeatloss({
           }
           // Only render the button if it's a subrow (depth > 0)
           if (row.depth > 0 && row.original.has_cause) {
-            const done = countData?.root_causes.length || 0; // Default to 0 if countData is undefined
+            const done = countData?.done || 0; // Default to 0 if countData is undefined
             // const total = countData?.total || 0; // Default to 0 if countData is undefined
             return (
               <div key={row.id} className="flex gap-1">
