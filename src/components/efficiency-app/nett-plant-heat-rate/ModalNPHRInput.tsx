@@ -24,6 +24,7 @@ import { useGetVariableCauses } from "@/lib/APIs/useGetVariableCause";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
+import toast from "react-hot-toast";
 
 function ModalNPHRInput({
     isOpen,
@@ -68,6 +69,11 @@ function ModalNPHRInput({
             if (niagaData) {
                 const nphrId = niagaData.find(item => item.name === "Niaga")?.id;
                 if (!nphrId) throw new Error("Niaga ID not found");
+
+                if (parseInt(nphr) < 0){
+                    toast.error("NPHR cannot be negative")
+                    return
+                }
 
                 resData = await makeApiRequest(
                     `${EFFICIENCY_API_URL}/cases/${nphrId}`,

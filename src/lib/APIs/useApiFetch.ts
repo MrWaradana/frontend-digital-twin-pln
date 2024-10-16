@@ -75,6 +75,10 @@ export function useApiFetch<T, RawT = T>(
     router.push("/login");
   }
 
+  if (error){
+    router.push("/")
+  }
+
   // Must include the isReady check, otherwise isLoading is false, but there is no data or error
   const isLoading = !isReady || isDataLoading;
 
