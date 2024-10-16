@@ -30,6 +30,8 @@ import {
 } from "@radix-ui/react-icons";
 import { columns, users, statusOptions } from "@/lib/data";
 import { capitalize } from "@/lib/utils";
+import { useGetUsers } from "../../lib/APIs/useGetUsers";
+import { useSession } from "next-auth/react";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   active: "success",
@@ -37,9 +39,7 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
-
-type User = (typeof users)[0];
+const INITIAL_VISIBLE_COLUMNS = ["name", "role", "username", "email"];
 
 export default function TableAdmin({
   tableData,
@@ -48,7 +48,31 @@ export default function TableAdmin({
   tableData: any;
   addNewUrl?: string;
 }) {
-  const { columns, users, statusOptions } = tableData;
+  const { data: session } = useSession();
+
+  const { data, error, mutate, isValidating, isLoading } = useGetUsers(
+    session?.user.access_token
+  );
+
+  const userData = data?.users ?? [];
+
+  type User = (typeof userData)[0];
+
+  const { statusOptions } = tableData;
+
+  const roleOptions = [
+    { name: "Admin", uid: "Admin" },
+    { name: "Management", uid: "Management" },
+    { name: "Engineer", uid: "Engineer" },
+  ];
+
+  const columns = [
+    { name: "ID", uid: "id", sortable: true },
+    { name: "NAME", uid: "name", sortable: true },
+    { name: "USERNAME", uid: "username", sortable: true },
+    { name: "EMAIL", uid: "email", sortable: true },
+    { name: "ROLE", uid: "role", sortable: true },
+  ];
 
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedRoles, setSelectedRoles] = React.useState<Selection>(
@@ -57,11 +81,11 @@ export default function TableAdmin({
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([])
   );
-  // const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
-  //   new Set(INITIAL_VISIBLE_COLUMNS)
-  // );
-  const [visibleColumns, setVisibleColumns] = React.useState<Selection>("all");
-  const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
+  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
+    new Set(INITIAL_VISIBLE_COLUMNS)
+  );
+  // const [visibleColumns, setVisibleColumns] = React.useState<Selection>("all");
+  const [roleFilter, setRoleFilter] = React.useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
     column: "age",
@@ -81,24 +105,25 @@ export default function TableAdmin({
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredUsers = [...userData];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase())
+        user?.name?.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
+      roleFilter !== "all" &&
+      Array.from(roleFilter).length !== roleOptions.length
     ) {
       filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status)
+        //@ts-ignore
+        Array.from(roleFilter).includes(user?.role)
       );
     }
 
     return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+  }, [userData, filterValue, roleFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -111,7 +136,9 @@ export default function TableAdmin({
 
   const sortedItems = React.useMemo(() => {
     return [...items].sort((a: User, b: User) => {
+      //@ts-ignore
       const first = a[sortDescriptor.column as keyof User] as number;
+      //@ts-ignore
       const second = b[sortDescriptor.column as keyof User] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
@@ -125,11 +152,7 @@ export default function TableAdmin({
     switch (columnKey) {
       case "name":
         return (
-          <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.email}
-            name={cellValue}
-          >
+          <User description={user.email} name={cellValue}>
             {user.email}
           </User>
         );
@@ -138,21 +161,21 @@ export default function TableAdmin({
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{cellValue}</p>
             <p className="text-bold text-tiny capitalize text-default-400">
-              {user.team}
+              {user.role}
             </p>
           </div>
         );
-      case "status":
-        return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[user.status]}
-            size="sm"
-            variant="flat"
-          >
-            {cellValue}
-          </Chip>
-        );
+      // case "status":
+      //   return (
+      //     <Chip
+      //       className="capitalize"
+      //       color={statusColorMap[user.status]}
+      //       size="sm"
+      //       variant="flat"
+      //     >
+      //       {cellValue}
+      //     </Chip>
+      //   );
       case "actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
@@ -254,18 +277,18 @@ export default function TableAdmin({
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Status
+                  Role
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
                 disallowEmptySelection
                 aria-label="Table Columns"
                 closeOnSelect={false}
-                selectedKeys={statusFilter}
+                selectedKeys={roleFilter}
                 selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
+                onSelectionChange={setRoleFilter}
               >
-                {statusOptions.map((status: any) => (
+                {roleOptions.map((status: any) => (
                   <DropdownItem key={status.uid} className="capitalize">
                     {capitalize(status.name)}
                   </DropdownItem>
@@ -308,7 +331,7 @@ export default function TableAdmin({
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {users.length} users
+            Total {userData.length} users
           </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
@@ -326,11 +349,11 @@ export default function TableAdmin({
     );
   }, [
     filterValue,
-    statusFilter,
+    roleFilter,
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    users.length,
+    userData.length,
     hasSearchFilter,
   ]);
 
@@ -401,7 +424,12 @@ export default function TableAdmin({
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No users found"} items={sortedItems}>
+      <TableBody
+        emptyContent={
+          error ? "Something went wrong with fetch users!" : "No users found!"
+        }
+        items={sortedItems}
+      >
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (

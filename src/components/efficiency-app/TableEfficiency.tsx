@@ -252,6 +252,7 @@ export default function TableEfficiency({
   };
 
   const handleSelectedId = async (value: any) => {
+    if (!value || value.currentKey === undefined) return;
     try {
       const response = await fetch(
         `${EFFICIENCY_API_URL}/data/${value.currentKey}`,
@@ -268,16 +269,15 @@ export default function TableEfficiency({
           .getState()
           //@ts-ignore
           .setSelectedEfficiencyData(value);
-          
       } else {
         console.error("Failed select data");
         toast.error("Failed select data");
       }
     } catch (error) {
       console.error("Failed select data");
-        toast.error("Failed select data");
+      toast.error("Failed select data");
     }
-  }
+  };
 
   const handlePeriod = () => {
     const url = `${addNewUrl}?parameter=periodic&date=${periodValue}`;
@@ -334,7 +334,7 @@ export default function TableEfficiency({
                       size="sm"
                       variant="solid"
                       color="primary"
-                    // isDisabled={!thermoStatus}
+                      // isDisabled={!thermoStatus}
                     >
                       <DotsVerticalIcon className="text-white dark:text-black text-2xl" />
                     </Button>
@@ -414,6 +414,7 @@ export default function TableEfficiency({
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
+        {JSON.stringify(selectedKeys)}
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
@@ -514,10 +515,11 @@ export default function TableEfficiency({
                     // <PlusIcon className={`${thermoStatus ? "hidden" : ""}`} />
                     <PlusIcon />
                   }
-                  className={`${session?.data?.user.user.role === "Management"
-                    ? "hidden"
-                    : ""
-                    } `}
+                  className={`${
+                    session?.data?.user.user.role === "Management"
+                      ? "hidden"
+                      : ""
+                  } `}
                 >
                   Add New
                   {/* {!thermoStatus ? "Add New" : "Processing Data..."} */}
@@ -692,12 +694,14 @@ export default function TableEfficiency({
           wrapper: "max-h-[382px]",
         }}
         selectedKeys={selectedKeys}
-        selectionMode="multiple"
+        selectionMode="single"
         selectionBehavior="replace"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
-        onSelectionChange={(value) => handleSelectedId(value)}
+        onSelectionChange={(value) => {
+          handleSelectedId(value);
+        }}
         onSortChange={setSortDescriptor}
       >
         <TableHeader columns={headerColumns}>

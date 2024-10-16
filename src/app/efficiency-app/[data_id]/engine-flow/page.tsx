@@ -59,6 +59,9 @@ export default function Page({ params }: { params: { data_id: string } }) {
     IPT: { name: "Efficiency:", top: "14%", left: "53%", unit: "%" },
     HPT: { name: "Efficiency:", top: "15%", left: "29.8%", unit: "%" },
 
+    //Boiler
+    Boiler: { name: "Boiler:", top: "74%", left: "8.7%", unit: "%" },
+
     // Bottom row - RH components
     RH7: { name: "TTD:", top: "74%", left: "28.7%", unit: "°C" },
     RH6: { name: "TTD:", top: "74%", left: "36.6%", unit: "°C" },

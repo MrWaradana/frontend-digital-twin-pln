@@ -141,7 +141,7 @@ export default function Navbar() {
                 color="foreground"
                 href={item.url}
                 className={
-                  item.name != "Admin" && session?.user.user.role != "Admin"
+                  item.name != "Admin" || session?.user.user.role != "Admin"
                     ? "hidden"
                     : ""
                 }

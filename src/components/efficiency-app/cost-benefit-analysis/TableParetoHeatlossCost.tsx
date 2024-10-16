@@ -584,19 +584,36 @@ export default function TableParetoHeatlossCost({
             {(props.row.depth > 0 ||
               !props.row.original.total_nilai_losses) && ( // Only render if it's a subrow
               <div className="flex justify-center">
-                {props.row.original.gap < 0 ? (
-                  <span className="py-1 px-3 bg-orange-400 text-white rounded-md">
-                    Lower
-                  </span>
-                ) : props.row.original.gap === 0 ? (
-                  <span className="py-1 px-3 bg-green-400 text-white dark:bg-green-700 rounded-md">
-                    Normal
-                  </span>
-                ) : (
-                  <span className="py-1 px-3 bg-red-500 text-white rounded-md">
-                    Higher
-                  </span>
-                )}
+                {(() => {
+                  const gap = props.row.original.gap;
+                  const goodIndicator = props.row.original.good_indicator;
+
+                  if (goodIndicator === "minus" && gap < 0) {
+                    return (
+                      <span className="py-1 px-3 bg-green-500 rounded-md text-white">
+                        Lower
+                      </span>
+                    );
+                  } else if (goodIndicator === "plus" && gap > 0) {
+                    return (
+                      <span className="py-1 px-3 bg-green-500 rounded-md text-white">
+                        Higher
+                      </span>
+                    );
+                  } else if (gap === 0) {
+                    return (
+                      <span className="py-1 px-3 bg-yellow-300 dark:bg-yellow-600 rounded-md text-black dark:text-white">
+                        Normal
+                      </span>
+                    );
+                  } else {
+                    return (
+                      <span className="py-1 px-3 bg-red-500 rounded-md text-white">
+                        {gap < 0 ? "Lower" : "Higher"}
+                      </span>
+                    );
+                  }
+                })()}
               </div>
             )}
           </>
@@ -624,11 +641,15 @@ export default function TableParetoHeatlossCost({
       {
         id: "actionMenutupGap",
         header: "Action Menutup Gap",
-        accessorFn: (row: any) => row.action_menutup_gap.join("\n"),
+        meta: {
+          className: "shadow-inner overflow-hidden whitespace-nowrap text-clip",
+        },
+        accessorFn: (row: any) =>
+          row.action_menutup_gap.length > 0
+            ? row.action_menutup_gap.join("\n")
+            : "-",
         size: 45,
-        cell: (props: any) => (
-          <div style={{ whiteSpace: "pre-wrap" }}>{props.getValue()}</div>
-        ),
+        cell: (props: any) => <div>{props.getValue()}</div>,
       },
       {
         id: "biayaClosingGap",
@@ -810,6 +831,7 @@ export default function TableParetoHeatlossCost({
       symptoms: dataItem.symptoms,
       potential_benefit: dataItem.cost_benefit,
       total_biaya: dataItem.total_biaya,
+      action_menutup_gap: dataItem.action_menutup_gap.join("\n"),
     }));
     // Generate CSV using flattened data
     const csv = generateCsv(csvConfig)(csvData);
@@ -885,6 +907,7 @@ export default function TableParetoHeatlossCost({
       symptoms: dataItem.symptoms,
       potential_benefit: dataItem.cost_benefit,
       total_biaya: dataItem.total_biaya,
+      action_menutup_gap: dataItem.action_menutup_gap.join("\n"),
     }));
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     // const worksheet_root_cause = XLSX.utils.json_to_sheet(excelData);
@@ -1059,19 +1082,21 @@ export default function TableParetoHeatlossCost({
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right pr-2">
-                {formattedNumber(summaryData.total_persen.toFixed(2) ?? 0)}
+                {formattedNumber(summaryData?.total_persen.toFixed(2) || 0)}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right pr-2">
-                {formattedNumber(summaryData.total_nilai.toFixed(2) ?? 0)}
+                {formattedNumber(summaryData?.total_nilai.toFixed(2) || 0)}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
                 Rp.
-                {formatCurrency(summaryData.total_cost_benefit.toFixed(2) ?? 0)}
+                {formatCurrency(
+                  summaryData?.total_cost_benefit.toFixed(2) ?? 0
+                )}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
-                Rp.{formatCurrency(summaryData.total_biaya.toFixed(2) ?? 0)}
+                Rp.{formatCurrency(summaryData?.total_biaya.toFixed(2) ?? 0)}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={2}></th>
             </tr>

@@ -8,37 +8,58 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDebouncedCallback } from "use-debounce";
 import AsyncSelect from "react-select/async";
+import { useGetData } from "../../../lib/APIs/useGetData";
 
 export default function CostBenefitContainer() {
   const { data: session } = useSession();
   const [costThreshold, setCostThreshold] = useState("");
+  const [dataId, setDataId] = useState("");
 
   const { data, error, mutate, isLoading, isValidating } =
-    useGetDataCostBenefit(session?.user.access_token, costThreshold);
+    useGetDataCostBenefit(session?.user.access_token, costThreshold, dataId);
+
+  const {
+    data: efficiencyData,
+    error: errorEfficiencyData,
+    mutate: mutateEfficiencyData,
+    isLoading: isLoadingEfficiencyData,
+    isValidating: isValidatingEfficiencyData,
+  } = useGetData(session?.user.access_token, 0);
 
   const [costInitialThreshold, setInitialCostThreshold] = useState("");
 
   const costData = data?.cost_benefit_result ?? [];
+  const selectedEfficiencyData = efficiencyData?.transactions ?? [];
   const costThresholdData = data?.cost_threshold ?? 0;
   // const costData = data ?? [];
 
   // Dummy Data
-  const DateOptions = [
-    { value: "12-12-2024", label: "12-12-2024", date: "12-12-2024" },
-    { value: "13-12-2024", label: "13-12-2024", date: "13-12-2024" },
-    { value: "14-12-2024", label: "14-12-2024", date: "14-12-2024" },
-  ];
+  const EfficiencyDataOptions = selectedEfficiencyData
+    .filter(
+      (item) => item.status === "Done" && item.jenis_parameter === "current"
+    )
+    .map((item) => {
+      return {
+        value: item.id,
+        label: item.name,
+      };
+    });
 
-  const filterDates = (inputValue: string) => {
-    return DateOptions.filter((i) =>
+  // Function to filter efficiency data based on user input
+  const filterEfficiencyData = (inputValue: string) => {
+    return EfficiencyDataOptions.filter((i) =>
       i.label.toLowerCase().includes(inputValue.toLowerCase())
     );
   };
 
-  const loadOptions = (inputValue: string, callback: (options) => void) => {
+  // Load options asynchronously
+  const loadOptions = (
+    inputValue: string,
+    callback: (options: any) => void
+  ) => {
     setTimeout(() => {
-      callback(filterDates(inputValue));
-    }, 1000);
+      callback(filterEfficiencyData(inputValue));
+    }, 1000); // Simulating a delay for async data fetching
   };
 
   // const debounced = useDebouncedCallback(
@@ -77,15 +98,25 @@ export default function CostBenefitContainer() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-col w-1/4">
         <p>Select Data</p>
-        <AsyncSelect
-          cacheOptions
-          loadOptions={loadOptions}
-          placeholder={"Select Cost Benefit Data..."}
-          defaultOptions
-          defaultValue={"12-12-2024"}
-          className="z-[100]"
-          isDisabled={true}
-        />
+        {isLoadingEfficiencyData ? (
+          "Loading..."
+        ) : (
+          <AsyncSelect
+            className="z-[99]"
+            classNamePrefix="select"
+            isClearable={true}
+            isSearchable={true}
+            loadOptions={loadOptions}
+            defaultOptions={EfficiencyDataOptions} // Optional: Show default options initially
+            cacheOptions // Caches the loaded options
+            isLoading={isLoadingEfficiencyData}
+            onChange={(e) => {
+              //@ts-ignore
+              setDataId(e?.value ?? "new");
+            }}
+            name="efficiencyData"
+          />
+        )}
         <hr />
       </div>
       {isLoading || isValidating ? (

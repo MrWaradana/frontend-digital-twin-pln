@@ -542,19 +542,36 @@ export default function TableParetoHeatlossNPHR({
             {(props.row.depth > 0 ||
               !props.row.original.total_nilai_losses) && ( // Only render if it's a subrow
               <div className="flex justify-center">
-                {props.row.original.gap < 0 ? (
-                  <span className="py-1 px-3 bg-orange-400 rounded-md text-white">
-                    Lower
-                  </span>
-                ) : props.row.original.gap === 0 ? (
-                  <span className="py-1 px-3 bg-green-400 dark:bg-green-700 rounded-md">
-                    Normal
-                  </span>
-                ) : (
-                  <span className="py-1 px-3 bg-red-500 rounded-md text-white">
-                    Higher
-                  </span>
-                )}
+                {(() => {
+                  const gap = props.row.original.gap;
+                  const goodIndicator = props.row.original.good_indicator;
+
+                  if (goodIndicator === "minus" && gap < 0) {
+                    return (
+                      <span className="py-1 px-3 bg-green-500 rounded-md text-white">
+                        Lower
+                      </span>
+                    );
+                  } else if (goodIndicator === "plus" && gap > 0) {
+                    return (
+                      <span className="py-1 px-3 bg-green-500 rounded-md text-white">
+                        Higher
+                      </span>
+                    );
+                  } else if (gap === 0) {
+                    return (
+                      <span className="py-1 px-3 bg-yellow-400 dark:bg-yellow-600 rounded-md text-white">
+                        Normal
+                      </span>
+                    );
+                  } else {
+                    return (
+                      <span className="py-1 px-3 bg-red-500 rounded-md text-white">
+                        {gap < 0 ? "Lower" : "Higher"}
+                      </span>
+                    );
+                  }
+                })()}
               </div>
             )}
           </>
