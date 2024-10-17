@@ -1,6 +1,7 @@
 import { loginSchema } from "@/schemas";
 import Credentials from "next-auth/providers/credentials";
 import { AUTH_API_URL } from "../lib/api-url";
+import toast from "react-hot-toast";
 
 /**
  * Takes a token, and returns a new token with updated
@@ -25,7 +26,9 @@ export const CredentialsProvider = Credentials({
       });
 
       if (!res.ok) {
-        return null;
+        throw new Error(
+          JSON.stringify({ status: res.status, message: res.statusText })
+        );
       }
 
       const data = await res.json();

@@ -16,11 +16,13 @@ import toast, { Toaster } from "react-hot-toast";
 import PlnLogo from "../../../../public/Logo_PLN.svg";
 import { useSession } from "next-auth/react";
 import useCaptcha from "use-offline-captcha";
+import { AUTH_API_URL } from "../../../lib/api-url";
 
 export default function Component() {
   const captchaRef = useRef<HTMLElement | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [captchaValue, setValue] = useState("");
+  const [mistakeCount, setMistakeCount] = useState(0);
   const [isCaptchaValidated, setIsCaptchaValidated] = useState(false);
   const { data: session } = useSession();
   const [credentials, setCredentials] = useState({
@@ -71,13 +73,22 @@ export default function Component() {
         return toast.error("Problem with request!");
       }
       if (result?.error) {
+        if (mistakeCount + 1 > 3) {
+          toast.error("Too many login attempts, please wait 15 min");
+          setTimeout(() => {
+            setMistakeCount(0);
+          }, 900000);
+        }
         setIsLoading(false);
+        setMistakeCount(mistakeCount + 1);
+        console.log(result, "result");
         return toast.error(`Invalid credentials`);
       }
 
       router.replace("/");
     } catch (error) {
       toast.error(`error: ${error}`);
+      console.log(error);
     }
   };
 
@@ -86,7 +97,7 @@ export default function Component() {
     const isValid = validate(captchaValue);
     // formRef.current?.requestSubmit();
     if (isValid) {
-      toast.success("Captcha is validated, you can sign in!");
+      // toast.success("Captcha is validated, you can sign in!");
       setIsCaptchaValidated(true);
       formRef.current?.requestSubmit();
     } else {
@@ -186,7 +197,7 @@ export default function Component() {
             onClick={handleValidate}
             className="w-full"
             color="primary"
-            disabled={isLoading ? true : false}
+            disabled={isLoading || mistakeCount > 3 ? true : false}
             isLoading={isLoading}
           >
             Sign in
