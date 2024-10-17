@@ -2,30 +2,20 @@ import { AUTH_API_URL, EFFICIENCY_API_URL } from "../api-url";
 import { HookReply } from "./types";
 import { useApiFetch } from "./useApiFetch";
 
-interface UserAPIType {
-  current_page: number | string;
-  has_next_page: boolean;
-  has_previous_page: boolean;
-  page_size: number | string;
+interface RoleAPIType {
+  roles: RoleType[];
   total_items: number | string;
-  total_pages: number | string;
-  users: UserType[];
 }
 
-interface UserType {
-  created_at: string | undefined;
-  deleted_at: string | null;
-  email: string | undefined;
-  id: string | undefined;
-  name: string | undefined;
-  position: string | undefined;
-  role: string | undefined;
-  role_id: string | undefined;
-  username: string | undefined;
+interface RoleType {
+  created_at: string | number;
+  id: string | number;
+  name: string | number;
+  updated_at: string | number;
 }
 
-export function useGetUsers(token: string | undefined): HookReply<UserAPIType> {
-  return useApiFetch(`${AUTH_API_URL}/users?page=1&size=100`, !!token, token, {
+export function useGetRoles(token: string | undefined): HookReply<RoleAPIType> {
+  return useApiFetch(`${AUTH_API_URL}/roles`, !!token, token, {
     onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
       // Never retry on 404.
       // @ts-ignore

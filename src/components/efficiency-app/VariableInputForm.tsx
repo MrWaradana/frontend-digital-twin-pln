@@ -369,15 +369,27 @@ export default function VariableInputForm({
                                   className={`justify-between max-w-xs lg:max-w-full  border-b-1 pb-1 pt-4`}
                                   labelPlacement="outside"
                                   type={
-                                    // v.base_case.toString() === "N/A"
-                                    //   ? "hidden"
-                                    //   : "text"
-                                    "text"
+                                    v.base_case.toString() === "N/A"
+                                      ? "hidden"
+                                      : "text"
+                                    // "text"
                                   }
                                   required
                                   {...field}
                                   onChange={async ({ target: { value } }) => {
-                                    field.onChange(value.toString());
+                                    // Allow empty string
+                                    if (value === "") {
+                                      field.onChange("");
+                                    }
+                                    // Allow "N/A"
+                                    else if (value.toUpperCase() === "N/A") {
+                                      field.onChange("N/A");
+                                    }
+                                    // Allow numbers (including decimals, negative numbers, and standalone decimal points)
+                                    else if (/^-?\.?\d*\.?\d*$/.test(value)) {
+                                      field.onChange(value);
+                                    }
+                                    // If the input is invalid, don't update the field
                                     await formInput.trigger(`inputs.${v.id}`);
                                   }}
                                   endContent={

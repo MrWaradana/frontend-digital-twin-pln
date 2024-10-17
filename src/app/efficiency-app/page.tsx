@@ -95,17 +95,23 @@ export default function Page() {
     (state) => state.setStatusThermoflow
   ); // Retrieve currentKey from Zustand
 
+  const setSelectedEfficiencyData = useSelectedEfficiencyDataStore(
+    (state) => state.setSelectedEfficiencyData
+  );
+
   const thermoStatus = efficiencyData?.thermo_status ?? StatusThermoflow;
   const efficiency = efficiencyData?.transactions ?? [];
 
-  if (!isLoading && !efficiencyLoading) {
-    useExcelStore.getState().setExcels(excel);
-
-    useSelectedEfficiencyDataStore
-      .getState()
-      //@ts-ignore
-      .setSelectedEfficiencyData(efficiency.find(item => item.is_selected) ?? efficiency[0]);
-  }
+  // useEffect(() => {
+  //   if (efficiency || isLoading) {
+  //     useSelectedEfficiencyDataStore
+  //       .getState()
+  //       //@ts-ignore
+  //       .setSelectedEfficiencyData(
+  //         efficiency.find((item) => item.is_selected)?.id ?? ""
+  //       );
+  //   }
+  // }, [efficiency]);
 
   useEffect(() => {
     const api = `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/stream`;

@@ -831,7 +831,7 @@ export default function TableParetoHeatlossCost({
       symptoms: dataItem.symptoms,
       potential_benefit: dataItem.cost_benefit,
       total_biaya: dataItem.total_biaya,
-      action_menutup_gap: dataItem.action_menutup_gap.join("\n"),
+      action_menutup_gap: dataItem.action_menutup_gap.join("| \n "),
     }));
     // Generate CSV using flattened data
     const csv = generateCsv(csvConfig)(csvData);
@@ -907,7 +907,7 @@ export default function TableParetoHeatlossCost({
       symptoms: dataItem.symptoms,
       potential_benefit: dataItem.cost_benefit,
       total_biaya: dataItem.total_biaya,
-      action_menutup_gap: dataItem.action_menutup_gap.join("\n"),
+      action_menutup_gap: dataItem.action_menutup_gap.join("| \n "),
     }));
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     // const worksheet_root_cause = XLSX.utils.json_to_sheet(excelData);

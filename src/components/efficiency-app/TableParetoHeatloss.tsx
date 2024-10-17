@@ -116,8 +116,9 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                   {row.getVisibleCells().map((cell: any) => (
                     <td
                       key={cell.id}
-                      className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${cell.column.columnDef.meta?.className ?? ""
-                        }`}
+                      className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${
+                        cell.column.columnDef.meta?.className ?? ""
+                      }`}
                       style={{
                         width: `calc(var(--col-${cell.column.id}-size) * 1px)`,
                         maxWidth: "100px",
@@ -139,8 +140,9 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         {subRow.getVisibleCells().map((cell: any) => (
                           <td
                             key={cell.id}
-                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border border-neutral-500 print-cell ${cell.column.columnDef.meta?.className ?? ""
-                              }`}
+                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border border-neutral-500 print-cell ${
+                              cell.column.columnDef.meta?.className ?? ""
+                            }`}
                             style={{
                               width: `calc(var(--col-${cell.column.id}-size) * 1px)`,
                               maxWidth: "100px",
@@ -208,8 +210,8 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                             Rp.
                             {row.original.total_cost_benefit
                               ? formatCurrency(
-                                row.original.total_cost_benefit.toFixed(2)
-                              )
+                                  row.original.total_cost_benefit.toFixed(2)
+                                )
                               : 0}
                           </td>
                         );
@@ -223,8 +225,8 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                             Rp.
                             {row.original.total_cost_gap
                               ? formatCurrency(
-                                row.original.total_cost_gap.toFixed(2)
-                              )
+                                  row.original.total_cost_gap.toFixed(2)
+                                )
                               : "0"}
                           </td>
                         );
@@ -462,8 +464,8 @@ export default function TableParetoHeatloss({
               {props.row.depth > 0 && value
                 ? formatSmallNumber(Number(value))
                 : props.row.depth > 0
-                  ? "-"
-                  : ""}
+                ? "-"
+                : ""}
             </div>
           );
         },
@@ -555,8 +557,8 @@ export default function TableParetoHeatloss({
               {props.row.depth > 0 && value
                 ? formatSmallNumber(Number(value))
                 : props.row.depth > 0
-                  ? "-"
-                  : ""}
+                ? "-"
+                : ""}
             </div>
           );
         },
@@ -609,8 +611,8 @@ export default function TableParetoHeatloss({
               {props.row.depth > 0 && value
                 ? formatSmallNumber(Number(value))
                 : props.row.depth > 0
-                  ? "-"
-                  : ""}
+                ? "-"
+                : ""}
             </div>
           );
         },
@@ -624,39 +626,39 @@ export default function TableParetoHeatloss({
           <>
             {(props.row.depth > 0 ||
               !props.row.original.total_nilai_losses) && ( // Only render if it's a subrow
-                <div className="flex justify-center">
-                  {(() => {
-                    const gap = props.row.original.gap;
-                    const goodIndicator = props.row.original.good_indicator;
+              <div className="flex justify-center">
+                {(() => {
+                  const gap = props.row.original.gap;
+                  const goodIndicator = props.row.original.good_indicator;
 
-                    if (goodIndicator === "minus" && gap < 0) {
-                      return (
-                        <span className="py-1 px-3 bg-green-500 rounded-md text-white">
-                          Lower
-                        </span>
-                      );
-                    } else if (goodIndicator === "plus" && gap > 0) {
-                      return (
-                        <span className="py-1 px-3 bg-green-500 rounded-md text-white">
-                          Higher 
-                        </span>
-                      );
-                    } else if (gap === 0) {
-                      return (
-                        <span className="py-1 px-3 bg-yellow-400 dark:bg-yellow-600 rounded-md text-white">
-                          Normal
-                        </span>
-                      );
-                    } else {
-                      return (
-                        <span className="py-1 px-3 bg-red-500 rounded-md text-white">
-                          {gap < 0 ? "Lower" : "Higher"}
-                        </span>
-                      );
-                    }
-                  })()}
-                </div>
-              )}
+                  if (goodIndicator === "minus" && gap < 0) {
+                    return (
+                      <span className="py-1 px-3 bg-green-500 rounded-md text-white">
+                        Lower
+                      </span>
+                    );
+                  } else if (goodIndicator === "plus" && gap > 0) {
+                    return (
+                      <span className="py-1 px-3 bg-green-500 rounded-md text-white">
+                        Higher
+                      </span>
+                    );
+                  } else if (gap === 0) {
+                    return (
+                      <span className="py-1 px-3 bg-yellow-400 dark:bg-yellow-600 rounded-md text-white">
+                        Normal
+                      </span>
+                    );
+                  } else {
+                    return (
+                      <span className="py-1 px-3 bg-red-500 rounded-md text-white">
+                        {gap < 0 ? "Lower" : "Higher"}
+                      </span>
+                    );
+                  }
+                })()}
+              </div>
+            )}
           </>
         ),
       },
@@ -745,10 +747,11 @@ export default function TableParetoHeatloss({
                 <div>
                   {`${formattedNumber(roundedCostBenefit)} : ${formattedNumber(
                     roundedTotalBiaya
-                  )} | ${totalBiaya == 0
+                  )} | ${
+                    totalBiaya == 0
                       ? "-"
                       : formattedNumber((costBenefit / totalBiaya).toFixed(2))
-                    }`}
+                  }`}
                 </div>
               )}
             </>
@@ -853,9 +856,9 @@ export default function TableParetoHeatloss({
           prev.map((row: any, index: any) =>
             index === rowIndex
               ? {
-                ...prev[rowIndex],
-                [columnId]: value,
-              }
+                  ...prev[rowIndex],
+                  [columnId]: value,
+                }
               : row
           )
         );
@@ -905,6 +908,7 @@ export default function TableParetoHeatloss({
         total_persen_losses: entry.total_persen_losses,
         total_cost_benefit: entry.total_cost_benefit,
         total_cost_gap: entry.total_cost_gap,
+        action_menutup_gap: dataItem.action_menutup_gap.join("\n"),
       }))
     );
     // Generate CSV using flattened data
@@ -984,6 +988,7 @@ export default function TableParetoHeatloss({
         total_persen_losses: entry.total_persen_losses,
         total_cost_benefit: entry.total_cost_benefit,
         total_cost_gap: entry.total_cost_gap,
+        action_menutup_gap: dataItem.action_menutup_gap.join("\n"),
       }))
     );
     const worksheet = XLSX.utils.json_to_sheet(flattenedData);
@@ -1102,10 +1107,11 @@ export default function TableParetoHeatloss({
                         }}
                       >
                         <div
-                          className={`absolute top-0 right-0 h-full w-[6px] hover:cursor-col-resize ${header.column.getIsResizing()
+                          className={`absolute top-0 right-0 h-full w-[6px] hover:cursor-col-resize ${
+                            header.column.getIsResizing()
                               ? "bg-red-700"
                               : "group-hover:bg-red-500 group-focus:bg-red-500"
-                            }`}
+                          }`}
                           onMouseDown={header.getResizeHandler()}
                           onTouchStart={header.getResizeHandler()}
                         ></div>

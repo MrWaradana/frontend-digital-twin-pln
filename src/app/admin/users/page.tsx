@@ -6,7 +6,10 @@ export default function Page() {
   return (
     <ContentLayout title="Users">
       <section className="relative">
-        <TableAdmin tableData={{ columns, users, statusOptions }} />
+        <TableAdmin
+          tableData={{ columns, users, statusOptions }}
+          addNewUrl="/admin/users/add"
+        />
       </section>
     </ContentLayout>
   );

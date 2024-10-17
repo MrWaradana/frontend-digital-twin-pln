@@ -4,7 +4,7 @@ import { persist } from "zustand/middleware";
 
 // Define the state and actions for the Zustand store
 interface SelectedEfficiencyDataState {
-  selectedEfficiencyData: string;
+  selectedEfficiencyData: string | any;
   setSelectedEfficiencyData: (data: {
     anchorKey: string;
     currentKey: string;
@@ -18,10 +18,11 @@ export const useSelectedEfficiencyDataStore =
       (set) => ({
         selectedEfficiencyData: "",
         setSelectedEfficiencyData: (data) =>
-          set({ selectedEfficiencyData: data.currentKey }), // Store only the currentKey
+          set({ selectedEfficiencyData: data }),
       }),
       {
-        name: "nphr-storage", // name of the storage item
+        name: "nphr-storage",
+        getStorage: () => localStorage, // Explicitly use localStorage
       }
     )
   );

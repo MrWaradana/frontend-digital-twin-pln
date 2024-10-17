@@ -263,12 +263,16 @@ export default function TableEfficiency({
           },
         }
       );
+      useSelectedEfficiencyDataStore
+        .getState()
+        //@ts-ignore
+        .setSelectedEfficiencyData(value.currentKey);
       if (response.ok) {
         // Remove the item from tableData after successful deletion
         useSelectedEfficiencyDataStore
           .getState()
           //@ts-ignore
-          .setSelectedEfficiencyData(value);
+          .setSelectedEfficiencyData(value.currentKey);
       } else {
         console.error("Failed select data");
         toast.error("Failed select data");
@@ -414,7 +418,6 @@ export default function TableEfficiency({
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
-        {JSON.stringify(selectedKeys)}
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
@@ -643,7 +646,7 @@ export default function TableEfficiency({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader>Confirm Deletion</ModalHeader>
+            <ModalHeader>Select Date Period</ModalHeader>
             <ModalBody>
               <DatePicker
                 label="Birth date"

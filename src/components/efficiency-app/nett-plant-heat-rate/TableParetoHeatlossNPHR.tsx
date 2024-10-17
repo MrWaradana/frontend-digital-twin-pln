@@ -785,6 +785,7 @@ export default function TableParetoHeatlossNPHR({
       deviasi: dataItem.deviasi,
       symptoms: dataItem.symptoms,
       total_biaya: dataItem.total_biaya,
+      action_menutup_gap: dataItem.action_menutup_gap.join("| \n "),
     }));
     // Generate CSV using flattened data
     const csv = generateCsv(csvConfig)(csvData);
@@ -859,6 +860,7 @@ export default function TableParetoHeatlossNPHR({
       deviasi: dataItem.deviasi,
       symptoms: dataItem.symptoms,
       total_biaya: dataItem.total_biaya,
+      action_menutup_gap: dataItem.action_menutup_gap.join("| \n "),
     }));
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     // const worksheet_root_cause = XLSX.utils.json_to_sheet(excelData);

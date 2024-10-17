@@ -25,6 +25,7 @@ export function useGetData(
     {
       onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
         // Never retry on 404.
+        //@ts-ignore
         if (error.status === 404) return;
 
         // Never retry for a specific key.

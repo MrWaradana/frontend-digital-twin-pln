@@ -67,9 +67,11 @@ export default function Component() {
       });
 
       if (!result) {
+        setIsLoading(false);
         return toast.error("Problem with request!");
       }
       if (result?.error) {
+        setIsLoading(false);
         return toast.error(`Invalid credentials`);
       }
 

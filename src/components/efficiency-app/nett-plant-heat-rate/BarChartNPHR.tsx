@@ -136,10 +136,10 @@ export default function BarChartNPHR({
     );
   }
 
-  if (error) {
-    //@ts-ignore
-    setSelectedEfficiencyData("null");
-  }
+  // if (error) {
+  //   //@ts-ignore
+  //   setSelectedEfficiencyData("new");
+  // }
 
   return (
     <>
