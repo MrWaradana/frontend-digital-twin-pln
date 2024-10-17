@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LayoutGrid, LogOut, User } from "lucide-react";
+import { LayoutGrid, LockIcon, LogOut, User } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
@@ -111,6 +111,17 @@ export function UserNav() {
               <Link href="/" className="flex items-center">
                 <LayoutGrid className="w-4 h-4 mr-3 text-muted-foreground" />
                 All Apps
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className={`hover:cursor-pointer ${
+                session.data?.user.user.role === "Admin" ? "" : "hidden"
+              }`}
+              asChild
+            >
+              <Link href="/admin/users" className="flex items-center">
+                <LockIcon className="w-4 h-4 mr-3 text-muted-foreground" />
+                Admin Dashboard
               </Link>
             </DropdownMenuItem>
             {/* <DropdownMenuItem className="hover:cursor-pointer" asChild>

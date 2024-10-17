@@ -3,6 +3,7 @@ import { HookReply } from "./types";
 import { useApiFetch } from "./useApiFetch";
 
 export interface CostBenefitDataType {
+  name: string;
   cost_benefit_result: CostBenefitType[];
   total_biaya: string | number;
   total_cost_benefit: string | number;

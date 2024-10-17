@@ -138,11 +138,11 @@ export default function TableEfficiency({
     (state) => state.selectedEfficiencyData
   ); // Retrieve currentKey from Zustand
 
-  useEffect(() => {
-    if (selectedEfficiencyData) {
-      setSelectedKeys(new Set([selectedEfficiencyData])); // Convert currentKey to Set and update the state
-    }
-  }, [selectedEfficiencyData]);
+  // useEffect(() => {
+  //   if (selectedEfficiencyData) {
+  //     setSelectedKeys(new Set([selectedEfficiencyData])); // Convert currentKey to Set and update the state
+  //   }
+  // }, [selectedEfficiencyData]);
 
   const [page, setPage] = React.useState(1);
 
@@ -251,37 +251,37 @@ export default function TableEfficiency({
     }
   };
 
-  const handleSelectedId = async (value: any) => {
-    if (!value || value.currentKey === undefined) return;
-    try {
-      const response = await fetch(
-        `${EFFICIENCY_API_URL}/data/${value.currentKey}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${session.data?.user.access_token}`,
-          },
-        }
-      );
-      useSelectedEfficiencyDataStore
-        .getState()
-        //@ts-ignore
-        .setSelectedEfficiencyData(value.currentKey);
-      if (response.ok) {
-        // Remove the item from tableData after successful deletion
-        useSelectedEfficiencyDataStore
-          .getState()
-          //@ts-ignore
-          .setSelectedEfficiencyData(value.currentKey);
-      } else {
-        console.error("Failed select data");
-        toast.error("Failed select data");
-      }
-    } catch (error) {
-      console.error("Failed select data");
-      toast.error("Failed select data");
-    }
-  };
+  // const handleSelectedId = async (value: any) => {
+  //   if (!value || value.currentKey === undefined) return;
+  //   try {
+  //     const response = await fetch(
+  //       `${EFFICIENCY_API_URL}/data/${value.currentKey}`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           Authorization: `Bearer ${session.data?.user.access_token}`,
+  //         },
+  //       }
+  //     );
+  //     useSelectedEfficiencyDataStore
+  //       .getState()
+  //       //@ts-ignore
+  //       .setSelectedEfficiencyData(value.currentKey);
+  //     if (response.ok) {
+  //       // Remove the item from tableData after successful deletion
+  //       useSelectedEfficiencyDataStore
+  //         .getState()
+  //         //@ts-ignore
+  //         .setSelectedEfficiencyData(value.currentKey);
+  //     } else {
+  //       console.error("Failed select data");
+  //       toast.error("Failed select data");
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed select data");
+  //     toast.error("Failed select data");
+  //   }
+  // };
 
   const handlePeriod = () => {
     const url = `${addNewUrl}?parameter=periodic&date=${periodValue}`;
@@ -610,7 +610,7 @@ export default function TableEfficiency({
         </div>
       </div>
     );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+  }, [ items.length, page, pages, hasSearchFilter]);
 
   // The modal that shows up when attempting to delete an item
   const deleteConfirmationModal = (
@@ -702,9 +702,9 @@ export default function TableEfficiency({
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
-        onSelectionChange={(value) => {
-          handleSelectedId(value);
-        }}
+        // onSelectionChange={(value) => {
+        //   handleSelectedId(value);
+        // }}
         onSortChange={setSortDescriptor}
       >
         <TableHeader columns={headerColumns}>

@@ -75,8 +75,11 @@ export function useApiFetch<T, RawT = T>(
     router.push("/login");
   }
 
-  if (error){
-    router.push("/")
+  if (error) {
+    toast.error(`${error} redirecting to all apps...`);
+    setTimeout(() => {
+      router.push("/");
+    }, 1000);
   }
 
   // Must include the isReady check, otherwise isLoading is false, but there is no data or error

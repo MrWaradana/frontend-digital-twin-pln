@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDebouncedCallback } from "use-debounce";
 import AsyncSelect from "react-select/async";
-import { useGetData } from "../../../lib/APIs/useGetData";
+import { useGetData } from "@/lib/APIs/useGetData";
 
 export default function CostBenefitContainer() {
   const { data: session } = useSession();
@@ -125,6 +125,10 @@ export default function CostBenefitContainer() {
         </div>
       ) : (
         <div>
+          {/* {JSON.stringify(data)} */}
+          <h2>
+            Showing <span className="font-semibold pl-1 ">{data?.name}</span>
+          </h2>
           <TableParetoHeatlossCost
             tableData={costData}
             summaryData={data}
