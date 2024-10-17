@@ -84,15 +84,15 @@ export default function Component() {
   const handleValidate = () => {
     setIsLoading(true);
     const isValid = validate(captchaValue);
-    formRef.current?.requestSubmit();
-    // if (isValid) {
-    //   toast.success("Captcha is validated, you can sign in!");
-    //   setIsCaptchaValidated(true);
-    //   formRef.current?.requestSubmit();
-    // } else {
-    //   toast.error("Captcha is wrong!");
-    //   setIsLoading(false);
-    // }
+    // formRef.current?.requestSubmit();
+    if (isValid) {
+      toast.success("Captcha is validated, you can sign in!");
+      setIsCaptchaValidated(true);
+      formRef.current?.requestSubmit();
+    } else {
+      toast.error("Captcha is wrong!");
+      setIsLoading(false);
+    }
   };
 
   const handleRefresh = () => gen();
