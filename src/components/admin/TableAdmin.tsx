@@ -39,7 +39,13 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "username", "email"];
+const INITIAL_VISIBLE_COLUMNS = [
+  "name",
+  "role",
+  "username",
+  "email",
+  // "actions",
+];
 
 export default function TableAdmin({
   tableData,
@@ -72,6 +78,7 @@ export default function TableAdmin({
     { name: "USERNAME", uid: "username", sortable: true },
     { name: "EMAIL", uid: "email", sortable: true },
     { name: "ROLE", uid: "role", sortable: true },
+    { name: "ACTIONS", uid: "actions" },
   ];
 
   const [filterValue, setFilterValue] = React.useState("");
@@ -186,8 +193,10 @@ export default function TableAdmin({
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem href="/admin/view">View</DropdownItem>
-                <DropdownItem href="/admin/edit">Edit</DropdownItem>
+                {/* <DropdownItem href="/admin/view">View</DropdownItem> */}
+                <DropdownItem href={`/admin/users/${user.id}/edit`}>
+                  Edit
+                </DropdownItem>
                 <DropdownItem>Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -406,7 +415,7 @@ export default function TableAdmin({
         wrapper: "max-h-[382px]",
       }}
       selectedKeys={selectedKeys}
-      selectionMode="multiple"
+      // selectionMode="multiple"
       sortDescriptor={sortDescriptor}
       topContent={topContent}
       topContentPlacement="outside"
