@@ -646,13 +646,16 @@ export default function TableEfficiency({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader>Select Date Period</ModalHeader>
+            <ModalHeader>Select Max Date for 30 Days Period</ModalHeader>
             <ModalBody>
               <DatePicker
-                label="Periodic Date"
+                label="Max Date"
                 className="max-w-[284px]"
                 maxValue={today(getLocalTimeZone())}
                 defaultValue={today(getLocalTimeZone())}
+                description={
+                  "This date will serve as the end point for calculating the average over those 30 days."
+                }
                 //@ts-ignore
                 onChange={setPeriodValue}
               />
