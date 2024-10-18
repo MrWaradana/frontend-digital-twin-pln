@@ -610,7 +610,7 @@ export default function TableEfficiency({
         </div>
       </div>
     );
-  }, [ items.length, page, pages, hasSearchFilter]);
+  }, [items.length, page, pages, hasSearchFilter]);
 
   // The modal that shows up when attempting to delete an item
   const deleteConfirmationModal = (
@@ -649,7 +649,7 @@ export default function TableEfficiency({
             <ModalHeader>Select Date Period</ModalHeader>
             <ModalBody>
               <DatePicker
-                label="Birth date"
+                label="Periodic Date"
                 className="max-w-[284px]"
                 maxValue={today(getLocalTimeZone())}
                 defaultValue={today(getLocalTimeZone())}
