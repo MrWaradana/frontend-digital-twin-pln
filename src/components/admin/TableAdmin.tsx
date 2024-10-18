@@ -21,6 +21,11 @@ import {
   ChipProps,
   SortDescriptor,
   Link,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
 } from "@nextui-org/react";
 import {
   DotsVerticalIcon,
@@ -32,6 +37,8 @@ import { columns, users, statusOptions } from "@/lib/data";
 import { capitalize } from "@/lib/utils";
 import { useGetUsers } from "../../lib/APIs/useGetUsers";
 import { useSession } from "next-auth/react";
+import { AUTH_API_URL } from "../../lib/api-url";
+import toast from "react-hot-toast";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   active: "success",
@@ -78,9 +85,13 @@ export default function TableAdmin({
     { name: "USERNAME", uid: "username", sortable: true },
     { name: "EMAIL", uid: "email", sortable: true },
     { name: "ROLE", uid: "role", sortable: true },
-    { name: "ACTIONS", uid: "actions" },
+    // { name: "ACTIONS", uid: "actions" },
   ];
 
+  const [tableState, setTableState] = React.useState(userData);
+  const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = React.useState(false);
+  const [selectedRowId, setSelectedRowId] = React.useState<string | null>(null);
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedRoles, setSelectedRoles] = React.useState<Selection>(
     new Set(["app1"])
@@ -130,7 +141,7 @@ export default function TableAdmin({
     }
 
     return filteredUsers;
-  }, [userData, filterValue, roleFilter]);
+  }, [userData, filterValue, roleFilter, tableState]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -197,7 +208,15 @@ export default function TableAdmin({
                 <DropdownItem href={`/admin/users/${user.id}/edit`}>
                   Edit
                 </DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
+                <DropdownItem
+                  onPress={() => {
+                    //@ts-ignore
+                    setSelectedRowId(user.id);
+                    setDeleteModalOpen(true);
+                  }}
+                >
+                  Delete {user.name}
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -265,6 +284,68 @@ export default function TableAdmin({
     setFilterValue("");
     setPage(1);
   }, []);
+
+  // Function to delete the selected row
+  const handleDelete = async () => {
+    if (!selectedRowId) return;
+    // setLoadingEfficiency(isValidating);
+    setIsDeleteLoading(true);
+    try {
+      const response = await fetch(`${AUTH_API_URL}/users/${selectedRowId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${session?.user.access_token}`,
+        },
+      });
+      if (response.ok) {
+        // Remove the item from tableData after successful deletion
+        const updatedData = userData.filter(
+          (item: User) => item.id !== selectedRowId
+        );
+        mutate();
+        setTableState(updatedData);
+        toast.success("Data deleted successfully!");
+        setDeleteModalOpen(false); // Close the modal
+      } else {
+        console.error("Failed to delete");
+        toast.error("Failed to delete data, try again later...");
+      }
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      toast.error(`Error: ${error || "Unknown error occurred"}`);
+    } finally {
+      setIsDeleteLoading(false);
+    }
+  };
+
+  // The modal that shows up when attempting to delete an item
+  const deleteConfirmationModal = (
+    <Modal isOpen={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader>Confirm Deletion</ModalHeader>
+            <ModalBody>
+              Are you sure you want to delete this item? This action cannot be
+              undone.
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                color="danger"
+                isLoading={isDeleteLoading}
+                onPress={handleDelete}
+              >
+                Delete
+              </Button>
+              <Button variant="light" onPress={onClose}>
+                Cancel
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
+  );
 
   const topContent = React.useMemo(() => {
     return (
@@ -406,47 +487,51 @@ export default function TableAdmin({
   }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
   return (
-    <Table
-      aria-label="Example table with custom cells, pagination and sorting"
-      isHeaderSticky
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[382px]",
-      }}
-      selectedKeys={selectedKeys}
-      // selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column: any) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody
-        emptyContent={
-          error ? "Something went wrong with fetch users!" : "No users found!"
-        }
-        items={sortedItems}
+    <>
+      {deleteConfirmationModal}
+      <Table
+        aria-label="Example table with custom cells, pagination and sorting"
+        isHeaderSticky
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        classNames={{
+          wrapper: "max-h-[382px]",
+        }}
+        selectedKeys={selectedKeys}
+        // selectionMode="multiple"
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSelectionChange={setSelectedKeys}
+        onSortChange={setSortDescriptor}
       >
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+        <TableHeader columns={headerColumns}>
+          {(column: any) => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === "actions" ? "center" : "start"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody
+          emptyContent={
+            error ? "Something went wrong with fetch users!" : "No users found!"
+          }
+          items={sortedItems}
+          isLoading={(isLoading ?? false) || (isValidating ?? false)}
+        >
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </>
   );
 }
