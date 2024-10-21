@@ -96,6 +96,13 @@ export default function TableEfficiency({
 
   // console.log(tableData, "table data");
 
+  const dateFormat = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: getLocalTimeZone(),
+  };
+
   const columns = [
     { name: "ID", uid: "id", sortable: true },
     { name: "NAMA", uid: "name", sortable: true },
@@ -362,6 +369,12 @@ export default function TableEfficiency({
                     </DropdownItem>
                     {/* <DropdownItem href="#">Edit</DropdownItem>*/}
                     <DropdownItem
+                      className={`${
+                        session?.data?.user.user.id === rowData.createdBy ||
+                        session?.data?.user.user.role === "Admin"
+                          ? ""
+                          : "hidden"
+                      }`}
                       onPress={() => {
                         setSelectedRowId(rowData.id);
                         setDeleteModalOpen(true);
@@ -653,6 +666,7 @@ export default function TableEfficiency({
                 className="max-w-[284px]"
                 maxValue={today(getLocalTimeZone())}
                 defaultValue={today(getLocalTimeZone())}
+                // formatOptions={dateFormat}
                 description={
                   "This date will serve as the end point for calculating the average over those 30 days."
                 }
