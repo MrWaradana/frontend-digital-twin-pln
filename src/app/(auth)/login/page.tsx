@@ -113,15 +113,51 @@ export default function Component() {
   }, [gen]);
 
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 min-h-[100dvh]">
       <Toaster />
 
-      <div className="mx-auto w-full max-w-md space-y-6">
+      <div
+        className={`h-full w-full px-28 flex flex-col text-white justify-center items-start gap-6 bg-blue-400`}
+      >
+        <div>
+          <h1 className={`text-3xl font-bold`}>Digital Twin</h1>
+          <h2 className={`text-lg font-normal`}>Dashboard</h2>
+        </div>
+        <p className={`text-justify`}>
+          Lorem ipsum odor amet, consectetuer adipiscing elit. Tempor bibendum
+          eros neque euismod et sodales dis aliquam. Fusce platea phasellus
+          suscipit placerat scelerisque dictum consectetur. Sociosqu ultricies
+          taciti lorem laoreet rhoncus est interdum aliquam ipsum. Aptent augue
+          fermentum conubia porta in. Bibendum morbi sollicitudin sit ultricies
+          quis nascetur. Augue phasellus tortor per non nostra sit. Natoque
+          fringilla euismod integer commodo leo; ornare faucibus fringilla
+          aptent? Erat mattis posuere habitant sollicitudin ornare maximus
+          praesent eleifend. Ornare cras nascetur mattis luctus, suspendisse non
+          luctus. Congue cras a imperdiet pretium dapibus sollicitudin. Ipsum
+          ultrices libero facilisi habitant consectetur tellus sagittis. Montes
+          mollis massa; justo platea fames mollis. Ipsum vitae viverra, cubilia
+          mi hendrerit enim consectetur cursus. Amet phasellus aenean penatibus
+          metus luctus aliquet.
+        </p>
+        <Button
+          color={`primary`}
+          variant={`bordered`}
+          className={`text-white border-white`}
+        >
+          Silahkan login terlebih dahulu {`>>>`}
+        </Button>
+      </div>
+      <div className="mx-auto w-full max-w-md space-y-6 py-20">
         <div className="space-y-2 text-center items-center flex flex-col gap-4">
-          <Image src={PlnLogo} alt="Logo PLN" width={124} />
-          <div className="inline-block rounded-lg bg-primary px-3 py-1 text-sm font-medium text-primary-foreground">
+          <Image
+            src={PlnLogo}
+            alt="Logo PLN"
+            width={124}
+            className={`bg-white p-2 rounded-sm`}
+          />
+          {/* <div className="inline-block rounded-lg bg-primary px-3 py-1 text-sm font-medium text-primary-foreground">
             Digital Twin Dashboard
-          </div>
+          </div> */}
           <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Sign in to your account
           </h1>
@@ -137,18 +173,12 @@ export default function Component() {
               onChange={handleChange}
               required
               value={credentials.username}
+              className={`rounded-sm`}
             />
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="password">Password</Label>
-              {/* <Link
-                href="#"
-                className="text-sm font-medium underline text-primary-foreground hover:text-primary"
-                prefetch={false}
-              >
-                Forgot password?
-              </Link> */}
             </div>
             <Input
               id="password"
@@ -158,6 +188,7 @@ export default function Component() {
               required
               onChange={handleChange}
               value={credentials.password}
+              className={`rounded-none`}
             />
           </div>
           {/* <div className="flex items-center">
@@ -173,7 +204,12 @@ export default function Component() {
                 {/* @ts-ignore */}
                 <div ref={captchaRef} />
               </div>
-              <Button onClick={handleRefresh} color="secondary" size="sm">
+              <Button
+                onClick={handleRefresh}
+                color="secondary"
+                size="sm"
+                className={`rounded-sm`}
+              >
                 Refresh Captcha
               </Button>
             </div>
@@ -183,6 +219,7 @@ export default function Component() {
               value={captchaValue}
               isDisabled={isCaptchaValidated}
               maxLength={5}
+              className={`rounded-sm`}
               // endContent={
               //   <>
               //     <Button onClick={handleValidate} color="success" size="sm">
@@ -195,7 +232,7 @@ export default function Component() {
           <Button
             type="button"
             onClick={handleValidate}
-            className="w-full"
+            className="w-full rounded-sm"
             color="primary"
             disabled={isLoading || mistakeCount > 3 ? true : false}
             isLoading={isLoading}

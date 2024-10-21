@@ -34,7 +34,7 @@ export default function Sidebar() {
           asChild
         >
           <Link href="#" className="flex items-center gap-2">
-            <Image src={PlnLogo} alt="Logo PLN" width={64} height={64} />
+            <Image src={PlnLogo} alt="Logo PLN" width={128} height={128} />
           </Link>
         </Button>
         <Menu isListOpen={sidebar?.isOpen} />

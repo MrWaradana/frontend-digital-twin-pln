@@ -33,7 +33,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
   } = useGetDataPareto(session?.user.access_token, params.data_id, 100);
 
   const tableData = data?.pareto_result ?? [];
-  const paretoTopData = data?.parett_uncategorized_result ?? [];
+  const paretoTopData = data?.pareto_uncategorized_result ?? [];
   const paretoBottomData = tableData.filter((item) => item.category != null);
 
   const coalData = paretoTopData

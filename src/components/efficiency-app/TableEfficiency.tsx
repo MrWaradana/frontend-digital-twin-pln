@@ -667,12 +667,25 @@ export default function TableEfficiency({
                 maxValue={today(getLocalTimeZone())}
                 defaultValue={today(getLocalTimeZone())}
                 // formatOptions={dateFormat}
+                showMonthAndYearPickers
                 description={
                   "This date will serve as the end point for calculating the average over those 30 days."
                 }
                 //@ts-ignore
                 onChange={setPeriodValue}
               />
+              {/* <input type={`date`} /> */}
+              {/* <MomentInput
+                // max={moment().add(5, "days")}
+                // min={moment()}
+                format="YYYY-MM-DD"
+                options={true}
+                readOnly={false}
+                icon={false}
+                onChange={(date) => {
+                  console.log(date);
+                }}
+              /> */}
             </ModalBody>
             <ModalFooter>
               <Button
@@ -711,7 +724,7 @@ export default function TableEfficiency({
         bottomContentPlacement="outside"
         color="primary"
         classNames={{
-          wrapper: "max-h-[382px]",
+          wrapper: "max-h-[442px]",
         }}
         selectedKeys={selectedKeys}
         selectionMode="single"

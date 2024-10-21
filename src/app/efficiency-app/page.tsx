@@ -167,8 +167,8 @@ export default function Page() {
 
   return (
     <EfficiencyContentLayout title="All Efficiency Data">
-      <div className="flex flex-col items-center justify-center mt-24">
-        <div className="flex flex-col gap-8 justify-center items-center w-full">
+      <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col gap-8 justify-center items-center w-full min-h-full p-2">
           {/* {JSON.stringify(excels)} */}
           {/* <h1>{excels[3].excel_filename}</h1> */}
           <TableEfficiency

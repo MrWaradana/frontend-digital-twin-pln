@@ -47,6 +47,7 @@ export default function MultipleLineChart({
   thresholdNumber,
   onBarClick,
   totalPersen,
+  name,
 }: any) {
   const [sliderValue, setSliderValue] = useState<SliderValue>(thresholdNumber);
   const [internalSliderValue, setInternalSliderValue] =
@@ -65,11 +66,16 @@ export default function MultipleLineChart({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Heat Loss Chart</CardTitle>
-        <CardDescription>{new Date().getFullYear()}</CardDescription>
+        <CardTitle>
+          {" "}
+          <span className={`px-1`}>Data {name}</span>{" "}
+        </CardTitle>
       </CardHeader>
-      <CardContent className="grid grid-cols-3">
-        <ChartContainer config={chartConfig} className="col-span-2">
+      <CardContent className="grid grid-cols-12 h-[75dvh]">
+        <ChartContainer
+          config={chartConfig}
+          className="col-span-11 w-full h-[75dvh]"
+        >
           <ComposedChart
             accessibilityLayer
             data={data}

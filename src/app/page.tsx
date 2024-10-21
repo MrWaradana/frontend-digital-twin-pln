@@ -1,16 +1,19 @@
 import { Fragment } from "react";
 import { Card, CardHeader, CardBody, Divider, Link } from "@nextui-org/react";
 import Navbar from "@/components/Navbar";
+import { AudioWaveform, HousePlug } from "lucide-react";
 
 export default async function Home() {
   const appList = [
     {
       name: "Efficiency App",
       url: "/efficiency-app",
+      icon: <HousePlug size={48} />,
     },
     {
       name: "PFI App",
       url: "/pfi-app",
+      icon: <AudioWaveform size={48} />,
     },
     {
       name: "App3",
@@ -45,10 +48,12 @@ export default async function Home() {
   return (
     <Fragment>
       <Navbar />
-      <div className="flex justify-center items-start mt-24 min-h-screen">
-        <Card>
-          <CardHeader>
-            <h1 className="font-semibold text-xl">Aplikasi</h1>
+      <div className="flex justify-center items-start min-h-full">
+        <Card className={`w-full rounded-none`}>
+          <CardHeader className="bg-blue-400 rounded-none flex justify-center w-full text-center">
+            <h1 className="font-semibold text-xl text-center text-white">
+              Pilih Aplikasi
+            </h1>
           </CardHeader>
           <Divider />
           <CardBody>
@@ -58,8 +63,9 @@ export default async function Home() {
                   <Link
                     key={`${item}-${index}`}
                     href={`${item.url}`}
-                    className="h-24 w-48 hover:bg-blue-300 transition ease px-6 py-4 rounded-lg border flex justify-center items-center"
+                    className="h-[170px] w-full hover:bg-blue-300 text-blue-500 border-blue-400 transition ease px-6 py-4 rounded-lg border flex flex-col gap-6 justify-center items-center"
                   >
+                    {item.icon}
                     <p className="text-base font-normal leading-tight">
                       {item.name}
                     </p>

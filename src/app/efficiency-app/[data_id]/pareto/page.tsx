@@ -43,8 +43,9 @@ export default function Page({ params }: { params: { data_id: string } }) {
   // console.log(data?.pareto_result, "table data pareto");
 
   const tableData = data?.pareto_result ?? [];
-  const paretoTopData = data?.parett_uncategorized_result ?? [];
+  const paretoTopData = data?.pareto_uncategorized_result ?? [];
   const paretoBottomData = tableData.filter((item) => item.category != null);
+  const name = data?.name ?? "";
 
   // const tableIsPareto = filter flag is Pareto Hari Senen
   const chartRawData = data?.chart_result ?? [];
@@ -128,11 +129,10 @@ export default function Page({ params }: { params: { data_id: string } }) {
   return (
     <EfficiencyContentLayout title="Pareto Heat Loss">
       <div
-        className="flex flex-col w-full items-center justify-center mt-2"
+        className="flex flex-col w-full items-center justify-center"
         id="root"
       >
-        Pareto Page
-        <Button
+        {/* <Button
           as={Link}
           color="primary"
           startContent={<ChevronLeftIcon size={18} />}
@@ -141,10 +141,11 @@ export default function Page({ params }: { params: { data_id: string } }) {
           size="sm"
         >
           Back to all data
-        </Button>
+        </Button> */}
         <div className="min-w-full h-full overflow-hidden">
           <MultipleLineChart
             data={chartData}
+            name={name}
             onThresholdChange={setPercentageThreshold}
             thresholdNumber={percentageThreshold}
             // @ts-ignore
