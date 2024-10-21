@@ -90,43 +90,48 @@ export default function Page({ params }: { params: { data_id: string } }) {
 
   return (
     <EfficiencyContentLayout title="Nett Plant Heat Rate">
-      <Button
-        color="primary"
-        isLoading={isLoadingNPHR}
-        startContent={
-          <>
-            <PlusIcon />
-          </>
-        }
-        onPress={onOpen}
-        className={`${
-          session?.user.user.role === "Management" ? "hidden" : ""
-        }`}
+      <div
+        className={`flex gap-12 items-center justify-between fixed top-20 right-16 z-50`}
       >
-        Input Niaga
-      </Button>
-      <div className="flex flex-col w-1/4">
-        <p>Select Data</p>
-        {isLoadingEfficiencyData ? (
-          "Loading..."
-        ) : (
-          <AsyncSelect
-            className="z-[99]"
-            classNamePrefix="select"
-            isClearable={true}
-            isSearchable={true}
-            loadOptions={loadOptions}
-            defaultOptions={EfficiencyDataOptions} // Optional: Show default options initially
-            cacheOptions // Caches the loaded options
-            isLoading={isLoadingEfficiencyData}
-            onChange={(e) => {
-              //@ts-ignore
-              setDataId(e?.value ?? "new");
-            }}
-            name="efficiencyData"
-          />
-        )}
-        <hr />
+        <div className="flex flex-col w-1/4">
+          {isLoadingEfficiencyData ? (
+            "Loading..."
+          ) : (
+            <AsyncSelect
+              className="z-[99] min-w-64"
+              classNamePrefix="select"
+              isClearable={true}
+              isSearchable={true}
+              loadOptions={loadOptions}
+              placeholder={`Select Data...`}
+              defaultOptions={EfficiencyDataOptions} // Optional: Show default options initially
+              cacheOptions // Caches the loaded options
+              isLoading={isLoadingEfficiencyData}
+              onChange={(e) => {
+                //@ts-ignore
+                setDataId(e?.value ?? "new");
+              }}
+              name="efficiencyData"
+            />
+          )}
+          <hr />
+        </div>
+        <Button
+          color="primary"
+          isLoading={isLoadingNPHR}
+          startContent={
+            <>
+              <PlusIcon />
+            </>
+          }
+          size="sm"
+          onPress={onOpen}
+          className={`${
+            session?.user.user.role === "Management" ? "hidden" : ""
+          }`}
+        >
+          Input Niaga
+        </Button>
       </div>
       <ModalNPHRInput
         isOpen={isOpen}

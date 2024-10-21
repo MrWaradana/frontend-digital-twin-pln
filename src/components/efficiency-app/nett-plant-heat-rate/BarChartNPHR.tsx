@@ -175,17 +175,17 @@ export default function BarChartNPHR({
           )}
         </ModalContent>
       </Modal>
-      <p className="w-full flex justify-center">
-        Showing <span className="font-bold px-2"> {`${data?.name}`}</span>
-        Nett Plant Heat Rate Data
-      </p>
+
       <Card>
         <CardHeader>
-          <CardTitle>Nett Plant Heat Rate</CardTitle>
+          <CardTitle>{`${data?.name}`} Data</CardTitle>
           <CardDescription>{new Date().getFullYear()}</CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig}>
+          <ChartContainer
+            config={chartConfig}
+            className={`max-h-[408px] w-full z-0`}
+          >
             <BarChart accessibilityLayer data={chartData}>
               <CartesianGrid vertical={false} />
               <XAxis
@@ -203,7 +203,7 @@ export default function BarChartNPHR({
                   dx: -20,
                 }}
               />
-              <ChartTooltip content={<ChartTooltipContent />} />
+              <ChartTooltip content={<ChartTooltipContent className="z-0" />} />
               <ChartLegend content={<ChartLegendContent />} />
               <Bar
                 dataKey="nphr"

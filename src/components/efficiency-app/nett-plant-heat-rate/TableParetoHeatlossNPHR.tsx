@@ -649,7 +649,8 @@ export default function TableParetoHeatlossNPHR({
           const roundedTotalBiaya = Math.round(scaledTotalBiaya);
           return (
             <>
-              {props.row.depth > 0 && ( // Only render if it's a subrow
+              {
+                // Only render if it's a subrow
                 <div>
                   {`${roundedCostBenefit} : ${roundedTotalBiaya} | ${
                     totalBiaya == 0
@@ -657,7 +658,7 @@ export default function TableParetoHeatlossNPHR({
                       : (costBenefit / totalBiaya).toFixed(2)
                   }`}
                 </div>
-              )}
+              }
             </>
           );
         },

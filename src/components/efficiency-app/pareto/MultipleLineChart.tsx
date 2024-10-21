@@ -65,13 +65,13 @@ export default function MultipleLineChart({
 
   return (
     <Card>
-      <CardHeader>
+      {/* <CardHeader>
         <CardTitle>
           {" "}
           <span className={`px-1`}>Data {name}</span>{" "}
         </CardTitle>
-      </CardHeader>
-      <CardContent className="grid grid-cols-12 h-[75dvh]">
+      </CardHeader> */}
+      <CardContent className="grid grid-cols-12 h-[75dvh] mt-12">
         <ChartContainer
           config={chartConfig}
           className="col-span-11 w-full h-[75dvh]"

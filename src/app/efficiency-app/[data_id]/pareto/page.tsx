@@ -55,20 +55,30 @@ export default function Page({ params }: { params: { data_id: string } }) {
   const chartData = useMemo(() => {
     const mapped_data = chartRawData
       .map((item: any, index: number) => {
-        const cum_frequency = chartRawData
-          .slice(0, index + 1) // Get all previous items up to the current index
+        let cum_frequency = chartRawData
+          .slice(0, index + 1)
           .reduce(
-            (acc: any, current: { total_persen_losses: any }) =>
+            (acc: number, current: { total_persen_losses: number }) =>
               acc + current.total_persen_losses,
             0
-          ); // Accumulate total_persen_losses
+          );
+
+        // Ensure cum_frequency is not above 100
+        cum_frequency = Math.min(cum_frequency, 100);
         return {
           ...item, // Spread the original item
           cum_frequency, // Add the accumulated frequency
         };
       })
       // .filter((item: any) => item.cum_frequency <= 100 && item.category);
-      .filter((item: any) => item.category);
+      .filter((item: any) => item.category)
+      .map((item, index, array) => {
+        // If it's the last item, set cum_frequency to 100
+        if (index === array.length - 1) {
+          return { ...item, cum_frequency: 100 };
+        }
+        return item;
+      });
 
     // console.log(mapped_data, "mapped chart data");
     //   return mapped_data;

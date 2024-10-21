@@ -95,9 +95,8 @@ export default function CostBenefitContainer() {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col w-1/4">
-        <p>Select Data</p>
+    <div className="flex flex-col gap-4 relative">
+      <div className="flex flex-col w-1/4 absolute top-2 left-[28rem]">
         {isLoadingEfficiencyData ? (
           "Loading..."
         ) : (
@@ -105,6 +104,7 @@ export default function CostBenefitContainer() {
             className="z-[99]"
             classNamePrefix="select"
             isClearable={true}
+            placeholder={`Select Data...`}
             isSearchable={true}
             loadOptions={loadOptions}
             defaultOptions={EfficiencyDataOptions} // Optional: Show default options initially
@@ -120,15 +120,11 @@ export default function CostBenefitContainer() {
         <hr />
       </div>
       {isLoading || isValidating ? (
-        <div className="w-full flex justify-center">
+        <div className="w-full h-[100dvh] flex justify-center items-center">
           <Spinner label={`Loading...`} />
         </div>
       ) : (
         <div>
-          {/* {JSON.stringify(data)} */}
-          <h2>
-            Showing <span className="font-semibold pl-1 ">{data?.name}</span>
-          </h2>
           <TableParetoHeatlossCost
             tableData={costData}
             summaryData={data}

@@ -737,7 +737,7 @@ export default function TableEfficiency({
         // }}
         onSortChange={setSortDescriptor}
       >
-        <TableHeader columns={headerColumns}>
+        <TableHeader columns={headerColumns} className="bg-blue-300">
           {(column: any) => (
             <TableColumn
               key={column.uid}
