@@ -11,14 +11,16 @@ import {
   NextUIProvider,
   useDisclosure,
 } from "@nextui-org/react";
-import { SessionProvider as NextAuthProvider } from "next-auth/react";
+import { SessionProvider as NextAuthProvider, signOut } from "next-auth/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { Modal, ModalBody } from "@nextui-org/react";
 import { type ThemeProviderProps } from "next-themes/dist/types";
 import { Session } from "next-auth";
 
-const timeout = 900_000;
-const promptBeforeIdle = 60_000;
+const timeout = 600_000; // 10 minutes in milliseconds
+// const timeout = 80_000; // 10 minutes in milliseconds
+const promptBeforeIdle = 180_000; // 3 minutes in milliseconds
+// const promptBeforeIdle = 70_000; // 3 minutes in milliseconds
 
 export function Providers({
   session,
@@ -34,6 +36,7 @@ export function Providers({
 
   const onIdle = () => {
     setState("Idle");
+    signOut();
     // setOpen(false);
   };
 
@@ -70,8 +73,23 @@ export function Providers({
     activate();
   };
 
+  const timeTillIdle = Math.max(remaining, 0);
   const timeTillPrompt = Math.max(remaining - promptBeforeIdle / 1000, 0);
-  const seconds = timeTillPrompt > 1 ? "seconds" : "second";
+
+  const formatTime = (seconds: number) => {
+    if (seconds >= 60) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes} minute${
+        minutes > 1 ? "s" : ""
+      } ${remainingSeconds} second${remainingSeconds !== 1 ? "s" : ""}`;
+    } else {
+      return `${seconds} second${seconds !== 1 ? "s" : ""}`;
+    }
+  };
+
+  // const seconds = timeTillPrompt > 1 ? "seconds" : "second";
+  // const secondsIdle = timeTillIdle > 1 ? "seconds" : "second";
 
   return (
     <>
@@ -81,11 +99,9 @@ export function Providers({
             {/* <h1>React Idle Timer</h1>
             <h2>Confirm Prompt</h2>
             <br />
-            <p>Current State: {state}</p> */}
-            {/* {timeTillPrompt > 0 && (
-              <p>
-                {timeTillPrompt} {seconds} until prompt
-              </p>
+            <p>Current State: {state}</p>
+            {timeTillPrompt > 0 && (
+              <p>{formatTime(timeTillPrompt)} until prompt</p>
             )} */}
             <Modal
               isOpen={open}
@@ -100,7 +116,10 @@ export function Providers({
                       Idle Confirmation
                     </ModalHeader>
                     <ModalBody>
-                      <p>Are you still here?</p>
+                      <p>
+                        Are you still here? If not you will be logged out in{" "}
+                        {formatTime(timeTillIdle)}
+                      </p>
                     </ModalBody>
                     <ModalFooter>
                       {/* <Button color="danger" variant="light" onPress={onClose}>
