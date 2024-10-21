@@ -146,7 +146,7 @@ const TableEquipment = ({
                     <DropdownMenu>
                       <DropdownItem
                         startContent={<EyeOpenIcon />}
-                        href={`/pfi-app/${row.id}`}
+                        href={`/pfi-app/equipments/${row.id}`}
                       >
                         View
                       </DropdownItem>

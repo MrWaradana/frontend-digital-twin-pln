@@ -1,7 +1,8 @@
 import {
   LayoutGrid,
   LucideIcon,
-  Briefcase
+  Briefcase,
+  LayoutDashboard
 } from "lucide-react";
 
 type Submenu = {
@@ -42,8 +43,15 @@ export function getMenuList(pathname: string): Group[] {
       menus: [
         {
           href: "/pfi-app",
-          label: "Equipment Lists",
+          label: "Dashboard",
           active: pathname === "/pfi-app" ? true : false,
+          icon: LayoutDashboard,
+          submenus: [],
+        },
+        {
+          href: "/pfi-app/equipments",
+          label: "Equipment Lists",
+          active: pathname === "/pfi-app/equipments" ? true : false,
           icon: Briefcase,
           submenus: [],
         },
