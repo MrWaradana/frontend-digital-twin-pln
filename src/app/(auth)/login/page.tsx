@@ -139,48 +139,7 @@ export default function Component() {
     <>
       <div className="grid grid-cols-1 lg:grid-cols-3 min-h-[100dvh]">
         <Toaster />
-        <div className={`col-span-2 h-full relative`}>
-          <div
-            className={`z-10 flex flex-col gap-6 text-white absolute  px-12 py-20`}
-          >
-            <div>
-              <h1 className={`text-3xl font-bold`}>Digital Twin</h1>
-              <h2 className={`text-lg font-normal`}>Dashboard</h2>
-            </div>
-            <p className={`text-justify text-sm`}>
-              Manajemen kesehatan aset pada pembangkit listrik adalah proses
-              yang sangat penting untuk memastikan operasional yang efisien dan
-              berkelanjutan dari seluruh sistem pembangkit. Ini melibatkan
-              pemantauan kondisi aset-aset utama seperti turbin, generator,
-              transformator, dan peralatan penting lainnya yang digunakan dalam
-              produksi dan distribusi energi. Melalui analisis data yang
-              dikumpulkan dari sensor dan perangkat monitoring, tim manajemen
-              dapat mengidentifikasi potensi masalah lebih awal sebelum terjadi
-              kerusakan serius yang dapat mengakibatkan downtime atau gangguan
-              layanan. Hal ini tidak hanya mengurangi biaya perbaikan darurat
-              tetapi juga memperpanjang umur aset dan memastikan kinerja
-              optimal.
-              <br /> <br />
-              Selain itu, manajemen kesehatan aset memungkinkan pembangkit
-              listrik untuk merencanakan pemeliharaan secara lebih efektif.
-              Dengan memahami kondisi nyata dari peralatan, keputusan terkait
-              pemeliharaan dapat dibuat berdasarkan data, bukan asumsi. Ini
-              termasuk penjadwalan perawatan preventif, prediktif, atau korektif
-              yang tepat waktu untuk meminimalkan dampak terhadap operasi
-              sehari-hari. Dengan demikian, manajemen kesehatan aset berperan
-              penting dalam meningkatkan keandalan pembangkit listrik,
-              mengurangi risiko kegagalan, dan pada akhirnya memastikan pasokan
-              energi yang stabil bagi konsumen.
-            </p>
-            <Button
-              color={`primary`}
-              variant={`bordered`}
-              className={`text-white border-white`}
-              disabled={true}
-            >
-              Silahkan sign in terlebih dahulu {`>>>`}
-            </Button>
-          </div>
+        <div className={`col-span-2 h-full relative hidden lg:block`}>
           <Swiper
             spaceBetween={0}
             centeredSlides={true}
@@ -203,13 +162,13 @@ export default function Component() {
                     alt={`login-background`}
                     className="absolute w-full top-0 left-0 h-full -z-10"
                   />
-                  <div className="absolute inset-0 w-full h-full bg-black/60 -z-10"></div>
+                  <div className="absolute inset-0 w-full h-full bg-black/30 -z-10"></div>
                 </SwiperSlide>
               );
             })}
           </Swiper>
         </div>
-        <div className="mx-auto w-full max-w-md space-y-6 py-12">
+        <div className="mx-auto w-full max-w-md space-y-6 py-4">
           <div className="space-y-2 text-center items-center flex flex-col gap-4">
             <Image
               src={PlnLogo}
@@ -305,6 +264,7 @@ export default function Component() {
             >
               Sign in
             </Button>
+            <h1 className={`text-3xl font-bold`}>Digital Twin</h1>
           </form>
         </div>
       </div>

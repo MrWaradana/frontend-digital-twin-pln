@@ -35,7 +35,8 @@ export default function Page() {
   } = useGetThermoStatus();
 
   const parameter = params.get("parameter") ?? "";
-  const date = params.get("date") ?? "";
+  const start_date = params.get("start_date") ?? "";
+  const end_date = params.get("end_date") ?? "";
 
   const {
     data: variableData,
@@ -46,7 +47,8 @@ export default function Page() {
     excels[0].id,
     "in",
     parameter,
-    date
+    start_date,
+    end_date
   );
 
   const variable = variableData ?? [];

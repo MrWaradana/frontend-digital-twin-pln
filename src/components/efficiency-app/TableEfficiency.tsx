@@ -29,6 +29,7 @@ import {
   Link,
   Spinner,
   DatePicker,
+  DateRangePicker,
 } from "@nextui-org/react";
 import {
   DotsVerticalIcon,
@@ -46,6 +47,9 @@ import { useStatusThermoflowStore } from "../../store/statusThermoflow";
 import { getLocalTimeZone, today, parseDate } from "@internationalized/date";
 import { Route } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { RangeValue } from "@react-types/shared";
+import { DateValue } from "@react-types/datepicker";
+import { useDateFormatter } from "@react-aria/i18n";
 
 const parameterColorMap: Record<string, ChipProps["color"]> = {
   current: "success",
@@ -93,6 +97,7 @@ export default function TableEfficiency({
   const [selectedRowId, setSelectedRowId] = React.useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
   const session = useSession();
+  let formatter = useDateFormatter({ dateStyle: "long" });
 
   // console.log(tableData, "table data");
 
@@ -114,9 +119,16 @@ export default function TableEfficiency({
 
   type TransactionsType = (typeof tableData)[0];
 
-  const [periodValue, setPeriodValue] = React.useState(
-    today(getLocalTimeZone())
-  );
+  const [periodValue, setPeriodValue] = React.useState<RangeValue<DateValue>>({
+    start: parseDate("2024-09-18"),
+    end: today(getLocalTimeZone()),
+  });
+  // const [periodValue, setPeriodValue] = React.useState(
+  //   today(getLocalTimeZone())
+  // );
+  // const [startPeriodValue, setStartPeriodValue] = React.useState(
+  //   Number(periodValue) - 30
+  // );
   const [modalChoosePeriod, setModalChoosePeriod] = React.useState(false);
   const [loadingEfficiency, setLoadingEfficiency] = React.useState(false);
   const [filterValue, setFilterValue] = React.useState("");
@@ -270,10 +282,10 @@ export default function TableEfficiency({
   //         },
   //       }
   //     );
-      // useSelectedEfficiencyDataStore
-      //   .getState()
-      //   //@ts-ignore
-      //   .setSelectedEfficiencyData(value.currentKey);
+  // useSelectedEfficiencyDataStore
+  //   .getState()
+  //   //@ts-ignore
+  //   .setSelectedEfficiencyData(value.currentKey);
   //     if (response.ok) {
   //       // Remove the item from tableData after successful deletion
   //       useSelectedEfficiencyDataStore
@@ -290,8 +302,25 @@ export default function TableEfficiency({
   //   }
   // };
 
+  // Handler for date range changes
+  const handleDateRangeChange = (range) => {
+    if (!range.start || !range.end) return;
+
+    const daysDifference = Math.abs(Number(range.end) - Number(range.start));
+
+    if (daysDifference > 30) {
+      // If selected range is more than 30 days, adjust the start date
+      setPeriodValue({
+        //@ts-ignore
+        start: Number(range.end) - 30,
+        end: range.end,
+      });
+    } else {
+      setPeriodValue(range);
+    }
+  };
   const handlePeriod = () => {
-    const url = `${addNewUrl}?parameter=periodic&date=${periodValue}`;
+    const url = `${addNewUrl}?parameter=periodic&start_date=${periodValue.start}&end_date=${periodValue.end}`;
     router.push(url);
   };
 
@@ -659,7 +688,24 @@ export default function TableEfficiency({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader>Select Max Date for 30 Days Period</ModalHeader>
+            <ModalHeader>Select Period Date for Max 30 Days Period</ModalHeader>
+            {JSON.stringify(periodValue.start.toDate)}
+            {JSON.stringify(periodValue.end.toDate)}
+            <ModalBody>
+              <DateRangePicker
+                label="Date period"
+                className="max-w-[284px]"
+                maxValue={today(getLocalTimeZone())}
+                value={periodValue}
+                defaultValue={{
+                  start: today(getLocalTimeZone()),
+                  end: today(getLocalTimeZone()),
+                }}
+                showMonthAndYearPickers
+                description="Select a date range (maximum 30 days)"
+                onChange={handleDateRangeChange}
+              />
+              {/* <ModalHeader>Select Max Date for 30 Days Period</ModalHeader>
             <ModalBody>
               <DatePicker
                 label="Max Date"
@@ -673,7 +719,7 @@ export default function TableEfficiency({
                 }
                 //@ts-ignore
                 onChange={setPeriodValue}
-              />
+              /> */}
               {/* <input type={`date`} /> */}
               {/* <MomentInput
                 // max={moment().add(5, "days")}

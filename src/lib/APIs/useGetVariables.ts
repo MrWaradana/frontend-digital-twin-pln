@@ -27,7 +27,8 @@ export function useGetVariables(
   excel_id: string | undefined,
   type: string | undefined,
   parameter?: string | undefined,
-  date?: string | undefined
+  startDate?: string | undefined,
+  endDate?: string | undefined
 ): HookReply<Array<Variable>> {
   const formatDate = (date: Date | null) => {
     return date ? format(date, "yyyy-MM-dd") : "";
@@ -36,7 +37,7 @@ export function useGetVariables(
   return useApiFetch(
     `${EFFICIENCY_API_URL}/variables?excel_id=${excel_id}&type=${type}&parameter=${
       parameter ? parameter : "current"
-    }&end_date=${date}`,
+    }&start_date=${startDate}&end_date=${endDate}`,
     // `${EFFICIENCY_API_URL}/variables?excel_id=${excel_id}&type=${type}`,
     !!token,
     token
