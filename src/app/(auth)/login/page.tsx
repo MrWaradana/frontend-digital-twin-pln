@@ -14,6 +14,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import PlnLogo from "../../../../public/Logo_PLN.svg";
+import BGLogin from "../../../../public/bg-login.jpg";
 import { useSession } from "next-auth/react";
 import useCaptcha from "use-offline-captcha";
 import { AUTH_API_URL } from "../../../lib/api-url";
@@ -113,39 +114,55 @@ export default function Component() {
   }, [gen]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 min-h-[100dvh]">
+    <div className="grid grid-cols-1 md:grid-cols-3 min-h-[100dvh]">
       <Toaster />
-
       <div
-        className={`h-full w-full px-28 flex flex-col text-white justify-center items-start gap-6 bg-blue-400`}
+        className={`h-full w-full px-28 flex flex-col text-white justify-center items-start gap-6 col-span-2 relative`}
       >
-        <div>
-          <h1 className={`text-3xl font-bold`}>Digital Twin</h1>
-          <h2 className={`text-lg font-normal`}>Dashboard</h2>
+        <Image
+          src={BGLogin}
+          alt={`login-background`}
+          className="absolute w-full top-0 left-0 h-full"
+        />
+        <div className="absolute inset-0 w-full h-full bg-black/60"></div>
+        <div className={`z-10 flex flex-col gap-6`}>
+          <div>
+            <h1 className={`text-3xl font-bold`}>Digital Twin</h1>
+            <h2 className={`text-lg font-normal`}>Dashboard</h2>
+          </div>
+          <p className={`text-justify text-sm`}>
+            Manajemen kesehatan aset pada pembangkit listrik adalah proses yang
+            sangat penting untuk memastikan operasional yang efisien dan
+            berkelanjutan dari seluruh sistem pembangkit. Ini melibatkan
+            pemantauan kondisi aset-aset utama seperti turbin, generator,
+            transformator, dan peralatan penting lainnya yang digunakan dalam
+            produksi dan distribusi energi. Melalui analisis data yang
+            dikumpulkan dari sensor dan perangkat monitoring, tim manajemen
+            dapat mengidentifikasi potensi masalah lebih awal sebelum terjadi
+            kerusakan serius yang dapat mengakibatkan downtime atau gangguan
+            layanan. Hal ini tidak hanya mengurangi biaya perbaikan darurat
+            tetapi juga memperpanjang umur aset dan memastikan kinerja optimal.
+            <br /> <br />
+            Selain itu, manajemen kesehatan aset memungkinkan pembangkit listrik
+            untuk merencanakan pemeliharaan secara lebih efektif. Dengan
+            memahami kondisi nyata dari peralatan, keputusan terkait
+            pemeliharaan dapat dibuat berdasarkan data, bukan asumsi. Ini
+            termasuk penjadwalan perawatan preventif, prediktif, atau korektif
+            yang tepat waktu untuk meminimalkan dampak terhadap operasi
+            sehari-hari. Dengan demikian, manajemen kesehatan aset berperan
+            penting dalam meningkatkan keandalan pembangkit listrik, mengurangi
+            risiko kegagalan, dan pada akhirnya memastikan pasokan energi yang
+            stabil bagi konsumen.
+          </p>
+          <Button
+            color={`primary`}
+            variant={`bordered`}
+            className={`text-white border-white`}
+            disabled={true}
+          >
+            Silahkan sign in terlebih dahulu {`>>>`}
+          </Button>
         </div>
-        <p className={`text-justify`}>
-          Lorem ipsum odor amet, consectetuer adipiscing elit. Tempor bibendum
-          eros neque euismod et sodales dis aliquam. Fusce platea phasellus
-          suscipit placerat scelerisque dictum consectetur. Sociosqu ultricies
-          taciti lorem laoreet rhoncus est interdum aliquam ipsum. Aptent augue
-          fermentum conubia porta in. Bibendum morbi sollicitudin sit ultricies
-          quis nascetur. Augue phasellus tortor per non nostra sit. Natoque
-          fringilla euismod integer commodo leo; ornare faucibus fringilla
-          aptent? Erat mattis posuere habitant sollicitudin ornare maximus
-          praesent eleifend. Ornare cras nascetur mattis luctus, suspendisse non
-          luctus. Congue cras a imperdiet pretium dapibus sollicitudin. Ipsum
-          ultrices libero facilisi habitant consectetur tellus sagittis. Montes
-          mollis massa; justo platea fames mollis. Ipsum vitae viverra, cubilia
-          mi hendrerit enim consectetur cursus. Amet phasellus aenean penatibus
-          metus luctus aliquet.
-        </p>
-        <Button
-          color={`primary`}
-          variant={`bordered`}
-          className={`text-white border-white`}
-        >
-          Silahkan login terlebih dahulu {`>>>`}
-        </Button>
       </div>
       <div className="mx-auto w-full max-w-md space-y-6 py-20">
         <div className="space-y-2 text-center items-center flex flex-col gap-4">

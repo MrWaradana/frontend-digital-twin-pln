@@ -143,14 +143,14 @@ export default function MultipleLineChart({
             />
             <ReferenceLine
               y={Number(internalSliderValue)}
-              label="USEFUL MANY"
+              // label="USEFUL MANY"
               stroke="#00b0f0"
               strokeDasharray={5}
               strokeWidth={2}
               strokeDashoffset={1}
               yAxisId={"total_persen_losses"}
             />
-            <Line
+            {/* <Line
               name={"Total Persen Loss"}
               dataKey="total_persen_losses"
               type="monotone"
@@ -158,7 +158,7 @@ export default function MultipleLineChart({
               strokeWidth={2}
               dot={true}
               yAxisId={"total_persen_losses"}
-            />
+            /> */}
             <Line
               name={`Cummulative Frequency`}
               dataKey="cum_frequency"

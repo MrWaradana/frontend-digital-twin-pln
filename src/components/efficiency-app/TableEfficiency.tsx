@@ -270,10 +270,10 @@ export default function TableEfficiency({
   //         },
   //       }
   //     );
-  //     useSelectedEfficiencyDataStore
-  //       .getState()
-  //       //@ts-ignore
-  //       .setSelectedEfficiencyData(value.currentKey);
+      // useSelectedEfficiencyDataStore
+      //   .getState()
+      //   //@ts-ignore
+      //   .setSelectedEfficiencyData(value.currentKey);
   //     if (response.ok) {
   //       // Remove the item from tableData after successful deletion
   //       useSelectedEfficiencyDataStore

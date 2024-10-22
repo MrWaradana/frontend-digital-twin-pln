@@ -149,11 +149,11 @@ export default function BarChartNPHR({
         size="5xl"
         scrollBehavior="inside"
       >
-        <ModalContent>
+        <ModalContent className={`min-h-[100dvh]`}>
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1"></ModalHeader>
-              <ModalBody className="flex justify-center items-center">
+              <ModalBody className="flex justify-start items-start min-h-[70dvh]">
                 <div className="min-h-full min-w-[968px] overflow-hidden">
                   <MultipleLineChart
                     data={chartParetoDataWithCumFeq}

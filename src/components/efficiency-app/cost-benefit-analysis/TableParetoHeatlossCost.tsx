@@ -368,7 +368,7 @@ export default function TableParetoHeatlossCost({
           </div>
         ),
         meta: {
-          className: "text-right",
+          className: "text-right pr-2",
         },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) =>
@@ -396,7 +396,7 @@ export default function TableParetoHeatlossCost({
           </div>
         ),
         meta: {
-          className: "text-right",
+          className: "text-right pr-2",
         },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) =>
@@ -412,7 +412,7 @@ export default function TableParetoHeatlossCost({
         header: () => <div className="text-center">Gap</div>,
         size: 45,
         meta: {
-          className: "text-right",
+          className: "text-right pr-2",
         },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) => (row.data ? null : row.gap),
@@ -491,7 +491,7 @@ export default function TableParetoHeatlossCost({
         accessorKey: "persen_losses",
         size: 45,
         meta: {
-          className: "text-right",
+          className: "text-right pr-2",
         },
         header: () => (
           <div className="text-center">
@@ -536,7 +536,7 @@ export default function TableParetoHeatlossCost({
         accessorKey: "nilai_losses",
         size: 45,
         meta: {
-          className: "text-right",
+          className: "text-right pr-2",
         },
         header: () => (
           <div className="text-center">
@@ -624,7 +624,7 @@ export default function TableParetoHeatlossCost({
         header: () => <div className="text-center">Potential Benefit</div>,
         size: 105,
         meta: {
-          className: "text-right",
+          className: "text-right pr-2",
         },
         accessorKey: "cost_benefit",
         cell: (props: any) => {
@@ -655,7 +655,7 @@ export default function TableParetoHeatlossCost({
         id: "biayaClosingGap",
         accessorKey: "total_biaya",
         meta: {
-          className: "text-right",
+          className: "text-right pr-2",
         },
         header: () => (
           <div className="text-center">Biaya untuk Closing Gap</div>

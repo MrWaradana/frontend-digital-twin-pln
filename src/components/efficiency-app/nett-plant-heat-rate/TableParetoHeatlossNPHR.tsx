@@ -349,7 +349,7 @@ export default function TableParetoHeatlossNPHR({
           </div>
         ),
         meta: {
-          className: "text-right",
+          className: "text-right pr-2",
         },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) =>
@@ -377,7 +377,7 @@ export default function TableParetoHeatlossNPHR({
           </div>
         ),
         meta: {
-          className: "text-right",
+          className: "text-right pr-2",
         },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) =>
@@ -394,7 +394,7 @@ export default function TableParetoHeatlossNPHR({
         header: () => <div className="text-center">Gap</div>,
         size: 45,
         meta: {
-          className: "text-right",
+          className: "text-right pr-2",
         },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) => (row.data ? null : row.gap.toFixed(2) || ""),
@@ -465,7 +465,7 @@ export default function TableParetoHeatlossNPHR({
         accessorKey: "persen_losses",
         size: 45,
         meta: {
-          className: "text-right",
+          className: "text-right pr-2",
         },
         header: () => (
           <div className="text-center">
@@ -502,7 +502,7 @@ export default function TableParetoHeatlossNPHR({
         accessorKey: "nilai_losses",
         size: 45,
         meta: {
-          className: "text-right",
+          className: "text-right pr-2",
         },
         header: () => (
           <div className="text-center">
@@ -582,7 +582,7 @@ export default function TableParetoHeatlossNPHR({
         header: () => <div className="text-center">Potential Benefit</div>,
         size: 125,
         meta: {
-          className: "text-right",
+          className: "text-right pr-2",
         },
         accessorKey: "cost_benefit",
         cell: (props: any) => {
@@ -606,7 +606,7 @@ export default function TableParetoHeatlossNPHR({
         id: "biayaClosingGap",
         accessorKey: "total_biaya",
         meta: {
-          className: "text-right",
+          className: "text-right pr-2",
         },
         header: () => (
           <div className="text-center">Biaya untuk Closing Gap</div>
@@ -628,7 +628,7 @@ export default function TableParetoHeatlossNPHR({
         header: () => <div className="text-center">Ratio Benefit to Cost</div>,
         size: 105,
         meta: {
-          className: "text-right pr-1",
+          className: "text-right pr-2",
         },
         cell: (props: any) => {
           const costBenefit = props.row.original.cost_benefit;

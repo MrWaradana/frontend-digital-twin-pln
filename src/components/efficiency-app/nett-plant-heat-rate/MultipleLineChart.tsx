@@ -131,15 +131,15 @@ export default function MultipleLineChart({
           )}
         </ModalContent>
       </Modal>
-      <Card>
+      <Card className="w-full h-full flex flex-col">
         <CardHeader>
           <CardTitle>Pareto Heat Loss</CardTitle>
           <CardDescription>{new Date().getFullYear()}</CardDescription>
         </CardHeader>
-        <CardContent className="grid grid-cols-1">
+        <CardContent className="flex-1 min-h-0 overflow-auto">
           <ChartContainer
             config={chartConfig}
-            className="col-span-2 h-[328px] min-w-full"
+            className="flex w-full h-full overflow-auto"
           >
             <ComposedChart
               accessibilityLayer
@@ -213,7 +213,7 @@ export default function MultipleLineChart({
                 strokeWidth={2}
                 strokeDashoffset={1}
               />
-              <Line
+              {/* <Line
                 name={"Total Persen Loss"}
                 dataKey="total_persen_losses"
                 type="monotone"
@@ -227,7 +227,7 @@ export default function MultipleLineChart({
                     handleDotLineClick(payload),
                 }}
                 yAxisId={"persenLosses"}
-              />
+              /> */}
               <Line
                 name={`Cummulative Frequency`}
                 dataKey="cum_frequency"
