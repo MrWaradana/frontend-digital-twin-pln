@@ -702,7 +702,7 @@ export default function TableParetoHeatlossCost({
         id: "potentialBenefit",
         header: () => (
           <div className="text-center">
-            Potential Benefit <br /> (Jt)
+            Potential Benefit <br /> (Juta/Jam)
           </div>
         ),
         size: 105,
@@ -748,7 +748,7 @@ export default function TableParetoHeatlossCost({
         },
         header: () => (
           <div className="text-center">
-            Biaya untuk Closing Gap <br /> (Jt)
+            Biaya untuk Closing Gap <br /> (Juta)
           </div>
         ),
         size: 55,
