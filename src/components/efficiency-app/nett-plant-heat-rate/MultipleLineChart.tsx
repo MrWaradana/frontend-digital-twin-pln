@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { Router, TrendingUp } from "lucide-react";
+import { Router, TrendingUp } from 'lucide-react'
 import {
   Bar,
   CartesianGrid,
@@ -13,7 +13,7 @@ import {
   ComposedChart,
   BarChart,
   Tooltip,
-} from "recharts";
+} from 'recharts'
 
 import {
   Card,
@@ -22,13 +22,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card'
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
+} from '@/components/ui/chart'
 import {
   Button,
   Modal,
@@ -39,22 +39,22 @@ import {
   Slider,
   SliderValue,
   useDisclosure,
-} from "@nextui-org/react";
-import { ReactNode, useEffect, useMemo, useState } from "react";
-import { debounce } from "lodash";
-import { useRouter } from "next/navigation";
-import TableParetoHeatlossNPHR from "./TableParetoHeatlossNPHR";
+} from '@nextui-org/react'
+import { ReactNode, useEffect, useMemo, useState } from 'react'
+import { debounce } from 'lodash'
+import { useRouter } from 'next/navigation'
+import TableParetoHeatlossNPHR from './TableParetoHeatlossNPHR'
 
 const chartConfig = {
   category: {
-    label: "category",
-    color: "hsl(var(--chart-1))",
+    label: 'category',
+    color: 'hsl(var(--chart-1))',
   },
   cum_frequency: {
-    label: "cum_frequency",
-    color: "hsl(var(--chart-2))",
+    label: 'cum_frequency',
+    color: 'hsl(var(--chart-2))',
   },
-} satisfies ChartConfig;
+} satisfies ChartConfig
 
 export default function MultipleLineChart({
   data,
@@ -62,38 +62,38 @@ export default function MultipleLineChart({
   thresholdNumber,
   paretoData,
 }: any) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [selectedCategory, setSelectedCategory] = useState<any>(null);
-  const router = useRouter();
-  const [sliderValue, setSliderValue] = useState<SliderValue>(thresholdNumber);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const [selectedCategory, setSelectedCategory] = useState<any>(null)
+  const router = useRouter()
+  const [sliderValue, setSliderValue] = useState<SliderValue>(thresholdNumber)
   const [internalSliderValue, setInternalSliderValue] =
-    useState<SliderValue>(thresholdNumber); // Holds the immediate value
+    useState<SliderValue>(thresholdNumber) // Holds the immediate value
 
   const handleBarClick = (data: any) => {
     // setSelectedBar(data.category);
     const dataParetoShow = paretoData.filter(
       (item) => item.category == data.category
-    );
-    setSelectedCategory(dataParetoShow[0]);
-    onOpen();
-  };
+    )
+    setSelectedCategory(dataParetoShow[0])
+    onOpen()
+  }
 
   const handleDotLineClick = (data: any) => {
     // setSelectedBar(data.category);
     const dataParetoShow = paretoData.filter(
       (item) => item.category == data.payload.category
-    );
-    setSelectedCategory(dataParetoShow[0]);
-    onOpen();
-  };
+    )
+    setSelectedCategory(dataParetoShow[0])
+    onOpen()
+  }
 
   // console.log(data, "data pareto chart heat loss");
   const renderValue = (key: string, value: unknown): ReactNode => {
-    if (typeof value === "object" && value !== null) {
-      return <pre>{JSON.stringify(value, null, 2)}</pre>; // For object rendering, stringify the object
+    if (typeof value === 'object' && value !== null) {
+      return <pre>{JSON.stringify(value, null, 2)}</pre> // For object rendering, stringify the object
     }
-    return value as ReactNode; // Render other types (string, number, etc.) directly
-  };
+    return value as ReactNode // Render other types (string, number, etc.) directly
+  }
 
   return (
     <>
@@ -108,7 +108,7 @@ export default function MultipleLineChart({
             <>
               <ModalHeader className="flex flex-col gap-1">
                 {selectedCategory?.category == null
-                  ? "Uncategorized"
+                  ? 'Uncategorized'
                   : selectedCategory?.category}
               </ModalHeader>
               <ModalBody className="flex justify-center items-center">
@@ -136,7 +136,7 @@ export default function MultipleLineChart({
           <CardTitle>Pareto Heat Loss</CardTitle>
           <CardDescription>{new Date().getFullYear()}</CardDescription>
         </CardHeader>
-        <CardContent className="flex-1 min-h-0 overflow-auto">
+        <CardContent className="flex-1 min-h-0 overflow-auto w-[117vh] self-center">
           <ChartContainer
             config={chartConfig}
             className="flex w-full h-full overflow-auto"
@@ -157,13 +157,13 @@ export default function MultipleLineChart({
                 axisLine={false}
                 tickMargin={8}
                 tickFormatter={(value) =>
-                  value ? value.slice(0, 4) : "Uncategorized"
+                  value ? value.slice(0, 4) : 'Uncategorized'
                 }
               />
               <YAxis
                 orientation="left"
                 label={{
-                  value: "Nilai Losses",
+                  value: 'Nilai Losses',
                   angle: -90,
                   dx: -20,
                 }}
@@ -172,25 +172,25 @@ export default function MultipleLineChart({
                 domain={[0, 100]}
                 orientation="right"
                 label={{
-                  value: "Persen Losses",
+                  value: 'Cumulative Frequency (%)',
                   angle: 90,
                   dx: 20,
                 }}
-                yAxisId={"persenLosses"}
+                yAxisId={'persenLosses'}
               />
               <Legend />
               <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
               <Bar
-                dataKey={"total_nilai_losses"}
-                name={"Total Nilai Loss"}
+                dataKey={'total_nilai_losses'}
+                name={'Total Nilai Loss'}
                 fill="#559e83"
                 className="hover:cursor-pointer"
                 barSize={20}
                 onClick={(e) => handleBarClick(e)}
               />
               <Bar
-                dataKey={"total_persen_losses"}
-                name={"Total Persen Loss"}
+                dataKey={'total_persen_losses'}
+                name={'Total Persen Loss'}
                 fill="#1b85b8"
                 className="hover:cursor-pointer"
                 barSize={20}
@@ -235,12 +235,12 @@ export default function MultipleLineChart({
                 stroke="#f1c232"
                 strokeWidth={2}
                 dot={true}
-                yAxisId={"persenLosses"}
+                yAxisId={'persenLosses'}
               />
             </ComposedChart>
           </ChartContainer>
         </CardContent>
       </Card>
     </>
-  );
+  )
 }

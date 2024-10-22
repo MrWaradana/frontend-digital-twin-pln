@@ -1,22 +1,22 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import Link from "next/link";
-import { Ellipsis, LogOut } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { useState } from 'react'
+import Link from 'next/link'
+import { Ellipsis, LogOut } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 
-import { cn } from "@/lib/utils";
-import { getMenuList } from "@/lib/menu-list";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { CollapseMenuButton } from "@/components/admin/CollapseMenuButton";
+import { cn } from '@/lib/utils'
+import { getMenuList } from '@/lib/menu-list'
+import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { CollapseMenuButton } from '@/components/admin/CollapseMenuButton'
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
   TooltipProvider,
-} from "@/components/ui/tooltip";
-import toast from "react-hot-toast";
+} from '@/components/ui/tooltip'
+import toast from 'react-hot-toast'
 import {
   Modal,
   ModalContent,
@@ -25,24 +25,24 @@ import {
   ModalFooter,
   useDisclosure,
   Button as NextButton,
-} from "@nextui-org/react";
-import { signOut } from "next-auth/react";
-import router from "next/router";
+} from '@nextui-org/react'
+import { signOut } from 'next-auth/react'
+import router from 'next/router'
 
 interface MenuProps {
-  isListOpen: boolean | undefined;
+  isListOpen: boolean | undefined
 }
 
 export function Menu({ isListOpen }: MenuProps) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const pathname = usePathname();
-  const menuList = getMenuList(pathname);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const pathname = usePathname()
+  const menuList = getMenuList(pathname)
 
   return (
     <>
-      {" "}
+      {' '}
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
@@ -61,12 +61,12 @@ export function Menu({ isListOpen }: MenuProps) {
                   color="primary"
                   onPress={async () => {
                     try {
-                      setIsLoading(true);
-                      await signOut();
-                      setIsLoading(false);
-                      router.push("/login");
+                      setIsLoading(true)
+                      await signOut()
+                      setIsLoading(false)
+                      router.push('/login')
                     } catch (err) {
-                      console.error("Unable to sign out!");
+                      console.error('Unable to sign out!')
                     }
                   }}
                   isLoading={isLoading}
@@ -83,7 +83,7 @@ export function Menu({ isListOpen }: MenuProps) {
           <ul className="flex flex-col min-h-[calc(100vh-48px-36px-16px-32px)] lg:min-h-[calc(100vh-32px-40px-32px)] items-start space-y-1 px-2">
             {menuList.map(({ groupLabel, menus }, index) => (
               <li
-                className={cn("w-full", groupLabel ? "pt-5" : "")}
+                className={cn('w-full', groupLabel ? 'pt-5' : '')}
                 key={index}
               >
                 {(isListOpen && groupLabel) || isListOpen === undefined ? (
@@ -114,24 +114,24 @@ export function Menu({ isListOpen }: MenuProps) {
                           <Tooltip delayDuration={100}>
                             <TooltipTrigger asChild>
                               <Button
-                                variant={active ? "secondary" : "ghost"}
+                                variant={active ? 'secondary' : 'ghost'}
                                 className="w-full justify-start h-10 mb-1"
                                 asChild
                               >
                                 <Link href={href}>
                                   <span
                                     className={cn(
-                                      isListOpen === false ? "" : "mr-4"
+                                      isListOpen === false ? '' : 'mr-4'
                                     )}
                                   >
                                     <Icon size={18} />
                                   </span>
                                   <p
                                     className={cn(
-                                      "max-w-[200px] truncate",
+                                      'max-w-[200px] truncate',
                                       isListOpen === false
-                                        ? "-translate-x-96 opacity-0"
-                                        : "translate-x-0 opacity-100"
+                                        ? '-translate-x-96 opacity-0'
+                                        : 'translate-x-0 opacity-100'
                                     )}
                                   >
                                     {label}
@@ -170,15 +170,15 @@ export function Menu({ isListOpen }: MenuProps) {
                       variant="outline"
                       className="w-full justify-center h-10 mt-5"
                     >
-                      <span className={cn(isListOpen === false ? "" : "mr-4")}>
+                      <span className={cn(isListOpen === false ? '' : 'mr-4')}>
                         <LogOut size={18} />
                       </span>
                       <p
                         className={cn(
-                          "whitespace-nowrap",
+                          'whitespace-nowrap',
                           isListOpen === false
-                            ? "opacity-0 hidden"
-                            : "opacity-100"
+                            ? 'opacity-0 hidden'
+                            : 'opacity-100'
                         )}
                       >
                         Sign out
@@ -195,5 +195,5 @@ export function Menu({ isListOpen }: MenuProps) {
         </nav>
       </ScrollArea>
     </>
-  );
+  )
 }
