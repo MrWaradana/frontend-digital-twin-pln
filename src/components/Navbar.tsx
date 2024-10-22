@@ -113,8 +113,8 @@ export default function Navbar() {
           <NavbarBrand>
             <Image
               src={PlnLogo}
-              height={64}
-              width={64}
+              height={95}
+              width={95}
               alt="pln logo"
               className="mx-4"
             />
