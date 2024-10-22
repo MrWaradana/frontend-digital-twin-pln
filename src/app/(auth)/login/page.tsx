@@ -23,7 +23,7 @@ import { AUTH_API_URL } from "../../../lib/api-url";
 import bg1 from "../../../../public/bg-images/6 (11).jpg";
 import bg2 from "../../../../public/bg-images/apik.jpg";
 import bg3 from "../../../../public/bg-images/AZM03189.jpg";
-import bg4 from "../../../../public/bg-images/AZM03441.jpg";
+import bg4 from "../../../../public/bg-images/DSC09120.jpg";
 import bg5 from "../../../../public/bg-images/DJI_0029.jpg";
 import bg6 from "../../../../public/bg-images/DJI_0031.jpg";
 import bg7 from "../../../../public/bg-images/DSC06770.jpg";
