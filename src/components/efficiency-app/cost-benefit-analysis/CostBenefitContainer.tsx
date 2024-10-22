@@ -96,7 +96,7 @@ export default function CostBenefitContainer() {
 
   return (
     <div className="flex flex-col gap-4 relative">
-      <div className="flex flex-col w-1/4 absolute top-2 left-[28rem]">
+      <div className="flex flex-col xl:w-1/4 xl:absolute xl:top-2 xl:left-[27rem]">
         {isLoadingEfficiencyData ? (
           "Loading..."
         ) : (

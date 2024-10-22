@@ -114,10 +114,10 @@ export default function Component() {
   }, [gen]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 min-h-[100dvh]">
+    <div className="grid grid-cols-1 lg:grid-cols-3 min-h-[100dvh]">
       <Toaster />
       <div
-        className={`h-full w-full px-28 flex flex-col text-white justify-center items-start gap-6 col-span-2 relative`}
+        className={`h-full w-full px-12 lg:px-28 py-12 flex flex-col text-white justify-center items-start gap-6 col-span-2 relative`}
       >
         <Image
           src={BGLogin}
@@ -164,23 +164,27 @@ export default function Component() {
           </Button>
         </div>
       </div>
-      <div className="mx-auto w-full max-w-md space-y-6 py-20">
+      <div className="mx-auto w-full max-w-md space-y-6 py-12">
         <div className="space-y-2 text-center items-center flex flex-col gap-4">
           <Image
             src={PlnLogo}
             alt="Logo PLN"
-            width={124}
+            width={240}
             className={`bg-white p-2 rounded-sm`}
           />
           {/* <div className="inline-block rounded-lg bg-primary px-3 py-1 text-sm font-medium text-primary-foreground">
             Digital Twin Dashboard
           </div> */}
-          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
             Sign in to your account
           </h1>
           {/* <p className="text-muted-foreground">Enter your credentials to access the PLN performance dashboard.</p> */}
         </div>
-        <form ref={formRef} className="space-y-4" onSubmit={handleSubmit}>
+        <form
+          ref={formRef}
+          className="space-y-4 flex flex-col justify-center items-center"
+          onSubmit={handleSubmit}
+        >
           <div className="space-y-2">
             <Label htmlFor="username">Username</Label>
             <Input
@@ -190,7 +194,7 @@ export default function Component() {
               onChange={handleChange}
               required
               value={credentials.username}
-              className={`rounded-sm`}
+              className={`rounded-sm w-72`}
             />
           </div>
           <div className="space-y-2">
@@ -205,7 +209,7 @@ export default function Component() {
               required
               onChange={handleChange}
               value={credentials.password}
-              className={`rounded-none`}
+              className={`rounded-none w-72`}
             />
           </div>
           {/* <div className="flex items-center">
@@ -215,17 +219,17 @@ export default function Component() {
           </div> */}
 
           <div className="flex flex-col gap-2">
-            <div className="flex flex-row gap-3 items-end">
+            <div className="flex flex-col gap-3 items-start justify-center">
               <div>
                 <p className="text-xs">Captcha</p>
                 {/* @ts-ignore */}
-                <div ref={captchaRef} />
+                <div ref={captchaRef} className="min-w-xs" />
               </div>
               <Button
                 onClick={handleRefresh}
                 color="secondary"
                 size="sm"
-                className={`rounded-sm`}
+                className={`rounded-sm w-full`}
               >
                 Refresh Captcha
               </Button>
@@ -236,7 +240,7 @@ export default function Component() {
               value={captchaValue}
               isDisabled={isCaptchaValidated}
               maxLength={5}
-              className={`rounded-sm`}
+              className={`rounded-sm w-72`}
               // endContent={
               //   <>
               //     <Button onClick={handleValidate} color="success" size="sm">
@@ -249,7 +253,7 @@ export default function Component() {
           <Button
             type="button"
             onClick={handleValidate}
-            className="w-full rounded-sm"
+            className="w-72 rounded-sm"
             color="primary"
             disabled={isLoading || mistakeCount > 3 ? true : false}
             isLoading={isLoading}

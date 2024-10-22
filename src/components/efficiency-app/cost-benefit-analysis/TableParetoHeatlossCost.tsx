@@ -34,6 +34,7 @@ import {
   TableRow,
   Checkbox,
   Spinner,
+  Tooltip,
 } from "@nextui-org/react";
 import { Box, DownloadIcon, PrinterIcon, FilterIcon } from "lucide-react";
 import EditableCell from "../EditableCell";
@@ -45,38 +46,62 @@ import { CostBenefitDataType } from "../../../lib/APIs/useGetDataCostBenefit";
 const formattedNumber = (value: any) =>
   new Intl.NumberFormat("id-ID").format(value);
 
+// const formatCurrency = (number: any) => {
+//   // Convert to absolute value to handle negative numbers
+//   const absNumber = Math.abs(number);
+//   const formattedNumberID = (value: any) =>
+//     new Intl.NumberFormat("id-ID").format(value);
+
+//   // Determine the appropriate suffix based on the value
+//   let formattedNumber;
+//   let suffix = "";
+
+//   if (absNumber >= 1_000_000_000_000) {
+//     // Trillions
+//     formattedNumber = (number / 1_000_000_000_000).toFixed(2);
+//     suffix = " T";
+//   } else if (absNumber >= 1_000_000_000) {
+//     // Billions
+//     formattedNumber = (number / 1_000_000_000).toFixed(2);
+//     suffix = " M";
+//   } else if (absNumber >= 1_000_000) {
+//     // Millions
+//     formattedNumber = (number / 1_000_000).toFixed(2);
+//     suffix = "";
+//   } else if (absNumber >= 1_000) {
+//     // Millions
+//     formattedNumber = (number / 1_000).toFixed(2);
+//     suffix = " Rb";
+//   } else {
+//     // Thousands separator for smaller numbers
+//     formattedNumber = number.toLocaleString("id-ID");
+//   }
+
+//   return formattedNumberID(formattedNumber) + suffix;
+// };
+
 const formatCurrency = (number: any) => {
-  // Convert to absolute value to handle negative numbers
-  const absNumber = Math.abs(number);
-  const formattedNumberID = (value: any) =>
-    new Intl.NumberFormat("id-ID").format(value);
-
-  // Determine the appropriate suffix based on the value
-  let formattedNumber;
-  let suffix = "";
-
-  if (absNumber >= 1_000_000_000_000) {
-    // Trillions
-    formattedNumber = (number / 1_000_000_000_000).toFixed(2);
-    suffix = " T";
-  } else if (absNumber >= 1_000_000_000) {
-    // Billions
-    formattedNumber = (number / 1_000_000_000).toFixed(2);
-    suffix = " M";
-  } else if (absNumber >= 1_000_000) {
-    // Millions
-    formattedNumber = (number / 1_000_000).toFixed(2);
-    suffix = " Jt";
-  } else if (absNumber >= 1_000) {
-    // Millions
-    formattedNumber = (number / 1_000).toFixed(2);
-    suffix = " Rb";
-  } else {
-    // Thousands separator for smaller numbers
-    formattedNumber = number.toLocaleString("id-ID");
+  // Handle zero case
+  if (number === 0) {
+    return "Rp0";
   }
 
-  return formattedNumberID(formattedNumber) + suffix;
+  // Convert to absolute value to handle negative numbers
+  const absNumber = Math.abs(number);
+  const sign = number < 0 ? "-" : "";
+
+  // If the number is very small (more than 2 decimal places of zeros)
+  if (absNumber > 0 && absNumber < 0.01) {
+    // Convert to scientific notation
+    const scientificStr = number.toExponential();
+    // Format to match desired pattern (e.g., -7.6x10^-8)
+    const [coefficient, exponent] = scientificStr.split("e");
+    return `${Number(coefficient).toFixed(1)}x10^${exponent}`;
+  }
+
+  // Regular formatting for normal numbers
+  const inMillions = (absNumber / 1_000_000).toFixed(2);
+  return sign + new Intl.NumberFormat("id-ID").format(Number(inMillions));
 };
 
 //un-memoized normal table body component - see memoized version below
@@ -246,6 +271,60 @@ export const MemoizedTableBody = React.memo(TableBody, (prev, next) => {
 
   return isSameData && hasExpandedStateChanged;
 }) as typeof TableBody;
+
+const FormattedTooltipCell = ({ row, getValue }) => {
+  const gap = row.original.gap;
+  const goodIndicator = row.original.good_indicator;
+
+  if (
+    (goodIndicator === "minus" && gap < 0) ||
+    (goodIndicator === "plus" && gap > 0)
+  ) {
+    return null;
+  }
+
+  const formatTooltipContent = (content) => {
+    if (!content) return "-";
+
+    const items = content.split(",").map((item) => {
+      const [issue, check, action] = item
+        .trim()
+        .split("|")
+        .map((s) => s.trim());
+      return { issue, check, action };
+    });
+
+    return (
+      <div className="p-2 max-w-md">
+        {items.map((item, index) => (
+          <div key={index} className="mb-4 last:mb-0">
+            <div className="font-semibold text-primary">{item.issue}</div>
+            <div className="ml-2 text-sm">
+              <div className="text-gray-600">Check: {item.check}</div>
+              <div className="text-gray-600">Action: {item.action}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const cellContent = getValue();
+
+  return (
+    <div className="max-w-full">
+      <Tooltip
+        content={formatTooltipContent(cellContent)}
+        placement="left-start"
+        className="max-w-md"
+      >
+        <p className="truncate cursor-help">
+          {cellContent ? cellContent.split(",")[0] + "..." : "-"}
+        </p>
+      </Tooltip>
+    </div>
+  );
+};
 
 export default function TableParetoHeatlossCost({
   tableData,
@@ -621,7 +700,11 @@ export default function TableParetoHeatlossCost({
       },
       {
         id: "potentialBenefit",
-        header: () => <div className="text-center">Potential Benefit</div>,
+        header: () => (
+          <div className="text-center">
+            Potential Benefit <br /> (Jt)
+          </div>
+        ),
         size: 105,
         meta: {
           className: "text-right pr-2",
@@ -629,11 +712,17 @@ export default function TableParetoHeatlossCost({
         accessorKey: "cost_benefit",
         cell: (props: any) => {
           const value = props.getValue();
+          const gap = props.row.original.gap;
+          const goodIndicator = props.row.original.good_indicator;
+
           if (
-            (props.row.depth > 0 || !props.row.original.total_nilai_losses) &&
-            value
+            (goodIndicator === "minus" && gap < 0) ||
+            (goodIndicator === "plus" && gap > 0)
           ) {
-            return `Rp.${formatCurrency(value.toFixed(2))}`;
+            return "";
+          }
+          if (!props.row.original.total_nilai_losses && value) {
+            return `Rp.${formatCurrency(value)}`;
           }
           return "Rp.0";
         },
@@ -644,12 +733,12 @@ export default function TableParetoHeatlossCost({
         meta: {
           className: "shadow-inner overflow-hidden whitespace-nowrap text-clip",
         },
-        accessorFn: (row: any) =>
+        accessorFn: (row) =>
           row.action_menutup_gap.length > 0
-            ? row.action_menutup_gap.join("\n")
+            ? row.action_menutup_gap.join(",")
             : "-",
         size: 45,
-        cell: (props: any) => <div>{props.getValue()}</div>,
+        cell: (props) => <FormattedTooltipCell {...props} />,
       },
       {
         id: "biayaClosingGap",
@@ -658,11 +747,22 @@ export default function TableParetoHeatlossCost({
           className: "text-right pr-2",
         },
         header: () => (
-          <div className="text-center">Biaya untuk Closing Gap</div>
+          <div className="text-center">
+            Biaya untuk Closing Gap <br /> (Jt)
+          </div>
         ),
         size: 55,
         cell: (props: any) => {
           const value = props.getValue();
+          const gap = props.row.original.gap;
+          const goodIndicator = props.row.original.good_indicator;
+
+          if (
+            (goodIndicator === "minus" && gap < 0) ||
+            (goodIndicator === "plus" && gap > 0)
+          ) {
+            return "";
+          }
           if (value) {
             return `Rp.${formatCurrency(value.toFixed(2))}`;
           }
@@ -679,6 +779,15 @@ export default function TableParetoHeatlossCost({
         cell: (props: any) => {
           const costBenefit = props.row.original.cost_benefit;
           const totalBiaya = props.row.original.total_biaya;
+          const gap = props.row.original.gap;
+          const goodIndicator = props.row.original.good_indicator;
+
+          if (
+            (goodIndicator === "minus" && gap < 0) ||
+            (goodIndicator === "plus" && gap > 0)
+          ) {
+            return "";
+          }
           if (totalBiaya === 0) {
             // return `${costBenefit.toFixed(0)} : 0 | -`;
             return `-`;
@@ -698,11 +807,12 @@ export default function TableParetoHeatlossCost({
               {
                 // Only render if it's a subrow
                 <div>
-                  {`${roundedCostBenefit} : ${roundedTotalBiaya} | ${
+                  {/* {`${roundedCostBenefit} : ${roundedTotalBiaya} | ${
                     totalBiaya == 0
                       ? "-"
                       : (costBenefit / totalBiaya).toFixed(2)
-                  }`}
+                  }`} */}
+                  {`${roundedCostBenefit} : ${roundedTotalBiaya}`}
                 </div>
               }
             </>
@@ -1075,9 +1185,9 @@ export default function TableParetoHeatlossCost({
           <MemoizedTableBody table={table} />
           {/* Initial Table Body for expanding row works */}
           {/* <TableBody table={table} /> */}
-          <tfoot className="sticky bottom-0 z-50 border-2">
+          <tfoot className="sticky bottom-0 z-50 border-2 print-column">
             <tr className="text-left">
-              <th className="sticky left-0 bg-blue-200 dark:bg-blue-600">
+              <th className="sticky left-0 bg-blue-200 dark:bg-blue-600 print-cell">
                 Total Summary
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>

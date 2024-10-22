@@ -43,37 +43,61 @@ import ModalRootCauseAction from "../ModalRootCauseAction";
 const formattedNumber = (value: any) =>
   new Intl.NumberFormat("id-ID").format(value);
 
-const formatCurrency = (number: any) => {
-  // Convert to absolute value to handle negative numbers
-  const absNumber = Math.abs(number);
-  const formatIDNumber = (value: any) =>
-    new Intl.NumberFormat("id-ID").format(value);
-  // Determine the appropriate suffix based on the value
-  let formattedNumber;
-  let suffix = "";
+// const formatCurrency = (number: any) => {
+//   // Convert to absolute value to handle negative numbers
+//   const absNumber = Math.abs(number);
+//   const formatIDNumber = (value: any) =>
+//     new Intl.NumberFormat("id-ID").format(value);
+//   // Determine the appropriate suffix based on the value
+//   let formattedNumber;
+//   let suffix = "";
 
-  if (absNumber >= 1_000_000_000_000) {
-    // Trillions
-    formattedNumber = (number / 1_000_000_000_000).toFixed(2);
-    suffix = " T";
-  } else if (absNumber >= 1_000_000_000) {
-    // Billions
-    formattedNumber = (number / 1_000_000_000).toFixed(2);
-    suffix = " M";
-  } else if (absNumber >= 1_000_000) {
-    // Millions
-    formattedNumber = (number / 1_000_000).toFixed(2);
-    suffix = " Jt";
-  } else if (absNumber >= 1_000) {
-    // Millions
-    formattedNumber = (number / 1_000).toFixed(2);
-    suffix = " Rb";
-  } else {
-    // Thousands separator for smaller numbers
-    formattedNumber = number.toLocaleString("id-ID");
+//   if (absNumber >= 1_000_000_000_000) {
+//     // Trillions
+//     formattedNumber = (number / 1_000_000_000_000).toFixed(2);
+//     suffix = " T";
+//   } else if (absNumber >= 1_000_000_000) {
+//     // Billions
+//     formattedNumber = (number / 1_000_000_000).toFixed(2);
+//     suffix = " M";
+//   } else if (absNumber >= 1_000_000) {
+//     // Millions
+//     formattedNumber = (number / 1_000_000).toFixed(2);
+//     suffix = " Jt";
+//   } else if (absNumber >= 1_000) {
+//     // Millions
+//     formattedNumber = (number / 1_000).toFixed(2);
+//     suffix = " Rb";
+//   } else {
+//     // Thousands separator for smaller numbers
+//     formattedNumber = number.toLocaleString("id-ID");
+//   }
+
+//   return formatIDNumber(formattedNumber) + suffix;
+// };
+
+const formatCurrency = (number: any) => {
+  // Handle zero case
+  if (number === 0) {
+    return "Rp0";
   }
 
-  return formatIDNumber(formattedNumber) + suffix;
+  // Convert to absolute value to handle negative numbers
+  const absNumber = Math.abs(number);
+  const sign = number < 0 ? "-" : "";
+
+  // If the number is very small (more than 2 decimal places of zeros)
+  if (absNumber > 0 && absNumber < 0.01) {
+    // Convert to scientific notation
+    const scientificStr = number.toExponential();
+    // Format to match desired pattern (e.g., -7.6x10^-8)
+    const [coefficient, exponent] = scientificStr.split("e");
+    return `${Number(coefficient).toFixed(1)}x10^${exponent}`;
+  }
+
+  // Regular formatting for normal numbers
+  const inMillions = (absNumber / 1_000_000).toFixed(2);
+  return sign + new Intl.NumberFormat("id-ID").format(Number(inMillions));
 };
 
 //un-memoized normal table body component - see memoized version below
@@ -579,7 +603,11 @@ export default function TableParetoHeatlossNPHR({
       },
       {
         id: "potentialBenefit",
-        header: () => <div className="text-center">Potential Benefit</div>,
+        header: () => (
+          <div className="text-center">
+            Potential Benefit <br /> (Jt)
+          </div>
+        ),
         size: 125,
         meta: {
           className: "text-right pr-2",
@@ -587,11 +615,16 @@ export default function TableParetoHeatlossNPHR({
         accessorKey: "cost_benefit",
         cell: (props: any) => {
           const value = props.getValue();
+          const gap = props.row.original.gap;
+          const goodIndicator = props.row.original.good_indicator;
           if (
-            (props.row.depth > 0 || !props.row.original.total_nilai_losses) &&
-            value
+            (goodIndicator === "minus" && gap < 0) ||
+            (goodIndicator === "plus" && gap > 0)
           ) {
-            return `Rp.${formatCurrency(value.toFixed(2))}`;
+            return "";
+          }
+          if (!props.row.original.total_nilai_losses && value) {
+            return `Rp.${formatCurrency(value)}`;
           }
           return "";
         },
@@ -609,15 +642,22 @@ export default function TableParetoHeatlossNPHR({
           className: "text-right pr-2",
         },
         header: () => (
-          <div className="text-center">Biaya untuk Closing Gap</div>
+          <div className="text-center">
+            Biaya untuk Closing Gap <br /> (Jt)
+          </div>
         ),
         size: 125,
         cell: (props: any) => {
           const value = props.getValue();
+          const gap = props.row.original.gap;
+          const goodIndicator = props.row.original.good_indicator;
           if (
-            (props.row.depth > 0 || !props.row.original.total_nilai_losses) &&
-            value
+            (goodIndicator === "minus" && gap < 0) ||
+            (goodIndicator === "plus" && gap > 0)
           ) {
+            return "";
+          }
+          if (!props.row.original.total_nilai_losses && value) {
             return `Rp.${formatCurrency(value.toFixed(0))}`;
           }
           return "Rp.0";
@@ -633,6 +673,14 @@ export default function TableParetoHeatlossNPHR({
         cell: (props: any) => {
           const costBenefit = props.row.original.cost_benefit;
           const totalBiaya = props.row.original.total_biaya;
+          const gap = props.row.original.gap;
+          const goodIndicator = props.row.original.good_indicator;
+          if (
+            (goodIndicator === "minus" && gap < 0) ||
+            (goodIndicator === "plus" && gap > 0)
+          ) {
+            return "";
+          }
           if (totalBiaya === 0) {
             // return `${costBenefit.toFixed(0)} : 0 | -`;
             return `-`;
@@ -652,11 +700,12 @@ export default function TableParetoHeatlossNPHR({
               {
                 // Only render if it's a subrow
                 <div>
-                  {`${roundedCostBenefit} : ${roundedTotalBiaya} | ${
+                  {/* {`${roundedCostBenefit} : ${roundedTotalBiaya} | ${
                     totalBiaya == 0
                       ? "-"
                       : (costBenefit / totalBiaya).toFixed(2)
-                  }`}
+                  }`} */}
+                  {`${roundedCostBenefit} : ${roundedTotalBiaya}`}
                 </div>
               }
             </>

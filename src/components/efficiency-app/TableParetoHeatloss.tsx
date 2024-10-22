@@ -46,53 +46,62 @@ import { useSession } from "next-auth/react";
 const formattedNumber = (value: any) =>
   new Intl.NumberFormat("id-ID").format(value);
 
-const formatCurrency = (number: any) => {
-  // Convert to absolute value to handle negative numbers
-  const absNumber = Math.abs(number);
-  const formatIDNumber = (value: any) =>
-    new Intl.NumberFormat("id-ID").format(value);
-  // Determine the appropriate suffix based on the value
-  let formattedNumber;
-  let suffix = "";
-
-  if (absNumber >= 1_000_000_000_000) {
-    // Trillions
-    formattedNumber = (number / 1_000_000_000_000).toFixed(2);
-    suffix = " T";
-  } else if (absNumber >= 1_000_000_000) {
-    // Billions
-    formattedNumber = (number / 1_000_000_000).toFixed(2);
-    suffix = " M";
-  } else if (absNumber >= 1_000_000) {
-    // Millions
-    formattedNumber = (number / 1_000_000).toFixed(2);
-    suffix = " Jt";
-  } else if (absNumber >= 1_000) {
-    // Millions
-    formattedNumber = (number / 1_000).toFixed(2);
-    suffix = " Rb";
-  } else {
-    // Thousands separator for smaller numbers
-    formattedNumber = number.toLocaleString("id-ID");
-  }
-
-  return formatIDNumber(formattedNumber) + suffix;
-};
-
 // const formatCurrency = (number: any) => {
 //   // Convert to absolute value to handle negative numbers
 //   const absNumber = Math.abs(number);
-
-//   // Always convert to juta (millions)
-//   const formattedNumber = (number / 1_000_000).toFixed(2); // Convert to juta
-
-//   // Formatter for Indonesian locale
 //   const formatIDNumber = (value: any) =>
 //     new Intl.NumberFormat("id-ID").format(value);
+//   // Determine the appropriate suffix based on the value
+//   let formattedNumber;
+//   let suffix = "";
 
-//   // Append the "Jt" (Juta) suffix for all values
-//   return formatIDNumber(formattedNumber) + " Jt";
+//   if (absNumber >= 1_000_000_000_000) {
+//     // Trillions
+//     formattedNumber = (number / 1_000_000_000_000).toFixed(2);
+//     suffix = " T";
+//   } else if (absNumber >= 1_000_000_000) {
+//     // Billions
+//     formattedNumber = (number / 1_000_000_000).toFixed(2);
+//     suffix = " M";
+//   } else if (absNumber >= 1_000_000) {
+//     // Millions
+//     formattedNumber = (number / 1_000_000).toFixed(2);
+//     suffix = " Jt";
+//   } else if (absNumber >= 1_000) {
+//     // Millions
+//     formattedNumber = (number / 1_000).toFixed(2);
+//     suffix = " Rb";
+//   } else {
+//     // Thousands separator for smaller numbers
+//     formattedNumber = number.toLocaleString("id-ID");
+//   }
+
+//   return formatIDNumber(formattedNumber) + suffix;
 // };
+
+const formatCurrency = (number: any) => {
+  // Handle zero case
+  if (number === 0) {
+    return "Rp0";
+  }
+
+  // Convert to absolute value to handle negative numbers
+  const absNumber = Math.abs(number);
+  const sign = number < 0 ? "-" : "";
+
+  // If the number is very small (more than 2 decimal places of zeros)
+  if (absNumber > 0 && absNumber < 0.01) {
+    // Convert to scientific notation
+    const scientificStr = number.toExponential();
+    // Format to match desired pattern (e.g., -7.6x10^-8)
+    const [coefficient, exponent] = scientificStr.split("e");
+    return `${Number(coefficient).toFixed(1)}x10^${exponent}`;
+  }
+
+  // Regular formatting for normal numbers
+  const inMillions = (absNumber / 1_000_000).toFixed(2);
+  return sign + new Intl.NumberFormat("id-ID").format(Number(inMillions));
+};
 
 //un-memoized normal table body component - see memoized version below
 function TableBody({ table }: { table: Table<ParetoType> }) {
@@ -666,7 +675,7 @@ export default function TableParetoHeatloss({
         id: "potentialBenefit",
         header: () => (
           <div className="text-center">
-            Potential Benefit <br />
+            Potential Benefit <br /> (Jt)
           </div>
         ),
         size: 125,
@@ -676,6 +685,16 @@ export default function TableParetoHeatloss({
         accessorKey: "cost_benefit",
         cell: (props: any) => {
           const value = props.getValue();
+          const gap = props.row.original.gap;
+          const goodIndicator = props.row.original.good_indicator;
+
+          if (
+            (goodIndicator === "minus" && gap < 0) ||
+            (goodIndicator === "plus" && gap > 0)
+          ) {
+            return "";
+          }
+
           if (
             (props.row.depth > 0 || !props.row.original.total_nilai_losses) &&
             value
@@ -684,7 +703,6 @@ export default function TableParetoHeatloss({
           } else if (props.row.depth > 0) {
             return `Rp.0`;
           }
-
           return "";
         },
       },
@@ -701,11 +719,22 @@ export default function TableParetoHeatloss({
           className: "text-right pr-2",
         },
         header: () => (
-          <div className="text-center">Biaya untuk Closing Gap</div>
+          <div className="text-center">
+            Biaya untuk Closing Gap <br /> (Jt)
+          </div>
         ),
         size: 125,
         cell: (props: any) => {
           const value = props.getValue();
+          const gap = props.row.original.gap;
+          const goodIndicator = props.row.original.good_indicator;
+
+          if (
+            (goodIndicator === "minus" && gap < 0) ||
+            (goodIndicator === "plus" && gap > 0)
+          ) {
+            return "";
+          }
           if (
             (props.row.depth > 0 || !props.row.original.total_nilai_losses) &&
             value
@@ -727,6 +756,15 @@ export default function TableParetoHeatloss({
         cell: (props: any) => {
           const costBenefit = props.row.original.cost_benefit;
           const totalBiaya = props.row.original.total_biaya;
+          const gap = props.row.original.gap;
+          const goodIndicator = props.row.original.good_indicator;
+
+          if (
+            (goodIndicator === "minus" && gap < 0) ||
+            (goodIndicator === "plus" && gap > 0)
+          ) {
+            return "";
+          }
           if (totalBiaya === 0) {
             // return `${costBenefit.toFixed(0)} : 0 | -`;
             return `-`;
@@ -745,13 +783,16 @@ export default function TableParetoHeatloss({
             <>
               {props.row.depth > 0 && ( // Only render if it's a subrow
                 <div>
-                  {`${formattedNumber(roundedCostBenefit)} : ${formattedNumber(
+                  {/* {`${formattedNumber(roundedCostBenefit)} : ${formattedNumber(
                     roundedTotalBiaya
                   )} | ${
                     totalBiaya == 0
                       ? "-"
                       : formattedNumber((costBenefit / totalBiaya).toFixed(2))
-                  }`}
+                  }`} */}
+                  {`${formattedNumber(roundedCostBenefit)} : ${formattedNumber(
+                    roundedTotalBiaya
+                  )}`}
                 </div>
               )}
             </>
@@ -763,6 +804,9 @@ export default function TableParetoHeatloss({
         header: "To Do Checklist",
         size: 280,
         cell: ({ row }) => {
+          const gap = row.original.gap;
+          const goodIndicator = row.original.good_indicator;
+
           if (session?.user.user.role === "Management") {
             return null; // Hide the column for management role
           }
@@ -795,9 +839,23 @@ export default function TableParetoHeatloss({
                     modalRootCauseOnopen();
                   }}
                   // isLoading={isValidatingRootCauseCount}
-                  color={done != 0 ? "success" : "danger"}
+                  color={
+                    done != 0 ||
+                    (goodIndicator === "minus" && gap < 0) ||
+                    (goodIndicator === "plus" && gap > 0) ||
+                    gap === 0
+                      ? "success"
+                      : "danger"
+                  }
                   size="sm"
-                  className={`m-0 p-1 ${done != 0 ? "text-white" : ""}`}
+                  className={`m-0 p-1 ${
+                    done != 0 ||
+                    (goodIndicator === "minus" && gap < 0) ||
+                    (goodIndicator === "plus" && gap > 0) ||
+                    gap === 0
+                      ? "text-white"
+                      : ""
+                  }`}
                 >
                   Root Cause
                 </Button>
@@ -812,9 +870,22 @@ export default function TableParetoHeatloss({
                     modalRootActionOnopen();
                   }}
                   // isLoading={isValidatingRootCauseCount}
-                  color={"primary"}
+                  color={
+                    (goodIndicator === "minus" && gap < 0) ||
+                    (goodIndicator === "plus" && gap > 0) ||
+                    gap === 0
+                      ? "success"
+                      : "primary"
+                  }
                   size="sm"
-                  className={`m-0 p-1 ${done != 0 ? "text-white" : ""}`}
+                  className={`m-0 p-1 ${
+                    done != 0 ||
+                    (goodIndicator === "minus" && gap < 0) ||
+                    (goodIndicator === "plus" && gap > 0) ||
+                    gap === 0
+                      ? "text-white"
+                      : ""
+                  }`}
                 >
                   Action
                 </Button>
