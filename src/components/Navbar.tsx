@@ -101,7 +101,7 @@ export default function Navbar() {
         isBordered
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
-        className="sticky top-0 z-[999]"
+        className="fixed top-0 z-[999]"
       >
         <NavbarContent className="sm:hidden" justify="start">
           <NavbarMenuToggle
@@ -118,7 +118,7 @@ export default function Navbar() {
               alt="pln logo"
               className="mx-4"
             />
-            <p className="font-bold text-inherit hidden lg:inline">
+            <p className="font-bold text-[20px] hidden lg:inline">
               Digital Twin
             </p>
           </NavbarBrand>
@@ -128,12 +128,12 @@ export default function Navbar() {
           <NavbarBrand>
             <Image
               src={PlnLogo}
-              height={64}
-              width={64}
+              height={95}
+              width={95}
               alt="pln logo"
               className="mx-4"
             />
-            <p className="font-bold text-inherit">Digital Twin</p>
+            <p className="font-bold text-[20px]">Digital Twin</p>
           </NavbarBrand>
           {linkItems.map((item, index) => (
             <NavbarItem key={`${item}-${index}`}>
@@ -143,7 +143,7 @@ export default function Navbar() {
                 className={
                   item.name != "Admin" || session?.user.user.role != "Admin"
                     ? "hidden"
-                    : ""
+                    : "text-[20px]"
                 }
               >
                 {item.name}
