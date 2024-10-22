@@ -1,7 +1,7 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import {
   Avatar,
   Button,
@@ -19,45 +19,45 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-} from "@nextui-org/react";
-import PlnLogo from "../../public/Logo_PLN.svg";
-import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import toast, { Toaster } from "react-hot-toast";
-import { ModeToggle } from "./ModeToggle";
+} from '@nextui-org/react'
+import PlnLogo from '../../public/Logo_PLN.svg'
+import { signOut, useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import toast, { Toaster } from 'react-hot-toast'
+import { ModeToggle } from './ModeToggle'
 
 export default function Navbar() {
-  const [isLoading, setIsLoading] = useState(false);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { data: session } = useSession();
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false)
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { data: session } = useSession()
+  const router = useRouter()
 
   const linkItems = [
     {
-      name: "All Apps",
-      role: ["Admin", "Engineer", "Management"],
-      url: "/",
+      name: 'All Apps',
+      role: ['Admin', 'Engineer', 'Management'],
+      url: '/',
     },
     {
-      name: "Admin",
-      role: ["Admin"],
-      url: "/admin/users",
+      name: 'Admin',
+      role: ['Admin'],
+      url: '/admin/users',
     },
-  ];
+  ]
 
   const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Sign Out",
-  ];
+    'Profile',
+    'Dashboard',
+    'Activity',
+    'Analytics',
+    'System',
+    'Deployments',
+    'My Settings',
+    'Team Settings',
+    'Help & Feedback',
+    'Sign Out',
+  ]
 
   return (
     <>
@@ -80,12 +80,12 @@ export default function Navbar() {
                   color="primary"
                   onPress={async () => {
                     try {
-                      setIsLoading(true);
-                      await signOut();
-                      setIsLoading(false);
-                      router.push("/login");
+                      setIsLoading(true)
+                      await signOut()
+                      setIsLoading(false)
+                      router.push('/login')
                     } catch (err) {
-                      console.error("Unable to sign out!");
+                      console.error('Unable to sign out!')
                     }
                   }}
                   isLoading={isLoading}
@@ -105,7 +105,7 @@ export default function Navbar() {
       >
         <NavbarContent className="sm:hidden" justify="start">
           <NavbarMenuToggle
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           />
         </NavbarContent>
 
@@ -141,9 +141,9 @@ export default function Navbar() {
                 color="foreground"
                 href={item.url}
                 className={
-                  item.name != "Admin" || session?.user.user.role != "Admin"
-                    ? "hidden"
-                    : ""
+                  item.name != 'Admin' || session?.user.user.role != 'Admin'
+                    ? 'hidden'
+                    : ''
                 }
               >
                 {item.name}
@@ -176,10 +176,10 @@ export default function Navbar() {
                 className="w-full"
                 color={
                   index === 2
-                    ? "warning"
+                    ? 'warning'
                     : index === menuItems.length - 1
-                    ? "danger"
-                    : "foreground"
+                    ? 'danger'
+                    : 'foreground'
                 }
                 href="#"
                 size="lg"
@@ -191,5 +191,5 @@ export default function Navbar() {
         </NavbarMenu>
       </NavbarLinks>
     </>
-  );
+  )
 }

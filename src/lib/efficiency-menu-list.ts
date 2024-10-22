@@ -6,49 +6,49 @@ import {
   DiamondPlus,
   Gauge,
   CircleDollarSign,
-} from "lucide-react";
-import path from "path";
+} from 'lucide-react'
+import path from 'path'
 
 type Submenu = {
-  href: string;
-  label: string;
-  active: boolean;
-};
+  href: string
+  label: string
+  active: boolean
+}
 
 type Menu = {
-  href: string;
-  label: string;
-  active: boolean;
-  icon: LucideIcon;
-  submenus: Submenu[];
-};
+  href: string
+  label: string
+  active: boolean
+  icon: LucideIcon
+  submenus: Submenu[]
+}
 
 type Group = {
-  groupLabel: string;
-  menus: Menu[];
-};
+  groupLabel: string
+  menus: Menu[]
+}
 
 export function getMenuList(pathname: string): Group[] {
   return [
     {
-      groupLabel: "",
+      groupLabel: '',
       menus: [
         {
-          href: "/",
-          label: "All Apps",
-          active: pathname.includes("/dashboard"),
+          href: '/',
+          label: 'All Apps',
+          active: pathname.includes('/dashboard'),
           icon: LayoutGrid,
           submenus: [],
         },
       ],
     },
     {
-      groupLabel: "Efficiency App Navigation",
+      groupLabel: 'Efficiency App Navigation',
       menus: [
         {
-          href: "/efficiency-app",
-          label: "All Efficiency Data",
-          active: pathname === "/efficiency-app" ? true : false,
+          href: '/efficiency-app',
+          label: 'All Efficiency Data',
+          active: pathname === '/efficiency-app' ? true : false,
           icon: DiamondPlus,
           submenus: [],
         },
@@ -61,18 +61,18 @@ export function getMenuList(pathname: string): Group[] {
         //   submenus: [],
         // },
         {
-          href: "/efficiency-app/nett-plant-heat-rate",
-          label: "Nett Plant Heat Rate",
+          href: '/efficiency-app/nett-plant-heat-rate',
+          label: 'Nett Plant Heat Rate',
           active:
-            pathname === "/efficiency-app/nett-plant-heat-rate" ? true : false,
+            pathname === '/efficiency-app/nett-plant-heat-rate' ? true : false,
           icon: ChartCandlestick,
           submenus: [],
         },
         {
-          href: "/efficiency-app/cost-benefit-analysis",
-          label: "Cost Benefit Analysis",
+          href: '/efficiency-app/cost-benefit-analysis',
+          label: 'Cost Benefit Analysis',
           active:
-            pathname === "/efficiency-app/cost-benefit-analysis" ? true : false,
+            pathname === '/efficiency-app/cost-benefit-analysis' ? true : false,
           icon: CircleDollarSign,
           submenus: [],
         },
@@ -86,5 +86,5 @@ export function getMenuList(pathname: string): Group[] {
         // },
       ],
     },
-  ];
+  ]
 }
