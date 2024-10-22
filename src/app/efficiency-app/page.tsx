@@ -102,16 +102,10 @@ export default function Page() {
   const thermoStatus = efficiencyData?.thermo_status ?? StatusThermoflow;
   const efficiency = efficiencyData?.transactions ?? [];
 
-  // useEffect(() => {
-  //   if (efficiency || isLoading) {
-  //     useSelectedEfficiencyDataStore
-  //       .getState()
-  //       //@ts-ignore
-  //       .setSelectedEfficiencyData(
-  //         efficiency.find((item) => item.is_selected)?.id ?? ""
-  //       );
-  //   }
-  // }, [efficiency]);
+  useEffect(() => {
+    useExcelStore.getState().setExcels(excel);
+    console.log(excel);
+  }, [excel]);
 
   useEffect(() => {
     const api = `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/stream`;
