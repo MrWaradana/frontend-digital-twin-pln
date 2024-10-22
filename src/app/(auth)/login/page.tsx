@@ -30,7 +30,7 @@ import bg7 from "../../../../public/bg-images/DSC06770.jpg";
 import bg8 from "../../../../public/bg-images/DSC06779.jpg";
 
 // Import Swiper React components
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper, SwiperSlide, EffectFade } from "swiper/react";
 
 // Import Swiper styles
 import "swiper/css";
@@ -141,29 +141,33 @@ export default function Component() {
         <Toaster />
         <div className={`col-span-2 h-full relative hidden lg:block`}>
           <Swiper
-            spaceBetween={0}
-            centeredSlides={true}
-            autoplay={{
-              delay: 2500,
-              disableOnInteraction: false,
-            }}
-            pagination={{
-              clickable: true,
-            }}
-            navigation={false}
-            modules={[Autoplay, Pagination, Navigation]}
-            className={`mySwiper h-full`}
+              spaceBetween={0}
+              centeredSlides={true}
+              autoplay={{
+                delay: 5000, // Memperlambat menjadi 5 detik (5000ms)
+                disableOnInteraction: false,
+              }}
+              pagination={{
+                clickable: true,
+              }}
+              navigation={false}
+              effect="fade" // Menambahkan efek fade
+              fadeEffect={{
+                crossFade: true, // Menambahkan crossFade untuk transisi yang lebih halus
+              }}
+              modules={[Autoplay, Pagination, Navigation, EffectFade]} // Menambahkan module EffectFade
+              className={`mySwiper h-full`}
           >
             {bgImages.map((item, index) => {
               return (
-                <SwiperSlide className="relative" key={`${item}-${index}`}>
-                  <Image
-                    src={item}
-                    alt={`login-background`}
-                    className="absolute w-full top-0 left-0 h-full -z-10"
-                  />
-                  <div className="absolute inset-0 w-full h-full bg-black/30 -z-10"></div>
-                </SwiperSlide>
+                  <SwiperSlide className="relative" key={`${item}-${index}`}>
+                    <Image
+                        src={item}
+                        alt={`login-background`}
+                        className="absolute w-full top-0 left-0 h-full -z-10"
+                    />
+                    <div className="absolute inset-0 w-full h-full bg-black/30 -z-10"></div>
+                  </SwiperSlide>
               );
             })}
           </Swiper>
@@ -171,10 +175,10 @@ export default function Component() {
         <div className="mx-auto w-full max-w-md space-y-6 py-4">
           <div className="space-y-2 text-center items-center flex flex-col gap-4">
             <Image
-              src={PlnLogo}
-              alt="Logo PLN"
-              width={240}
-              className={`bg-white p-2 rounded-sm`}
+                src={PlnLogo}
+                alt="Logo PLN"
+                width={240}
+                className={`bg-white p-2 rounded-sm`}
             />
             {/* <div className="inline-block rounded-lg bg-primary px-3 py-1 text-sm font-medium text-primary-foreground">
             Digital Twin Dashboard
@@ -185,9 +189,9 @@ export default function Component() {
             {/* <p className="text-muted-foreground">Enter your credentials to access the PLN performance dashboard.</p> */}
           </div>
           <form
-            ref={formRef}
-            className="space-y-4 flex flex-col justify-center items-center"
-            onSubmit={handleSubmit}
+              ref={formRef}
+              className="space-y-4 flex flex-col justify-center items-center"
+              onSubmit={handleSubmit}
           >
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
