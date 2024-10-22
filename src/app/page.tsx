@@ -1,19 +1,16 @@
-import { Fragment } from "react";
-import Image from "next/image";
-import { Card, CardHeader, CardBody, Divider, Link } from "@nextui-org/react";
 import Navbar from "@/components/Navbar";
+import { Card, CardBody, CardHeader, Divider, Link } from "@nextui-org/react";
+import { CircuitBoard, Grid2x2Check, HousePlug } from "lucide-react";
+import Image from "next/image";
+import { Fragment } from "react";
 import BGAllApps from "../../public/bg-all-apps.jpg";
-import {
-  AudioWaveform,
-  HousePlug,
-  TrendingUp,
-  SquareAsterisk,
-  Workflow,
-  ChartNoAxesCombined,
-  Grid2x2Check,
-  SearchCheck,
-  CircuitBoard,
-} from "lucide-react";
+
+import pfiLogo from "../../public/icons/iPFI App.png";
+import irfcaLogo from "../../public/icons/iRCFA App.png";
+import lccLogo from "../../public/icons/LCC App.png";
+import rdbLogo from "../../public/icons/RBD App.png";
+import reliableLogo from "../../public/icons/Reliability Predict App.png";
+import riskLogo from "../../public/icons/Risk Matrix App.png";
 
 export default async function Home() {
   const appList = [
@@ -24,28 +21,35 @@ export default async function Home() {
     },
     {
       name: "i-PFI App",
-      url: "/pfi-app",
-      icon: <AudioWaveform size={48} />,
+      url: "/#",
+      icon: <Image src={pfiLogo} alt="i-PFI App" width={95} height={95} />,
     },
     {
       name: "Reliability Predicts App",
       url: "/#",
-      icon: <TrendingUp size={48} />,
+      icon: (
+        <Image
+          src={reliableLogo}
+          alt="reliable Logo App"
+          width={95}
+          height={95}
+        />
+      ),
     },
     {
       name: "Risk Matrix App",
       url: "/#",
-      icon: <SquareAsterisk size={48} />,
+      icon: <Image src={riskLogo} alt="i-PFI App" width={95} height={95} />,
     },
     {
       name: "RBD App",
       url: "/#",
-      icon: <Workflow size={48} />,
+      icon: <Image src={rdbLogo} alt="i-PFI App" width={95} height={95} />,
     },
     {
       name: "LCCA App",
       url: "/#",
-      icon: <ChartNoAxesCombined size={48} />,
+      icon: <Image src={lccLogo} alt="i-PFI App" width={95} height={95} />,
     },
     {
       name: "Optimum OH App",
@@ -55,7 +59,7 @@ export default async function Home() {
     {
       name: "i-RCFA App",
       url: "/#",
-      icon: <SearchCheck size={48} />,
+      icon: <Image src={irfcaLogo} alt="i-PFI App" width={95} height={95} />,
     },
     {
       name: "AHM App",

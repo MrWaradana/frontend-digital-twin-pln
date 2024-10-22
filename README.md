@@ -19,6 +19,12 @@ npm install
 Third, run the development server:
 
 ```bash
+npx auth secret
+```
+
+Third, run the development server:
+
+```bash
 npm run dev
 ```
 
@@ -29,6 +35,7 @@ You can start editing the page by modifying `src/app/page.tsx`. The page auto-up
 This project uses [`Typescript`](https://www.typescriptlang.org/docs/handbook/basic-types.html). Basically Javascript but with types like string and number so that you can easily detect rendered data type error and following the best practice.
 
 All of the dependencies can be look at package.json. Some of the notable dependencies are:
+
 1. [Next UI](https://nextui.org/docs/guide/introduction)
 1. [ShadCN UI](https://ui.shadcn.com/charts)
 1. [Tailwind CSS](https://tailwindcss.com/)
@@ -37,7 +44,8 @@ All of the dependencies can be look at package.json. Some of the notable depende
 ## Structure of The Pages
 
 All page is on `src/app/`. Here are the list of the pages:
-1. Login &rarr; `app/(auth)/login/page.tsx` 
+
+1. Login &rarr; `app/(auth)/login/page.tsx`
 1. Admin &rarr; `app/admin/page.tsx`
 1. Efficiency App &rarr; `app/efficiency-app/page.tsx`
 1. Application X &rarr; `app/app-name/page.tsx`
