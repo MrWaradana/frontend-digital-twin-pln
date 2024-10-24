@@ -111,9 +111,11 @@ const TableEquipment = ({
       >
         <TableHeader>
           <TableColumn>Name</TableColumn>
-          <TableColumn>Level Equipment</TableColumn>
+          <TableColumn>Equipment Description</TableColumn>
+          <TableColumn>Asset Number</TableColumn>
           <TableColumn>Category</TableColumn>
-          <TableColumn>Status</TableColumn>
+          <TableColumn>Location Tag</TableColumn>
+          <TableColumn>System Tag</TableColumn>
           <TableColumn>Actions</TableColumn>
         </TableHeader>
         <TableBody
@@ -128,8 +130,10 @@ const TableEquipment = ({
             <TableRow key={row.id}>
               <TableCell>{row.name}</TableCell>
               <TableCell>{row.equipment_tree.name}</TableCell>
+              <TableCell>{row.assetnum ? row.assetnum : "-"}</TableCell>
               <TableCell>{row.category.name}</TableCell>
-              <TableCell>Normal</TableCell>
+              <TableCell>{row.location_tag ? row.location_tag : "-"}</TableCell>
+              <TableCell>{row.system_tag ? row.system_tag : "-"}</TableCell>
               <TableCell>
                 <div className="relative flex justify-left items-left gap-2">
                   <Dropdown>
@@ -175,6 +179,7 @@ const TableEquipment = ({
       {isOpen && selectedRow && (
         <UpdateModal
           categories={categories}
+          eqTrees={eqTrees}
           mutate={mutate}
           isOpen={isOpen}
           handleModal={handleModal}
