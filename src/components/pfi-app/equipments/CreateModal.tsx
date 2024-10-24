@@ -31,47 +31,49 @@ const CreateModal = ({
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [loading, setLoading] = React.useState(false);
 
-  // Form values
-  const [name, setName] = React.useState("");
-  const [categoryId, setCategoryId] = React.useState("");
-  const [eqTreeId, setEqTreeId] = React.useState("");
-  const [systemTag, setSystemTag] = React.useState("");
-  const [assetNum, setAssetNum] = React.useState("");
-  const [locationTag, setLocationTag] = React.useState("");
+  const [formData, setFormData] = React.useState({
+    name: "",
+    category_id: "",
+    equipment_tree_id: "",
+    system_tag: "",
+    assetnum: "",
+    location_tag: "",
+    parent_id,
+  });
 
-  // Error state
   const [errors, setErrors] = React.useState({
     name: "",
-    categoryId: "",
-    eqTreeId: "",
-    systemTag: "",
-    assetNum: "",
-    locationTag: "",
+    category_id: "",
+    equipment_tree_id: "",
+    system_tag: "",
+    assetnum: "",
+    location_tag: "",
   });
 
   const session = useSession();
 
-  // Form validation
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
   const validateForm = () => {
     const newErrors: any = {};
 
-    if (!name) newErrors.name = "Nama tidak boleh kosong";
-    if (!categoryId) newErrors.categoryId = "Kategori harus dipilih";
-    if (!eqTreeId) newErrors.eqTreeId = "Equipment level harus dipilih";
-    if (!systemTag) newErrors.systemTag = "System tag tidak boleh kosong";
-    if (!assetNum) newErrors.assetNum = "Asset number tidak boleh kosong";
-    if (!locationTag) newErrors.locationTag = "Location tag tidak boleh kosong";
+    if (!formData.name) newErrors.name = "Nama tidak boleh kosong";
+    if (!formData.category_id)
+      newErrors.category_id = "Kategori tidak boleh kosong";
+    if (!formData.equipment_tree_id)
+      newErrors.equipment_tree_id = "Equipment Level tidak boleh kosong";
 
     setErrors(newErrors);
-
-    // Return true if there are no errors
     return Object.keys(newErrors).length === 0;
   };
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // Validate form before submitting
     if (!validateForm()) {
       toast.error("Silakan perbaiki input yang salah");
       return;
@@ -80,16 +82,6 @@ const CreateModal = ({
     setLoading(true);
 
     try {
-      const payload = {
-        name,
-        category_id: categoryId,
-        parent_id: parent_id,
-        equipment_tree_id: eqTreeId,
-        system_tag: systemTag,
-        assetnum: assetNum,
-        location_tag: locationTag,
-      };
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_PFI_APP_URL}/equipments`,
         {
@@ -98,36 +90,39 @@ const CreateModal = ({
             "Content-Type": "application/json",
             Authorization: `Bearer ${session.data?.user.access_token}`,
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({ ...formData }),
         }
       );
 
       if (response.status === 201) {
         toast.success("Equipment berhasil ditambahkan");
         mutate();
-
-        // Reset form
-        setName("");
-        setCategoryId("");
-        setEqTreeId("");
-        setSystemTag("");
-        setAssetNum("");
-        setLocationTag("");
+        setFormData({
+          name: "",
+          category_id: "",
+          equipment_tree_id: "",
+          system_tag: "",
+          assetnum: "",
+          location_tag: "",
+          parent_id,
+        });
         setErrors({
           name: "",
-          categoryId: "",
-          eqTreeId: "",
-          systemTag: "",
-          assetNum: "",
-          locationTag: "",
+          category_id: "",
+          equipment_tree_id: "",
+          system_tag: "",
+          assetnum: "",
+          location_tag: "",
         });
         onOpenChange();
-        setLoading(false);
       } else {
-        toast.error("Terjadi kesalahan");
+        const errorData = await response.json();
+        toast.error(errorData.message || "An error occurred");
       }
-    } catch (error) {
-      toast.error("Terjadi kesalahan");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -147,98 +142,87 @@ const CreateModal = ({
                 </ModalHeader>
                 <ModalBody>
                   <div className="flex flex-row mb-3">
-                    <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-                      <Input
-                        type="text"
-                        label="Nama"
-                        placeholder="Masukkan nama equipment"
-                        labelPlacement="outside"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        isInvalid={!!errors.name}
-                        errorMessage={errors.name}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex flex-row mb-3 gap-4">
-                    <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-                      <Select
-                        label="Kategori"
-                        labelPlacement="outside"
-                        placeholder="Pilih kategori"
-                        value={categoryId}
-                        onChange={(e) => setCategoryId(e.target.value)}
-                        isInvalid={!!errors.categoryId}
-                        errorMessage={errors.categoryId}
-                      >
-                        {categories.map((ctg: any) => (
-                          <SelectItem key={ctg.id} value={ctg.id}>
-                            {ctg.name}
-                          </SelectItem>
-                        ))}
-                      </Select>
-                    </div>
-
-                    <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-                      <Select
-                        label="Equipment Level"
-                        labelPlacement="outside"
-                        placeholder="Pilih Equipment Level"
-                        value={eqTreeId}
-                        onChange={(e) => setEqTreeId(e.target.value)}
-                        isInvalid={!!errors.eqTreeId}
-                        errorMessage={errors.eqTreeId}
-                      >
-                        {eqTrees.map((eq: any) => (
-                          <SelectItem key={eq.id} value={eq.id}>
-                            {eq.name}
-                          </SelectItem>
-                        ))}
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-row mb-3 gap-4">
-                    <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-                      <Input
-                        type="text"
-                        label="System Tag"
-                        placeholder="Masukkan System Tag"
-                        labelPlacement="outside"
-                        value={systemTag}
-                        onChange={(e) => setSystemTag(e.target.value)}
-                        isInvalid={!!errors.systemTag}
-                        errorMessage={errors.systemTag}
-                      />
-                    </div>
-
-                    <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-                      <Input
-                        type="text"
-                        label="Asset Number"
-                        placeholder="Masukkan Asset Number"
-                        labelPlacement="outside"
-                        value={assetNum}
-                        onChange={(e) => setAssetNum(e.target.value)}
-                        isInvalid={!!errors.assetNum}
-                        errorMessage={errors.assetNum}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                     <Input
                       type="text"
-                      label="Location Tag"
-                      placeholder="Masukkan Location Tag"
+                      name="name"
+                      label="Nama"
+                      placeholder="Masukkan nama equipment"
                       labelPlacement="outside"
-                      value={locationTag}
-                      onChange={(e) => setLocationTag(e.target.value)}
-                      isInvalid={!!errors.locationTag}
-                      errorMessage={errors.locationTag}
+                      value={formData.name}
+                      onChange={handleChange}
+                      isInvalid={!!errors.name}
+                      errorMessage={errors.name}
                     />
                   </div>
+                  <div className="flex flex-row mb-3 gap-4">
+                    <Select
+                      label="Kategori"
+                      name="category_id"
+                      labelPlacement="outside"
+                      placeholder="Pilih kategori"
+                      value={formData.category_id}
+                      onChange={handleChange}
+                      isInvalid={!!errors.category_id}
+                      errorMessage={errors.category_id}
+                    >
+                      {categories.map((ctg: any) => (
+                        <SelectItem key={ctg.id} value={ctg.id}>
+                          {ctg.name}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                    <Select
+                      label="Equipment Level"
+                      name="equipment_tree_id"
+                      labelPlacement="outside"
+                      placeholder="Pilih Equipment Level"
+                      value={formData.equipment_tree_id}
+                      onChange={handleChange}
+                      isInvalid={!!errors.equipment_tree_id}
+                      errorMessage={errors.equipment_tree_id}
+                    >
+                      {eqTrees.map((eq: any) => (
+                        <SelectItem key={eq.id} value={eq.id}>
+                          {eq.name}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="flex flex-row mb-3 gap-4">
+                    <Input
+                      type="text"
+                      name="system_tag"
+                      label="System Tag"
+                      placeholder="Masukkan System Tag"
+                      labelPlacement="outside"
+                      value={formData.system_tag}
+                      onChange={handleChange}
+                      isInvalid={!!errors.system_tag}
+                      errorMessage={errors.system_tag}
+                    />
+                    <Input
+                      type="text"
+                      name="assetnum"
+                      label="Asset Number"
+                      placeholder="Masukkan Asset Number"
+                      labelPlacement="outside"
+                      value={formData.assetnum}
+                      onChange={handleChange}
+                      isInvalid={!!errors.assetnum}
+                      errorMessage={errors.assetnum}
+                    />
+                  </div>
+                  <Input
+                    type="text"
+                    name="location_tag"
+                    label="Location Tag"
+                    placeholder="Masukkan Location Tag"
+                    labelPlacement="outside"
+                    value={formData.location_tag}
+                    onChange={handleChange}
+                    isInvalid={!!errors.location_tag}
+                    errorMessage={errors.location_tag}
+                  />
                 </ModalBody>
                 <ModalFooter>
                   <Button color="danger" variant="light" onPress={onClose}>

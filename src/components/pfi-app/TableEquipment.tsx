@@ -162,7 +162,10 @@ const TableEquipment = ({
                       </DropdownItem>
                       <DropdownItem
                         startContent={<TrashIcon />}
-                        onClick={() => deleteHandler(row.id)}
+                        onClick={() =>
+                          row.parent_id != null && deleteHandler(row.id)
+                        }
+                        isDisabled={row.parent_id == null}
                       >
                         Delete
                       </DropdownItem>
