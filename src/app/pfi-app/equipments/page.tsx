@@ -20,12 +20,12 @@ export default function Page() {
   const { data: categoriesData } = useGetCategories(session?.user.access_token);
   const { data: eqTreesData } = useGetEqTrees(session?.user.access_token);
 
-  const equipments = equipmentsData ?? [];
+  const equipments = equipmentsData?.equipments ?? [];
   const categories = categoriesData ?? [];
   const eqTrees = eqTreesData ?? [];
 
   return (
-    <PFIContentLayout title="All PFI Data">
+    <PFIContentLayout title="Intelligent P-F Interval Equipments">
       <div className="flex flex-col items-center justify-center mt-24">
         {/* Content */}
         <div className="flex flex-col gap-8 justify-center items-center w-full">

@@ -2,17 +2,19 @@
 
 import React from "react";
 
+import TableEquipment from "@/components/pfi-app/TableEquipment";
 import { PFIContentLayout } from "@/containers/PFIContentLayout";
-import { useSession } from "next-auth/react";
-import { useGetEquipment } from "@/lib/APIs/useGetEquipments";
 import { useGetCategories } from "@/lib/APIs/useGetCategoryPfi";
 import { useGetEqTrees } from "@/lib/APIs/useGetEqTree";
-import { CircularProgress, Button, Link } from "@nextui-org/react";
+import { useGetEquipment } from "@/lib/APIs/useGetEquipments";
+import { Button, CircularProgress, Link } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
-import TableEquipment from "@/components/pfi-app/TableEquipment";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const Page = ({ params }: { params: { equipment_id: string } }) => {
   const { data: session } = useSession();
+  const router = useRouter();
   const id = params.equipment_id;
   const [isLoading, setLoading] = React.useState(true);
 
@@ -40,29 +42,30 @@ const Page = ({ params }: { params: { equipment_id: string } }) => {
   const eqTrees = eqTreesData ?? [];
 
   return (
-    <PFIContentLayout title="All PFI Data">
+    <PFIContentLayout title="Intelligent P-F Interval Equipments">
       <div className="flex flex-col items-center justify-center mt-24">
         {/* Content */}
         <div className="flex flex-col gap-8 justify-center items-center w-full">
           <div className="w-full text-left">
             <Button
               as={Link}
-              href={`/pfi-app`}
+              onPress={() => router.back()}
               color="primary"
               size="sm"
               className="mb-10"
             >
               <ChevronLeftIcon size={12} />
-              Back to main
+              Back
             </Button>
             <div className="flex items-center gap-4">
               <h1 className="text-3xl font-bold text-gray-800">
-                {equipmentsData?.name} Sub Equipment Lists
+                {equipmentsData?.name} {equipmentsData?.equipment_tree?.name}{" "}
+                Lists
               </h1>
             </div>
             <p className="text-sm text-gray-600 mt-2">
-              Manage your {equipmentsData?.name} sub equipments by viewing the
-              list below.
+              Manage your {equipmentsData?.name}{" "}
+              {equipmentsData?.equipment_tree?.name} by viewing the list below.
             </p>
           </div>
 

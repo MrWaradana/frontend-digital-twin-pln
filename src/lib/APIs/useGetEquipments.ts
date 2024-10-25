@@ -8,14 +8,10 @@ export interface Category {
   created_at: string,
   updated_at: string,
 }
-export interface Children{
+
+export interface EquipmentTree {
   id: string
-  parent_id: string | null,
-  category_id: string,
   name: string,
-  description: string,
-  category: Category,
-  children: Children[],
   created_at: string,
   updated_at: string,
 }
@@ -23,20 +19,30 @@ export interface Children{
 export interface Equipment {
   id: string
   parent_id: string | null,
-  category_id: string,
   name: string,
-  description: string,
-  children: Children[],
+  equipment_tree: EquipmentTree,
   category: Category,
   created_at: string,
   updated_at: string,
 }
 
+export interface DataList{
+  pagination: {
+    current_page: number;
+    has_next_page: boolean;
+    has_previous_page: boolean;
+    page_size: number;
+    total_items: number;
+    total_pages: number;
+  },
+  equipments: Equipment[]
+}
+
 export function useGetEquipments(
   token: string | undefined,
-): HookReply<Array<Equipment>> {
+): HookReply<DataList> {
   return useApiFetch(
-      `${PFI_API_URL}/equipments`,
+      `${PFI_API_URL}/equipments?page=1&limit=100`,
       !!token,
       token
   )
