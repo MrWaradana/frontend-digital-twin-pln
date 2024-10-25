@@ -51,6 +51,13 @@ export function getMenuList(pathname: string): Group[] {
           icon: DiamondPlus,
           submenus: [],
         },
+        {
+          href: "/risk-matrix-app/bar-chart",
+          label: "Risk Matrix Bar Chart",
+          active: pathname === "/risk-matrix-app/bar-chart" ? true : false,
+          icon: DiamondPlus,
+          submenus: [],
+        },
       ],
     },
   ];
