@@ -1,82 +1,121 @@
-import React, { useEffect } from "react";
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Button,
   Input,
-  Textarea,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
   Select,
   SelectItem,
 } from "@nextui-org/react";
-import toast, { Toaster } from "react-hot-toast";
 import { useSession } from "next-auth/react";
+import React, { useEffect } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 const UpdateModal = ({
   categories,
+  eqTrees,
   mutate,
   isOpen,
   handleModal,
   selectedData,
 }: {
   categories: any;
+  eqTrees: any;
   mutate: any;
   isOpen: boolean;
   handleModal: any;
   selectedData: any; // Accepting the selected data
 }) => {
   const [loading, setLoading] = React.useState(false);
-  const [id, setId] = React.useState("");
-  const [name, setName] = React.useState("");
-  const [description, setDescription] = React.useState("");
-  const [categoryId, setCategoryId] = React.useState("");
+  const [id, setId] = React.useState<string>("");
 
-  const session = useSession();
+  const [formData, setFormData] = React.useState({
+    name: "",
+    category_id: "",
+    equipment_tree_id: "",
+    system_tag: "",
+    assetnum: "",
+    location_tag: "",
+    parent_id: "",
+  });
+
+  const [errors, setErrors] = React.useState({
+    name: "",
+    category_id: "",
+    equipment_tree_id: "",
+  });
+
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (selectedData) {
       setId(selectedData.id);
-      setName(selectedData.name);
-      setDescription(selectedData.description);
-      setCategoryId(selectedData.category.id);
+      setFormData({
+        name: selectedData.name,
+        category_id: selectedData.category.id,
+        equipment_tree_id: selectedData.equipment_tree.id,
+        system_tag: selectedData.system_tag,
+        assetnum: selectedData.assetnum,
+        location_tag: selectedData.location_tag,
+        parent_id: selectedData.parent_id,
+      });
     }
   }, [selectedData]);
 
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const validateForm = () => {
+    const newErrors: any = {};
+
+    if (!formData.name) newErrors.name = "Nama tidak boleh kosong";
+    if (!formData.category_id)
+      newErrors.category_id = "Kategori tidak boleh kosong";
+    if (!formData.equipment_tree_id)
+      newErrors.equipment_tree_id = "Equipment Level tidak boleh kosong";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      toast.error("Silakan perbaiki input yang salah");
+      return;
+    }
+
     setLoading(true);
     try {
-      const payload = {
-        name,
-        description,
-        category_id: categoryId,
-        parent_id: null,
-      };
-
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_PFI_APP_URL}/equipment/` + id,
+        `${process.env.NEXT_PUBLIC_PFI_APP_URL}/equipment/${id}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${session.data?.user.access_token}`,
+            Authorization: `Bearer ${session?.user.access_token}`,
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(formData),
         }
       );
 
-      if (response.status == 200) {
+      if (response.ok) {
         toast.success("Equipment berhasil diperbaharui");
         mutate();
-        setLoading(false);
         handleModal();
       } else {
         toast.error("Terjadi kesalahan");
       }
     } catch (error) {
       console.error("Error updating equipment:", error);
+      toast.error("Terjadi kesalahan saat memperbarui data");
     } finally {
       setLoading(false);
     }
@@ -94,52 +133,82 @@ const UpdateModal = ({
                 Update Equipment
               </ModalHeader>
               <ModalBody>
-                <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                <div className="flex flex-row mb-3">
                   <Input
                     type="text"
-                    label="Name"
-                    placeholder="Enter equipment name"
+                    name="name"
+                    label="Nama"
+                    placeholder="Masukkan nama equipment"
                     labelPlacement="outside"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    isInvalid={!!errors.name}
+                    errorMessage={errors.name}
                   />
                 </div>
-                <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                <div className="flex flex-row mb-3 gap-4">
                   <Select
-                    label="Category"
+                    label="Kategori"
+                    name="category_id"
                     labelPlacement="outside"
-                    placeholder="Select category"
-                    value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                    required
+                    placeholder={selectedData.category.name}
+                    value={formData.category_id}
+                    onChange={handleChange}
+                    isInvalid={!!errors.category_id}
+                    errorMessage={errors.category_id}
                   >
-                    {categoryId && (
-                      <SelectItem key={categoryId} value={categoryId}>
-                        {categories.find((ctg: any) => ctg.id === categoryId)
-                          ?.name || "Selected Category"}
+                    {categories.map((ctg) => (
+                      <SelectItem key={ctg.id} value={ctg.id}>
+                        {ctg.name}
                       </SelectItem>
-                    )}
-
-                    {categories
-                      .filter((ctg: any) => ctg.id !== categoryId)
-                      .map((ctg: any) => (
-                        <SelectItem key={ctg.id} value={ctg.id}>
-                          {ctg.name}
-                        </SelectItem>
-                      ))}
+                    ))}
+                  </Select>
+                  <Select
+                    label="Equipment Level"
+                    name="equipment_tree_id"
+                    labelPlacement="outside"
+                    placeholder={selectedData.equipment_tree.name}
+                    value={formData.equipment_tree_id}
+                    onChange={handleChange}
+                    isInvalid={!!errors.equipment_tree_id}
+                    errorMessage={errors.equipment_tree_id}
+                  >
+                    {eqTrees.map((eq) => (
+                      <SelectItem key={eq.id} value={eq.id}>
+                        {eq.name}
+                      </SelectItem>
+                    ))}
                   </Select>
                 </div>
-                <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-                  <Textarea
-                    label="Description"
-                    placeholder="Enter equipment description"
+                <div className="flex flex-row mb-3 gap-4">
+                  <Input
+                    type="text"
+                    name="system_tag"
+                    label="System Tag"
+                    placeholder="Masukkan System Tag"
                     labelPlacement="outside"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
+                    value={formData.system_tag}
+                    onChange={handleChange}
+                  />
+                  <Input
+                    type="text"
+                    name="assetnum"
+                    label="Asset Number"
+                    placeholder="Masukkan Asset Number"
+                    labelPlacement="outside"
+                    value={formData.assetnum}
+                    onChange={handleChange}
                   />
                 </div>
+                <Input
+                  type="text"
+                  name="location_tag"
+                  label="Location Tag"
+                  placeholder="Masukkan Location Tag"
+                  labelPlacement="outside"
+                  value={formData.location_tag}
+                  onChange={handleChange}
+                />
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>

@@ -1,22 +1,21 @@
 "use client";
 
-import React from "react";
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Button,
-  useDisclosure,
   Input,
-  Textarea,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
   Select,
   SelectItem,
+  useDisclosure,
 } from "@nextui-org/react";
 import { PlusIcon } from "@radix-ui/react-icons";
-import toast, { Toaster } from "react-hot-toast";
 import { useSession } from "next-auth/react";
+import React from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 const CreateModal = ({
   categories,
@@ -32,30 +31,57 @@ const CreateModal = ({
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [loading, setLoading] = React.useState(false);
 
-  const [name, setName] = React.useState("");
-  const [categoryId, setCategoryId] = React.useState("");
-  const [eqTreeId, setEqTreeId] = React.useState("");
-  const [systemTag, setSystemTag] = React.useState("");
-  const [assetNum, setAssetNum] = React.useState("");
-  const [locationTag, setLocationTag] = React.useState("");
+  const [formData, setFormData] = React.useState({
+    name: "",
+    category_id: "",
+    equipment_tree_id: "",
+    system_tag: "",
+    assetnum: "",
+    location_tag: "",
+    parent_id,
+  });
+
+  const [errors, setErrors] = React.useState({
+    name: "",
+    category_id: "",
+    equipment_tree_id: "",
+    system_tag: "",
+    assetnum: "",
+    location_tag: "",
+  });
 
   const session = useSession();
 
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const validateForm = () => {
+    const newErrors: any = {};
+
+    if (!formData.name) newErrors.name = "Nama tidak boleh kosong";
+    if (!formData.category_id)
+      newErrors.category_id = "Kategori tidak boleh kosong";
+    if (!formData.equipment_tree_id)
+      newErrors.equipment_tree_id = "Equipment Level tidak boleh kosong";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!validateForm()) {
+      toast.error("Silakan perbaiki input yang salah");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const payload = {
-        name,
-        category_id: categoryId,
-        parent_id: parent_id,
-        equipment_tree_id: eqTreeId,
-        system_tag: systemTag,
-        assetnum: assetNum,
-        location_tag: locationTag,
-      };
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_PFI_APP_URL}/equipments`,
         {
@@ -64,35 +90,45 @@ const CreateModal = ({
             "Content-Type": "application/json",
             Authorization: `Bearer ${session.data?.user.access_token}`,
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({ ...formData }),
         }
       );
+
       if (response.status === 201) {
         toast.success("Equipment berhasil ditambahkan");
         mutate();
-
-        setName("");
-        setCategoryId("");
-        setEqTreeId("");
-        setSystemTag("");
-        setAssetNum("");
-        setLocationTag("");
+        setFormData({
+          name: "",
+          category_id: "",
+          equipment_tree_id: "",
+          system_tag: "",
+          assetnum: "",
+          location_tag: "",
+          parent_id,
+        });
+        setErrors({
+          name: "",
+          category_id: "",
+          equipment_tree_id: "",
+          system_tag: "",
+          assetnum: "",
+          location_tag: "",
+        });
         onOpenChange();
-        setLoading(false);
       } else {
-        toast.error("Terjadi kesalahan");
+        const errorData = await response.json();
+        toast.error(errorData.message || "An error occurred");
       }
-
-      // API request here
-    } catch (error) {
-      toast.error("Terjadi kesalahan");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
       <Toaster />
-
       <Button onPress={onOpen} color="primary" startContent={<PlusIcon />}>
         Add New
       </Button>
@@ -105,23 +141,29 @@ const CreateModal = ({
                   Tambah Equipment
                 </ModalHeader>
                 <ModalBody>
-                  <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                  <div className="flex flex-row mb-3">
                     <Input
                       type="text"
+                      name="name"
                       label="Nama"
                       placeholder="Masukkan nama equipment"
                       labelPlacement="outside"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      value={formData.name}
+                      onChange={handleChange}
+                      isInvalid={!!errors.name}
+                      errorMessage={errors.name}
                     />
                   </div>
-                  <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                  <div className="flex flex-row mb-3 gap-4">
                     <Select
                       label="Kategori"
+                      name="category_id"
                       labelPlacement="outside"
                       placeholder="Pilih kategori"
-                      value={categoryId}
-                      onChange={(e) => setCategoryId(e.target.value)}
+                      value={formData.category_id}
+                      onChange={handleChange}
+                      isInvalid={!!errors.category_id}
+                      errorMessage={errors.category_id}
                     >
                       {categories.map((ctg: any) => (
                         <SelectItem key={ctg.id} value={ctg.id}>
@@ -129,14 +171,15 @@ const CreateModal = ({
                         </SelectItem>
                       ))}
                     </Select>
-                  </div>
-                  <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                     <Select
                       label="Equipment Level"
+                      name="equipment_tree_id"
                       labelPlacement="outside"
                       placeholder="Pilih Equipment Level"
-                      value={eqTreeId}
-                      onChange={(e) => setEqTreeId(e.target.value)}
+                      value={formData.equipment_tree_id}
+                      onChange={handleChange}
+                      isInvalid={!!errors.equipment_tree_id}
+                      errorMessage={errors.equipment_tree_id}
                     >
                       {eqTrees.map((eq: any) => (
                         <SelectItem key={eq.id} value={eq.id}>
@@ -145,36 +188,41 @@ const CreateModal = ({
                       ))}
                     </Select>
                   </div>
-                  <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                  <div className="flex flex-row mb-3 gap-4">
                     <Input
                       type="text"
+                      name="system_tag"
                       label="System Tag"
                       placeholder="Masukkan System Tag"
                       labelPlacement="outside"
-                      value={systemTag}
-                      onChange={(e) => setSystemTag(e.target.value)}
+                      value={formData.system_tag}
+                      onChange={handleChange}
+                      isInvalid={!!errors.system_tag}
+                      errorMessage={errors.system_tag}
                     />
-                  </div>
-                  <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                     <Input
                       type="text"
+                      name="assetnum"
                       label="Asset Number"
                       placeholder="Masukkan Asset Number"
                       labelPlacement="outside"
-                      value={assetNum}
-                      onChange={(e) => setAssetNum(e.target.value)}
+                      value={formData.assetnum}
+                      onChange={handleChange}
+                      isInvalid={!!errors.assetnum}
+                      errorMessage={errors.assetnum}
                     />
                   </div>
-                  <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-                    <Input
-                      type="text"
-                      label="Location Tag" // Corrected label here
-                      placeholder="Masukkan Location Tag"
-                      labelPlacement="outside"
-                      value={locationTag}
-                      onChange={(e) => setLocationTag(e.target.value)}
-                    />
-                  </div>
+                  <Input
+                    type="text"
+                    name="location_tag"
+                    label="Location Tag"
+                    placeholder="Masukkan Location Tag"
+                    labelPlacement="outside"
+                    value={formData.location_tag}
+                    onChange={handleChange}
+                    isInvalid={!!errors.location_tag}
+                    errorMessage={errors.location_tag}
+                  />
                 </ModalBody>
                 <ModalFooter>
                   <Button color="danger" variant="light" onPress={onClose}>
