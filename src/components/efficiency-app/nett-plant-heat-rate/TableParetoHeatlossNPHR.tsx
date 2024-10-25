@@ -33,8 +33,9 @@ import {
   TableHeader,
   TableRow,
   Checkbox,
+  Tooltip,
 } from "@nextui-org/react";
-import { Box, DownloadIcon, PrinterIcon } from "lucide-react";
+import { Box, CircleHelp, DownloadIcon, PrinterIcon } from "lucide-react";
 import EditableCell from "../EditableCell";
 import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
 import ModalRootCause from "../ModalRootCause";
@@ -492,9 +493,24 @@ export default function TableParetoHeatlossNPHR({
           className: "text-right pr-2",
         },
         header: () => (
-          <div className="text-center">
-            Persen Losses <br /> (%)
-          </div>
+          <Tooltip
+            content={
+              <span>
+                Rumus Persen Losses: <br />
+                <strong>
+                  absolute( (gap/deviasi) * <em>persen_hr</em> )
+                </strong>
+                <br />
+              </span>
+            }
+          >
+            <div className="text-center flex flex-row gap-1">
+              <p>
+                Persen Losses <br /> (%)
+              </p>
+              <CircleHelp size={16} />
+            </div>
+          </Tooltip>
         ),
         cell: (props: any) => {
           const value = props.getValue();
@@ -529,9 +545,22 @@ export default function TableParetoHeatlossNPHR({
           className: "text-right pr-2",
         },
         header: () => (
-          <div className="text-center">
-            Nilai Losses <br /> (kCal/kWh)
-          </div>
+          <Tooltip
+            content={
+              <span>
+                Rumus Nilai Losses: <br />
+                <strong>(persen_losses/100)*(NPHR Commisioning)</strong>
+                <br />
+              </span>
+            }
+          >
+            <div className="text-center flex flex-row gap-1">
+              <p>
+                Nilai Losses <br /> (kWh/kCal)
+              </p>
+              <CircleHelp size={12} />
+            </div>
+          </Tooltip>
         ),
         cell: (props: any) => {
           const value = props.getValue();
