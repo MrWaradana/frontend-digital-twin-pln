@@ -143,6 +143,7 @@ export default function Component() {
           <Swiper
             spaceBetween={0}
             centeredSlides={true}
+            loop={true}
             autoplay={{
               delay: 5000,
               disableOnInteraction: false,
