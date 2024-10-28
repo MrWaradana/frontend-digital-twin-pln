@@ -25,7 +25,7 @@ export default async function Home() {
     },
     {
       name: "i-PFI App",
-      url: "/#",
+      url: "/pfi-app",
       icon: <Image src={pfiLogo} alt="i-PFI App" width={150} height={150} />,
     },
     {
