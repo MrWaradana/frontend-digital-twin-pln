@@ -37,7 +37,7 @@ const Page = ({ params }: { params: { equipment_id: string } }) => {
     );
   }
 
-  const childrens = equipmentsData?.children ?? [];
+  const childrens = equipmentsData?.equipments ?? [];
   const categories = categoriesData ?? [];
   const eqTrees = eqTreesData ?? [];
 
@@ -59,13 +59,12 @@ const Page = ({ params }: { params: { equipment_id: string } }) => {
             </Button>
             <div className="flex items-center gap-4">
               <h1 className="text-3xl font-bold text-gray-800">
-                {equipmentsData?.name} {equipmentsData?.equipment_tree?.name}{" "}
-                Lists
+              {childrens[0]?.parent.name} Lists
               </h1>
             </div>
             <p className="text-sm text-gray-600 mt-2">
-              Manage your {equipmentsData?.name}{" "}
-              {equipmentsData?.equipment_tree?.name} by viewing the list below.
+              Manage your {childrens[0]?.parent.name + " " + childrens[0]?.equipment_tree.name}
+              {" "}by viewing the list below.
             </p>
           </div>
 
