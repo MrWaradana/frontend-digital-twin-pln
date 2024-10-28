@@ -35,6 +35,7 @@ import { useSession } from "next-auth/react";
 import { useStatusThermoflowStore } from "../../store/statusThermoflow";
 import AsyncSelect from "react-select/async";
 import { useGetThermoStatus } from "../../lib/APIs/useGetThermoStatus";
+import { useSearchParams } from "next/navigation";
 interface Variable {
   category: string;
   input_name: string;
@@ -52,6 +53,7 @@ export default function VariableInputForm({
   variables: any;
   selectedMasterData: string;
 }) {
+  const params = useSearchParams();
   const router = useRouter();
   const session = useSession();
   const [variableData, setVariableData] = useState(variables);
@@ -146,6 +148,9 @@ export default function VariableInputForm({
           jenis_parameter: selectedMasterData,
           excel_id: excel[0].id,
           inputs: values.inputs,
+          input_type: params.get("parameter") ?? "current",
+          periodic_start_date: params.get("start_date") ?? null,
+          periodic_end_date: params.get("end_date") ?? null,
         };
 
         const response = await fetch(

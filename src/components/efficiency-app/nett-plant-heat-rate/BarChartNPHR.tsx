@@ -1,7 +1,14 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  LabelList,
+  XAxis,
+  YAxis,
+} from "recharts";
 import {
   Card,
   CardContent,
@@ -210,7 +217,13 @@ export default function BarChartNPHR({
                 stackId="a"
                 fill="#8daed9"
                 radius={[0, 0, 4, 4]}
-              />
+              >
+                <LabelList
+                  dataKey="nphr"
+                  position="center"
+                  className="fill-white text-2xl"
+                />{" "}
+              </Bar>
               <Bar
                 dataKey="gap"
                 stackId="a"

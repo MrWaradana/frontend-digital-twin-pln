@@ -324,7 +324,7 @@ export default function TableParetoTop({
               const [coefficient, exponent] = exponentialForm.split("e");
               return `${coefficient}x10^${exponent}`;
             }
-            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+            return formatIDNumber(num.toFixed(2)); // For normal-sized numbers, show two decimal places
           };
 
           return (

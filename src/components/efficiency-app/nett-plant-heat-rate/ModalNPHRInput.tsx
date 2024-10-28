@@ -112,12 +112,12 @@ function ModalNPHRInput({
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Input NPHR Niaga Value
+                Input NPHR Target Value
               </ModalHeader>
               <ModalBody>
                 <Input
                   label="Net Plant Heat Rate"
-                  placeholder="Enter NPHR value"
+                  placeholder="Enter NPHR Target value"
                   value={nphr}
                   onChange={(e) => setNphr(e.target.value)}
                   type="number"

@@ -389,7 +389,7 @@ export default function TableParetoHeatlossNPHR({
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
           >
-            {formattedNumber(props.getValue())}
+            {formattedNumber(Number(props.getValue()).toFixed(2))}
           </div>
         ),
       },
@@ -411,7 +411,9 @@ export default function TableParetoHeatlossNPHR({
             : (row.existing_data != null ? row.existing_data.toFixed(2) : 0) ||
               "",
         cell: (props: any) => (
-          <div className="text-center">{props.getValue()}</div>
+          <div className="text-center">
+            {formattedNumber(Number(props.getValue()).toFixed(2))}
+          </div>
         ),
       },
       {
@@ -433,7 +435,7 @@ export default function TableParetoHeatlossNPHR({
               const [coefficient, exponent] = exponentialForm.split("e");
               return `${coefficient}x10^${exponent}`;
             }
-            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+            return formattedNumber(num.toFixed(2)); // For normal-sized numbers, show two decimal places
           };
 
           return (
@@ -522,7 +524,7 @@ export default function TableParetoHeatlossNPHR({
               const [coefficient, exponent] = exponentialForm.split("e");
               return `${coefficient}x10^${exponent}`;
             }
-            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+            return formattedNumber(num.toFixed(2)); // For normal-sized numbers, show two decimal places
           };
 
           return (
@@ -572,7 +574,7 @@ export default function TableParetoHeatlossNPHR({
               const [coefficient, exponent] = exponentialForm.split("e");
               return `${coefficient}x10^${exponent}`;
             }
-            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+            return formattedNumber(num.toFixed(2)); // For normal-sized numbers, show two decimal places
           };
 
           return (
@@ -734,7 +736,9 @@ export default function TableParetoHeatlossNPHR({
                       ? "-"
                       : (costBenefit / totalBiaya).toFixed(2)
                   }`} */}
-                  {`${roundedCostBenefit} : ${roundedTotalBiaya}`}
+                  {`${formattedNumber(
+                    roundedCostBenefit
+                  )} : ${roundedTotalBiaya}`}
                 </div>
               }
             </>
@@ -1081,10 +1085,10 @@ export default function TableParetoHeatlossNPHR({
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
-                {formatCurrency(summaryData.total_persen_losses.toFixed(2))}
+                {formattedNumber(summaryData.total_persen_losses.toFixed(2))}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">
-                {summaryData.total_nilai_losses.toFixed(2)}
+                {formattedNumber(summaryData.total_nilai_losses.toFixed(2))}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right">

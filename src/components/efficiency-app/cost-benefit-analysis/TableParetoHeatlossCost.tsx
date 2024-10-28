@@ -459,18 +459,19 @@ export default function TableParetoHeatlossCost({
         accessorFn: (row: any) =>
           row.depth === 0
             ? null
-            : (row.reference_data != null
-                ? formattedNumber(row.reference_data.toFixed(2))
-                : 0) || "",
-        cell: (props: any) => (
-          <div
-            style={{
-              paddingLeft: `${props.cell.row.depth * 1}rem`,
-            }}
-          >
-            {props.getValue()}
-          </div>
-        ),
+            : (row.reference_data != null ? row.reference_data : 0) || "",
+        cell: (props: any) => {
+          const value = props.getValue();
+          return (
+            <div
+              style={{
+                paddingLeft: `${props.cell.row.depth * 1}rem`,
+              }}
+            >
+              {formattedNumber(Number(value).toFixed(2))}
+            </div>
+          );
+        },
       },
       {
         id: "existingData", // Add a unique id for the column
@@ -487,10 +488,11 @@ export default function TableParetoHeatlossCost({
         accessorFn: (row: any) =>
           row.depth === 0
             ? null
-            : (row.existing_data != null
-                ? formattedNumber(row.existing_data.toFixed(2))
-                : 0) || "",
-        cell: (props: any) => <div>{props.getValue()}</div>,
+            : (row.existing_data != null ? row.existing_data : 0) || "",
+        cell: (props: any) => {
+          const value = props.getValue();
+          return <div>{formattedNumber(Number(value).toFixed(2))}</div>;
+        },
       },
       {
         id: "gap",
@@ -514,7 +516,7 @@ export default function TableParetoHeatlossCost({
               const [coefficient, exponent] = exponentialForm.split("e");
               return `${coefficient}x10^${exponent}`; // Custom format with x10^
             }
-            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+            return formattedNumber(num.toFixed(2)); // For normal-sized numbers, show two decimal places
           };
 
           // Ensure the value is a number or 0 before formatting
@@ -611,7 +613,7 @@ export default function TableParetoHeatlossCost({
               const [coefficient, exponent] = exponentialForm.split("e");
               return `${coefficient}x10^${exponent}`; // Custom format with x10^
             }
-            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+            return formattedNumber(num.toFixed(2)); // For normal-sized numbers, show two decimal places
           };
 
           // Ensure the value is a number or 0 before formatting
@@ -669,7 +671,7 @@ export default function TableParetoHeatlossCost({
               const [coefficient, exponent] = exponentialForm.split("e");
               return `${coefficient}x10^${exponent}`; // Custom format with x10^
             }
-            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+            return formattedNumber(num.toFixed(2)); // For normal-sized numbers, show two decimal places
           };
 
           // Ensure the value is a number or 0 before formatting
@@ -846,7 +848,9 @@ export default function TableParetoHeatlossCost({
                       ? "-"
                       : (costBenefit / totalBiaya).toFixed(2)
                   }`} */}
-                  {`${roundedCostBenefit} : ${roundedTotalBiaya}`}
+                  {`${formattedNumber(
+                    roundedCostBenefit
+                  )} : ${roundedTotalBiaya}`}
                 </div>
               }
             </>

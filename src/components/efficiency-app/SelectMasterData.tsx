@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 const masterDataParameter = [
   { key: "current", label: "Current" },
   // { key: "Niaga", label: "Niaga" },
-  { key: "Commision", label: "Commision" },
+  // { key: "Commision", label: "Commision" },
 ];
 
 export default function SelectMasterData({

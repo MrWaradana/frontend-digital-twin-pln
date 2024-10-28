@@ -193,7 +193,9 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                             className="font-bold border border-neutral-700 text-right pb-4"
                           >
                             {row.original.total_nilai_losses
-                              ? row.original.total_nilai_losses.toFixed(2)
+                              ? formattedNumber(
+                                  row.original.total_nilai_losses.toFixed(2)
+                                )
                               : "0"}
                           </td>
                         );
@@ -205,7 +207,9 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                             className="font-bold border border-neutral-700 text-right pb-4"
                           >
                             {row.original.total_persen_losses
-                              ? row.original.total_persen_losses.toFixed(2)
+                              ? formattedNumber(
+                                  row.original.total_persen_losses.toFixed(2)
+                                )
                               : "0"}
                           </td>
                         );
@@ -406,15 +410,20 @@ export default function TableParetoHeatloss({
           row.depth === 0
             ? null
             : (row.reference_data != null ? row.reference_data : 0) || "",
-        cell: (props: any) => (
-          <div
-            style={{
-              paddingLeft: `${props.cell.row.depth * 1}rem`,
-            }}
-          >
-            {props.row.depth > 0 ? formattedNumber(props.getValue()) : ""}
-          </div>
-        ),
+        cell: (props: any) => {
+          const value = props.getValue();
+          return (
+            <div
+              style={{
+                paddingLeft: `${props.cell.row.depth * 1}rem`,
+              }}
+            >
+              {props.row.depth > 0
+                ? formattedNumber(Number(value).toFixed(2))
+                : ""}
+            </div>
+          );
+        },
       },
       {
         id: "existingData", // Add a unique id for the column
@@ -432,15 +441,21 @@ export default function TableParetoHeatloss({
           row.depth === 0
             ? null
             : (row.existing_data != null ? row.existing_data : 0) || "",
-        cell: (props: any) => (
-          <div
-            style={{
-              paddingLeft: `${props.cell.row.depth * 1}rem`,
-            }}
-          >
-            {props.row.depth > 0 ? formattedNumber(props.getValue()) : ""}
-          </div>
-        ),
+        cell: (props: any) => {
+          const value = props.getValue();
+
+          return (
+            <div
+              style={{
+                paddingLeft: `${props.cell.row.depth * 1}rem`,
+              }}
+            >
+              {props.row.depth > 0
+                ? formattedNumber(Number(value).toFixed(2))
+                : ""}
+            </div>
+          );
+        },
       },
       {
         id: "gap",
@@ -461,7 +476,7 @@ export default function TableParetoHeatloss({
               const [coefficient, exponent] = exponentialForm.split("e");
               return `${coefficient}x10^${exponent}`;
             }
-            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+            return formattedNumber(num.toFixed(2)); // For normal-sized numbers, show two decimal places
           };
 
           return (
@@ -554,7 +569,7 @@ export default function TableParetoHeatloss({
               const [coefficient, exponent] = exponentialForm.split("e");
               return `${coefficient}x10^${exponent}`;
             }
-            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+            return formattedNumber(num.toFixed(2)); // For normal-sized numbers, show two decimal places
           };
 
           return (
@@ -608,7 +623,7 @@ export default function TableParetoHeatloss({
               const [coefficient, exponent] = exponentialForm.split("e");
               return `${coefficient}x10^${exponent}`;
             }
-            return num.toFixed(2); // For normal-sized numbers, show two decimal places
+            return formattedNumber(num.toFixed(2)); // For normal-sized numbers, show two decimal places
           };
 
           return (
@@ -1208,10 +1223,10 @@ export default function TableParetoHeatloss({
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
-                {summaryData.total_persen.toFixed(2)}
+                {formattedNumber(summaryData.total_persen.toFixed(2))}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
-                {summaryData.total_nilai.toFixed(2)}
+                {formattedNumber(summaryData.total_nilai.toFixed(2))}
               </th>
               <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
               <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">

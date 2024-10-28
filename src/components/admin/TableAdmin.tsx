@@ -51,7 +51,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "role",
   "username",
   "email",
-  // "actions",
+  "actions",
 ];
 
 export default function TableAdmin({
@@ -85,10 +85,10 @@ export default function TableAdmin({
     { name: "USERNAME", uid: "username", sortable: true },
     { name: "EMAIL", uid: "email", sortable: true },
     { name: "ROLE", uid: "role", sortable: true },
-    // { name: "ACTIONS", uid: "actions" },
+    { name: "ACTIONS", uid: "actions" },
   ];
 
-  const [tableState, setTableState] = React.useState(userData);
+  const [tableState, setTableState] = React.useState(userData ?? []);
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = React.useState(false);
   const [selectedRowId, setSelectedRowId] = React.useState<string | null>(null);

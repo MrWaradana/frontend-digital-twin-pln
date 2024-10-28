@@ -130,7 +130,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
             session?.user.user.role === "Management" ? "hidden" : ""
           }`}
         >
-          Input Niaga
+          Input Target
         </Button>
       </div>
       <ModalNPHRInput

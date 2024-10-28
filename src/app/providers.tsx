@@ -19,7 +19,7 @@ import { Session } from "next-auth";
 
 const timeout = 600_000; // 10 minutes in milliseconds
 // const timeout = 80_000; // 10 minutes in milliseconds
-const promptBeforeIdle = 180_000; // 3 minutes in milliseconds
+const promptBeforeIdle = 120_000; // 3 minutes in milliseconds
 // const promptBeforeIdle = 70_000; // 3 minutes in milliseconds
 
 export function Providers({
@@ -33,6 +33,7 @@ export function Providers({
   const [state, setState] = useState<string>("Active");
   const [remaining, setRemaining] = useState<number>(timeout);
   const [open, setOpen] = useState<boolean>(false);
+  const [count, setCount] = useState<number>(0);
 
   const onIdle = () => {
     setState("Idle");
@@ -45,18 +46,33 @@ export function Providers({
     setOpen(false);
   };
 
+  const onMessage = () => {
+    setCount(count + 1);
+  };
+
   const onPrompt = () => {
     setState("Prompted");
     setOpen(true);
   };
 
-  const { getRemainingTime, activate } = useIdleTimer({
+  const {
+    getRemainingTime,
+    activate,
+    getTabId,
+    isLeader,
+    isLastActiveTab,
+    message,
+  } = useIdleTimer({
     onIdle,
     onActive,
     onPrompt,
+    onMessage,
     timeout,
+    crossTab: true,
     promptBeforeIdle,
+    leaderElection: true,
     throttle: 500,
+    syncTimers: 500,
   });
 
   useEffect(() => {
@@ -71,7 +87,13 @@ export function Providers({
 
   const handleStillHere = () => {
     activate();
+    setOpen(false);
   };
+
+  const tabId = getTabId() === null ? "loading" : getTabId().toString();
+  const lastActiveTab =
+    isLastActiveTab() === null ? "loading" : isLastActiveTab().toString();
+  const leader = isLeader() === null ? "loading" : isLeader().toString();
 
   const timeTillIdle = Math.max(remaining, 0);
   const timeTillPrompt = Math.max(remaining - promptBeforeIdle / 1000, 0);

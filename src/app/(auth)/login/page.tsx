@@ -262,6 +262,7 @@ export default function Component() {
               color="primary"
               disabled={isLoading || mistakeCount > 3 ? true : false}
               isLoading={isLoading}
+              onKeyDown={handleValidate}
             >
               Sign in
             </Button>
