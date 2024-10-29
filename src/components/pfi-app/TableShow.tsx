@@ -29,7 +29,7 @@ import Swal from "sweetalert2";
 import CreateModal from "./equipments/CreateModal";
 import UpdateModal from "./equipments/UpdateModal";
 
-const TableEquipment = ({
+const TableShow = ({
   dataRow,
   categories,
   eqTrees,
@@ -59,7 +59,7 @@ const TableEquipment = ({
   const columns = [
     { name: "NAME", uid: "name", sortable: true },
     {
-      name: "EQUIPMENT DESKRIPTION",
+      name: "EQUIPMENT DESCRIPTION",
       uid: "equipment_description",
       sortable: true,
     },
@@ -67,7 +67,7 @@ const TableEquipment = ({
     { name: "CATEGORY", uid: "category", sortable: true },
     { name: "LOCATION TAG", uid: "location_tag", sortable: true },
     { name: "SYSTEM TAG", uid: "system_tag", sortable: true },
-    { name: "ACTIONS", uid: "actions" },
+    { name: "STATUS", uid: "actions" },
   ];
 
   // Handle opening and closing of the modal
@@ -76,48 +76,9 @@ const TableEquipment = ({
     setIsOpen((prev) => !prev);
   }, []);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const deleteHandler = async (id: string) => {
-    try {
-      Swal.fire({
-        title: "Confirm Deletion",
-        text: "Are you sure you want to delete this item? This action cannot be undone.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_PFI_APP_URL}/equipment/` + id,
-            {
-              method: "DELETE",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${session.data?.user.access_token}`,
-              },
-            }
-          );
-          if (res.status == 200) {
-            toast.success("Equipment berhasil dihapus");
-            Swal.close();
-            mutate();
-          }
-        }
-      });
-    } catch (e: any) {
-      toast.error(e.message);
-    }
-  };
-
   const renderCell = React.useCallback(
     (rowData: EquipmentType, columnKey: React.Key) => {
       const cellValue = rowData[columnKey as keyof EquipmentType];
-      console.log("rowData :", rowData);
-      console.log("cellValue :", cellValue);
-
-      console.log("columnKey :", columnKey);
       switch (columnKey) {
         case "name":
           return cellValue;
@@ -131,46 +92,18 @@ const TableEquipment = ({
           return cellValue ? cellValue : "No Data";
         case "system_tag":
           return cellValue ? cellValue : "No Data";
-        case "actions":
+        case "status":
           return (
-            <div className="relative flex justify-left items-left gap-2">
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button isIconOnly size="sm" variant="solid" color="primary">
-                    <DotsVerticalIcon className="text-white dark:text-black text-2xl" />
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu>
-                  <DropdownItem
-                    startContent={<EyeOpenIcon />}
-                    href={`/pfi-app/equipments/${rowData.id}`}
-                  >
-                    View
-                  </DropdownItem>
-                  <DropdownItem
-                    startContent={<Pencil1Icon />}
-                    onClick={() => handleModal(rowData)}
-                  >
-                    Update
-                  </DropdownItem>
-                  <DropdownItem
-                    startContent={<TrashIcon />}
-                    onClick={() =>
-                      rowData.parent_id != null && deleteHandler(rowData.id)
-                    }
-                    isDisabled={rowData.parent_id == null}
-                  >
-                    Delete
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </div>
+            <Button size="sm" variant="solid" color="primary">
+              <DotsVerticalIcon className="text-white dark:text-black text-2xl" />
+            </Button>
           );
+
         default:
           return cellValue;
       }
     },
-    [deleteHandler, handleModal]
+    []
   );
 
   const onSearchChange = React.useCallback((value?: string) => {
@@ -254,14 +187,6 @@ const TableEquipment = ({
             onClear={() => onClear()}
             onValueChange={onSearchChange}
           />
-          <div className="flex gap-3">
-            <CreateModal
-              categories={categories}
-              eqTrees={eqTrees}
-              mutate={mutate}
-              parent_id={parent_id}
-            />
-          </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
@@ -281,17 +206,7 @@ const TableEquipment = ({
         </div>
       </div>
     );
-  }, [
-    categories,
-    mutate,
-    parent_id,
-    eqTrees,
-    filterValue,
-    onSearchChange,
-    onClear,
-    onRowsPerPageChange,
-    dataRow,
-  ]);
+  }, [filterValue, onSearchChange, onClear, onRowsPerPageChange, dataRow]);
 
   const bottomContent = React.useMemo(() => {
     return (
@@ -386,4 +301,4 @@ const TableEquipment = ({
   );
 };
 
-export default TableEquipment;
+export default TableShow;
