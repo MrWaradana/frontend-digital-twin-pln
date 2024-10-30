@@ -43,7 +43,7 @@ const Page = ({ params }: { params: { equipment_id: string } }) => {
 
   return (
     <PFIContentLayout title="Intelligent P-F Interval Equipments">
-      <div className="flex flex-col items-center justify-center mt-24">
+      <div className="flex flex-col items-center justify-center mt-8">
         {/* Content */}
         <div className="flex flex-col gap-8 justify-center items-center w-full">
           <div className="w-full text-left">
@@ -59,7 +59,7 @@ const Page = ({ params }: { params: { equipment_id: string } }) => {
             </Button>
             <div className="flex items-center gap-4">
               <h1 className="text-3xl font-bold text-gray-800">
-              {childrens[0]?.parent.name} Lists
+                {childrens[0]?.parent.name} Lists
               </h1>
             </div>
             <p className="text-sm text-gray-600 mt-2">
@@ -76,6 +76,7 @@ const Page = ({ params }: { params: { equipment_id: string } }) => {
             mutate={mutate}
             isValidating={isValidating}
             parent_id={id}
+            isCreated={true}
           />
         </div>
       </div>

@@ -12,7 +12,6 @@ export default function Page() {
 
   const {
     data: equipmentsData,
-    isLoading: equipmentLoading,
     isValidating,
     mutate,
   } = useGetEquipments(session?.user.access_token);
@@ -26,7 +25,7 @@ export default function Page() {
 
   return (
     <PFIContentLayout title="Intelligent P-F Interval Equipments">
-      <div className="flex flex-col items-center justify-center mt-24">
+      <div className="flex flex-col items-center justify-center mt-8">
         {/* Content */}
         <div className="flex flex-col gap-8 justify-center items-center w-full">
           <div className="w-full text-left">
@@ -46,6 +45,7 @@ export default function Page() {
             mutate={mutate}
             isValidating={isValidating}
             parent_id={null}
+            isCreated={false}
           />
         </div>
       </div>
