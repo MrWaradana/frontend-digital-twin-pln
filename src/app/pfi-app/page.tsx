@@ -4,6 +4,8 @@ import React from "react";
 import { PFIContentLayout } from "@/containers/PFIContentLayout";
 import Image from "next/image";
 import PowerPlant from "../../../public/power-plant.png";
+import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 const positions = [
   {
@@ -11,6 +13,7 @@ const positions = [
     top: "29%",
     left: "48%",
     status: "Normal",
+    uuid: "1",
   },
   {
     name: "Turbine",
@@ -23,18 +26,21 @@ const positions = [
     top: "37%",
     left: "73%",
     status: "Normal",
+    uuid: "1",
   },
   {
     name: "Transmission Lines",
     top: "37%",
     left: "87%",
     status: "Normal",
+    uuid: "1",
   },
   {
     name: "Transformer",
     top: "100%",
     left: "87%",
     status: "Normal",
+    uuid: "1",
   },
   {
     name: "Condenser",
@@ -47,10 +53,13 @@ const positions = [
     top: "90%",
     left: "46%",
     status: "Normal",
+    uuid: "1",
   },
 ];
 
 const Page = () => {
+  const router = useRouter();
+
   return (
     <PFIContentLayout title="Intelligent P-F Interval Analytics">
       <div className="flex flex-col items-center justify-center mt-24">
@@ -77,6 +86,7 @@ const Page = () => {
                          hover:scale-105 hover:bg-blue-500/80 hover:shadow-md
                          transition-all duration-200 ease-in-out
                          transform origin-center`}
+                onClick={() => router.push(`/pfi-app/${positions[key].uuid}`)}
               >
                 <div className="font-semibold text-neutral-200 px-2 py-1">
                   {positions[key].status}
