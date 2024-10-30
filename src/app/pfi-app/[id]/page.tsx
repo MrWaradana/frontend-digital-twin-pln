@@ -5,10 +5,13 @@ import boiler from "../../../../public/boiler-system.png";
 import Image from "next/image";
 import TableShow from "@/components/pfi-app/TableShow";
 import { Button, Link } from "@nextui-org/react";
-import router from "next/router";
 import { ChevronLeftIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
+  const router = useRouter()
+
+
   const systems = [
     {
       id: 1,
@@ -65,47 +68,49 @@ export default function Page() {
   ];
 
   const isValidating = false;
-  const mutate = () => {};
+  const mutate = () => { };
 
   return (
     <PFIContentLayout title="Intelligent P-F Interval Equipments">
-      <div className="w-full text-left">
-        <Button
-          as={Link}
-          onPress={() => router.back()}
-          color="primary"
-          size="sm"
-          className="mb-10"
-        >
-          <ChevronLeftIcon size={12} />
-          Back
-        </Button>
+      <div className="container mx-auto">
+        <div className="w-full text-left">
+          <Button
+            as={Link}
+            onPress={() => router.back()}
+            color="primary"
+            size="sm"
+            className="mb-10"
+          >
+            <ChevronLeftIcon size={12} />
+            Back
+          </Button>
 
-        <h1 className="text-3xl font-bold text-gray-800">Equipment Lists</h1>
-        <p className="text-sm text-gray-600 mt-2">
-          Manage your equipment efficiently by viewing the list below.
-        </p>
-      </div>
-
-      <div className="flex flex-row items-center justify-center mt-24">
-        {/* Content */}
-        <div className="flex flex-col gap-2 justify-center items-center w-full">
-          <div className="container items-center justify-center text-left">
-            <h3 className="text-black-500 mb-5">Overall Observation</h3>
-
-            <Image src={boiler} alt="Boiler system" className="text-center" />
-          </div>
+          <h1 className="text-3xl font-bold text-gray-800">Equipment Lists</h1>
+          <p className="text-sm text-gray-600 mt-2">
+            Manage your equipment efficiently by viewing the list below.
+          </p>
         </div>
-        <div className="flex flex-col gap-2 justify-center items-center w-full">
-          {/* Table disini */}
-          <TableShow
-            dataRow={systems}
-            categories={categories}
-            eqTrees={eqTrees}
-            mutate={mutate}
-            isValidating={isValidating}
-            parent_id={null}
-          />
+
+        <div className="flex flex-row mt-14">
+          {/* Content */}
+          <div className="flex flex-col gap-2 items-center w-full">
+            <div className="flex flex-col items-center justify-center text-center">
+              <h3 className="text-black-500 mb-5">Overall Observation</h3>
+              <Image src={boiler} alt="Boiler system" className="mx-start" />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 justify-left items-left w-full">
+            {/* Table disini */}
+            <TableShow
+              dataRow={systems}
+              categories={categories}
+              eqTrees={eqTrees}
+              mutate={mutate}
+              isValidating={isValidating}
+              parent_id={null}
+            />
+          </div>
         </div>
       </div>
     </PFIContentLayout>
