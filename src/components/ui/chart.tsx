@@ -100,6 +100,9 @@ ${colorConfig
   );
 };
 
+const formattedNumber = (value: any) =>
+  new Intl.NumberFormat("id-ID").format(value);
+
 const ChartTooltip = RechartsPrimitive.Tooltip;
 
 const ChartTooltipContent = React.forwardRef<
@@ -245,7 +248,7 @@ const ChartTooltipContent = React.forwardRef<
                       </div>
                       {item.value && (
                         <span className="font-mono font-medium tabular-nums text-foreground">
-                          {Number(item.value).toFixed(2)}
+                          {formattedNumber(Number(item.value).toFixed(2))}
                         </span>
                       )}
                     </div>

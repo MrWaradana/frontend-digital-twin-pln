@@ -72,7 +72,8 @@ export default function BarChartNPHR({
   //   session?.data?.user.access_token,
   //   selectedEfficiencyData ? selectedEfficiencyData : data_id
   // );
-
+  const formattedNumber = (value: any) =>
+    new Intl.NumberFormat("id-ID").format(value);
   const summaryData = data ?? [];
   const chartParetoData = data?.chart_result ?? [];
   const nphrData: any = data?.nphr_result ?? [];
@@ -127,7 +128,11 @@ export default function BarChartNPHR({
 
   const chartData = [
     { month: "Niaga", nphr: niagaNPHR, gap: 0 },
-    { month: "Current", nphr: nphrData.current, gap: 0 },
+    {
+      month: "Current",
+      nphr: nphrData.current.toFixed(2),
+      gap: 0,
+    },
     {
       month: "Commission",
       nphr: nphrData.target,
@@ -219,8 +224,11 @@ export default function BarChartNPHR({
                 radius={[0, 0, 4, 4]}
               >
                 <LabelList
-                  dataKey="nphr"
+                  dataKey={`nphr`}
                   position="center"
+                  formatter={(value) =>
+                    formattedNumber(Number(value).toFixed(2))
+                  }
                   className="fill-white text-2xl"
                 />{" "}
               </Bar>
