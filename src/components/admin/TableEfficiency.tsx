@@ -37,7 +37,6 @@ import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
 } from "@radix-ui/react-icons";
-import { parameterOptions, statusOptions } from "@/lib/efficiency-data";
 import { capitalize } from "@/lib/utils";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { useSession } from "next-auth/react";
@@ -51,10 +50,19 @@ import { RangeValue } from "@react-types/shared";
 import { DateValue } from "@react-types/datepicker";
 import { useDateFormatter } from "@react-aria/i18n";
 
+const statusOptions = [
+  { name: "Pending", uid: "Pending" },
+  { name: "Done", uid: "Done" },
+  { name: "Processing", uid: "Processing" },
+  { name: "Failed", uid: "Failed" },
+];
+
+const parameterOptions = [{ name: "Commision", uid: "commision" }];
+
 const parameterColorMap: Record<string, ChipProps["color"]> = {
   current: "success",
   Niaga: "primary",
-  Commision: "warning",
+  commision: "warning",
 };
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -73,7 +81,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "actions",
 ];
 
-const INITIAL_VISIBLE_PARAMETER = ["current"];
+const INITIAL_VISIBLE_PARAMETER = ["commision"];
 const INITIAL_VISIBLE_STATUS = ["Done", "Pending", "Processing"];
 
 export default function TableEfficiency({
@@ -89,7 +97,7 @@ export default function TableEfficiency({
   mutate: any;
   efficiencyLoading: any;
   isValidating: boolean;
-  thermoStatus: any;
+  thermoStatus?: any;
 }) {
   const router = useRouter();
   const [tableState, setTableState] = React.useState(tableData);
@@ -170,8 +178,7 @@ export default function TableEfficiency({
   const hasSearchFilter = Boolean(filterValue);
 
   const nonPerformanceData = tableData.filter(
-    (item: any) =>
-      !item.is_performance_test && item.jenis_parameter === "current"
+    (item: any) => !item.is_performance_test
   );
 
   const headerColumns = React.useMemo(() => {
@@ -385,16 +392,6 @@ export default function TableEfficiency({
                     {/* <DropdownItem href={`/efficiency-app/heat-rate`}>
                   Heat Rate
                 </DropdownItem> */}
-                    <DropdownItem
-                      href={`/efficiency-app/${rowData.id}/engine-flow`}
-                    >
-                      Engine Flow
-                    </DropdownItem>
-                    <DropdownItem
-                      href={`/efficiency-app/${rowData.id}/pareto?percent-threshold=${rowData.persen_threshold}`}
-                    >
-                      Pareto Heat Loss
-                    </DropdownItem>
                     <DropdownItem href={`/efficiency-app/${rowData.id}/output`}>
                       View
                     </DropdownItem>
@@ -515,7 +512,7 @@ export default function TableEfficiency({
                 selectedKeys={parameterFilter}
                 selectionMode="multiple"
                 onSelectionChange={setParameterFilter}
-                disabledKeys={["commision", "Niaga"]}
+                disabledKeys={[]}
               >
                 {parameterOptions.map((parameter: any) => {
                   return (
@@ -551,41 +548,23 @@ export default function TableEfficiency({
               </DropdownMenu>
             </Dropdown> */}
 
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  as={Link}
-                  // isDisabled={thermoStatus ?? false}
-                  // isLoading={thermoStatus ?? false}
-                  color="primary"
-                  startContent={
-                    // <PlusIcon className={`${thermoStatus ? "hidden" : ""}`} />
-                    <PlusIcon />
-                  }
-                  className={`${
-                    session?.data?.user.user.role === "Management"
-                      ? "hidden"
-                      : ""
-                  } `}
-                >
-                  Add New
-                  {/* {!thermoStatus ? "Add New" : "Processing Data..."} */}
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu aria-label="Actions">
-                <DropdownItem key="new" href={`${addNewUrl}?parameter=current`}>
-                  Current
-                </DropdownItem>
-                <DropdownItem
-                  key="new"
-                  onClick={() => {
-                    setModalChoosePeriod(true);
-                  }}
-                >
-                  Periodic
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+            <Button
+              as={Link}
+              // isDisabled={thermoStatus ?? false}
+              // isLoading={thermoStatus ?? false}
+              href="/admin/commision/input"
+              color="primary"
+              startContent={
+                // <PlusIcon className={`${thermoStatus ? "hidden" : ""}`} />
+                <PlusIcon />
+              }
+              className={`${
+                session?.data?.user.user.role === "Management" ? "hidden" : ""
+              } `}
+            >
+              Add New
+              {/* {!thermoStatus ? "Add New" : "Processing Data..."} */}
+            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">

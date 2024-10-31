@@ -1,4 +1,11 @@
-import { Tag, Users, AppWindowMac, LayoutGrid, LucideIcon } from "lucide-react";
+import {
+  Tag,
+  Users,
+  AppWindowMac,
+  LayoutGrid,
+  LucideIcon,
+  DiamondPlus,
+} from "lucide-react";
 
 type Submenu = {
   href: string;
@@ -41,6 +48,13 @@ export function getMenuList(pathname: string): Group[] {
           label: "Users",
           active: pathname.includes("/users"),
           icon: Users,
+          submenus: [],
+        },
+        {
+          href: "/admin/commision",
+          label: "Commision Data",
+          active: pathname.includes("/commision"),
+          icon: DiamondPlus,
           submenus: [],
         },
         // {

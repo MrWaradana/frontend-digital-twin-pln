@@ -1,3 +1,4 @@
+import Commision from "../../app/admin/commision/page";
 import { EFFICIENCY_API_URL } from "../api-url";
 import { HookReply } from "./types";
 import { useApiFetch } from "./useApiFetch";
@@ -35,10 +36,13 @@ interface DataPareto {
 export function useGetDataPareto(
   token: string | undefined,
   data_id: string | undefined,
-  thresholdValue: string | number | null
+  thresholdValue: string | number | null,
+  commision_id?: string | null
 ): HookReply<ParetoResultDataList> {
   return useApiFetch(
-    `${EFFICIENCY_API_URL}/data/${data_id}/pareto?percent_threshold=${thresholdValue}`,
+    `${EFFICIENCY_API_URL}/data/${data_id}/pareto?percent_threshold=${thresholdValue}${
+      commision_id ? `&commision_id=${commision_id}` : null
+    }`,
     !!token,
     token,
     {

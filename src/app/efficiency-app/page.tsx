@@ -101,6 +101,9 @@ export default function Page() {
 
   const thermoStatus = efficiencyData?.thermo_status ?? StatusThermoflow;
   const efficiency = efficiencyData?.transactions ?? [];
+  const efficiencyFiltered = efficiency.filter(
+    (item: any) => item.created_by === session?.user.user.id
+  );
 
   useEffect(() => {
     useExcelStore.getState().setExcels(excel);
@@ -166,7 +169,11 @@ export default function Page() {
           {/* {JSON.stringify(excels)} */}
           {/* <h1>{excels[3].excel_filename}</h1> */}
           <TableEfficiency
-            tableData={efficiency}
+            tableData={
+              session?.user.user.role === "Admin"
+                ? efficiency
+                : efficiencyFiltered
+            }
             thermoStatus={thermoStatus}
             addNewUrl={`/efficiency-app/input`}
             efficiencyLoading={efficiencyLoading}
