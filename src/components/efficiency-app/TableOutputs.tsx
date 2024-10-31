@@ -45,7 +45,7 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
         }
 
         const data = await response.json();
-        console.log(response, "responseeeeeeeeeeeeeeeeeeeeeeeee");
+
         setTableData(data.data);
       } catch (error) {
         toast.error(`Failed to fetch variables: ${error}`);

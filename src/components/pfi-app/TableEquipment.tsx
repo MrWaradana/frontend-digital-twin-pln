@@ -36,6 +36,7 @@ const TableEquipment = ({
   mutate,
   isValidating,
   parent_id,
+  isCreated
 }: {
   dataRow: any;
   categories: any;
@@ -43,6 +44,7 @@ const TableEquipment = ({
   mutate: any;
   isValidating: boolean;
   parent_id?: string | null;
+  isCreated: boolean;
 }) => {
   type EquipmentType = (typeof dataRow)[0];
 
@@ -114,23 +116,20 @@ const TableEquipment = ({
   const renderCell = React.useCallback(
     (rowData: EquipmentType, columnKey: React.Key) => {
       const cellValue = rowData[columnKey as keyof EquipmentType];
-      console.log("rowData :", rowData);
-      console.log("cellValue :", cellValue);
 
-      console.log("columnKey :", columnKey);
       switch (columnKey) {
         case "name":
           return cellValue;
         case "equipment_description":
-          return cellValue?.name ?? "No Data";
+          return cellValue?.name ?? "-";
         case "asset_number":
-          return cellValue ? cellValue : "No Data";
+          return cellValue ? cellValue : "-";
         case "category":
-          return cellValue?.name ?? "No Data";
+          return cellValue?.name ?? "-";
         case "location_tag":
-          return cellValue ? cellValue : "No Data";
+          return cellValue ? cellValue : "-";
         case "system_tag":
-          return cellValue ? cellValue : "No Data";
+          return cellValue ? cellValue : "-";
         case "actions":
           return (
             <div className="relative flex justify-left items-left gap-2">
@@ -153,15 +152,16 @@ const TableEquipment = ({
                   >
                     Update
                   </DropdownItem>
-                  <DropdownItem
-                    startContent={<TrashIcon />}
-                    onClick={() =>
-                      rowData.parent_id != null && deleteHandler(rowData.id)
-                    }
-                    isDisabled={rowData.parent_id == null}
-                  >
-                    Delete
-                  </DropdownItem>
+                  {rowData.parent_id != null ? (
+                    <DropdownItem
+                      startContent={<TrashIcon />}
+                      onClick={() => deleteHandler(rowData.id)}
+                    >
+                      Delete
+                    </DropdownItem>
+                  ) : (
+                    <DropdownItem className="hidden" />
+                  )}
                 </DropdownMenu>
               </Dropdown>
             </div>
@@ -255,12 +255,16 @@ const TableEquipment = ({
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3">
-            <CreateModal
-              categories={categories}
-              eqTrees={eqTrees}
-              mutate={mutate}
-              parent_id={parent_id}
-            />
+            {
+              isCreated && (
+                <CreateModal
+                  categories={categories}
+                  eqTrees={eqTrees}
+                  mutate={mutate}
+                  parent_id={parent_id}
+                />
+              )
+            }
           </div>
         </div>
         <div className="flex justify-between items-center">

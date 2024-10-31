@@ -74,11 +74,17 @@ export default function VariableInputForm({
   } = useGetThermoStatus();
 
   const categorizedData = variableData.reduce((acc: any, variable: any) => {
+    if (!acc["Pareto"]) {
+      acc["Pareto"] = [];
+    }
     if (!acc[variable.category] && variable.category) {
       acc[variable.category] = [];
     }
     if (variable.category) {
       acc[variable.category].push(variable);
+    }
+    if (variable.is_pareto) {
+      acc["Pareto"].push(variable);
     }
     return acc;
   }, {} as Record<string, Variable[]>);
@@ -86,7 +92,7 @@ export default function VariableInputForm({
   const [loading, setLoading] = useState(false);
 
   const filteredVariableData = variableData.filter(
-    (v: any) => v.in_out === "out" && v.category
+    (v: any) => v.in_out === "out" && (v.category || v.is_pareto)
   );
   const formRef = useRef<HTMLFormElement>(null);
 
