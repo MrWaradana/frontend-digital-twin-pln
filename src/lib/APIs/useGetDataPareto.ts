@@ -41,7 +41,7 @@ export function useGetDataPareto(
 ): HookReply<ParetoResultDataList> {
   return useApiFetch(
     `${EFFICIENCY_API_URL}/data/${data_id}/pareto?percent_threshold=${thresholdValue}${
-      commision_id ? `&commision_id=${commision_id}` : null
+      commision_id ? `&commision_id=${commision_id}` : ""
     }`,
     !!token,
     token,
