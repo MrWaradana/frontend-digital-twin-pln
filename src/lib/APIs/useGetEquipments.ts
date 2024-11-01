@@ -65,3 +65,12 @@ export function useGetEquipment(
     token
   )
 }
+
+export function useGetEquipmentByParams(token: string | undefined,
+  parent: string,): HookReply<DataList> {
+  return useApiFetch(
+    `${PFI_API_URL}/equipment?parent=${parent}&page=1&limit=100`,
+    !!token,
+    token
+  )
+}

@@ -1,64 +1,82 @@
 "use client";
 
-import React from "react";
 import { PFIContentLayout } from "@/containers/PFIContentLayout";
 import Image from "next/image";
-import PowerPlant from "../../../public/power-plant.png";
 import { useRouter } from "next/navigation";
-import Swal from "sweetalert2";
-
-const positions = [
-  {
-    name: "Stream Line",
-    top: "29%",
-    left: "48%",
-    status: "Normal",
-    uuid: "1",
-  },
-  {
-    name: "Turbine",
-    top: "29%",
-    left: "63%",
-    status: "Warning",
-  },
-  {
-    name: "Generator",
-    top: "37%",
-    left: "73%",
-    status: "Normal",
-    uuid: "1",
-  },
-  {
-    name: "Transmission Lines",
-    top: "37%",
-    left: "87%",
-    status: "Normal",
-    uuid: "1",
-  },
-  {
-    name: "Transformer",
-    top: "100%",
-    left: "87%",
-    status: "Normal",
-    uuid: "1",
-  },
-  {
-    name: "Condenser",
-    top: "92%",
-    left: "76%",
-    status: "Warning",
-  },
-  {
-    name: "Boiler",
-    top: "90%",
-    left: "46%",
-    status: "Normal",
-    uuid: "1",
-  },
-];
+import PowerPlant from "../../../public/power-plant.png";
+import { useGetEquipmentByParams, useGetEquipments } from "@/lib/APIs/useGetEquipments";
+import { useSession } from "next-auth/react";
+import { CircularProgress } from "@nextui-org/react";
 
 const Page = () => {
   const router = useRouter();
+  const { data: session } = useSession();
+
+  const {
+    data: equipmentsData,
+    isLoading,
+    isValidating,
+    mutate
+  } = useGetEquipmentByParams(session?.user.access_token, "TJB 3");
+
+
+  const positions = [
+    {
+      top: "29%",
+      left: "48%",
+      status: "Normal",
+    },
+    {
+      top: "29%",
+      left: "63%",
+      status: "Warning",
+    },
+    {
+      top: "37%",
+      left: "73%",
+      status: "Normal",
+    },
+    {
+      top: "37%",
+      left: "87%",
+      status: "Normal",
+    },
+    {
+      top: "100%",
+      left: "87%",
+      status: "Normal",
+    },
+    {
+      top: "92%",
+      left: "76%",
+      status: "Warning",
+    },
+    {
+      top: "90%",
+      left: "46%",
+      status: "Normal",
+    },
+  ];
+
+  const equipments = equipmentsData?.equipments ?? [];
+
+  const combinedEquipments = equipments.map((equipment, index) => {
+    const position = positions[index] || { top: "0%", left: "0%" };
+    return {
+      ...equipment,
+      position,
+    };
+  });
+
+  if (isLoading || isValidating)
+    return (
+      <div className="w-full mt-24 flex justify-center items-center">
+        <CircularProgress
+          color="primary"
+          label={isLoading ? "Loading..." : "Validating..."}
+        />
+      </div>
+    );
 
   return (
     <PFIContentLayout title="Intelligent P-F Interval Analytics">
@@ -73,18 +91,18 @@ const Page = () => {
           {/* Content */}
           <div className="relative w-5/6">
             <Image src={PowerPlant} alt="power-plant" className="w-full" />
-            {Object.keys(positions).map((key) => (
+            {Object.keys(combinedEquipments).map((key) => (
               <div
                 key={key}
                 style={{
-                  top: positions[key].top,
-                  left: positions[key].left,
+                  top: combinedEquipments[key].position.top,
+                  left: combinedEquipments[key].position.left,
                   transform: "translate(-50%, -50%)",
                 }}
                 className="absolute z-10"
               >
                 <button
-                  className={`${positions[key].status == "Normal"
+                  className={`${combinedEquipments[key].position.status == "Normal"
                     ? "bg-green-500"
                     : "bg-yellow-500"
                     } backdrop-blur-sm px-1.5 py-0.5 rounded-sm 
@@ -92,10 +110,10 @@ const Page = () => {
                          hover:scale-105 hover:bg-blue-500/80 hover:shadow-md
                          transition-all duration-200 ease-in-out
                          transform origin-center`}
-                  onClick={() => router.push(`/pfi-app/${positions[key].uuid}`)}
+                  onClick={() => router.push(`/pfi-app/${combinedEquipments[key].id}`)}
                 >
                   <div className="font-semibold text-neutral-200 px-2 py-1">
-                    {positions[key].status}
+                    {combinedEquipments[key].position.status}
                   </div>
                 </button>
               </div>
