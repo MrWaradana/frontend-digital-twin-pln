@@ -17,9 +17,10 @@ import { useSession } from "next-auth/react";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import toast from "react-hot-toast";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { formattedNumber } from "@/lib/formattedNumber";
 
 export default function TableOutputs({ data_id }: { data_id: string }) {
-  const [tableData, setTableData] = useState([]);
+  const [tableData, setTableData]: any = useState([]);
   const [isLoading, setLoading] = useState(true);
   const session = useSession();
   const [filterValue, setFilterValue] = React.useState("");
@@ -59,10 +60,10 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
     }
   }, [data_id, session?.data?.user?.access_token]);
 
-  const data = tableData ?? [];
+  const data = tableData.details ?? [];
 
   const filteredItems = React.useMemo(() => {
-    let filteredData = [...tableData];
+    let filteredData = [...data];
     if (hasSearchFilter && filteredData.length != 0) {
       filteredData = filteredData.filter((item) =>
         // @ts-ignore
@@ -72,7 +73,7 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
       );
     }
     return filteredData;
-  }, [tableData, filterValue]);
+  }, [data, filterValue]);
 
   const mappedData = useMemo(() => {
     return filteredItems.map((item: any) => {
@@ -80,7 +81,8 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
       return {
         id: item.id,
         variable: item.variable.excel_variable_name,
-        value: item.nilai,
+        value: formattedNumber(Number(item.nilai).toFixed(2)),
+        unit: item.variable.satuan === "NaN" ? "" : item.variable.satuan,
       };
     });
   }, [isLoading, filteredItems]);
@@ -97,6 +99,10 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
     {
       key: "value",
       label: "INPUT VALUE",
+    },
+    {
+      key: "unit",
+      label: "UNIT",
     },
   ];
 
@@ -179,7 +185,7 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
               <Spinner label={`Loading...`} />
             </>
           }
-          emptyContent={`Data is not available yet, please wait...`}
+          emptyContent={`Data is not available!`}
         >
           {(item) => (
             <TableRow key={item.id}>

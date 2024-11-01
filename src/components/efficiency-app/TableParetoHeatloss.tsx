@@ -169,7 +169,10 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                 )}
 
                 {/* Render summary row under specific columns */}
-                {!row.original.total_nilai_losses ? null : (
+                {row.original.total_nilai_losses ||
+                row.original.total_persen_losses ||
+                row.original.total_cost_benefit ||
+                row.original.total_cost_gap ? (
                   <tr
                     key={`summary-${row.id}`}
                     className="bg-neutral-100 dark:bg-neutral-900 border border-black py-8"
@@ -248,7 +251,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                       return <td key={cell.id}></td>;
                     })}
                   </tr>
-                )}
+                ) : null}
               </>
             )
         )

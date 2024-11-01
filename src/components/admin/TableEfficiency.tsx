@@ -77,7 +77,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "is_performance_test",
   "periode",
   "status",
-  "created_by",
+  "user_name",
   "actions",
 ];
 
@@ -123,7 +123,7 @@ export default function TableEfficiency({
     { name: "JENIS PARAMETER", uid: "jenis_parameter", sortable: true },
     { name: "PERIODE", uid: "periode", sortable: true },
     { name: "STATUS", uid: "status", sortable: true },
-    { name: "CREATED BY", uid: "created_by", sortable: true },
+    { name: "CREATED BY", uid: "user_name", sortable: true },
     { name: "ACTIONS", uid: "actions" },
   ];
 

@@ -17,9 +17,11 @@ import { useSession } from "next-auth/react";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import toast from "react-hot-toast";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { formattedNumber } from "@/lib/formattedNumber";
+import { table } from "console";
 
 export default function TableOutputs({ data_id }: { data_id: string }) {
-  const [tableData, setTableData] = useState([]);
+  const [tableData, setTableData]: any = useState([]);
   const [isLoading, setLoading] = useState(true);
   const session = useSession();
   const [filterValue, setFilterValue] = React.useState("");
@@ -59,10 +61,10 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
     }
   }, [data_id, session?.data?.user?.access_token]);
 
-  const data = tableData ?? [];
+  const data = tableData.details ?? [];
 
   const filteredItems = React.useMemo(() => {
-    let filteredData = [...tableData];
+    let filteredData = [...data];
     if (hasSearchFilter && filteredData.length != 0) {
       filteredData = filteredData.filter((item) =>
         // @ts-ignore
@@ -72,7 +74,7 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
       );
     }
     return filteredData;
-  }, [tableData, filterValue]);
+  }, [data, filterValue]);
 
   const mappedData = useMemo(() => {
     return filteredItems.map((item: any) => {
@@ -80,7 +82,8 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
       return {
         id: item.id,
         variable: item.variable.excel_variable_name,
-        value: item.nilai,
+        value: formattedNumber(Number(item.nilai).toFixed(2)),
+        unit: item.variable.satuan,
       };
     });
   }, [isLoading, filteredItems]);
@@ -97,6 +100,10 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
     {
       key: "value",
       label: "OUTPUT VALUE",
+    },
+    {
+      key: "unit",
+      label: "UNIT",
     },
   ];
 
@@ -129,6 +136,16 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
+        <div className={`flex flex-col w-full items-center `}>
+          <h2 className={`capitalize font-bold`}>
+            {tableData.name} Output Data
+          </h2>
+
+          <h3 className={`capitalize font-semibold`}>
+            Parameter: {tableData.jenis_parameter}
+          </h3>
+        </div>
+
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable

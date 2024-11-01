@@ -3,6 +3,7 @@ import {
   Users,
   AppWindowMac,
   LayoutGrid,
+  SearchCheck,
   LucideIcon,
   DiamondPlus,
 } from "lucide-react";
@@ -55,6 +56,13 @@ export function getMenuList(pathname: string): Group[] {
           label: "Commision Data",
           active: pathname.includes("/commision"),
           icon: DiamondPlus,
+          submenus: [],
+        },
+        {
+          href: "/admin/root-cause",
+          label: "Root Cause Data",
+          active: pathname.includes("/root-cause"),
+          icon: SearchCheck,
           submenus: [],
         },
         // {

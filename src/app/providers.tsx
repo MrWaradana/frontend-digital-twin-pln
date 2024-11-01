@@ -12,10 +12,12 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { SessionProvider as NextAuthProvider, signOut } from "next-auth/react";
+import { MantineProvider } from "@mantine/core";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { Modal, ModalBody } from "@nextui-org/react";
 import { type ThemeProviderProps } from "next-themes/dist/types";
 import { Session } from "next-auth";
+import { usePathname } from "next/navigation";
 
 const timeout = 600_000; // 10 minutes in milliseconds
 // const timeout = 80_000; // 10 minutes in milliseconds
@@ -29,6 +31,7 @@ export function Providers({
   children: React.ReactNode;
   session: Session | null;
 }) {
+  const pathname = usePathname();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [state, setState] = useState<string>("Active");
   const [remaining, setRemaining] = useState<number>(timeout);
@@ -36,8 +39,10 @@ export function Providers({
   const [count, setCount] = useState<number>(0);
 
   const onIdle = () => {
-    setState("Idle");
-    signOut();
+    if (pathname != "/login") {
+      setState("Idle");
+      signOut();
+    }
     // setOpen(false);
   };
 
@@ -51,8 +56,10 @@ export function Providers({
   };
 
   const onPrompt = () => {
-    setState("Prompted");
-    setOpen(true);
+    if (pathname != "/login") {
+      setState("Prompted");
+      setOpen(true);
+    }
   };
 
   const {
@@ -117,46 +124,48 @@ export function Providers({
     <>
       <NextThemesProvider attribute="class" defaultTheme="light" enableSystem>
         <NextAuthProvider>
-          <NextUIProvider>
-            {/* <h1>React Idle Timer</h1>
+          <MantineProvider>
+            <NextUIProvider>
+              {/* <h1>React Idle Timer</h1>
             <h2>Confirm Prompt</h2>
             <br />
             <p>Current State: {state}</p>
             {timeTillPrompt > 0 && (
               <p>{formatTime(timeTillPrompt)} until prompt</p>
             )} */}
-            <Modal
-              isOpen={open}
-              hideCloseButton={true}
-              isDismissable={false}
-              isKeyboardDismissDisabled
-            >
-              <ModalContent>
-                {(onClose) => (
-                  <>
-                    <ModalHeader className="flex flex-col gap-1">
-                      Idle Confirmation
-                    </ModalHeader>
-                    <ModalBody>
-                      <p>
-                        Are you still here? If not you will be logged out in{" "}
-                        {formatTime(timeTillIdle)}
-                      </p>
-                    </ModalBody>
-                    <ModalFooter>
-                      {/* <Button color="danger" variant="light" onPress={onClose}>
+              <Modal
+                isOpen={pathname === "login" ? false : open}
+                hideCloseButton={true}
+                isDismissable={false}
+                isKeyboardDismissDisabled
+              >
+                <ModalContent>
+                  {(onClose) => (
+                    <>
+                      <ModalHeader className="flex flex-col gap-1">
+                        Idle Confirmation
+                      </ModalHeader>
+                      <ModalBody>
+                        <p>
+                          Are you still here? If not you will be logged out in{" "}
+                          {formatTime(timeTillIdle)}
+                        </p>
+                      </ModalBody>
+                      <ModalFooter>
+                        {/* <Button color="danger" variant="light" onPress={onClose}>
                         Close
                       </Button> */}
-                      <Button color="primary" onPress={handleStillHere}>
-                        Yes, I am still here
-                      </Button>
-                    </ModalFooter>
-                  </>
-                )}
-              </ModalContent>
-            </Modal>
-            {children}
-          </NextUIProvider>
+                        <Button color="primary" onPress={handleStillHere}>
+                          Yes, I am still here
+                        </Button>
+                      </ModalFooter>
+                    </>
+                  )}
+                </ModalContent>
+              </Modal>
+              {children}
+            </NextUIProvider>
+          </MantineProvider>
         </NextAuthProvider>
       </NextThemesProvider>
     </>

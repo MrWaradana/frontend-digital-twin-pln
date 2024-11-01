@@ -130,7 +130,7 @@ export default function BarChartNPHR({
     { month: "Niaga", nphr: niagaNPHR, gap: 0 },
     {
       month: "Current",
-      nphr: nphrData.current.toFixed(2),
+      nphr: Number(nphrData.current).toFixed(2),
       gap: 0,
     },
     {

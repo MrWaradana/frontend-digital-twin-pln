@@ -30,14 +30,8 @@ export interface VariableCauseAction {
 
 // ${EFFICIENCY_API_URL}/variables?excel_id=${selectedExcel.id}
 
-export function useGetVariableCauses(
-  token: string | undefined,
-  variable_id: string | undefined,
-  isOpen: boolean
+export function useGetVariableCausesAll(
+  token: string | undefined
 ): HookReply<Array<VariableCause>> {
-  return useApiFetch(
-    `${EFFICIENCY_API_URL}/variables/${variable_id}/causes`,
-    !!token && !!isOpen,
-    token
-  );
+  return useApiFetch(`${EFFICIENCY_API_URL}/variables/causes`, !!token, token);
 }
