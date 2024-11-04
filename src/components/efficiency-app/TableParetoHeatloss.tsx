@@ -288,6 +288,8 @@ export default function TableParetoHeatloss({
   isValidatingRootCauseCount,
   rootCauseCount,
   isLoadingRootCauseCount,
+  potentialTimeframe,
+  setPotentialTimeframe,
 }: {
   tableData: any;
   summaryData: any;
@@ -298,6 +300,8 @@ export default function TableParetoHeatloss({
   isValidatingRootCauseCount: any;
   rootCauseCount: any;
   isLoadingRootCauseCount: any;
+  potentialTimeframe: any;
+  setPotentialTimeframe: any;
 }) {
   const { data: session } = useSession();
   const {
@@ -693,7 +697,7 @@ export default function TableParetoHeatloss({
         id: "potentialBenefit",
         header: () => (
           <div className="text-center">
-            Potential Benefit <br /> (Juta/Jam)
+            Potential Benefit <br /> (Juta/ {potentialTimeframe} Jam)
           </div>
         ),
         size: 125,
@@ -1130,6 +1134,19 @@ export default function TableParetoHeatloss({
       />
 
       <div className=" flex justify-end gap-2">
+        <Input
+          type="number"
+          className="max-w-xs"
+          size="sm"
+          onChange={(e) => {
+            setPotentialTimeframe(e.target.value);
+          }}
+          min={0}
+          value={String(potentialTimeframe)}
+          endContent={`jam`}
+          label={`Potential Timeframe`}
+          variant="bordered"
+        />
         <Button
           onClick={() => handleExportExcel()}
           color="success"

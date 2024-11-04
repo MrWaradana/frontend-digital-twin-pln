@@ -26,13 +26,13 @@ export default function Page() {
   const [selectedMasterData, setSelectedMasterData] =
     useState<string>("current");
 
-  const {
-    data: thermoStatusData,
-    isLoading: isLoadingThermoStatus,
-    isValidating: isValidatingThermoStatus,
-    error: errorThermoStatus,
-    mutate: mutateThermoStatus,
-  } = useGetThermoStatus();
+  // const {
+  //   data: thermoStatusData,
+  //   isLoading: isLoadingThermoStatus,
+  //   isValidating: isValidatingThermoStatus,
+  //   error: errorThermoStatus,
+  //   mutate: mutateThermoStatus,
+  // } = useGetThermoStatus();
 
   const parameter = params.get("parameter") ?? "";
   const start_date = params.get("start_date") ?? "";

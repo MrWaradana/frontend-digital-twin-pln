@@ -14,7 +14,8 @@ import {
   type MRT_ColumnDef,
   useMantineReactTable,
 } from "mantine-react-table";
-import { ActionIcon, Box, Button, Text, TextInput } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { ActionIcon, Box, Button, Modal, Text, TextInput } from "@mantine/core";
 import {
   useGetVariableCausesAll,
   VariableCause,
@@ -62,6 +63,7 @@ const transformData = (causes: VariableCause[]): VariableCauseWithSubRows[] => {
 };
 
 export default function RootCauseTable() {
+  const [opened, { open, close }] = useDisclosure(false);
   const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -158,7 +160,7 @@ export default function RootCauseTable() {
     renderTopToolbarCustomActions: () => (
       <Box
         mb="xs"
-        className={`flex flex-nowrap items-center justify-between gap-6`}
+        className={`flex flex-nowrap items-center w-full justify-between gap-6`}
       >
         <TextInput
           placeholder="Search parent causes..."
@@ -167,6 +169,11 @@ export default function RootCauseTable() {
           leftSection={<IconSearch size={16} />}
           style={{ width: "300px" }}
         />
+
+        <Button onClick={open}>
+          <IconPlus />
+          Add New Parent Root Cause
+        </Button>
       </Box>
     ),
     renderEmptyRowsFallback: () => (
@@ -180,5 +187,17 @@ export default function RootCauseTable() {
     },
   });
 
-  return <MantineReactTable table={table} />;
+  return (
+    <>
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Add New Parent Root Cause"
+        centered
+      >
+        {/* Modal content */}
+      </Modal>{" "}
+      <MantineReactTable table={table} />
+    </>
+  );
 }

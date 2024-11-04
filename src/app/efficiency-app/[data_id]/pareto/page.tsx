@@ -19,6 +19,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
   const router = useRouter();
 
   const percent_threshold = searchParams.get("percent-threshold");
+  const [potentialTimeframe, setPotentialTimeframe]: any = useState(1);
   const [tableParetoData, setTableParetoData] = useState([]);
   const [isMutating, setIsMutating] = useState(false);
   const session = useSession();
@@ -37,7 +38,8 @@ export default function Page({ params }: { params: { data_id: string } }) {
   const { data, mutate, isLoading, error, isValidating } = useGetDataPareto(
     session?.data?.user.access_token,
     params.data_id,
-    percentageThreshold
+    percentageThreshold,
+    potentialTimeframe
   );
 
   // console.log(data?.pareto_result, "table data pareto");
@@ -134,6 +136,10 @@ export default function Page({ params }: { params: { data_id: string } }) {
   //     </div>
   //   );
 
+  useEffect(() => {
+    mutate();
+  }, [mutate, potentialTimeframe]);
+
   if (error) return <div>{error.message}</div>;
 
   return (
@@ -178,6 +184,8 @@ export default function Page({ params }: { params: { data_id: string } }) {
                 />
                 <Divider className="h-1 bg-neutral-500 rounded-xl" />
                 <TableParetoHeatloss
+                  potentialTimeframe={potentialTimeframe}
+                  setPotentialTimeframe={setPotentialTimeframe}
                   rootCauseCount={dataRootCauseCount}
                   tableData={paretoBottomData}
                   summaryData={summaryData}

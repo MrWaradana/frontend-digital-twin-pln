@@ -66,10 +66,14 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 const INITIAL_VISIBLE_COLUMNS = [
   "name",
   "jenis_parameter",
-  "is_performance_test",
+  "input_type",
+  "periodic_start_date",
+  "periodic_end_date",
+  // "is_performance_test",
   "periode",
   "status",
   "user_name",
+  "created_at",
   "actions",
 ];
 
@@ -113,9 +117,13 @@ export default function TableEfficiency({
     { name: "ID", uid: "id", sortable: true },
     { name: "NAMA", uid: "name", sortable: true },
     { name: "JENIS PARAMETER", uid: "jenis_parameter", sortable: true },
+    { name: "TIPE", uid: "input_type", sortable: true },
+    { name: "START DATE", uid: "periodic_start_date", sortable: true },
+    { name: "END DATE", uid: "periodic_end_date", sortable: true },
     { name: "PERIODE", uid: "periode", sortable: true },
     { name: "STATUS", uid: "status", sortable: true },
     { name: "CREATED BY", uid: "user_name", sortable: true },
+    { name: "CREATED AT", uid: "created_at", sortable: true },
     { name: "ACTIONS", uid: "actions" },
   ];
 
@@ -141,7 +149,8 @@ export default function TableEfficiency({
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
   const [statusFilter, setStatusFilter] = React.useState<Selection>(
-    new Set(INITIAL_VISIBLE_STATUS)
+    // new Set(INITIAL_VISIBLE_STATUS)
+    "all"
   );
   const [parameterFilter, setParameterFilter] = React.useState<Selection>(
     new Set(INITIAL_VISIBLE_PARAMETER)
@@ -354,6 +363,16 @@ export default function TableEfficiency({
           );
         case "periode":
           return cellValue;
+        case "input_type":
+          return cellValue;
+        case "periodic_start_date":
+          if (cellValue === null) return "";
+          return new Date(cellValue).toLocaleDateString("id");
+        case "periodic_end_date":
+          if (cellValue === null) return "";
+          return new Date(cellValue).toLocaleDateString("id");
+        case "created_at":
+          return new Date(cellValue).toLocaleString("id");
         case "status":
           return (
             <Chip

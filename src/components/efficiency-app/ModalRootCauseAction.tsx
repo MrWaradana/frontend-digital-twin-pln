@@ -190,6 +190,7 @@ function ModalRootCause({
         dataRootCauseAction.map((root) => {
           const stateRootCause = root.actions?.reduce((acc, action) => {
             acc[action.action_id] = {
+              notes: action.notes,
               biaya: action.biaya,
               isChecked: action.is_checked,
             };
@@ -223,6 +224,7 @@ function ModalRootCause({
     headerId,
     isChecked,
     is_repair = false,
+    notes,
     biaya,
   }: {
     parentId: string;
@@ -231,6 +233,7 @@ function ModalRootCause({
     isChecked?: boolean; // The checked state of the checkbox
     is_repair?: boolean; // Optional, for the repair status
     biaya?: number;
+    notes?: string;
   }) => {
     setCheckRootActions((prev) => {
       const updatedRootCauses = {
@@ -240,6 +243,7 @@ function ModalRootCause({
           ...prev[parentId]?.updatedRootCauses[rowId],
           ...(typeof isChecked !== "undefined" ? { isChecked } : {}),
           ...(typeof biaya !== "undefined" ? { biaya } : {}),
+          ...(typeof notes !== "undefined" ? { notes } : {}),
         },
       };
       return {
@@ -403,6 +407,7 @@ function ModalRootCause({
                           <TableHead key={header.id}>{header.name}</TableHead>
                         ))} */}
                           <TableHead>Corrective Action</TableHead>
+                          <TableHead>Notes</TableHead>
                           <TableHead>Cost</TableHead>
                           {/* <TableHead>Need Corrective Action</TableHead> */}
                           {/* <TableHead>Cost</TableHead> */}

@@ -34,6 +34,7 @@ export interface DataRootCauseAction {
   created_at: string;
   updated_at: string;
   actions: {
+    notes: string;
     biaya: number;
     action_id: string;
     created_at: string;

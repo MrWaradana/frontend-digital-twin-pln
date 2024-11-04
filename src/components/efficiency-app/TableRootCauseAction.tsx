@@ -17,7 +17,7 @@ import {
 import { VariableHeader } from "@/lib/APIs/useGetVariableHeaders";
 import { DataRootCause } from "@/lib/APIs/useGetDataRootCause";
 // import { Input } from "../ui/input";
-import { Input } from "@nextui-org/react";
+import { Input, Textarea } from "@nextui-org/react";
 import { CheckedState } from "@radix-ui/react-checkbox";
 
 // // Define the structure of our tree data
@@ -130,6 +130,27 @@ const TableRootCause: React.FC<{
           )}
         </TableCell>
 
+        <TableCell className="p-3">
+          {isAction && (
+            <Textarea
+              type="text"
+              placeholder="add action notes..."
+              disableAutosize
+              value={
+                checkRoot[parentId]?.updatedRootCauses[node.id]?.notes
+                  ? checkRoot[parentId]?.updatedRootCauses[node.id]?.notes
+                  : ""
+              }
+              onChange={(e) => {
+                handleCheckBox({
+                  parentId: parentId,
+                  rowId: node.id,
+                  notes: e.target.value,
+                });
+              }}
+            />
+          )}
+        </TableCell>
         <TableCell className="p-0">
           {isAction && (
             <Input
