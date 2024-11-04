@@ -62,11 +62,16 @@ interface VariableType {
 export function useGetDataCostBenefit(
   token: string | undefined,
   costThreshold: string,
-  data_id?: string | undefined
+  data_id?: string | undefined,
+  potential_timeframe?: number | undefined
 ): HookReply<CostBenefitDataType> {
   const url = `${EFFICIENCY_API_URL}/data/${
     data_id ? data_id : `new`
-  }/cost-benefit${costThreshold ? `?cost_threshold=${costThreshold}` : ""}`;
+  }/cost-benefit${costThreshold ? `?cost_threshold=${costThreshold}` : ""}${
+    potential_timeframe
+      ? `${costThreshold ? `&` : `?`}potential_timeframe=${potential_timeframe}`
+      : ``
+  }`;
   return useApiFetch(url, !!token, token, {
     keepPreviousData: true,
     refreshInterval: 7200000,

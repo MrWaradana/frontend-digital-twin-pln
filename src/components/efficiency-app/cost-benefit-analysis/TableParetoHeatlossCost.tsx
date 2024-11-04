@@ -346,6 +346,7 @@ export default function TableParetoHeatlossCost({
   handleFilterClick,
   costThresholdData,
   isLoading,
+  potentialTimeframe,
 }: {
   tableData: any;
   summaryData?: any;
@@ -360,6 +361,7 @@ export default function TableParetoHeatlossCost({
   handleFilterClick: any;
   costThresholdData: any;
   isLoading: any;
+  potentialTimeframe: any;
 }) {
   const {
     isOpen: modalRootCauseIsopen,
@@ -738,7 +740,7 @@ export default function TableParetoHeatlossCost({
         id: "potentialBenefit",
         header: () => (
           <div className="text-center">
-            Potential Benefit <br /> (Juta/Jam)
+            Potential Benefit <br /> (Juta/{potentialTimeframe} Jam)
           </div>
         ),
         size: 105,

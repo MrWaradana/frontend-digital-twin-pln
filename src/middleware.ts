@@ -14,7 +14,6 @@ export default auth(async (req) => {
       const newUrl = new URL("/login", req.nextUrl.origin); // clean URL without parameters
       return Response.redirect(newUrl);
     }
-    console.log(req.nextUrl.searchParams.toString(), "params");
     const newUrl = new URL("/login", req.nextUrl.origin);
     return Response.redirect(newUrl);
   }
