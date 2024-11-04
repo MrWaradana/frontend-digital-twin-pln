@@ -19,7 +19,9 @@ export default function Page({ params }: { params: { data_id: string } }) {
   const router = useRouter();
 
   const percent_threshold = searchParams.get("percent-threshold");
-  const [potentialTimeframe, setPotentialTimeframe]: any = useState(1);
+  const [potentialTimeframe, setPotentialTimeframe]: any = useState(
+    searchParams.get("potential_timeframe") ?? 1
+  );
   const [tableParetoData, setTableParetoData] = useState([]);
   const [isMutating, setIsMutating] = useState(false);
   const session = useSession();

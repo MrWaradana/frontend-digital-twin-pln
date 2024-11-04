@@ -410,7 +410,7 @@ export default function TableEfficiency({
                       Engine Flow
                     </DropdownItem>
                     <DropdownItem
-                      href={`/efficiency-app/${rowData.id}/pareto?percent-threshold=${rowData.persen_threshold}`}
+                      href={`/efficiency-app/${rowData.id}/pareto?percent-threshold=${rowData.persen_threshold}&potential-timeframe=${rowData.potential_timeframe}`}
                     >
                       Pareto Heat Loss
                     </DropdownItem>

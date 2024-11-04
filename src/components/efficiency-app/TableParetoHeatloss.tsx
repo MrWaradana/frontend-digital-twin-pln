@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useMemo, useEffect, useState, useCallback } from "react";
 import {
   Column,
   Table,
@@ -13,6 +13,7 @@ import {
   ColumnDef,
   flexRender,
 } from "@tanstack/react-table";
+import { useDebouncedCallback } from "use-debounce";
 import { paretoData, ParetoType } from "@/lib/pareto-api-data";
 import { mkConfig, generateCsv, download } from "export-to-csv";
 import * as XLSX from "xlsx";
@@ -42,6 +43,7 @@ import { CaretDownIcon, CaretRightIcon } from "@radix-ui/react-icons";
 import ModalRootCause from "./ModalRootCause";
 import ModalRootCauseAction from "./ModalRootCauseAction";
 import { useSession } from "next-auth/react";
+import { debounce } from "lodash";
 
 const formattedNumber = (value: any) =>
   new Intl.NumberFormat("id-ID").format(value);
@@ -318,6 +320,9 @@ export default function TableParetoHeatloss({
   const [expanded, setExpanded] = React.useState<ExpandedState>(true);
   const [tableDataPrint, setTableDataPrint] = React.useState([tableData]);
   const [rootCauseCountState, setRootCauseCountState] = React.useState([]);
+  const [inputValueTimeframe, setInputValueTimeframe] = useState(
+    String(potentialTimeframe)
+  );
   const [selectecModalId, setSelectedModalId] = React.useState<any>({
     variableId: "",
     detailId: "",
@@ -936,6 +941,14 @@ export default function TableParetoHeatloss({
     []
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSetTimeframe = useCallback(
+    debounce((value) => {
+      setPotentialTimeframe(value);
+    }, 500), // 500ms delay
+    [] // Empty dependency array since we don't want to recreate the debounced function
+  );
+
   const table = useReactTable({
     data,
     columns,
@@ -1139,10 +1152,12 @@ export default function TableParetoHeatloss({
           className="max-w-xs"
           size="sm"
           onChange={(e) => {
-            setPotentialTimeframe(e.target.value);
+            const newValue = e.target.value;
+            setInputValueTimeframe(newValue);
+            debouncedSetTimeframe(newValue);
           }}
           min={0}
-          value={String(potentialTimeframe)}
+          value={String(inputValueTimeframe)}
           endContent={`jam`}
           label={`Potential Timeframe`}
           variant="bordered"
