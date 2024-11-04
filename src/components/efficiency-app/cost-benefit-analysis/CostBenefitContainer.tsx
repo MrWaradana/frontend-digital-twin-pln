@@ -12,19 +12,19 @@ import { useGetData } from "@/lib/APIs/useGetData";
 import { debounce } from "lodash";
 
 export default function CostBenefitContainer() {
-  const [inputValueTimeframe, setInputValueTimeframe]: any = useState(1);
   const [potentialTimeframe, setPotentialTimeframe]: any = useState(1);
+  const [inputValueTimeframe, setInputValueTimeframe]: any = useState(1);
   const { data: session } = useSession();
   const [costThreshold, setCostThreshold] = useState("");
   const [dataId, setDataId] = useState("");
-
+  
   const { data, error, mutate, isLoading, isValidating } =
-    useGetDataCostBenefit(
-      session?.user.access_token,
-      costThreshold,
-      dataId,
-      potentialTimeframe
-    );
+  useGetDataCostBenefit(
+    session?.user.access_token,
+    costThreshold,
+    dataId,
+    potentialTimeframe
+  );
 
   const {
     data: efficiencyData,
@@ -52,6 +52,14 @@ export default function CostBenefitContainer() {
         label: item.name,
       };
     });
+
+  // Update potentialTimeframe when data changes
+  useEffect(() => {
+    if (data?.potential_timeframe) {
+      setPotentialTimeframe(data.potential_timeframe);
+      setInputValueTimeframe(data.potential_timeframe);
+    }
+  }, [data?.potential_timeframe]);
 
   // Function to filter efficiency data based on user input
   const filterEfficiencyData = (inputValue: string) => {
@@ -135,18 +143,20 @@ export default function CostBenefitContainer() {
               name="efficiencyData"
             />
             <Input
-              type={`number`}
-              size={`sm`}
-              endContent={`Jam`}
+              type="number"
+              size="sm"
+              endContent="Jam"
               min={0}
-              label={`Potential Timeframe`}
+              step={1}
+              pattern="\d*"  // Only allow digits
+              label="Potential Timeframe"
               onChange={(e) => {
-                const newValue = e.target.value;
+                const newValue = parseInt(e.target.value) || "";
                 setInputValueTimeframe(newValue);
                 debouncedSetTimeframe(newValue);
               }}
               value={String(inputValueTimeframe)}
-              variant={`bordered`}
+              variant="bordered"
               className="z-[99] w-1/2 bg-white -translate-y-1"
             />
           </>

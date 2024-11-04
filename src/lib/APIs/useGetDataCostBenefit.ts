@@ -9,6 +9,7 @@ export interface CostBenefitDataType {
   total_cost_benefit: string | number;
   total_nilai: string | number;
   total_persen: string | number;
+  potential_timeframe: string | number;
   cost_threshold: string | number;
 }
 

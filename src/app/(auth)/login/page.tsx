@@ -73,6 +73,12 @@ export default function Component() {
     setCredentials((prev) => ({ ...prev, [name]: value }));
   };
 
+  const preventPaste = (e) => {
+    e.preventDefault();
+    // Optional: Tampilkan pesan ke user
+    toast.error("Paste is not allowed for security reasons");
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -212,6 +218,7 @@ export default function Component() {
                 type="password"
                 placeholder="Enter your password"
                 required
+                onPaste={() => preventPaste}
                 onChange={handleChange}
                 value={credentials.password}
                 className={`rounded-none w-72`}
