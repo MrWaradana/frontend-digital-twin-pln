@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/efficiency-app/nav/Navbar";
+import { Navbar } from "@/components/pfi-app/nav/Navbar";
 import { Toaster } from "react-hot-toast";
 
 interface ContentLayoutProps {
