@@ -62,10 +62,10 @@ const TableEquipment = ({
     { name: "NAME", uid: "name", sortable: true },
     {
       name: "EQUIPMENT DESKRIPTION",
-      uid: "equipment_description",
+      uid: "equipment_tree",
       sortable: true,
     },
-    { name: "ASSET NUMBER", uid: "asset_number", sortable: true },
+    { name: "ASSET NUMBER", uid: "assetnum", sortable: true },
     { name: "CATEGORY", uid: "category", sortable: true },
     { name: "LOCATION TAG", uid: "location_tag", sortable: true },
     { name: "SYSTEM TAG", uid: "system_tag", sortable: true },
@@ -120,9 +120,9 @@ const TableEquipment = ({
       switch (columnKey) {
         case "name":
           return cellValue;
-        case "equipment_description":
+        case "equipment_tree":
           return cellValue?.name ?? "-";
-        case "asset_number":
+        case "assetnum":
           return cellValue ? cellValue : "-";
         case "category":
           return cellValue?.name ?? "-";

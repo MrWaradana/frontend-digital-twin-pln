@@ -4,71 +4,41 @@ import { PFIContentLayout } from "@/containers/PFIContentLayout";
 import boiler from "../../../../public/boiler-system.png";
 import Image from "next/image";
 import TableShow from "@/components/pfi-app/TableShow";
-import { Button, Link } from "@nextui-org/react";
+import { Button, CircularProgress, Link } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useGetEquipment } from "@/lib/APIs/useGetEquipments";
+import { useGetCategories } from "@/lib/APIs/useGetCategoryPfi";
+import { useGetEqTrees } from "@/lib/APIs/useGetEqTree";
 
-export default function Page() {
+export default function Page({ params }: { params: { id: string } }) {
   const router = useRouter()
+  const { data: session } = useSession();
+  const id = params.id;
 
+  const {
+    data: equipmentsData,
+    isLoading,
+    isValidating,
+    mutate,
+  } = useGetEquipment(session?.user.access_token, id);
 
-  const systems = [
-    {
-      id: 1,
-      name: "Kanan",
-      equipment_tree: {
-        id: 1,
-        name: "Tree 1",
-      },
-      asset_number: "123456",
-      location_tag: "Location 1",
-      system_tag: "System 1",
-      category: {
-        id: 1,
-        name: "Category 1",
-      },
-    },
-    {
-      id: 2,
-      name: "Kiri",
-      equipment_tree: {
-        id: 2,
-        name: "Tree 2",
-      },
-      asset_number: "123457",
-      location_tag: "Location 2",
-      system_tag: "System 2",
-      category: {
-        id: 2,
-        name: "Category 2",
-      },
-    },
-  ];
+  const { data: categoriesData } = useGetCategories(session?.user.access_token);
+  const { data: eqTreesData } = useGetEqTrees(session?.user.access_token);
 
-  const categories = [
-    {
-      id: 1,
-      name: "Category 1",
-    },
-    {
-      id: 2,
-      name: "Category 2",
-    },
-  ];
+  if (isLoading) {
+    return (
+      <div className="w-full mt-24 flex justify-center items-center">
+        <CircularProgress color="primary" />
+        Loading ...
+      </div>
+    );
+  }
 
-  const eqTrees = [
-    {
-      id: 1,
-      name: "Tree 1",
-    },
-    {
-      id: 2,
-      name: "Tree 2",
-    },
-  ];
-
-  const isValidating = false;
-  const mutate = () => { };
+  const childrens = equipmentsData?.equipments ?? [];
+  const categories = categoriesData ?? [];
+  const eqTrees = eqTreesData ?? [];
 
   return (
     <PFIContentLayout title="Intelligent P-F Interval Equipments">
@@ -103,7 +73,7 @@ export default function Page() {
           <div className="flex flex-col gap-2 justify-left items-left w-full">
             {/* Table disini */}
             <TableShow
-              dataRow={systems}
+              dataRow={childrens}
               categories={categories}
               eqTrees={eqTrees}
               mutate={mutate}
