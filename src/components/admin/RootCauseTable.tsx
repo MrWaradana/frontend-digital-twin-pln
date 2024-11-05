@@ -82,12 +82,15 @@ const transformData = (causes: VariableCause[]): VariableCauseWithSubRows[] => {
 export default function RootCauseTable() {
   const [openedParent, { open: openParent, close: closeParent }] =
     useDisclosure(false);
-  const [openedChildren, { open: openChildren, close: closeChildren }] =
-    useDisclosure(false);
+  const [
+    openedConfirmationDelete,
+    { open: openConfirmationDelete, close: closeConfirmationDelete },
+  ] = useDisclosure(false);
   const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState("");
   const [isActionLoading, setIsActionLoading] = useState(false);
-  const [name, setName] = useState('')
+  const [selectedToDelete, setSelectedToDelete]: any = useState(null);
+  const [name, setName] = useState("");
 
   const { data, isLoading, isValidating, mutate, error } =
     useGetVariableCausesAll(session?.user.access_token);
@@ -159,8 +162,29 @@ export default function RootCauseTable() {
     []
   );
 
-  const handleDelete = (rowId: any) => {
-    alert(`delete ${rowId}`);
+  const handleDelete = async (row: any) => {
+    try {
+      const response = await fetch(
+        `${EFFICIENCY_API_URL}/variables/${row.original.variable_id}/causes/${row.original.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.access_token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        setIsActionLoading(false);
+      }
+
+      setIsActionLoading(false);
+      closeConfirmationDelete();
+      mutate();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   //  //DELETE action
@@ -184,7 +208,7 @@ export default function RootCauseTable() {
     const payload = {
       name: values.name,
       parent_id: values.parent_id,
-    }
+    };
 
     try {
       const response = await fetch(
@@ -202,64 +226,60 @@ export default function RootCauseTable() {
       if (response.ok) {
         mutate();
         setIsActionLoading(false);
-        onClose(false)
+        onClose(false);
         return;
       }
     } catch (error) {
       setIsActionLoading(false);
-      console.log(error)
+      console.log(error);
     }
   };
   //Edit Action
   //CREATE action
-  const handleEditCause: MRT_TableOptions<VariableCause>['onEditingRowSave'] = async ({
-    values,
-    exitEditingMode,
-    row
-  }) => {
-    // const newValidationErrors = validateMasterData(values);
+  const handleEditCause: MRT_TableOptions<VariableCause>["onEditingRowSave"] =
+    async ({ values, exitEditingMode, row }) => {
+      // const newValidationErrors = validateMasterData(values);
 
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //     setValidationErrors(newValidationErrors);
-    //     setIsActionLoading(false);
-    //     return;
-    // }
+      // if (Object.values(newValidationErrors).some((error) => error)) {
+      //     setValidationErrors(newValidationErrors);
+      //     setIsActionLoading(false);
+      //     return;
+      // }
 
-    // setValidationErrors({});
-    // await createUser(values);
-    console.log(values)
-    setIsActionLoading(true);
-    // //Create MasterData 
-    const payload = {
-      name: values.name,
-    }
+      // setValidationErrors({});
+      // await createUser(values);
+      console.log(values);
+      setIsActionLoading(true);
+      // //Create MasterData
+      const payload = {
+        name: values.name,
+      };
 
-    try {
-      const response = await fetch(
-        `${EFFICIENCY_API_URL}/variables/${row.original.variable_id}/causes/${row.original.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.user.access_token}`,
-          },
-          body: JSON.stringify(payload),
+      try {
+        const response = await fetch(
+          `${EFFICIENCY_API_URL}/variables/${row.original.variable_id}/causes/${row.original.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.user.access_token}`,
+            },
+            body: JSON.stringify(payload),
+          }
+        );
+
+        if (!response.ok) {
+          setIsActionLoading(false);
         }
-      );
 
-      if (!response.ok) {
         setIsActionLoading(false);
+        mutate();
+      } catch (error) {
+        console.error(error);
       }
 
-      setIsActionLoading(false);
-      mutate()
-    } catch (error) {
-      console.error(error);
-    }
-
-    exitEditingMode();
-  };
-
+      exitEditingMode();
+    };
 
   const table = useMantineReactTable({
     columns,
@@ -279,13 +299,30 @@ export default function RootCauseTable() {
         <Stack>
           <Title order={3}>Create New Children Root Cause</Title>
           {/* {internalEditComponents} */}
-          <TextInput label={`Name`} name={`name`} value={name} onChange={e => setName(e.currentTarget.value)} required />
+          <TextInput
+            label={`Name`}
+            name={`name`}
+            value={name}
+            onChange={(e) => setName(e.currentTarget.value)}
+            required
+          />
           <Flex justify="flex-end" mt="xl">
-            <Button onClick={() => handleCreateChildren({
-              name: name,
-              variable_id: row.original.variable_id,
-              parent_id: row.original.id
-            }, table.setCreatingRow)} disabled={!name.trim()} loading={isActionLoading}>Submit</Button>
+            <Button
+              onClick={() =>
+                handleCreateChildren(
+                  {
+                    name: name,
+                    variable_id: row.original.variable_id,
+                    parent_id: row.original.id,
+                  },
+                  table.setCreatingRow
+                )
+              }
+              disabled={!name.trim()}
+              loading={isActionLoading}
+            >
+              Submit
+            </Button>
           </Flex>
         </Stack>
       );
@@ -293,7 +330,10 @@ export default function RootCauseTable() {
     onEditingRowSave: handleEditCause,
     renderEditRowModalContent: ({ table, row, internalEditComponents }) => {
       const regex = /^\d+(\.\d+)*_name$/;
-      const selectedComponent = internalEditComponents.find(component => regex.test(component?.key as string))
+      const selectedComponent = internalEditComponents.find((component) =>
+        // @ts-ignore
+        regex.test(component?.key as string)
+      );
 
       return (
         <Stack>
@@ -303,7 +343,7 @@ export default function RootCauseTable() {
             <MRT_EditActionButtons variant="text" table={table} row={row} />
           </Flex>
         </Stack>
-      )
+      );
     },
     renderRowActions: ({ row }) => (
       <Box className="flex flex-nowrap gap-8">
@@ -326,7 +366,9 @@ export default function RootCauseTable() {
         <ActionIcon
           color="red"
           onClick={() => {
-            handleDelete(row.original.id);
+            // handleDelete(row);
+            setSelectedToDelete(row);
+            openConfirmationDelete();
           }}
         >
           <IconTrash />
@@ -385,8 +427,38 @@ export default function RootCauseTable() {
     },
   });
 
+  const deleteConfirmationModal = (
+    <>
+      <Modal
+        opened={openedConfirmationDelete}
+        onClose={closeConfirmationDelete}
+        title={`Are you sure you want to delete this item?`}
+      >
+        <div className={`flex justify-end gap-5`}>
+          <Button
+            color={`gray`}
+            onClick={() => {
+              closeConfirmationDelete();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            color={`red`}
+            onClick={() => {
+              handleDelete(selectedToDelete);
+            }}
+          >
+            Yes, delete
+          </Button>
+        </div>
+      </Modal>
+    </>
+  );
+
   return (
     <>
+      {deleteConfirmationModal}
       <Modal
         opened={openedParent}
         onClose={closeParent}
@@ -395,9 +467,35 @@ export default function RootCauseTable() {
       >
         <form
           id={`parent-root-cause-form`}
-          onSubmit={formParent.onSubmit((values) =>
-            alert(JSON.stringify(values))
-          )}
+          onSubmit={formParent.onSubmit(async (values) => {
+            const payload = {
+              name: values.rootCauseName,
+            };
+
+            try {
+              const response = await fetch(
+                `${EFFICIENCY_API_URL}/variables/${values.variableCause}/causes`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${session?.user.access_token}`,
+                  },
+                  body: JSON.stringify(payload),
+                }
+              );
+
+              if (response.ok) {
+                mutate();
+                setIsActionLoading(false);
+                closeParent();
+                return;
+              }
+            } catch (error) {
+              setIsActionLoading(false);
+              console.log(error);
+            }
+          })}
         >
           <TextInput
             label={`Name`}
@@ -412,8 +510,8 @@ export default function RootCauseTable() {
             placeholder="Pick variable"
             key={formParent.key("variableCause")}
             {...formParent.getInputProps("variableCause")}
-          // value={value ? value.value : null}
-          // onChange={(_value, option) => setValue(option)}
+            // value={value ? value.value : null}
+            // onChange={(_value, option) => setValue(option)}
           />
           <div className={`flex justify-end mt-4`}>
             <Button color={`green`} type="submit">
