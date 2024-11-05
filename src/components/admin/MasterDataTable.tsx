@@ -1,10 +1,11 @@
 'use client'
 
+import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { MasterData, useGetMasterData } from "@/lib/APIs/useGetMasterData";
 import { ActionIcon, Box, Button, Flex, Stack, Text, Title, Tooltip } from "@mantine/core";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { size } from "lodash";
-import { MantineReactTable, MRT_ColumnDef, MRT_EditActionButtons, useMantineReactTable } from "mantine-react-table";
+import { MantineReactTable, MRT_ColumnDef, MRT_EditActionButtons, MRT_TableOptions, useMantineReactTable } from "mantine-react-table";
 import { useSession } from "next-auth/react";
 import { useMemo, useState } from "react";
 
@@ -13,6 +14,9 @@ export default function MasterDataTable() {
     const { data: session } = useSession();
     const [searchTerm, setSearchTerm] = useState("");
     const [isActionLoading, setIsActionLoading] = useState(false);
+    const [validationErrors, setValidationErrors] = useState<
+        Record<string, string | undefined>
+    >({});
 
     const {
         data: masterData,
@@ -55,6 +59,63 @@ export default function MasterDataTable() {
         ], []
     )
 
+    const validateRequired = (value: string) => !!value.length;
+    function validateMasterData(masterData: MasterData) {
+        return {
+            name: validateRequired(masterData.name) ? undefined : 'Name is required',
+            nphr_value: validateRequired(masterData.nphr_value.toString()) ? undefined : 'Value is required',
+        };
+    }
+
+
+    //CREATE action
+    const handleCreateUser: MRT_TableOptions<MasterData>['onCreatingRowSave'] = async ({
+        values,
+        exitCreatingMode,
+    }) => {
+        const newValidationErrors = validateMasterData(values);
+
+        if (Object.values(newValidationErrors).some((error) => error)) {
+            setValidationErrors(newValidationErrors);
+            setIsActionLoading(false);
+            return;
+        }
+
+        setValidationErrors({});
+        // await createUser(values);
+        setIsActionLoading(true);
+        //Create MasterData 
+        const payload = {
+            name: values.name,
+            nphr_value: values.nphr_value
+        }
+
+        try {
+            const response = await fetch(
+                `${EFFICIENCY_API_URL}/cases`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${session?.user.access_token}`,
+                    },
+                    body: JSON.stringify(payload),
+                }
+            );
+
+            if (!response.ok) {
+                setIsActionLoading(false);
+            }
+
+            setIsActionLoading(false);
+        } catch (error) {
+            console.error(error);
+        }
+
+        exitCreatingMode();
+    };
+
+
     const table = useMantineReactTable({
         columns,
         data: memoMasterData,
@@ -74,8 +135,8 @@ export default function MasterDataTable() {
         //         minHeight: '500px',
         //     },
         // },
-        // onCreatingRowCancel: () => setValidationErrors({}),
-        // onCreatingRowSave: handleCreateUser,
+        onCreatingRowCancel: () => setValidationErrors({}),
+        onCreatingRowSave: handleCreateUser,
         // onEditingRowCancel: () => setValidationErrors({}),
         // onEditingRowSave: handleSaveUser,
         renderCreateRowModalContent: ({ table, row, internalEditComponents }) => (
@@ -104,7 +165,7 @@ export default function MasterDataTable() {
                     </ActionIcon>
                 </Tooltip>
                 <Tooltip label="Delete">
-                    <ActionIcon color="red" onClick={() => {}}>
+                    <ActionIcon color="red" onClick={() => { }}>
                         <IconTrash />
                     </ActionIcon>
                 </Tooltip>
