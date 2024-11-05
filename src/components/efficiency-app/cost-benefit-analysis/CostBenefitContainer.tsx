@@ -17,14 +17,14 @@ export default function CostBenefitContainer() {
   const { data: session } = useSession();
   const [costThreshold, setCostThreshold] = useState("");
   const [dataId, setDataId] = useState("");
-  
+
   const { data, error, mutate, isLoading, isValidating } =
-  useGetDataCostBenefit(
-    session?.user.access_token,
-    costThreshold,
-    dataId,
-    potentialTimeframe
-  );
+    useGetDataCostBenefit(
+      session?.user.access_token,
+      costThreshold,
+      dataId,
+      potentialTimeframe
+    );
 
   const {
     data: efficiencyData,
@@ -147,11 +147,9 @@ export default function CostBenefitContainer() {
               size="sm"
               endContent="Jam"
               min={0}
-              step={1}
-              pattern="\d*"  // Only allow digits
               label="Potential Timeframe"
               onChange={(e) => {
-                const newValue = parseInt(e.target.value) || "";
+                const newValue = e.target.value;
                 setInputValueTimeframe(newValue);
                 debouncedSetTimeframe(newValue);
               }}
