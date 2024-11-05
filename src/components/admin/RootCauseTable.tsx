@@ -87,6 +87,7 @@ export default function RootCauseTable() {
   const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState("");
   const [isActionLoading, setIsActionLoading] = useState(false);
+  const [name, setName] = useState('')
 
   const { data, isLoading, isValidating, mutate, error } =
     useGetVariableCausesAll(session?.user.access_token);
@@ -274,7 +275,6 @@ export default function RootCauseTable() {
     enableRowActions: true,
     positionActionsColumn: "last",
     renderCreateRowModalContent: ({ table, row, internalEditComponents }) => {
-      const [name, setName] = useState('')
       return (
         <Stack>
           <Title order={3}>Create New Children Root Cause</Title>
