@@ -1149,7 +1149,7 @@ export default function TableParetoHeatloss({
   // Data
   const EfficiencyDataOptions = selectedEfficiencyData
     .filter(
-      (item) => item.status === "Done" && item.jenis_parameter === "current"
+      (item) => item.status === "Done"
     )
     .map((item) => {
       return {
