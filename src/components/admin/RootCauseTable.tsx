@@ -10,13 +10,28 @@ import {
 } from "react";
 import { Spinner } from "@nextui-org/react";
 import {
+  createRow,
   MantineReactTable,
   type MRT_ColumnDef,
   MRT_EditActionButtons,
+  MRT_TableOptions,
   useMantineReactTable,
 } from "mantine-react-table";
 import { useDisclosure } from "@mantine/hooks";
-import { ActionIcon, Box, Button, Flex, Modal, Select, Stack, Text, TextInput, Title } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import {
+  ActionIcon,
+  Box,
+  Button,
+  Flex,
+  Input,
+  Modal,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import {
   useGetVariableCausesAll,
   VariableCause,
@@ -64,7 +79,10 @@ const transformData = (causes: VariableCause[]): VariableCauseWithSubRows[] => {
 };
 
 export default function RootCauseTable() {
-  const [opened, { open, close }] = useDisclosure(false);
+  const [openedParent, { open: openParent, close: closeParent }] =
+    useDisclosure(false);
+  const [openedChildren, { open: openChildren, close: closeChildren }] =
+    useDisclosure(false);
   const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -82,15 +100,17 @@ export default function RootCauseTable() {
   }, [data, searchTerm]);
 
   const availableVariableData = data?.reduce((arr: any, variableCause: any) => {
-    if (variableCause.variable_name && !arr.find(a => a.value === variableCause.variable_id)) {
+    if (
+      variableCause.variable_name &&
+      !arr.find((a) => a.value === variableCause.variable_id)
+    ) {
       arr.push({
         value: variableCause.variable_id,
-        label: variableCause.variable_name
-      })
+        label: variableCause.variable_name,
+      });
     }
-    return arr
-  }, [])
-
+    return arr;
+  }, []);
 
   const columns = useMemo<MRT_ColumnDef<VariableCauseWithSubRows>[]>(
     () => [
@@ -140,7 +160,6 @@ export default function RootCauseTable() {
     alert(`delete ${rowId}`);
   };
 
-
   //  //DELETE action
   //  const openDeleteConfirmModal = (row: MRT_Row<User>) =>
   //   modals.openConfirmModal({
@@ -155,6 +174,12 @@ export default function RootCauseTable() {
   //     confirmProps: { color: 'red' },
   //     onConfirm: () => deleteUser(row.original.id),
   //   });
+  //CREATE action
+  const handleCreateChildren: MRT_TableOptions<VariableCause>["onCreatingRowSave"] =
+    async ({ values, exitCreatingMode }) => {
+      alert(JSON.stringify(values.name, null, 2));
+      exitCreatingMode();
+    };
 
   const table = useMantineReactTable({
     columns,
@@ -167,9 +192,26 @@ export default function RootCauseTable() {
     },
     enableRowActions: true,
     positionActionsColumn: "last",
+    renderCreateRowModalContent: ({ table, row, internalEditComponents }) => {
+      // const selectedInput = internalEditComponents.filter(node => {
+      //   node?.key
+      // })
+      console.log(internalEditComponents);
+      return (
+        <Stack>
+          <Title order={3}>Create New Children Root Cause</Title>
+          {/* {internalEditComponents} */}
+          <TextInput label={`Name`} name={`name`} />
+          <Flex justify="flex-end" mt="xl">
+            <MRT_EditActionButtons variant="text" table={table} row={row} />
+          </Flex>
+        </Stack>
+      );
+    },
+    onCreatingRowSave: handleCreateChildren,
     renderEditRowModalContent: ({ table, row, internalEditComponents }) => (
       <Stack>
-        <Title order={3}>Edit User</Title>
+        <Title order={3}>Edit {row.original.name}</Title>
         {internalEditComponents}
         <Flex justify="flex-end" mt="xl">
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -178,7 +220,18 @@ export default function RootCauseTable() {
     ),
     renderRowActions: ({ row }) => (
       <Box className="flex flex-nowrap gap-8">
-        <ActionIcon color="blue">
+        <ActionIcon
+          color="blue"
+          onClick={() => {
+            table.setCreatingRow({
+              ...row,
+              original: {
+                ...row.original,
+                name: "",
+              },
+            });
+          }}
+        >
           <IconPlus />
         </ActionIcon>
         <ActionIcon
@@ -218,7 +271,7 @@ export default function RootCauseTable() {
           style={{ width: "300px" }}
         />
 
-        <Button onClick={open}>
+        <Button onClick={openParent}>
           <IconPlus />
           Add New Parent Root Cause
         </Button>
@@ -235,26 +288,59 @@ export default function RootCauseTable() {
     },
     //Group by Variable name
     enableGrouping: true,
-    initialState: { grouping: ['variable_name'], expanded: false },
+    initialState: { grouping: ["variable_name"] },
+  });
+
+  const formParent = useForm({
+    mode: "uncontrolled",
+    initialValues: {
+      rootCauseName: "",
+      variableCause: "",
+    },
+
+    validate: {
+      rootCauseName: (value) =>
+        /^[a-zA-Z]/.test(value) ? null : "Invalid Name",
+    },
   });
 
   return (
     <>
       <Modal
-        opened={opened}
-        onClose={close}
+        opened={openedParent}
+        onClose={closeParent}
         title="Add New Parent Root Cause"
         centered
       >
+        <form
+          id={`parent-root-cause-form`}
+          onSubmit={formParent.onSubmit((values) =>
+            alert(JSON.stringify(values))
+          )}
+        >
+          <TextInput
+            label={`Name`}
+            type={`text`}
+            placeholder="Parent Root Cause Name..."
+            key={formParent.key("rootCauseName")}
+            {...formParent.getInputProps("rootCauseName")}
+          />
+          <Select
+            data={availableVariableData}
+            label="Variable"
+            placeholder="Pick variable"
+            key={formParent.key("variableCause")}
+            {...formParent.getInputProps("variableCause")}
+            // value={value ? value.value : null}
+            // onChange={(_value, option) => setValue(option)}
+          />
+          <div className={`flex justify-end mt-4`}>
+            <Button color={`green`} type="submit">
+              Submit
+            </Button>
+          </div>
+        </form>
         {/* Modal content */}
-        <Select
-          data={availableVariableData}
-          label="Variable"
-          placeholder="Pick variable"
-          // value={value ? value.value : null}
-          // onChange={(_value, option) => setValue(option)}
-        />
-
       </Modal>{" "}
       <MantineReactTable table={table} />
     </>

@@ -29,11 +29,11 @@ export function SheetMenu() {
             asChild
           >
             <Link href="#" className="flex items-center gap-2">
-              <Image src={PLNLogo} alt={`pln-logo`} width={36} />
+              <Image src={PLNLogo} alt={`pln-logo`} width={84} />
             </Link>
           </Button>
         </SheetHeader>
-        <Menu isOpen />
+        <Menu isListOpen />
       </SheetContent>
     </Sheet>
   );

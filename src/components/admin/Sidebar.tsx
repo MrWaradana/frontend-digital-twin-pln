@@ -38,12 +38,12 @@ export default function Sidebar() {
             <Image
               src={sidebar?.isOpen ? PlnLogo : PlnLogoVertical}
               alt="Logo PLN"
-              width={64}
-              height={64}
+              width={188}
+              height={188}
             />
           </Link>
         </Button>
-        <Menu isOpen={sidebar?.isOpen} />
+        <Menu isListOpen={sidebar?.isOpen} />
       </div>
     </aside>
   );
