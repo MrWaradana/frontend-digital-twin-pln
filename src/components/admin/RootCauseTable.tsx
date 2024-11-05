@@ -12,10 +12,11 @@ import { Spinner } from "@nextui-org/react";
 import {
   MantineReactTable,
   type MRT_ColumnDef,
+  MRT_EditActionButtons,
   useMantineReactTable,
 } from "mantine-react-table";
 import { useDisclosure } from "@mantine/hooks";
-import { ActionIcon, Box, Button, Modal, Text, TextInput } from "@mantine/core";
+import { ActionIcon, Box, Button, Flex, Modal, Select, Stack, Text, TextInput, Title } from "@mantine/core";
 import {
   useGetVariableCausesAll,
   VariableCause,
@@ -80,6 +81,17 @@ export default function RootCauseTable() {
     );
   }, [data, searchTerm]);
 
+  const availableVariableData = data?.reduce((arr: any, variableCause: any) => {
+    if (variableCause.variable_name && !arr.find(a => a.value === variableCause.variable_id)) {
+      arr.push({
+        value: variableCause.variable_id,
+        label: variableCause.variable_name
+      })
+    }
+    return arr
+  }, [])
+
+
   const columns = useMemo<MRT_ColumnDef<VariableCauseWithSubRows>[]>(
     () => [
       {
@@ -89,6 +101,17 @@ export default function RootCauseTable() {
         Cell: ({ row }) => (
           <Box>
             <Text>{row.original.name}</Text>
+          </Box>
+        ),
+      },
+      // Add Variable Name column
+      {
+        accessorKey: "variable_name",
+        header: "Variable Name",
+        size: 300,
+        Cell: ({ row }) => (
+          <Box>
+            <Text>{row.original.variable_name}</Text>
           </Box>
         ),
       },
@@ -117,6 +140,22 @@ export default function RootCauseTable() {
     alert(`delete ${rowId}`);
   };
 
+
+  //  //DELETE action
+  //  const openDeleteConfirmModal = (row: MRT_Row<User>) =>
+  //   modals.openConfirmModal({
+  //     title: 'Are you sure you want to delete this user?',
+  //     children: (
+  //       <Text>
+  //         Are you sure you want to delete {row.original.firstName}{' '}
+  //         {row.original.lastName}? This action cannot be undone.
+  //       </Text>
+  //     ),
+  //     labels: { confirm: 'Delete', cancel: 'Cancel' },
+  //     confirmProps: { color: 'red' },
+  //     onConfirm: () => deleteUser(row.original.id),
+  //   });
+
   const table = useMantineReactTable({
     columns,
     data: filteredAndTransformedData,
@@ -128,6 +167,15 @@ export default function RootCauseTable() {
     },
     enableRowActions: true,
     positionActionsColumn: "last",
+    renderEditRowModalContent: ({ table, row, internalEditComponents }) => (
+      <Stack>
+        <Title order={3}>Edit User</Title>
+        {internalEditComponents}
+        <Flex justify="flex-end" mt="xl">
+          <MRT_EditActionButtons variant="text" table={table} row={row} />
+        </Flex>
+      </Stack>
+    ),
     renderRowActions: ({ row }) => (
       <Box className="flex flex-nowrap gap-8">
         <ActionIcon color="blue">
@@ -185,6 +233,9 @@ export default function RootCauseTable() {
       striped: true,
       highlightOnHover: true,
     },
+    //Group by Variable name
+    enableGrouping: true,
+    initialState: { grouping: ['variable_name'], expanded: false },
   });
 
   return (
@@ -196,6 +247,14 @@ export default function RootCauseTable() {
         centered
       >
         {/* Modal content */}
+        <Select
+          data={availableVariableData}
+          label="Variable"
+          placeholder="Pick variable"
+          // value={value ? value.value : null}
+          // onChange={(_value, option) => setValue(option)}
+        />
+
       </Modal>{" "}
       <MantineReactTable table={table} />
     </>

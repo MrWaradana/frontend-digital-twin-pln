@@ -22,7 +22,7 @@ export default function Commision() {
 
   const efficiency = efficiencyData?.transactions ?? [];
   const commisionData = efficiency.filter(
-    (item: any) => item.jenis_parameter === "commision"
+    (item: any) => item.jenis_parameter.toLowerCase() === "commision"
   );
 
   return (

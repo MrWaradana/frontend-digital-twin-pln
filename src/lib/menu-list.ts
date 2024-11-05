@@ -6,6 +6,7 @@ import {
   SearchCheck,
   LucideIcon,
   DiamondPlus,
+  Database
 } from "lucide-react";
 
 type Submenu = {
@@ -42,7 +43,7 @@ export function getMenuList(pathname: string): Group[] {
       ],
     },
     {
-      groupLabel: "User Management",
+      groupLabel: "Admin Management",
       menus: [
         {
           href: "/admin/users",
@@ -63,6 +64,13 @@ export function getMenuList(pathname: string): Group[] {
           label: "Root Cause Data",
           active: pathname.includes("/root-cause"),
           icon: SearchCheck,
+          submenus: [],
+        },
+        {
+          href: "/admin/masterdata",
+          label: "Master Data",
+          active: pathname.includes("/masterdata"),
+          icon: Database,
           submenus: [],
         },
         // {

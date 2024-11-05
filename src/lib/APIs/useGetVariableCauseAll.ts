@@ -16,6 +16,7 @@ export interface VariableCause {
   created_by: string;
   updated_at: string;
   updated_by: string;
+  variable_name: string;
 }
 
 export interface VariableCauseAction {
