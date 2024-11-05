@@ -13,6 +13,7 @@ import {
   ColumnDef,
   flexRender,
 } from "@tanstack/react-table";
+import { useGetData } from "@/lib/APIs/useGetData";
 import { useDebouncedCallback } from "use-debounce";
 import { paretoData, ParetoType } from "@/lib/pareto-api-data";
 import { mkConfig, generateCsv, download } from "export-to-csv";
@@ -44,6 +45,7 @@ import ModalRootCause from "./ModalRootCause";
 import ModalRootCauseAction from "./ModalRootCauseAction";
 import { useSession } from "next-auth/react";
 import { debounce } from "lodash";
+import AsyncSelect from "react-select/async";
 
 const formattedNumber = (value: any) =>
   new Intl.NumberFormat("id-ID").format(value);
@@ -292,6 +294,7 @@ export default function TableParetoHeatloss({
   isLoadingRootCauseCount,
   potentialTimeframe,
   setPotentialTimeframe,
+  setDataId,
 }: {
   tableData: any;
   summaryData: any;
@@ -304,6 +307,7 @@ export default function TableParetoHeatloss({
   isLoadingRootCauseCount: any;
   potentialTimeframe: any;
   setPotentialTimeframe: any;
+  setDataId: any;
 }) {
   const { data: session } = useSession();
   const {
@@ -327,6 +331,23 @@ export default function TableParetoHeatloss({
     variableId: "",
     detailId: "",
   });
+
+  const {
+    data: efficiencyData,
+    error: errorEfficiencyData,
+    mutate: mutateEfficiencyData,
+    isLoading: isLoadingEfficiencyData,
+    isValidating: isValidatingEfficiencyData,
+  } = useGetData(session?.user.access_token, 0);
+
+  const selectedEfficiencyData =
+    efficiencyData?.transactions.filter((i: any) => i.status === "Done") ?? [];
+
+  const filterEfficiencyData = (inputValue: string) => {
+    return EfficiencyDataOptions.filter((i: any) =>
+      i.label.toLowerCase().includes(inputValue.toLowerCase())
+    );
+  };
 
   useEffect(() => {
     setRootCauseCountState(rootCauseCount);
@@ -1115,6 +1136,28 @@ export default function TableParetoHeatloss({
     window.print();
   };
 
+  // Load options asynchronously
+  const loadOptions = (
+    inputValue: string,
+    callback: (options: any) => void
+  ) => {
+    setTimeout(() => {
+      callback(filterEfficiencyData(inputValue));
+    }, 1000); // Simulating a delay for async data fetching
+  };
+
+  // Data
+  const EfficiencyDataOptions = selectedEfficiencyData
+    .filter(
+      (item) => item.status === "Done" && item.jenis_parameter === "current"
+    )
+    .map((item) => {
+      return {
+        value: item.id,
+        label: item.name,
+      };
+    });
+
   const columnSizeVars = React.useMemo(() => {
     const headers = table.getFlatHeaders();
     const colSizes: { [key: string]: number } = {};
@@ -1147,6 +1190,22 @@ export default function TableParetoHeatloss({
       />
 
       <div className=" flex justify-end gap-2">
+        <AsyncSelect
+          className="z-[99] w-1/2"
+          classNamePrefix="select"
+          isClearable={true}
+          placeholder={`Select Data...`}
+          isSearchable={true}
+          loadOptions={loadOptions}
+          defaultOptions={EfficiencyDataOptions} // Optional: Show default options initially
+          cacheOptions // Caches the loaded options
+          isLoading={isValidating}
+          onChange={(e) => {
+            //@ts-ignore
+            setDataId(e?.value ?? null);
+          }}
+          name="efficiencyData"
+        />
         <Input
           type="number"
           className="max-w-xs"

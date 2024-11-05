@@ -23,6 +23,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
     searchParams.get("potential_timeframe") ?? 1
   );
   const [tableParetoData, setTableParetoData] = useState([]);
+  const [dataId, setDataId]: any = useState(null);
   const [isMutating, setIsMutating] = useState(false);
   const session = useSession();
 
@@ -41,7 +42,8 @@ export default function Page({ params }: { params: { data_id: string } }) {
     session?.data?.user.access_token,
     params.data_id,
     percentageThreshold,
-    potentialTimeframe
+    potentialTimeframe,
+    dataId
   );
 
   // console.log(data?.pareto_result, "table data pareto");
@@ -187,6 +189,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
                 <Divider className="h-1 bg-neutral-500 rounded-xl" />
                 <TableParetoHeatloss
                   potentialTimeframe={potentialTimeframe}
+                  setDataId={setDataId}
                   setPotentialTimeframe={setPotentialTimeframe}
                   rootCauseCount={dataRootCauseCount}
                   tableData={paretoBottomData}
