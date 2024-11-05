@@ -108,6 +108,7 @@ export default function MasterDataTable() {
             }
 
             setIsActionLoading(false);
+            mutate()
         } catch (error) {
             console.error(error);
         }
@@ -190,6 +191,7 @@ export default function MasterDataTable() {
             isLoading: isLoading || isValidating,
             isSaving: isActionLoading,
             showAlertBanner: error ? true : false,
+            density: "xs",
         },
     });
 

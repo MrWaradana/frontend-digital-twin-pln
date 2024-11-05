@@ -45,6 +45,7 @@ import {
   IconSend,
   IconTrash,
 } from "@tabler/icons-react";
+import { EFFICIENCY_API_URL } from "@/lib/api-url";
 
 // Extend VariableCause to include subRows for MantineReactTable
 interface VariableCauseWithSubRows extends VariableCause {
@@ -85,6 +86,7 @@ export default function RootCauseTable() {
     useDisclosure(false);
   const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState("");
+  const [isActionLoading, setIsActionLoading] = useState(false);
 
   const { data, isLoading, isValidating, mutate, error } =
     useGetVariableCausesAll(session?.user.access_token);
@@ -174,12 +176,89 @@ export default function RootCauseTable() {
   //     confirmProps: { color: 'red' },
   //     onConfirm: () => deleteUser(row.original.id),
   //   });
+
   //CREATE action
-  const handleCreateChildren: MRT_TableOptions<VariableCause>["onCreatingRowSave"] =
-    async ({ values, exitCreatingMode }) => {
-      alert(JSON.stringify(values.name, null, 2));
-      exitCreatingMode();
-    };
+  const handleCreateChildren = async (values, onClose) => {
+    setIsActionLoading(true);
+    const payload = {
+      name: values.name,
+      parent_id: values.parent_id,
+    }
+
+    try {
+      const response = await fetch(
+        `${EFFICIENCY_API_URL}/variables/${values.variable_id}/causes`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.access_token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (response.ok) {
+        mutate();
+        setIsActionLoading(false);
+        onClose(false)
+        return;
+      }
+    } catch (error) {
+      setIsActionLoading(false);
+      console.log(error)
+    }
+  };
+  //Edit Action
+  //CREATE action
+  const handleEditCause: MRT_TableOptions<VariableCause>['onEditingRowSave'] = async ({
+    values,
+    exitEditingMode,
+    row
+  }) => {
+    // const newValidationErrors = validateMasterData(values);
+
+    // if (Object.values(newValidationErrors).some((error) => error)) {
+    //     setValidationErrors(newValidationErrors);
+    //     setIsActionLoading(false);
+    //     return;
+    // }
+
+    // setValidationErrors({});
+    // await createUser(values);
+    console.log(values)
+    setIsActionLoading(true);
+    // //Create MasterData 
+    const payload = {
+      name: values.name,
+    }
+
+    try {
+      const response = await fetch(
+        `${EFFICIENCY_API_URL}/variables/${row.original.variable_id}/causes/${row.original.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.access_token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!response.ok) {
+        setIsActionLoading(false);
+      }
+
+      setIsActionLoading(false);
+      mutate()
+    } catch (error) {
+      console.error(error);
+    }
+
+    exitEditingMode();
+  };
+
 
   const table = useMantineReactTable({
     columns,
@@ -189,47 +268,49 @@ export default function RootCauseTable() {
     state: {
       density: "xs",
       isLoading: isLoading || isValidating,
+      isSaving: isActionLoading,
+      showAlertBanner: error ? true : false,
     },
     enableRowActions: true,
     positionActionsColumn: "last",
     renderCreateRowModalContent: ({ table, row, internalEditComponents }) => {
-      // const selectedInput = internalEditComponents.filter(node => {
-      //   node?.key
-      // })
-      console.log(internalEditComponents);
+      const [name, setName] = useState('')
       return (
         <Stack>
           <Title order={3}>Create New Children Root Cause</Title>
           {/* {internalEditComponents} */}
-          <TextInput label={`Name`} name={`name`} />
+          <TextInput label={`Name`} name={`name`} value={name} onChange={e => setName(e.currentTarget.value)} required />
           <Flex justify="flex-end" mt="xl">
-            <MRT_EditActionButtons variant="text" table={table} row={row} />
+            <Button onClick={() => handleCreateChildren({
+              name: name,
+              variable_id: row.original.variable_id,
+              parent_id: row.original.id
+            }, table.setCreatingRow)} disabled={!name.trim()} loading={isActionLoading}>Submit</Button>
           </Flex>
         </Stack>
       );
     },
-    onCreatingRowSave: handleCreateChildren,
-    renderEditRowModalContent: ({ table, row, internalEditComponents }) => (
-      <Stack>
-        <Title order={3}>Edit {row.original.name}</Title>
-        {internalEditComponents}
-        <Flex justify="flex-end" mt="xl">
-          <MRT_EditActionButtons variant="text" table={table} row={row} />
-        </Flex>
-      </Stack>
-    ),
+    onEditingRowSave: handleEditCause,
+    renderEditRowModalContent: ({ table, row, internalEditComponents }) => {
+      const regex = /^\d+(\.\d+)*_name$/;
+      const selectedComponent = internalEditComponents.find(component => regex.test(component?.key as string))
+
+      return (
+        <Stack>
+          <Title order={3}>Edit {row.original.name}</Title>
+          {selectedComponent}
+          <Flex justify="flex-end" mt="xl">
+            <MRT_EditActionButtons variant="text" table={table} row={row} />
+          </Flex>
+        </Stack>
+      )
+    },
     renderRowActions: ({ row }) => (
       <Box className="flex flex-nowrap gap-8">
         <ActionIcon
           color="blue"
           onClick={() => {
-            table.setCreatingRow({
-              ...row,
-              original: {
-                ...row.original,
-                name: "",
-              },
-            });
+            table.setCreatingRow(row);
           }}
         >
           <IconPlus />
@@ -331,8 +412,8 @@ export default function RootCauseTable() {
             placeholder="Pick variable"
             key={formParent.key("variableCause")}
             {...formParent.getInputProps("variableCause")}
-            // value={value ? value.value : null}
-            // onChange={(_value, option) => setValue(option)}
+          // value={value ? value.value : null}
+          // onChange={(_value, option) => setValue(option)}
           />
           <div className={`flex justify-end mt-4`}>
             <Button color={`green`} type="submit">
