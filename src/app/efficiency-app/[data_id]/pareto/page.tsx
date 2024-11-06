@@ -20,11 +20,12 @@ export default function Page({ params }: { params: { data_id: string } }) {
 
   const percent_threshold = searchParams.get("percent-threshold");
   const [potentialTimeframe, setPotentialTimeframe]: any = useState(
-    searchParams.get("potential_timeframe") ?? 1
+    searchParams.get("potential-timeframe")
   );
   const [tableParetoData, setTableParetoData] = useState([]);
   const [dataId, setDataId]: any = useState(null);
   const [isMutating, setIsMutating] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState("commision");
   const session = useSession();
 
   const [percentageThreshold, setPercentageThreshold] =
@@ -49,9 +50,9 @@ export default function Page({ params }: { params: { data_id: string } }) {
   // console.log(data?.pareto_result, "table data pareto");
 
   const tableData = data?.pareto_result ?? [];
+  const efficiencyData = data?.data ?? [];
   const paretoTopData = data?.pareto_uncategorized_result ?? [];
   const paretoBottomData = tableData.filter((item) => item.category != null);
-  const name = data?.name ?? "";
 
   // const tableIsPareto = filter flag is Pareto Hari Senen
   const chartRawData = data?.chart_result ?? [];
@@ -125,13 +126,14 @@ export default function Page({ params }: { params: { data_id: string } }) {
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("percent-threshold", percentageThreshold as string);
+    params.set("potential-timeframe", potentialTimeframe as string);
     router.replace(`${pathname}?${params}`, {
       scroll: false,
     });
     setIsMutating(true);
     onMutate();
     setIsMutating(false);
-  }, [percentageThreshold]);
+  }, [percentageThreshold, potentialTimeframe]);
 
   // if (isLoading)
   //   return (
@@ -165,7 +167,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
         <div className="min-w-full h-full overflow-hidden">
           <MultipleLineChart
             data={chartData}
-            name={name}
+            efficiencyData={efficiencyData}
             onThresholdChange={setPercentageThreshold}
             thresholdNumber={percentageThreshold}
             // @ts-ignore
@@ -190,6 +192,10 @@ export default function Page({ params }: { params: { data_id: string } }) {
                 <TableParetoHeatloss
                   potentialTimeframe={potentialTimeframe}
                   setDataId={setDataId}
+                  dataId={dataId}
+                  setSelectedLabel={setSelectedLabel}
+                  selectedLabel={selectedLabel}
+                  params={params.data_id}
                   setPotentialTimeframe={setPotentialTimeframe}
                   rootCauseCount={dataRootCauseCount}
                   tableData={paretoBottomData}

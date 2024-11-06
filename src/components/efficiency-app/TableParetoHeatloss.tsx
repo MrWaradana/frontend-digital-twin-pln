@@ -295,6 +295,10 @@ export default function TableParetoHeatloss({
   potentialTimeframe,
   setPotentialTimeframe,
   setDataId,
+  dataId,
+  params,
+  setSelectedLabel,
+  selectedLabel,
 }: {
   tableData: any;
   summaryData: any;
@@ -308,6 +312,10 @@ export default function TableParetoHeatloss({
   potentialTimeframe: any;
   setPotentialTimeframe: any;
   setDataId: any;
+  dataId: any;
+  params: any;
+  setSelectedLabel: any;
+  selectedLabel: any;
 }) {
   const { data: session } = useSession();
   const {
@@ -431,9 +439,22 @@ export default function TableParetoHeatloss({
         id: "referenceData",
         size: 45,
         header: () => (
-          <div className="text-center">
-            Reference Data <br /> (Commission)
-          </div>
+          <Tooltip
+            content={
+              <>
+                Reference Data: <br />
+                {selectedLabel}
+              </>
+            }
+          >
+            <div className="text-center">
+              Reference Data <br /> (
+              {selectedLabel.length > 9
+                ? `${selectedLabel.slice(0, 9)}...`
+                : selectedLabel}
+              )
+            </div>
+          </Tooltip>
         ),
         meta: {
           className: "text-right pr-2",
@@ -1148,9 +1169,7 @@ export default function TableParetoHeatloss({
 
   // Data
   const EfficiencyDataOptions = selectedEfficiencyData
-    .filter(
-      (item) => item.status === "Done"
-    )
+    .filter((item) => item.status === "Done" && item.id != params)
     .map((item) => {
       return {
         value: item.id,
@@ -1194,15 +1213,18 @@ export default function TableParetoHeatloss({
           className="z-[99] w-1/2"
           classNamePrefix="select"
           isClearable={true}
-          placeholder={`Select Data...`}
+          placeholder={`Select Reference Data...`}
           isSearchable={true}
           loadOptions={loadOptions}
           defaultOptions={EfficiencyDataOptions} // Optional: Show default options initially
+          defaultValue={dataId ? { value: dataId, label: selectedLabel } : null}
           cacheOptions // Caches the loaded options
           isLoading={isValidating}
-          onChange={(e) => {
-            //@ts-ignore
-            setDataId(e?.value ?? null);
+          onChange={(e: any) => {
+            const newValue = e?.value ?? null;
+            const newLabel = e?.label ?? "";
+            setDataId(newValue);
+            setSelectedLabel(newLabel);
           }}
           name="efficiencyData"
         />

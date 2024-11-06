@@ -126,8 +126,10 @@ export default function TableAdmin({
     let filteredUsers = [...userData];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user?.name?.toLowerCase().includes(filterValue.toLowerCase())
+      filteredUsers = filteredUsers.filter(
+        (user) =>
+          user?.name?.toLowerCase().includes(filterValue.toLowerCase()) ||
+          user?.role?.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (

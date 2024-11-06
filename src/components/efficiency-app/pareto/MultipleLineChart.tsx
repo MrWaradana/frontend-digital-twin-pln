@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Bar,
@@ -10,7 +10,7 @@ import {
   ReferenceLine,
   Legend,
   ComposedChart,
-} from 'recharts'
+} from "recharts";
 
 import {
   Card,
@@ -19,27 +19,27 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@/components/ui/chart'
-import { Slider, SliderValue } from '@nextui-org/react'
-import { useEffect, useState } from 'react'
-import { debounce } from 'lodash'
+} from "@/components/ui/chart";
+import { Slider, SliderValue } from "@nextui-org/react";
+import { useEffect, useState } from "react";
+import { debounce } from "lodash";
 
 const chartConfig = {
   category: {
-    label: 'category',
-    color: 'hsl(var(--chart-1))',
+    label: "category",
+    color: "hsl(var(--chart-1))",
   },
   cum_frequency: {
-    label: 'cum_frequency',
-    color: 'hsl(var(--chart-2))',
+    label: "cum_frequency",
+    color: "hsl(var(--chart-2))",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export default function MultipleLineChart({
   data,
@@ -47,30 +47,30 @@ export default function MultipleLineChart({
   thresholdNumber,
   onBarClick,
   totalPersen,
-  name,
+  efficiencyData,
 }: any) {
-  const [sliderValue, setSliderValue] = useState<SliderValue>(thresholdNumber)
+  const [sliderValue, setSliderValue] = useState<SliderValue>(thresholdNumber);
   const [internalSliderValue, setInternalSliderValue] =
-    useState<SliderValue>(thresholdNumber) // Holds the immediate value
+    useState<SliderValue>(thresholdNumber); // Holds the immediate value
 
   // Debounce the onThresholdChange call
   const debouncedThresholdChange = debounce((value) => {
-    onThresholdChange(value)
-  }, 500) // 300ms delay
+    onThresholdChange(value);
+  }, 500); // 300ms delay
 
   useEffect(() => {
-    debouncedThresholdChange(internalSliderValue)
-    return () => debouncedThresholdChange.cancel() // Clean up on unmount
-  }, [internalSliderValue])
+    debouncedThresholdChange(internalSliderValue);
+    return () => debouncedThresholdChange.cancel(); // Clean up on unmount
+  }, [internalSliderValue]);
 
   return (
     <Card>
-      {/* <CardHeader>
+      <CardHeader>
         <CardTitle>
           {" "}
-          <span className={`px-1`}>Data {name}</span>{" "}
+          <span className={`px-1`}>Data Pareto {efficiencyData.name}</span>{" "}
         </CardTitle>
-      </CardHeader> */}
+      </CardHeader>
       <CardContent className="grid grid-cols-12 h-[75dvh] mt-12">
         <ChartContainer
           config={chartConfig}
@@ -91,24 +91,24 @@ export default function MultipleLineChart({
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => (value ? value.slice(0, 4) : 'Pareto')}
+              tickFormatter={(value) => (value ? value.slice(0, 4) : "Pareto")}
             />
             <YAxis
               domain={[0, 100]}
               orientation="right"
               allowDataOverflow={true}
               label={{
-                value: 'Cumulative Frequency (%)',
+                value: "Cumulative Frequency (%)",
                 angle: 90,
-                position: 'outsideLeft',
+                position: "outsideLeft",
                 dx: 20,
               }}
-              yAxisId={'total_persen_losses'}
+              yAxisId={"total_persen_losses"}
             />
             <YAxis
               orientation="left"
               label={{
-                value: 'Nilai Losses',
+                value: "Nilai Losses",
                 angle: -90,
                 dx: -10,
               }}
@@ -118,19 +118,19 @@ export default function MultipleLineChart({
             <Legend className="" />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Bar
-              dataKey={'total_nilai_losses'}
-              name={'Total Nilai Loss'}
+              dataKey={"total_nilai_losses"}
+              name={"Total Nilai Loss"}
               fill="#559e83"
               className=""
               barSize={20}
             />
             <Bar
-              dataKey={'total_persen_losses'}
-              name={'Total Persen Loss'}
+              dataKey={"total_persen_losses"}
+              name={"Total Persen Loss"}
               fill="#1b85b8"
               className=""
               barSize={20}
-              yAxisId={'total_persen_losses'}
+              yAxisId={"total_persen_losses"}
             />
             <ReferenceLine
               x="Miscellaneous auxiliary load"
@@ -139,7 +139,7 @@ export default function MultipleLineChart({
               strokeDasharray={5}
               strokeWidth={2}
               strokeDashoffset={1}
-              yAxisId={'total_persen_losses'}
+              yAxisId={"total_persen_losses"}
             />
             <ReferenceLine
               y={Number(internalSliderValue)}
@@ -148,7 +148,7 @@ export default function MultipleLineChart({
               strokeDasharray={5}
               strokeWidth={2}
               strokeDashoffset={1}
-              yAxisId={'total_persen_losses'}
+              yAxisId={"total_persen_losses"}
             />
             {/* <Line
               name={"Total Persen Loss"}
@@ -166,7 +166,7 @@ export default function MultipleLineChart({
               stroke="#f1c232"
               strokeWidth={2}
               dot={true}
-              yAxisId={'total_persen_losses'}
+              yAxisId={"total_persen_losses"}
             />
           </ComposedChart>
         </ChartContainer>
@@ -178,12 +178,12 @@ export default function MultipleLineChart({
             onChange={setInternalSliderValue}
             maxValue={100}
             minValue={0}
-            formatOptions={{ style: 'decimal' }}
+            formatOptions={{ style: "decimal" }}
             orientation="vertical"
             defaultValue={sliderValue}
           />
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

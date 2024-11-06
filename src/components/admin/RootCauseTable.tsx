@@ -137,7 +137,9 @@ export default function RootCauseTable() {
         size: 300,
         Cell: ({ row }) => (
           <Box>
-            <Text>{row.original.variable_name}</Text>
+            <Text className={`whitespace-pre-wrap break-words`}>
+              {row.original.variable_name}
+            </Text>
           </Box>
         ),
       },
@@ -151,11 +153,17 @@ export default function RootCauseTable() {
         },
       },
       {
-        accessorFn: (row) => row.actions?.[0]?.name ?? "",
+        accessorFn: (row) => row.actions ?? [],
         header: "Action",
         Cell: ({ row }) => {
-          const action = row.original.actions?.[0]?.name;
-          return <Text>{action || "-"}</Text>;
+          const actions = row.original.actions
+            ?.map((action) => action.name)
+            .join(",\n");
+          return (
+            <Text className="whitespace-pre-wrap break-words">
+              {actions || "-"}
+            </Text>
+          );
         },
       },
     ],
@@ -345,36 +353,50 @@ export default function RootCauseTable() {
         </Stack>
       );
     },
-    renderRowActions: ({ row }) => (
-      <Box className="flex flex-nowrap gap-8">
-        <ActionIcon
-          color="blue"
-          onClick={() => {
-            table.setCreatingRow(row);
-          }}
-        >
-          <IconPlus />
-        </ActionIcon>
-        <ActionIcon
-          color="orange"
-          onClick={() => {
-            table.setEditingRow(row);
-          }}
-        >
-          <IconEdit />
-        </ActionIcon>
-        <ActionIcon
-          color="red"
-          onClick={() => {
-            // handleDelete(row);
-            setSelectedToDelete(row);
-            openConfirmationDelete();
-          }}
-        >
-          <IconTrash />
-        </ActionIcon>
-      </Box>
-    ),
+    renderRowActions: ({ row }) => {
+      return (
+        <Box className="flex flex-nowrap gap-8">
+          {row.original.actions ? null : (
+            <ActionIcon
+              color="blue"
+              onClick={() => {
+                table.setCreatingRow(row);
+              }}
+            >
+              <IconPlus />
+            </ActionIcon>
+          )}
+          {row.original.children.length > 0 ? null : (
+            <ActionIcon
+              color="green"
+              onClick={() => {
+                // Your onClick handler for the second plus icon
+              }}
+            >
+              <IconPlus />
+            </ActionIcon>
+          )}
+          <ActionIcon
+            color="orange"
+            onClick={() => {
+              table.setEditingRow(row);
+            }}
+          >
+            <IconEdit />
+          </ActionIcon>
+          <ActionIcon
+            color="red"
+            onClick={() => {
+              // handleDelete(row);
+              setSelectedToDelete(row);
+              openConfirmationDelete();
+            }}
+          >
+            <IconTrash />
+          </ActionIcon>
+        </Box>
+      );
+    },
     mantineLoadingOverlayProps: {
       loaderProps: {
         type: "dots",
