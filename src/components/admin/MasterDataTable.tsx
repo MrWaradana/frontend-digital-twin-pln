@@ -2,8 +2,9 @@
 
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { MasterData, useGetMasterData } from "@/lib/APIs/useGetMasterData";
-import { ActionIcon, Box, Button, Flex, Stack, Text, Title, Tooltip } from "@mantine/core";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { ActionIcon, Box, Button, Flex, Modal, Stack, Text, Title, Tooltip } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
 import { size } from "lodash";
 import { MantineReactTable, MRT_ColumnDef, MRT_EditActionButtons, MRT_TableOptions, useMantineReactTable } from "mantine-react-table";
 import { useSession } from "next-auth/react";
@@ -17,6 +18,11 @@ export default function MasterDataTable() {
     const [validationErrors, setValidationErrors] = useState<
         Record<string, string | undefined>
     >({});
+    const [selectedToDelete, setSelectedToDelete]: any = useState(null);
+    const [
+        openedConfirmationDelete,
+        { open: openConfirmationDelete, close: closeConfirmationDelete },
+    ] = useDisclosure(false);
 
     const {
         data: masterData,
@@ -69,7 +75,7 @@ export default function MasterDataTable() {
 
 
     //CREATE action
-    const handleCreateUser: MRT_TableOptions<MasterData>['onCreatingRowSave'] = async ({
+    const handleCreateMasterData: MRT_TableOptions<MasterData>['onCreatingRowSave'] = async ({
         values,
         exitCreatingMode,
     }) => {
@@ -116,6 +122,80 @@ export default function MasterDataTable() {
         exitCreatingMode();
     };
 
+    const handleDelete = async (row: any) => {
+        setIsActionLoading(true);
+        try {
+            const response = await fetch(
+                `${EFFICIENCY_API_URL}/cases/${row.id}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${session?.user.access_token}`,
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                setIsActionLoading(false);
+            }
+
+            setIsActionLoading(false);
+            closeConfirmationDelete();
+            mutate();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const handleSaveMasterData: MRT_TableOptions<MasterData>['onEditingRowSave'] = async ({
+        values,
+        exitEditingMode,
+        row
+    }) => {
+        const newValidationErrors = validateMasterData(values);
+
+        if (Object.values(newValidationErrors).some((error) => error)) {
+            setValidationErrors(newValidationErrors);
+            setIsActionLoading(false);
+            return;
+        }
+
+        setValidationErrors({});
+        // await createUser(values);
+        setIsActionLoading(true);
+        //Create MasterData 
+        const payload = {
+            name: values.name,
+            nphr_value: values.nphr_value
+        }
+
+        try {
+            const response = await fetch(
+                `${EFFICIENCY_API_URL}/cases/${row.id}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${session?.user.access_token}`,
+                    },
+                    body: JSON.stringify(payload),
+                }
+            );
+
+            if (!response.ok) {
+                setIsActionLoading(false);
+            }
+
+            setIsActionLoading(false);
+            mutate()
+        } catch (error) {
+            console.error(error);
+        }
+
+        exitEditingMode();
+    };
+
 
     const table = useMantineReactTable({
         columns,
@@ -137,9 +217,9 @@ export default function MasterDataTable() {
         //     },
         // },
         onCreatingRowCancel: () => setValidationErrors({}),
-        onCreatingRowSave: handleCreateUser,
-        // onEditingRowCancel: () => setValidationErrors({}),
-        // onEditingRowSave: handleSaveUser,
+        onCreatingRowSave: handleCreateMasterData,
+        onEditingRowCancel: () => setValidationErrors({}),
+        onEditingRowSave: handleSaveMasterData,
         renderCreateRowModalContent: ({ table, row, internalEditComponents }) => (
             <Stack>
                 <Title order={3}>Create New User</Title>
@@ -149,15 +229,19 @@ export default function MasterDataTable() {
                 </Flex>
             </Stack>
         ),
-        renderEditRowModalContent: ({ table, row, internalEditComponents }) => (
-            <Stack>
-                <Title order={3}>Edit User</Title>
-                {internalEditComponents}
-                <Flex justify="flex-end" mt="xl">
-                    <MRT_EditActionButtons variant="text" table={table} row={row} />
-                </Flex>
-            </Stack>
-        ),
+        renderEditRowModalContent: ({ table, row, internalEditComponents }) => {
+            //filter internalEditComponents to remove the name field
+
+            return (
+                <Stack>
+                    <Title order={3}>Edit Master Data</Title>
+                    {internalEditComponents}
+                    <Flex justify="flex-end" mt="xl">
+                        <MRT_EditActionButtons variant="text" table={table} row={row} />
+                    </Flex>
+                </Stack>
+            )
+        },
         renderRowActions: ({ row, table }) => (
             <Flex gap="md">
                 <Tooltip label="Edit">
@@ -166,26 +250,38 @@ export default function MasterDataTable() {
                     </ActionIcon>
                 </Tooltip>
                 <Tooltip label="Delete">
-                    <ActionIcon color="red" onClick={() => { }}>
+                    <ActionIcon color="red" onClick={() => {
+                        setSelectedToDelete(row);
+                        openConfirmationDelete();
+                    }}>
                         <IconTrash />
                     </ActionIcon>
                 </Tooltip>
             </Flex>
         ),
         renderTopToolbarCustomActions: ({ table }) => (
-            <Button
-                onClick={() => {
-                    table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-                    //or you can pass in a row object to set default values with the `createRow` helper function
-                    // table.setCreatingRow(
-                    //   createRow(table, {
-                    //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-                    //   }),
-                    // );
-                }}
+            <Box
+                mb="xs"
+                className={`flex flex-nowrap items-center w-full justify-between gap-6`}
             >
-                Create New User
-            </Button>
+
+                <Button
+                    onClick={() => {
+                        table.setCreatingRow(true); //simplest way to open the create row modal with no default values
+                        //or you can pass in a row object to set default values with the `createRow` helper function
+                        // table.setCreatingRow(
+                        //   createRow(table, {
+                        //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
+                        //   }),
+                        // );
+                    }}
+                >
+                    <IconPlus />
+                    Create New Master Data
+                </Button>
+
+            </Box>
+
         ),
         state: {
             isLoading: isLoading || isValidating,
@@ -195,9 +291,39 @@ export default function MasterDataTable() {
         },
     });
 
+    const deleteConfirmationModal = (
+        <>
+            <Modal
+                opened={openedConfirmationDelete}
+                onClose={closeConfirmationDelete}
+                title={`Are you sure you want to delete this item?`}
+            >
+                <div className={`flex justify-end gap-5`}>
+                    <Button
+                        color={`gray`}
+                        onClick={() => {
+                            closeConfirmationDelete();
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        color={`red`}
+                        onClick={() => {
+                            handleDelete(selectedToDelete);
+                        }}
+                    >
+                        Yes, delete
+                    </Button>
+                </div>
+            </Modal>
+        </>
+    );
+
 
     return (
         <>
+            {deleteConfirmationModal}
             <MantineReactTable table={table} />
         </>
     )

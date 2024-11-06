@@ -395,7 +395,7 @@ export default function TableEfficiency({
                     <DropdownItem href={`/efficiency-app/${rowData.id}/output`}>
                       View
                     </DropdownItem>
-                    {/* <DropdownItem href="#">Edit</DropdownItem>*/}
+                    <DropdownItem href={`/admin/commision/input?data_id=${rowData.id}`}>Edit</DropdownItem>
                     <DropdownItem
                       className={`${
                         session?.data?.user.user.id === rowData.createdBy ||

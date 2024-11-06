@@ -17,7 +17,7 @@ export function useApiFetch<T, RawT = T>(
   customFetcher?: ([url, token]: [string, string]) => Promise<RawT | T>
 ): HookReply<RawT | T> {
   const router = useRouter();
-  const { data: session, status, update } = useSession();
+  // const { data: session, status, update } = useSession();
   const isReady = isReadyCondition;
 
   const fetcherToUse = token ? fetcher : fetcherNoToken;
@@ -34,15 +34,15 @@ export function useApiFetch<T, RawT = T>(
     swrConfig
   );
 
-  async function updateSessionToken(newToken: any) {
-    await update({
-      ...session,
-      user: {
-        ...session?.user,
-        access_token: newToken,
-      },
-    });
-  }
+  // async function updateSessionToken(newToken: any) {
+  //   await update({
+  //     ...session,
+  //     user: {
+  //       ...session?.user,
+  //       access_token: newToken,
+  //     },
+  //   });
+  // }
 
   // if (error) {
   //   // console.log(error, "ERROOOOOOOR");

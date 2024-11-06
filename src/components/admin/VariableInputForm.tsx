@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -27,6 +27,7 @@ import {
   ModalFooter,
   ModalHeader,
   Badge,
+  Spinner,
 } from "@nextui-org/react";
 import { useState, Fragment } from "react";
 import Link from "next/link";
@@ -36,6 +37,7 @@ import { useStatusThermoflowStore } from "../../store/statusThermoflow";
 import AsyncSelect from "react-select/async";
 import { useGetThermoStatus } from "../../lib/APIs/useGetThermoStatus";
 import { useSearchParams } from "next/navigation";
+import { useGetDataDetail } from "@/lib/APIs/useGetDataDetail";
 interface Variable {
   category: string;
   input_name: string;
@@ -48,10 +50,12 @@ export default function VariableInputForm({
   excel,
   variables,
   selectedMasterData,
+  isEditing = false,
 }: {
   excel: any;
   variables: any;
   selectedMasterData: string;
+  isEditing?: boolean;
 }) {
   const params = useSearchParams();
   const router = useRouter();
@@ -64,6 +68,7 @@ export default function VariableInputForm({
   const [inputValues, setInputValues] = useState(
     Object.fromEntries(variableData.map((v: any) => [v.id, v.base_case]))
   );
+
 
   const {
     data: thermoStatusData,
@@ -109,25 +114,58 @@ export default function VariableInputForm({
     ),
   });
 
-  const defaultInputs = Object.fromEntries(
-    filteredVariableData.map((v: any) => [v.id, String(0)])
+  // Move the hook outside of conditions
+  const { data: dataDetail, isLoading: isLoadingDataDetail } = useGetDataDetail(
+    session.data?.user.access_token,
+    params.get("data_id"),
+    // Only fetch if we're editing
+    isEditing
   );
+
+  // Create initial default values
+  const [defaultValues, setDefaultValues] = useState({
+    name: "",
+    inputs: Object.fromEntries(
+      filteredVariableData.map((v: any) => [v.id, String(0)])
+    ),
+  });
 
   // 1. Define your form.
   const formInput = useForm<z.infer<typeof formSchemaInput>>({
     resolver: zodResolver(formSchemaInput),
     mode: "onChange",
-    defaultValues: {
-      name: "",
-      inputs: defaultInputs,
-    },
+    defaultValues: defaultValues,
   });
+
+  // Update form values when editing data is loaded
+  useEffect(() => {
+    if (isEditing && dataDetail) {
+      const editValues = {
+        name: dataDetail.name,
+        inputs: Object.fromEntries(
+          filteredVariableData.map((v: any) => [
+            v.id,
+            String(dataDetail?.details.find((d: any) => d.variable_id === v.id)?.nilai) ?? String(0),
+          ])
+        ),
+      };
+
+      setDefaultValues(editValues);
+      // Reset form with new values
+      formInput.reset(editValues);
+    }
+  }, [dataDetail, isEditing, formInput]);
+
+  // Show loading state while fetching edit data
+  if (isEditing && isLoadingDataDetail) {
+    return <Spinner label="Loading..." />
+  }
 
   const formError = formInput.formState.errors;
 
-  const setStatusThermoflow = useStatusThermoflowStore(
-    (state) => state.setStatusThermoflow
-  );
+  // const setStatusThermoflow = useStatusThermoflowStore(
+  //   (state) => state.setStatusThermoflow
+  // );
 
   // Handle input change to update state
   // const handleInputChange = (id: string, value: number) => {
@@ -151,20 +189,36 @@ export default function VariableInputForm({
 
     const sendData = async () => {
       try {
-        const payload = {
-          name: `${values.name}_commision`,
-          jenis_parameter: selectedMasterData,
-          excel_id: excel[0].id,
-          inputs: values.inputs,
-          input_type: "commision",
-          periodic_start_date: params.get("start_date") ?? null,
-          periodic_end_date: params.get("end_date") ?? null,
-        };
+
+        let payload = {};
+        let url = "";
+        let method = "";
+
+        if (isEditing) {
+          payload = {
+            name: values.name,
+            inputs: values.inputs,
+          }
+          url = `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/data/${params.get("data_id")}`;
+          method = "PUT";
+        } else {
+          payload = {
+            name: `${values.name}_commision`,
+            jenis_parameter: selectedMasterData,
+            excel_id: excel[0].id,
+            inputs: values.inputs,
+            input_type: "commision",
+            periodic_start_date: params.get("start_date") ?? null,
+            periodic_end_date: params.get("end_date") ?? null,
+          };
+          url = `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/data`;
+          method = "POST";
+        }
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/data`,
+          url,
           {
-            method: "POST",
+            method: method,
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${session.data?.user.access_token}`,
@@ -183,11 +237,13 @@ export default function VariableInputForm({
           return;
         }
 
-        toast.success("Data input received, wait for the to be processed!");
-        setStatusThermoflow(true);
-        setLoading(false);
+        toast.success("Data input received");
+        // setStatusThermoflow(true);
         // router.push(`/efficiency-app/${response_data.data.data_id}/output`);
-        setTimeout(() => router.push(`/admin/commision`), 3000);
+        setTimeout(() => {
+          setLoading(false);
+          router.push(`/admin/commision`)
+        }, 3000);
 
         // if (response) {
         //   setLoading(false);
@@ -335,11 +391,10 @@ export default function VariableInputForm({
                     textValue={
                       category === "null"
                         ? "Tidak Ada Kategori"
-                        : `${category}${
-                            variables.some((v: any) => v.web_id)
-                              ? " => PI SERVER"
-                              : ""
-                          }`
+                        : `${category}${variables.some((v: any) => v.web_id)
+                          ? " => PI SERVER"
+                          : ""
+                        }`
                     }
                     title={
                       <span
@@ -357,8 +412,8 @@ export default function VariableInputForm({
                         {category === "null"
                           ? "Tidak Ada Kategori"
                           : variables.some((v: any) => v.web_id)
-                          ? `${category} => PI SERVER`
-                          : `${category}`}
+                            ? `${category} => PI SERVER`
+                            : `${category}`}
                       </span>
                     }
                   >

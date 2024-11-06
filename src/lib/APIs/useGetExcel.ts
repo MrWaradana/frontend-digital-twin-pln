@@ -21,8 +21,8 @@ import { useApiFetch } from "./useApiFetch";
 // }
 // ${EFFICIENCY_API_URL}/variables?excel_id=${selectedExcel.id}
 
-export function useGetExcel(token: string | undefined): HookReply<Array<any>> {
-  return useApiFetch(`${EFFICIENCY_API_URL}/excels`, !!token, token, {
+export function useGetExcel(token: string | undefined, isFetched: boolean = false): HookReply<Array<any>> {
+  return useApiFetch(`${EFFICIENCY_API_URL}/excels`, !!token && !isFetched, token, {
     shouldRetryOnError: false,
     errorRetryInterval: 60000,
     onErrorRetry: (error, key, config, revalidate, { retryCount }) => {

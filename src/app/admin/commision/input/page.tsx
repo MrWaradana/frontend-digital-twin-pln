@@ -6,9 +6,12 @@ import { useSession } from "next-auth/react";
 import { useGetVariables } from "@/lib/APIs/useGetVariables";
 import { useExcelStore } from "@/store/excels";
 import { Spinner } from "@nextui-org/react";
+import { useSearchParams } from "next/navigation";
 
 export default function Input() {
   const { data: session, status } = useSession();
+  const params = useSearchParams();
+  const isEditing = params.get("data_id") ? true : false;
 
   const excels = useExcelStore((state) => state.excels);
 
@@ -29,6 +32,7 @@ export default function Input() {
             excel={excels}
             variables={variable}
             selectedMasterData={`commision`}
+            isEditing={isEditing}
           />
         )}
       </section>

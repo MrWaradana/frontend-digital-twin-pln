@@ -1,7 +1,7 @@
 // app/providers.tsx
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useIdleTimer } from "react-idle-timer";
 import {
   Button,
@@ -18,6 +18,8 @@ import { Modal, ModalBody } from "@nextui-org/react";
 import { type ThemeProviderProps } from "next-themes/dist/types";
 import { Session } from "next-auth";
 import { usePathname } from "next/navigation";
+import { useGetExcel } from "@/lib/APIs/useGetExcel";
+import { useExcelStore } from "@/store/excels";
 
 const timeout = 600_000; // 10 minutes in milliseconds
 // const timeout = 80_000; // 10 minutes in milliseconds
@@ -109,13 +111,25 @@ export function Providers({
     if (seconds >= 60) {
       const minutes = Math.floor(seconds / 60);
       const remainingSeconds = seconds % 60;
-      return `${minutes} minute${
-        minutes > 1 ? "s" : ""
-      } ${remainingSeconds} second${remainingSeconds !== 1 ? "s" : ""}`;
+      return `${minutes} minute${minutes > 1 ? "s" : ""
+        } ${remainingSeconds} second${remainingSeconds !== 1 ? "s" : ""}`;
     } else {
       return `${seconds} second${seconds !== 1 ? "s" : ""}`;
     }
   };
+
+  const excels = useExcelStore((state) => state.excels);
+  const { data: excelData, isLoading, isValidating, error, mutate } =
+    useGetExcel(session?.user.access_token, excels.length > 0);
+
+  // Use useEffect for side effects
+  useEffect(() => {
+    // Check if we need to update the store
+    if (excels.length === 0 && excelData) {
+      useExcelStore.getState().setExcels(excelData);
+    }
+  }, [excelData, excels.length]);
+
 
   // const seconds = timeTillPrompt > 1 ? "seconds" : "second";
   // const secondsIdle = timeTillIdle > 1 ? "seconds" : "second";
