@@ -68,7 +68,7 @@ const TableTag = ({
                          hover:scale-105 hover:bg-blue-500/80 hover:shadow-md
                          transition-all duration-200 ease-in-out
                          transform origin-center`}
-                onClick={() => router.push(`/pfi-app/selected-tag/3871`)}
+                onClick={() => router.push(`/pfi-app/selected-tag/${rowData.id}`)}
               >
                 <div className="font-semibold text-neutral-200 px-2 py-1">
                   Warning
