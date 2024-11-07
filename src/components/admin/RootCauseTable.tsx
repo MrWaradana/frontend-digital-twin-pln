@@ -7,6 +7,7 @@ import {
   useMemo,
   useState,
   DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES,
+  useEffect,
 } from "react";
 import { Spinner } from "@nextui-org/react";
 import {
@@ -29,6 +30,7 @@ import {
   Modal,
   Select,
   Stack,
+  TagsInput,
   Text,
   TextInput,
   Title,
@@ -99,6 +101,7 @@ export default function RootCauseTable() {
   const [selectedToAddAction, setSelectedToAddAction]: any = useState(null);
   const [name, setName] = useState("");
   const [actionName, setActionName] = useState("");
+  const [actions, setActions] = useState<string[]>([]);
 
   const { data, isLoading, isValidating, mutate, error } =
     useGetVariableCausesAll(session?.user.access_token);
@@ -285,39 +288,48 @@ export default function RootCauseTable() {
     }
   };
   //Edit data
-  const handleEditCause: MRT_TableOptions<VariableCause>["onEditingRowSave"] =
-    async ({ values, exitEditingMode, row }) => {
-      console.log(values);
-      setIsActionLoading(true);
-      const payload = {
-        name: values.name,
-      };
+  const handleEditCause = async (values, exitEditingMode) => {
+    setIsActionLoading(true);
 
-      try {
-        const response = await fetch(
-          `${EFFICIENCY_API_URL}/variables/${row.original.variable_id}/causes/${row.original.id}`,
+    try {
+      const causeEdit = await fetch(
+        `${EFFICIENCY_API_URL}/variables/${values.variable_id}/causes/${values.cause_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.access_token}`,
+          },
+          body: JSON.stringify({
+            name: values.name
+          }),
+        }
+      );
+
+      if (values.isLastChild) {
+        const actionsEdit = await fetch(
+          `${EFFICIENCY_API_URL}/variables/${values.variable_id}/actions`,
           {
-            method: "PUT",
+            method: "POST",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${session?.user.access_token}`,
             },
-            body: JSON.stringify(payload),
+            body: JSON.stringify({
+              cause_id: values.cause_id,
+              names: values.actions,
+            }),
           }
         );
-
-        if (!response.ok) {
-          setIsActionLoading(false);
-        }
-
-        setIsActionLoading(false);
-        mutate();
-      } catch (error) {
-        console.error(error);
       }
+      setIsActionLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
 
-      exitEditingMode();
-    };
+    mutate();
+    exitEditingMode(false);
+  };
 
   const table = useMantineReactTable({
     columns,
@@ -332,6 +344,7 @@ export default function RootCauseTable() {
     },
     enableRowActions: true,
     positionActionsColumn: "last",
+    onCreatingRowCancel: () => setName(""),
     renderCreateRowModalContent: ({ table, row, internalEditComponents }) => {
       return (
         <Stack>
@@ -365,20 +378,59 @@ export default function RootCauseTable() {
         </Stack>
       );
     },
-    onEditingRowSave: handleEditCause,
+    onEditingRowCancel: () => {
+      setName("");
+      setActions([]);
+    },
+    // onEditingRowSave: handleEditCause,
     renderEditRowModalContent: ({ table, row, internalEditComponents }) => {
       const regex = /^\d+(\.\d+)*_(name|actions)$/;
       const selectedComponent = internalEditComponents.filter((component) =>
         // @ts-ignore
         regex.test(component?.key as string)
       );
+      const isLastChild = row.original.actions ? true : false;
 
       return (
         <Stack>
           <Title order={3}>Edit {row.original.name}</Title>
-          {selectedComponent}
+          {/* {selectedComponent} */}
+          <TextInput
+            label={`Name`}
+            name={`name`}
+            value={name}
+            onChange={(e) => setName(e.currentTarget.value)}
+            required
+          />
+
+          <TagsInput
+            label="Press Enter to submit a action"
+            placeholder="Enter action"
+            value={actions}
+            onChange={setActions}
+            clearable
+            disabled={!isLastChild}
+          />
+
           <Flex justify="flex-end" mt="xl">
-            <MRT_EditActionButtons variant="text" table={table} row={row} />
+            <Button
+              onClick={() =>
+                handleEditCause(
+                  {
+                    name: name,
+                    actions: actions,
+                    variable_id: row.original.variable_id,
+                    cause_id: row.original.id,
+                    isLastChild: isLastChild,
+                  },
+                  table.setEditingRow
+                )
+              }
+              disabled={!name.trim()}
+              loading={isActionLoading}
+            >
+              Submit
+            </Button>
           </Flex>
         </Stack>
       );
@@ -406,6 +458,9 @@ export default function RootCauseTable() {
         )}
         <Menu.Item
           onClick={() => {
+            const actionsData = row.original.actions?.map((action) => action.name);
+            setActions(actionsData)
+            setName(row.original.name);
             table.setEditingRow(row);
           }}
         >
@@ -648,8 +703,8 @@ export default function RootCauseTable() {
             placeholder="Pick variable"
             key={formParent.key("variableCause")}
             {...formParent.getInputProps("variableCause")}
-            // value={value ? value.value : null}
-            // onChange={(_value, option) => setValue(option)}
+          // value={value ? value.value : null}
+          // onChange={(_value, option) => setValue(option)}
           />
           <div className={`flex justify-end mt-4`}>
             <Button color={`green`} type="submit">
