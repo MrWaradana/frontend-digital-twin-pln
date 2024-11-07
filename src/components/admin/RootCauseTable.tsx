@@ -25,12 +25,14 @@ import {
   Button,
   Flex,
   Input,
+  Menu,
   Modal,
   Select,
   Stack,
   Text,
   TextInput,
   Title,
+  Tooltip,
 } from "@mantine/core";
 import {
   useGetVariableCausesAll,
@@ -86,11 +88,17 @@ export default function RootCauseTable() {
     openedConfirmationDelete,
     { open: openConfirmationDelete, close: closeConfirmationDelete },
   ] = useDisclosure(false);
+  const [
+    openedAddActionModal,
+    { open: openAddActionModal, close: closeAddActionModal },
+  ] = useDisclosure(false);
   const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState("");
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [selectedToDelete, setSelectedToDelete]: any = useState(null);
+  const [selectedToAddAction, setSelectedToAddAction]: any = useState(null);
   const [name, setName] = useState("");
+  const [actionName, setActionName] = useState("");
 
   const { data, isLoading, isValidating, mutate, error } =
     useGetVariableCausesAll(session?.user.access_token);
@@ -126,7 +134,9 @@ export default function RootCauseTable() {
         size: 300,
         Cell: ({ row }) => (
           <Box>
-            <Text>{row.original.name}</Text>
+            <Text className="whitespace-pre-wrap break-words">
+              {row.original.name}
+            </Text>
           </Box>
         ),
       },
@@ -153,8 +163,9 @@ export default function RootCauseTable() {
         },
       },
       {
+        id: "actions",
         accessorFn: (row) => row.actions ?? [],
-        header: "Action",
+        header: "To Do Action",
         Cell: ({ row }) => {
           const actions = row.original.actions
             ?.map((action) => action.name)
@@ -195,6 +206,37 @@ export default function RootCauseTable() {
     }
   };
 
+  const handleAddAction = async (row: any) => {
+    setIsActionLoading(true);
+    const payload = {
+      name: actionName,
+      cause_id: row.original.id,
+    };
+    try {
+      const response = await fetch(
+        `${EFFICIENCY_API_URL}/variables/${row.original.variable_id}/actions`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.access_token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!response.ok) {
+        setIsActionLoading(false);
+      }
+
+      setIsActionLoading(false);
+      closeAddActionModal();
+      mutate();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   //  //DELETE action
   //  const openDeleteConfirmModal = (row: MRT_Row<User>) =>
   //   modals.openConfirmModal({
@@ -210,7 +252,7 @@ export default function RootCauseTable() {
   //     onConfirm: () => deleteUser(row.original.id),
   //   });
 
-  //CREATE action
+  //CREATE children
   const handleCreateChildren = async (values, onClose) => {
     setIsActionLoading(true);
     const payload = {
@@ -242,23 +284,11 @@ export default function RootCauseTable() {
       console.log(error);
     }
   };
-  //Edit Action
-  //CREATE action
+  //Edit data
   const handleEditCause: MRT_TableOptions<VariableCause>["onEditingRowSave"] =
     async ({ values, exitEditingMode, row }) => {
-      // const newValidationErrors = validateMasterData(values);
-
-      // if (Object.values(newValidationErrors).some((error) => error)) {
-      //     setValidationErrors(newValidationErrors);
-      //     setIsActionLoading(false);
-      //     return;
-      // }
-
-      // setValidationErrors({});
-      // await createUser(values);
       console.log(values);
       setIsActionLoading(true);
-      // //Create MasterData
       const payload = {
         name: values.name,
       };
@@ -337,8 +367,8 @@ export default function RootCauseTable() {
     },
     onEditingRowSave: handleEditCause,
     renderEditRowModalContent: ({ table, row, internalEditComponents }) => {
-      const regex = /^\d+(\.\d+)*_name$/;
-      const selectedComponent = internalEditComponents.find((component) =>
+      const regex = /^\d+(\.\d+)*_(name|actions)$/;
+      const selectedComponent = internalEditComponents.filter((component) =>
         // @ts-ignore
         regex.test(component?.key as string)
       );
@@ -353,50 +383,97 @@ export default function RootCauseTable() {
         </Stack>
       );
     },
-    renderRowActions: ({ row }) => {
-      return (
-        <Box className="flex flex-nowrap gap-8">
-          {row.original.actions ? null : (
-            <ActionIcon
-              color="blue"
-              onClick={() => {
-                table.setCreatingRow(row);
-              }}
-            >
-              <IconPlus />
-            </ActionIcon>
-          )}
-          {row.original.children.length > 0 ? null : (
-            <ActionIcon
-              color="green"
-              onClick={() => {
-                // Your onClick handler for the second plus icon
-              }}
-            >
-              <IconPlus />
-            </ActionIcon>
-          )}
-          <ActionIcon
-            color="orange"
+    renderRowActionMenuItems: ({ row }) => (
+      <>
+        {row.original.actions ? null : (
+          <Menu.Item
             onClick={() => {
-              table.setEditingRow(row);
+              table.setCreatingRow(row);
             }}
           >
-            <IconEdit />
-          </ActionIcon>
-          <ActionIcon
-            color="red"
+            Add Children
+          </Menu.Item>
+        )}
+        {row.original.children.length > 0 ? null : (
+          <Menu.Item
             onClick={() => {
-              // handleDelete(row);
-              setSelectedToDelete(row);
-              openConfirmationDelete();
+              setSelectedToAddAction(row);
+              openAddActionModal();
             }}
           >
-            <IconTrash />
-          </ActionIcon>
-        </Box>
-      );
-    },
+            Add Action
+          </Menu.Item>
+        )}
+        <Menu.Item
+          onClick={() => {
+            table.setEditingRow(row);
+          }}
+        >
+          Edit
+        </Menu.Item>
+        <Menu.Item
+          onClick={() => {
+            setSelectedToDelete(row);
+            openConfirmationDelete();
+          }}
+        >
+          Delete
+        </Menu.Item>
+      </>
+    ),
+    // renderRowActions: ({ row }) => {
+    //   return (
+    //     <Box className="flex flex-nowrap gap-8">
+    //       {row.original.actions ? null : (
+    //         <Tooltip label={`Add Children`}>
+    //           <ActionIcon
+    //             color="blue"
+    //             onClick={() => {
+    //               table.setCreatingRow(row);
+    //             }}
+    //           >
+    //             <IconPlus />
+    //           </ActionIcon>
+    //         </Tooltip>
+    //       )}
+    //       {row.original.children.length > 0 ? null : (
+    //         <Tooltip label={`Add Action`}>
+    //           <ActionIcon
+    //             color="green"
+    //             onClick={() => {
+    //               setSelectedToAddAction(row);
+    //               openAddActionModal();
+    //             }}
+    //           >
+    //             <IconPlus />
+    //           </ActionIcon>
+    //         </Tooltip>
+    //       )}
+    //       <Tooltip label={`Edit ${row.original.name}`}>
+    //         <ActionIcon
+    //           color="orange"
+    //           onClick={() => {
+    //             table.setEditingRow(row);
+    //           }}
+    //         >
+    //           <IconEdit />
+    //         </ActionIcon>
+    //       </Tooltip>
+    //       <Tooltip label={`Delete ${row.original.name}`}>
+    //         <ActionIcon
+    //           color="red"
+    //           onClick={() => {
+    //             // handleDelete(row);
+    //             setSelectedToDelete(row);
+    //             openConfirmationDelete();
+    //           }}
+    //         >
+    //           <IconTrash />
+    //         </ActionIcon>
+    //       </Tooltip>
+    //     </Box>
+    //   );
+    // },
     mantineLoadingOverlayProps: {
       loaderProps: {
         type: "dots",
@@ -478,8 +555,47 @@ export default function RootCauseTable() {
     </>
   );
 
+  const createActionModal = (
+    <>
+      <Modal
+        opened={openedAddActionModal}
+        onClose={closeAddActionModal}
+        title={`Add To Do Action`}
+      >
+        <TextInput
+          label={`Name`}
+          name={`name`}
+          value={actionName}
+          onChange={(e) => setActionName(e.currentTarget.value)}
+          required
+        />
+        <div className={`flex justify-end gap-5 mt-6`}>
+          <Button
+            color={`gray`}
+            onClick={() => {
+              closeAddActionModal();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            color={`blue`}
+            disabled={!actionName.trim()}
+            loading={isActionLoading}
+            onClick={() => {
+              handleAddAction(selectedToAddAction);
+            }}
+          >
+            Submit
+          </Button>
+        </div>
+      </Modal>
+    </>
+  );
+
   return (
     <>
+      {createActionModal}
       {deleteConfirmationModal}
       <Modal
         opened={openedParent}
