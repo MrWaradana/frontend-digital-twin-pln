@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm version patch && next build",
+    "build:minor": "npm version minor && next build",
+    "build:major": "npm version major && next build",
     "start": "next start",
     "lint": "next lint"
   },
