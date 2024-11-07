@@ -48,10 +48,12 @@ export default function VariableInputForm({
   excel,
   variables,
   selectedMasterData,
+  coalPrice,
 }: {
   excel: any;
   variables: any;
   selectedMasterData: string;
+  coalPrice: any;
 }) {
   const params = useSearchParams();
   const router = useRouter();
@@ -151,6 +153,7 @@ export default function VariableInputForm({
           input_type: params.get("parameter") ?? "current",
           periodic_start_date: params.get("start_date") ?? null,
           periodic_end_date: params.get("end_date") ?? null,
+          coal_price: coalPrice,
         };
 
         const response = await fetch(

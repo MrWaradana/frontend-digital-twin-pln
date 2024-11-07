@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import VariableBestCaseForm from "@/components/efficiency-app/VariableBestCaseForm";
 import VariableInputForm from "@/components/efficiency-app/VariableInputForm";
 import MasterDataRadioGroup from "@/components/efficiency-app/MasterDataRadioGroup";
 import SelectMasterData from "@/components/efficiency-app/SelectMasterData";
-import { Link, Button, CircularProgress } from "@nextui-org/react";
+import { Link, Button, CircularProgress, Input } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import { formatFilename } from "@/lib/format-text";
 import toast, { Toaster } from "react-hot-toast";
@@ -17,6 +17,7 @@ import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { useGetVariables } from "@/lib/APIs/useGetVariables";
 import { useGetThermoStatus } from "@/lib/APIs/useGetThermoStatus";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useGetMasterData } from "@/lib/APIs/useGetMasterData";
 
 export default function Page() {
   const params = useSearchParams();
@@ -51,7 +52,34 @@ export default function Page() {
     end_date
   );
 
+  const {
+    data: masterData,
+    isLoading: isLoadingMasterData,
+    isValidating: isValidatingMasterData,
+    mutate: mutateMasterData,
+    error: errorMasterData,
+  } = useGetMasterData(session?.user.access_token);
+
+  const formatNumber = (num: number | string) => {
+    // Convert the input number to a string to avoid rounding off decimals
+    const parts = num.toString().split("."); // Use '.' to handle decimals correctly
+    const integerPart = new Intl.NumberFormat("id-ID").format(Number(parts[0]));
+
+    // Return the formatted number with a decimal part if present
+    return parts.length > 1 ? `${integerPart},${parts[1]}` : integerPart;
+  };
+
+  const unformatNumber = (formattedValue: string) => {
+    // Remove thousands separators (commas) and replace decimal commas with periods
+    return formattedValue.replace(/\./g, "").replace(",", ".");
+  };
+
   const variable = variableData ?? [];
+  const coalPriceData = masterData?.find(
+    (item: any) => item.name === "Coal Price"
+  );
+
+  const [coalPrice, setCoalPrice] = useState(`${coalPriceData?.nphr_value}`);
 
   // if (thermoStatusData?.thermo_status ) {
   //   setTimeout(() => router.push("/efficiency-app"), 2000);
@@ -66,6 +94,12 @@ export default function Page() {
   //     </EfficiencyContentLayout>
   //   );
   // }
+
+  useEffect(() => {
+    if (coalPriceData?.nphr_value) {
+      setCoalPrice(`${coalPriceData?.nphr_value}`);
+    }
+  }, [coalPriceData]);
 
   if (isLoading)
     return (
@@ -96,10 +130,25 @@ export default function Page() {
           <ChevronLeftIcon size={12} />
           Back to all
         </Button>
-        <h2 className="mb-4">
+        <h2 className="mb-2">
           Opened <span>Excel {formatFilename(excels[0].excel_filename)}</span>
         </h2>
+        <h2 className="mb-2">
+          Period {start_date} until {end_date} Data
+        </h2>
         <SelectMasterData onMasterDataChange={setSelectedMasterData} />
+        <Input
+          type={`text`}
+          label={`Coal Price`}
+          value={formatNumber(coalPrice)}
+          required
+          startContent={`Rp.`}
+          className={`max-w-xs mt-4`}
+          onChange={(e) => {
+            const unformattedValue = unformatNumber(e.target.value);
+            setCoalPrice(unformattedValue);
+          }}
+        />
         <div className="flex flex-row gap-4 lg:gap-12 items-center justify-center my-4 min-w-3xl mx-auto">
           <div className="hidden lg:block ">
             {/* {JSON.stringify(variableData.data)} */}
@@ -109,6 +158,7 @@ export default function Page() {
             excel={excels}
             variables={variable}
             selectedMasterData={selectedMasterData}
+            coalPrice={coalPrice}
           />
         </div>
       </div>
