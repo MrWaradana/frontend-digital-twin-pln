@@ -133,7 +133,7 @@ export default function Page() {
         <h2 className="mb-2">
           Opened <span>Excel {formatFilename(excels[0].excel_filename)}</span>
         </h2>
-        <h2 className="mb-2">
+        <h2 className={`mb-2 ${start_date && end_date ? "" : "hidden"}`}>
           Period {start_date} until {end_date} Data
         </h2>
         <SelectMasterData onMasterDataChange={setSelectedMasterData} />
@@ -143,6 +143,7 @@ export default function Page() {
           value={formatNumber(coalPrice)}
           required
           startContent={`Rp.`}
+          endContent={`per KG`}
           className={`max-w-xs mt-4`}
           onChange={(e) => {
             const unformattedValue = unformatNumber(e.target.value);

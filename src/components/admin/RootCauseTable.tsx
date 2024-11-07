@@ -301,7 +301,7 @@ export default function RootCauseTable() {
             Authorization: `Bearer ${session?.user.access_token}`,
           },
           body: JSON.stringify({
-            name: values.name
+            name: values.name,
           }),
         }
       );
@@ -410,6 +410,7 @@ export default function RootCauseTable() {
             onChange={setActions}
             clearable
             disabled={!isLastChild}
+            className={!isLastChild ? "hidden" : ""}
           />
 
           <Flex justify="flex-end" mt="xl">
@@ -458,8 +459,10 @@ export default function RootCauseTable() {
         )}
         <Menu.Item
           onClick={() => {
-            const actionsData = row.original.actions?.map((action) => action.name);
-            setActions(actionsData)
+            const actionsData = row.original.actions?.map(
+              (action) => action.name
+            );
+            setActions(actionsData);
             setName(row.original.name);
             table.setEditingRow(row);
           }}
@@ -703,8 +706,8 @@ export default function RootCauseTable() {
             placeholder="Pick variable"
             key={formParent.key("variableCause")}
             {...formParent.getInputProps("variableCause")}
-          // value={value ? value.value : null}
-          // onChange={(_value, option) => setValue(option)}
+            // value={value ? value.value : null}
+            // onChange={(_value, option) => setValue(option)}
           />
           <div className={`flex justify-end mt-4`}>
             <Button color={`green`} type="submit">
