@@ -7,7 +7,8 @@ import { offsetPositive } from "recharts/types/util/ChartUtils";
 import { Smokum } from "next/font/google";
 
 export default function EChartsStackedLine({ chartData }: any) {
-
+  const { theme } = useTheme(); // Detect the current theme
+  const [echartsTheme, setEchartsTheme] = useState("light");
   // const dataChart = [
   //   {
   //     period: "2019",
@@ -67,6 +68,9 @@ export default function EChartsStackedLine({ chartData }: any) {
   //   },
   // ];
 
+  // Check if data is empty or invalid
+  const isDataEmpty = !chartData || chartData.length === 0;
+
   // Extract categories for the x-axis
   // const categories = dataChart.map((item) => item.period);
   const periode = chartData.map((item: any) => item.data.periode);
@@ -81,10 +85,7 @@ export default function EChartsStackedLine({ chartData }: any) {
       });
     });
     return Array.from(categories);
-
   }, [chartData]);
-
-  
 
   const seriesData = listCategories.map((item: any) => {
     return {
@@ -94,7 +95,6 @@ export default function EChartsStackedLine({ chartData }: any) {
       data: chartData.map((pareto) => pareto[item]),
     };
   });
-
 
   console.log(seriesData, "seriesData");
 
@@ -143,7 +143,7 @@ export default function EChartsStackedLine({ chartData }: any) {
   const option = {
     title: {
       text: "Efficiency Trending",
-      offsetPositive: 24,
+      textAlign: "left",
     },
     tooltip: {
       order: "valueDesc",
@@ -151,11 +151,30 @@ export default function EChartsStackedLine({ chartData }: any) {
     },
     legend: {
       type: "scroll",
+      orient: "vertical",
+      align: "auto",
+      right: -4,
+      top: 62,
+      // tooltip: {
+      //   show: true,
+      //   formatter: function (param: any) {
+      //     // Return the full name in tooltip
+      //     return (
+      //       listCategories.find((name: string) =>
+      //         name.startsWith(param.name.slice(0, 3))
+      //       ) || param.name
+      //     );
+      //   },
+      // },
+      formatter: function (name) {
+        // if (name.length > 5) return name.slice(0, 3) + "...";
+        return name;
+      },
       data: listCategories,
     },
     grid: {
       left: "3%",
-      right: "10%",
+      right: "20%",
       bottom: "3%",
       containLabel: true,
     },
@@ -183,11 +202,26 @@ export default function EChartsStackedLine({ chartData }: any) {
         start: 0,
       },
     ],
+    graphic: [
+      {
+        type: "group",
+        left: "center",
+        top: "middle",
+        children: [
+          {
+            type: "text",
+            style: {
+              text: isDataEmpty ? "No data available" : "",
+              font: "14px sans-serif",
+              fill: theme === "dark" ? "#fff" : "#999",
+            },
+            silent: true,
+          },
+        ],
+      },
+    ],
     series: seriesData,
   };
-
-  const { theme } = useTheme(); // Detect the current theme
-  const [echartsTheme, setEchartsTheme] = useState("light");
 
   // Detect when the theme changes and set ECharts theme accordingly
   useEffect(() => {
@@ -205,7 +239,7 @@ export default function EChartsStackedLine({ chartData }: any) {
         <ReactECharts
           option={option}
           theme={echartsTheme} // Apply the theme dynamically
-          className="rounded-md p-4  min-h-[80dvh] "
+          className="rounded-md p-4 min-h-[90dvh] "
         />
       </CardBody>
     </Card>
