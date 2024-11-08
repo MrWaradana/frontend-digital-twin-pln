@@ -57,7 +57,7 @@ export default async function Home() {
     },
     {
       name: "Optimum OH App",
-      url: "/#",
+      url: "/optimum-oh-app",
       icon: <Image src={ohLogo} alt="i-PFI App" width={150} height={150} />,
     },
     {

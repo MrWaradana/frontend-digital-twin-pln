@@ -46,7 +46,7 @@
     "echarts": "^5.5.1",
     "echarts-for-react": "^3.0.2",
     "export-to-csv": "^1.4.0",
-    "framer-motion": "^11.3.28",
+    "framer-motion": "^11.11.11",
     "jspdf-html2canvas": "^1.5.2",
     "lodash": "^4.17.21",
     "lucide-react": "^0.428.0",
