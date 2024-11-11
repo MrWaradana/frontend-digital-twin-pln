@@ -438,7 +438,7 @@ export default function RootCauseTable() {
     },
     renderRowActionMenuItems: ({ row }) => (
       <>
-        {row.original.actions ? null : (
+        {row.original.children && !(row.original.actions.length == 0) ? null : (
           <Menu.Item
             onClick={() => {
               table.setCreatingRow(row);

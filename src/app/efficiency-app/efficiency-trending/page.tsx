@@ -64,7 +64,7 @@ export default function Page() {
                 pareto?.category &&
                 typeof pareto.total_nilai_losses !== "undefined"
               ) {
-                transformedData[pareto.category] = pareto.total_nilai_losses;
+                transformedData[pareto.category] = pareto;
               }
             });
           }

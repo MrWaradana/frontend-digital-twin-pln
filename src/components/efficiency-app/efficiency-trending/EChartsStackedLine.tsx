@@ -9,64 +9,32 @@ import { Smokum } from "next/font/google";
 export default function EChartsStackedLine({ chartData }: any) {
   const { theme } = useTheme(); // Detect the current theme
   const [echartsTheme, setEchartsTheme] = useState("light");
-  // const dataChart = [
-  //   {
-  //     period: "2019",
-  //     Parameter1: 0,
-  //     Parameter2: 0,
-  //     Parameter3: 0,
-  //     Parameter4: 0,
-  //     Parameter5: 0,
-  //   },
-  //   {
-  //     period: "2020",
-  //     Parameter1: 25,
-  //     Parameter2: 15,
-  //     Parameter3: 35,
-  //     Parameter4: 12,
-  //     Parameter5: 55,
-  //   },
-  //   {
-  //     period: "2021",
-  //     Parameter1: 43,
-  //     Parameter2: 53,
-  //     Parameter3: 43,
-  //     Parameter4: 23,
-  //     Parameter5: 63,
-  //   },
-  //   {
-  //     period: "2022",
-  //     Parameter1: 63,
-  //     Parameter2: 73,
-  //     Parameter3: 63,
-  //     Parameter4: 53,
-  //     Parameter5: 83,
-  //   },
-  //   {
-  //     period: "2023",
-  //     Parameter1: 73,
-  //     Parameter2: 73,
-  //     Parameter3: 83,
-  //     Parameter4: 63,
-  //     Parameter5: 93,
-  //   },
-  //   {
-  //     period: "2024",
-  //     Parameter1: 83,
-  //     Parameter2: 96,
-  //     Parameter3: 98,
-  //     Parameter4: 91,
-  //     Parameter5: 97,
-  //   },
-  //   {
-  //     period: "2025",
-  //     Parameter1: 96,
-  //     Parameter2: 98,
-  //     Parameter3: 99,
-  //     Parameter4: 94,
-  //     Parameter5: 99,
-  //   },
-  // ];
+  const [selectedSeries, setSelectedSeries]: any = useState(null);
+  const [selectedCategory, setSelectedCategory]: any = useState(null);
+
+  // Custom color palettes
+  const mainChartColors = [
+    "#5470c6",
+    "#91cc75",
+    "#fac858",
+    "#ee6666",
+    "#73c0de",
+    "#3ba272",
+    "#fc8452",
+    "#9a60b4",
+    "#ea7ccc",
+  ];
+  const modalChartColors = [
+    "#FF6B6B",
+    "#4ECDC4",
+    "#45B7D1",
+    "#96CEB4",
+    "#FFEEAD",
+    "#D4A5A5",
+    "#9B4DCA",
+    "#FFB6B9",
+    "#A8E6CF",
+  ];
 
   // Check if data is empty or invalid
   const isDataEmpty = !chartData || chartData.length === 0;
@@ -87,66 +55,421 @@ export default function EChartsStackedLine({ chartData }: any) {
     return Array.from(categories);
   }, [chartData]);
 
-  const seriesData = listCategories.map((item: any) => {
+  // Enhanced series data with larger line width and area for better clickability
+  const seriesData = listCategories
+    .map((item: any, index) => {
+      return {
+        name: item,
+        type: "line",
+        smooth: true,
+        data: chartData.map((pareto) => pareto[item]),
+        lineStyle: {
+          width: 3, // Thicker line for better visibility
+          color: mainChartColors[index % mainChartColors.length],
+        },
+        itemStyle: {
+          color: mainChartColors[index % mainChartColors.length],
+        },
+        triggerLineEvent: true, // Added this line to enhance line click events
+
+        emphasis: {
+          focus: "series",
+          lineStyle: {
+            width: 4, // Even thicker on hover
+          },
+        },
+        // Add a subtle area below the line to increase clickable area
+        areaStyle: {
+          opacity: 0.1,
+          color: mainChartColors[index % mainChartColors.length],
+        },
+      };
+    })
+    .filter((item: any) => item.name === "total_nilai");
+
+  // Event handler for chart clicks
+  const onChartClick = (params) => {
+    // Get the index of the clicked point
+    const clickedSeriesName = params.seriesName;
+
+    // Prepare data for all categories at this point
+    const allSeriesData = listCategories
+      .map((category) => ({
+        name: category,
+        data: chartData.map((point, index) => ({
+          period: periode[index],
+          value: point[category].total_nilai_losses,
+        })),
+        isClickedSeries: category === clickedSeriesName,
+      }))
+      .filter((item: any) => item.name != "total_nilai");
+
+    setSelectedSeries({
+      clickedName: clickedSeriesName,
+      allSeries: allSeriesData,
+    });
+  };
+
+  const onModalChartClick = (params) => {
+    const categoryName = params.seriesName;
+    const categoryData = chartData.map((point) => {
+      const categoryInfo = point[categoryName];
+      return {
+        period: point.data.periode,
+        total_losses: categoryInfo.total_nilai_losses,
+        breakdown: categoryInfo.data.map((item) => ({
+          name: item.variable.input_name,
+          nilai_losses: item.nilai_losses,
+          symptoms: item.symptoms,
+          existing_data: item.existing_data,
+          reference_data: item.reference_data,
+          gap: item.gap,
+        })),
+      };
+    });
+
+    setSelectedCategory({
+      name: categoryName,
+      data: categoryData,
+    });
+  };
+
+  const onEvents = {
+    click: onChartClick,
+  };
+
+  const onModalEvents = {
+    click: onModalChartClick,
+  };
+
+  const getCategoryChartOptions = (data) => {
+    // Distinct color palette with high contrast
+    const distinctColors = [
+      "#FF3B30", // Red
+      "#007AFF", // Blue
+      "#4CD964", // Green
+      "#FF9500", // Orange
+      "#5856D6", // Purple
+      "#FFD700", // Gold
+      "#FF2D55", // Pink
+      "#00FFFF", // Cyan
+      "#8B4513", // Brown
+      "#FF1493", // Deep Pink
+      "#32CD32", // Lime Green
+      "#4169E1", // Royal Blue
+      "#FF4500", // Orange Red
+      "#9370DB", // Medium Purple
+      "#00FA9A", // Medium Spring Green
+    ];
+
+    // Different line styles for better distinction
+    const lineStyles = [
+      { width: 3, type: "solid" },
+      { width: 3, type: "solid" },
+      { width: 3, type: "solid" },
+      { width: 4, type: "solid" },
+      { width: 4, type: "solid" },
+      { width: 4, type: "solid" },
+      { width: 5, type: "solid" },
+      { width: 5, type: "solid" },
+      { width: 5, type: "solid" },
+    ];
+
+    // Different symbols for data points
+    const symbols = [
+      "circle",
+      "rect",
+      "triangle",
+      "diamond",
+      "pin",
+      "arrow",
+      "none",
+    ];
+
+    const componentNames = new Set();
+    data.data.forEach((point) => {
+      point.breakdown.forEach((component) => {
+        componentNames.add(component.name);
+      });
+    });
+
+    const series = Array.from(componentNames).map((componentName, index) => {
+      const componentData = data.data.map((point) => {
+        const component = point.breakdown.find((c) => c.name === componentName);
+        return {
+          nilai_losses: component ? component.nilai_losses : 0,
+          existing: component ? component.existing_data : 0,
+          reference: component ? component.reference_data : 0,
+          gap: component ? component.gap : 0,
+          symptoms: component ? component.symptoms : "",
+        };
+      });
+
+      return {
+        name: componentName,
+        type: "line",
+        smooth: true,
+        triggerLineEvent: true,
+        yAxisIndex: 0,
+        data: componentData.map((d) => d.nilai_losses),
+        emphasis: {
+          focus: "series",
+          lineStyle: {
+            width: lineStyles[index % lineStyles.length].width + 2,
+          },
+        },
+        lineStyle: {
+          ...lineStyles[index % lineStyles.length],
+          color: distinctColors[index % distinctColors.length],
+        },
+        itemStyle: {
+          color: distinctColors[index % distinctColors.length],
+        },
+        symbol: symbols[index % symbols.length],
+        symbolSize: 8,
+        showSymbol: true,
+        // areaStyle: {
+        //   opacity: 0.00002,
+        //   color: distinctColors[index % distinctColors.length],
+        // },
+        tooltip: {
+          formatter: (params) => {
+            const dataPoint = componentData[params.dataIndex];
+            return `
+              <div style="font-weight: bold; margin-bottom: 4px; color: ${
+                distinctColors[index % distinctColors.length]
+              }">
+                ${params.seriesName}
+              </div>
+              <div style="margin: 4px 0">
+                Heat Loss: ${params.value.toFixed(2)} kCal/kWh
+              </div>
+              <div style="margin: 4px 0">
+                Existing: ${dataPoint.existing.toFixed(2)}
+              </div>
+              <div style="margin: 4px 0">
+                Reference: ${dataPoint.reference.toFixed(2)}
+              </div>
+              <div style="margin: 4px 0">
+                Gap: ${dataPoint.gap.toFixed(2)}
+              </div>
+              <div style="margin: 4px 0">
+                Symptoms: ${dataPoint.symptoms}
+              </div>
+            `;
+          },
+        },
+      };
+    });
+
+    // Calculate min/max values for y-axis
+    let minValue = Infinity;
+    let maxValue = -Infinity;
+
+    series.forEach((s) => {
+      const values = s.data;
+      const seriesMin = Math.min(...values);
+      const seriesMax = Math.max(...values);
+      minValue = Math.min(minValue, seriesMin);
+      maxValue = Math.max(maxValue, seriesMax);
+    });
+
+    const padding = (maxValue - minValue) * 0.1;
+    minValue = Math.floor(minValue - padding);
+    maxValue = Math.ceil(maxValue + padding);
+
     return {
-      name: item,
+      title: {
+        text: `${data.name} - Component Breakdown`,
+        left: "center",
+        top: 0,
+      },
+      tooltip: {
+        trigger: "axis",
+        axisPointer: {
+          type: "cross",
+        },
+        backgroundColor: "rgba(255, 255, 255, 0.95)",
+        borderColor: "#ccc",
+        borderWidth: 1,
+        textStyle: {
+          color: "#333",
+        },
+        padding: 10,
+      },
+      legend: {
+        type: "scroll",
+        orient: "horizontal",
+        bottom: 0,
+        data: Array.from(componentNames),
+        textStyle: {
+          fontSize: 12,
+        },
+        selectedMode: true,
+        selector: [
+          { type: "all", title: "All" },
+          { type: "inverse", title: "Inverse" },
+        ],
+      },
+      grid: {
+        left: "3%",
+        right: "4%",
+        bottom: "15%",
+        containLabel: true,
+      },
+      xAxis: {
+        type: "category",
+        data: data.data.map((point) => point.period),
+        axisLabel: {
+          rotate: 45,
+          interval: 0,
+        },
+      },
+      yAxis: {
+        type: "value",
+        name: "Heat Loss (kCal/kWh)",
+        min: minValue,
+        max: maxValue,
+        scale: true,
+        splitLine: {
+          lineStyle: {
+            type: "dashed",
+          },
+        },
+      },
+      dataZoom: [
+        {
+          type: "inside",
+          bottom: 46,
+          start: 0,
+          end: 100,
+        },
+        {
+          bottom: 46,
+          start: 0,
+          end: 100,
+        },
+      ],
+      toolbox: {
+        feature: {
+          dataZoom: {
+            yAxisIndex: "none",
+          },
+          restore: {},
+          saveAsImage: {},
+        },
+      },
+      series,
+    };
+  };
+
+  // Modal chart options
+  const getModalChartOptions = (data) => {
+    // Create series for each category
+    const modalSeries = data.allSeries.map((series: any, index) => ({
+      name: series.name,
       type: "line",
       smooth: true,
-      data: chartData.map((pareto) => pareto[item]),
+      triggerLineEvent: true,
+      data: series.data.map((item) => item.value),
+      lineStyle: {
+        width: series.isClickedSeries ? 4 : 2,
+        // type: series.isClickedSeries ? "solid" : "dashed",
+        type: "solid",
+        color: modalChartColors[index % modalChartColors.length],
+      },
+      itemStyle: {
+        color: modalChartColors[index % modalChartColors.length],
+      },
+      emphasis: {
+        focus: "series",
+        lineStyle: {
+          width: 4,
+        },
+      },
+      markPoint: series.isClickedSeries
+        ? {
+            data: [
+              { type: "max", name: "Maximum" },
+              { type: "min", name: "Minimum" },
+            ],
+          }
+        : undefined,
+      markLine: series.isClickedSeries
+        ? {
+            data: [{ type: "average", name: "Average" }],
+          }
+        : undefined,
+      areaStyle: {
+        opacity: 0.1,
+        color: modalChartColors[index % modalChartColors.length],
+      },
+    }));
+
+    return {
+      title: {
+        text: `Nilai Heat Loss per Category`,
+        left: "center",
+      },
+      tooltip: {
+        trigger: "axis",
+        axisPointer: {
+          type: "cross",
+        },
+      },
+      legend: {
+        type: "scroll",
+        bottom: 0,
+        size: 12,
+        data: data.allSeries.map((series) => series.name),
+      },
+      toolbox: {
+        feature: {
+          dataZoom: {
+            yAxisIndex: "none",
+          },
+          restore: {},
+          saveAsImage: {},
+        },
+      },
+      grid: {
+        left: "3%",
+        right: "8%",
+        bottom: "12%",
+        containLabel: true,
+      },
+      xAxis: {
+        type: "category",
+        name: "Period",
+        boundaryGap: false,
+        data: data.allSeries[0].data.map((item) => item.period),
+      },
+      yAxis: {
+        type: "value",
+        name: "Nilai Heat Loss",
+      },
+      series: modalSeries,
+      dataZoom: [
+        {
+          type: "inside",
+          bottom: 32,
+          start: 0,
+        },
+        {
+          bottom: 32,
+          start: 0,
+        },
+      ],
     };
-  });
+  };
 
-  console.log(seriesData, "seriesData");
-
-  // console.log("seriesData", seriesData);
-
-  // Extract series data for each parameter
-  // const series = [
-  //   {
-  //     name: "Parameter1",
-  //     type: "line",
-  //     // stack: "Total",
-  //     smooth: true,
-  //     data: dataChart.map((item) => item.Parameter1),
-  //   },
-  //   {
-  //     name: "Parameter2",
-  //     type: "line",
-  //     // stack: "Total",
-  //     smooth: true,
-  //     data: dataChart.map((item) => item.Parameter2),
-  //   },
-  //   {
-  //     name: "Parameter3",
-  //     type: "line",
-  //     // stack: "Total",
-  //     smooth: true,
-  //     data: dataChart.map((item) => item.Parameter3),
-  //   },
-  //   {
-  //     name: "Parameter4",
-  //     type: "line",
-  //     // stack: "Total",
-  //     smooth: true,
-  //     data: dataChart.map((item) => item.Parameter4),
-  //   },
-  //   {
-  //     name: "Parameter5",
-  //     type: "line",
-  //     // stack: "Total",
-  //     smooth: true,
-  //     data: dataChart.map((item) => item.Parameter5),
-  //   },
-  // ];
-
-  // ECharts option
+  // Main chart options
   const option = {
     title: {
       text: "Efficiency Trending",
       textAlign: "left",
     },
     tooltip: {
-      order: "valueDesc",
       trigger: "axis",
     },
     legend: {
@@ -155,26 +478,14 @@ export default function EChartsStackedLine({ chartData }: any) {
       align: "auto",
       right: -4,
       top: 62,
-      // tooltip: {
-      //   show: true,
-      //   formatter: function (param: any) {
-      //     // Return the full name in tooltip
-      //     return (
-      //       listCategories.find((name: string) =>
-      //         name.startsWith(param.name.slice(0, 3))
-      //       ) || param.name
-      //     );
-      //   },
-      // },
       formatter: function (name) {
-        // if (name.length > 5) return name.slice(0, 3) + "...";
         return name;
       },
       data: listCategories,
     },
     grid: {
       left: "3%",
-      right: "20%",
+      right: "5%",
       bottom: "3%",
       containLabel: true,
     },
@@ -238,9 +549,95 @@ export default function EChartsStackedLine({ chartData }: any) {
       <CardBody>
         <ReactECharts
           option={option}
-          theme={echartsTheme} // Apply the theme dynamically
-          className="rounded-md p-4 min-h-[90dvh] "
+          theme={echartsTheme}
+          className="rounded-md p-4 min-h-[90dvh]"
+          onEvents={onEvents}
         />
+
+        {selectedSeries && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setSelectedSeries(null)}
+          >
+            <div
+              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-[80vw] max-w-4xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold">
+                  Detailed Analysis: {selectedSeries.name}
+                </h3>
+                <button
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  onClick={() => setSelectedSeries(null)}
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+
+              <div className="h-[60vh]">
+                <ReactECharts
+                  option={getModalChartOptions(selectedSeries)}
+                  theme={echartsTheme}
+                  style={{ height: "100%", width: "100%" }}
+                  onEvents={onModalEvents}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {selectedCategory && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]"
+            onClick={() => setSelectedCategory(null)}
+          >
+            <div
+              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-[90vw] max-w-6xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold">
+                  {selectedCategory.name} - Component Analysis
+                </h3>
+                <button
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  onClick={() => setSelectedCategory(null)}
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+
+              <div className="h-[70vh]">
+                <ReactECharts
+                  option={getCategoryChartOptions(selectedCategory)}
+                  theme={echartsTheme}
+                  style={{ height: "100%", width: "100%" }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </CardBody>
     </Card>
   );
