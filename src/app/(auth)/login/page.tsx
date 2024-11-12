@@ -13,7 +13,7 @@ import { useState, useEffect, useRef } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
-import PlnLogo from "../../../../public/Logo_PLN.svg";
+import PlnLogo from "../../../../public/Logo_PLN.png";
 import BGLogin from "../../../../public/bg-login.jpg";
 import { useSession } from "next-auth/react";
 import useCaptcha from "use-offline-captcha";
@@ -58,10 +58,10 @@ export default function Component() {
     type: "mixed", // "mixed"(default) | "numeric" | "alpha"
     length: 5, // 4 to 8 number. default is 5
     sensitive: true, // Case sensitivity. default is false
-    width: 200, // Canvas width. default is 200
+    width: 300, // Canvas width. default is 200
     height: 50, // Canvas height. default is 50
-    fontColor: "#000",
-    background: "rgba(255, 255, 255, .2)",
+    fontColor: "rgba(255, 255, 255, .9)",
+    background: "#000",
   };
 
   const bgImages = [BGLogin, bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8];
@@ -143,9 +143,9 @@ export default function Component() {
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-3 min-h-[100dvh]">
+      <div className="grid grid-cols-1 min-h-[100dvh] relative">
         <Toaster />
-        <div className={`col-span-2 h-full relative hidden lg:block`}>
+        <div className={`h-full relative`}>
           <Swiper
             spaceBetween={0}
             centeredSlides={true}
@@ -156,10 +156,11 @@ export default function Component() {
             }}
             pagination={{
               clickable: true,
+              type: "bullets",
             }}
             navigation={false}
             modules={[Autoplay, Pagination, Navigation]}
-            className={`mySwiper h-full`}
+            className={`custom-swiper w-full h-full`}
           >
             {bgImages.map((item, index) => {
               return (
@@ -173,108 +174,127 @@ export default function Component() {
                 </SwiperSlide>
               );
             })}
+            <style jsx global>{`
+              .custom-swiper .swiper-pagination-bullet {
+                width: 40px;
+                height: 4px;
+                border-radius: 0;
+                background: white;
+                opacity: 0.5;
+                transition: all 0.3s ease;
+              }
+
+              .custom-swiper .swiper-pagination-bullet-active {
+                background: #ffd700;
+                opacity: 1;
+              }
+            `}</style>
           </Swiper>
         </div>
-        <div className="mx-auto w-full max-w-md space-y-6 py-4">
+        <div className="w-full max-w-md space-y-2 py-4 absolute m-auto left-0 right-0 z-10 flex flex-col justify-center items-center">
           <div className="space-y-2 text-center items-center flex flex-col gap-4">
             <Image
               src={PlnLogo}
               alt="Logo PLN"
-              width={240}
-              className={`bg-white p-2 rounded-sm`}
+              width={80}
+              className={`p-2 rounded-sm`}
             />
-            {/* <div className="inline-block rounded-lg bg-primary px-3 py-1 text-sm font-medium text-primary-foreground">
-            Digital Twin Dashboard
-          </div> */}
-            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-              Sign in to your account
-            </h1>
-            {/* <p className="text-muted-foreground">Enter your credentials to access the PLN performance dashboard.</p> */}
           </div>
-          <form
-            ref={formRef}
-            className="space-y-4 flex flex-col justify-center items-center"
-            onSubmit={handleSubmit}
-          >
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                name="username"
-                placeholder="Enter your username"
-                onChange={handleChange}
-                required
-                value={credentials.username}
-                className={`rounded-sm w-72`}
-              />
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
+          <div className="bg-white/80 backdrop-blue-xl rounded-xl py-8 px-10">
+            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl text-center mb-8">
+              Welcome to Digital Twin!
+            </h1>
+            <form
+              ref={formRef}
+              className="space-y-4 flex flex-col justify-center items-center"
+              onSubmit={handleSubmit}
+            >
+              <div className="space-y-2">
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  name="username"
+                  placeholder="Enter your username"
+                  onChange={handleChange}
+                  required
+                  value={credentials.username}
+                  className={`rounded-sm w-72 lg:w-96`}
+                />
               </div>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Enter your password"
-                required
-                onPaste={() => preventPaste}
-                onChange={handleChange}
-                value={credentials.password}
-                className={`rounded-none w-72`}
-              />
-            </div>
-            {/* <div className="flex items-center">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Password</Label>
+                </div>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  required
+                  onPaste={() => preventPaste}
+                  onChange={handleChange}
+                  value={credentials.password}
+                  className={`rounded-none w-72 lg:w-96`}
+                />
+              </div>
+              {/* <div className="flex items-center">
             <Label htmlFor="remember" className="ml-2 text-sm font-medium">
               Remember me
             </Label>
           </div> */}
 
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-col gap-3 items-start justify-center">
-                <div>
-                  <p className="text-xs">Captcha</p>
-                  {/* @ts-ignore */}
-                  <div ref={captchaRef} className="min-w-xs" />
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1 items-start justify-center">
+                  <div
+                    className={`flex flex-row justify-between items-center w-full`}
+                  >
+                    <p className="text-xs">Captcha</p>
+                    <Button
+                      onClick={handleRefresh}
+                      color="secondary"
+                      size="sm"
+                      className={`rounded-xl max-w-sm text-blue-500 bg-transparent hover:underline p-0`}
+                    >
+                      Refresh Captcha
+                    </Button>
+                  </div>
+                  <div className="w-full bg-transparent flex justify-center items-center">
+                    {/* @ts-ignore */}
+                    <div ref={captchaRef} className="min-w-full" />
+                  </div>
                 </div>
-                <Button
-                  onClick={handleRefresh}
-                  color="secondary"
-                  size="sm"
-                  className={`rounded-sm w-full`}
-                >
-                  Refresh Captcha
-                </Button>
+                <p className="text-xs">
+                  Fill the captcha above before sign in!
+                </p>
+                <Input
+                  onChange={(e) => setValue(e.target.value)}
+                  value={captchaValue}
+                  isDisabled={isCaptchaValidated}
+                  maxLength={5}
+                  placeholder="Enter the captcha"
+                  className={`rounded-xl w-72 lg:w-96`}
+                  // endContent={
+                  //   <>
+                  //     <Button onClick={handleValidate} color="success" size="sm">
+                  //       Validate
+                  //     </Button>
+                  //   </>
+                  // }
+                />
               </div>
-              <p className="text-xs">Fill the captcha above before sign in!</p>
-              <Input
-                onChange={(e) => setValue(e.target.value)}
-                value={captchaValue}
-                isDisabled={isCaptchaValidated}
-                maxLength={5}
-                className={`rounded-sm w-72`}
-                // endContent={
-                //   <>
-                //     <Button onClick={handleValidate} color="success" size="sm">
-                //       Validate
-                //     </Button>
-                //   </>
-                // }
-              />
-            </div>
-            <Button
-              type="button"
-              onClick={handleValidate}
-              className="w-72 rounded-sm"
-              color="primary"
-              disabled={isLoading || mistakeCount > 3 ? true : false}
-              isLoading={isLoading}
-              onKeyDown={handleValidate}
-            >
-              Sign in
-            </Button>
-            <h1 className={`text-3xl font-bold`}>Digital Twin</h1>
-          </form>
+              <Button
+                type="button"
+                onClick={handleValidate}
+                className="w-72 lg:w-96 rounded-xl bg-black text-white"
+                color="primary"
+                disabled={isLoading || mistakeCount > 3 ? true : false}
+                isLoading={isLoading}
+                onKeyDown={handleValidate}
+              >
+                Sign in
+              </Button>
+            </form>
+          </div>
         </div>
       </div>
     </>
