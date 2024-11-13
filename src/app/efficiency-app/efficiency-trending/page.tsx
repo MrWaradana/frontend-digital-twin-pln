@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
-import { DateRangePicker, Spinner } from "@nextui-org/react";
+import { Button, DateRangePicker, Spinner } from "@nextui-org/react";
 import { getLocalTimeZone, today, parseDate } from "@internationalized/date";
 import { DateValue } from "@react-types/datepicker";
 import { RangeValue } from "@react-types/shared";
@@ -12,6 +12,7 @@ import { useSession } from "next-auth/react";
 import DateShortcutPicker from "@/components/efficiency-app/efficiency-trending/DateShortcutPicker";
 
 export default function Page() {
+  const [selectedSeries, setSelectedSeries]: any = useState(null);
   const [periodValue, setPeriodValue] = useState<RangeValue<DateValue>>({
     start: parseDate("2024-09-18"),
     end: today(getLocalTimeZone()),
@@ -78,6 +79,45 @@ export default function Page() {
       .filter(Boolean); // Remove any null entries from failed transformations
   }, [paretoTrendingData, isLoadingParetoTrending]);
 
+  const listCategories = useMemo(() => {
+    const categories = new Set<string>();
+    paretoTrendingChart.forEach((pareto: any) => {
+      Object.keys(pareto).forEach((key) => {
+        if (key !== "data") {
+          categories.add(key);
+        }
+      });
+    });
+    return Array.from(categories);
+  }, [paretoTrendingChart]);
+
+  // Extract categories for the x-axis
+  // const categories = dataChart.map((item) => item.period);
+  const periode = paretoTrendingChart.map((item: any) => item.data.periode);
+
+  // Event handler for button detailed analysis clicks
+  const onDetailedAnalysisClicked = () => {
+    // Get the index of the clicked point
+    const clickedSeriesName = "Total Nilai Heatloss";
+
+    // Prepare data for all categories at this point
+    const allSeriesData = listCategories
+      .map((category) => ({
+        name: category,
+        data: paretoTrendingChart.map((point: any, index: any) => ({
+          period: periode[index],
+          value: point[category].total_nilai_losses,
+        })),
+        isClickedSeries: category === clickedSeriesName,
+      }))
+      .filter((item: any) => item.name != "total_nilai");
+
+    setSelectedSeries({
+      clickedName: clickedSeriesName,
+      allSeries: allSeriesData,
+    });
+  };
+
   // Handler for shortcut selection
   const handleShortcutSelect = (interval: {
     unit: "days" | "months";
@@ -132,6 +172,15 @@ export default function Page() {
             value={periodValue}
             size="sm"
           />
+          <Button
+            color={`primary`}
+            variant={`solid`}
+            size={`sm`}
+            className="w-full"
+            onClick={onDetailedAnalysisClicked}
+          >
+            Open Detailed per Category
+          </Button>
         </div>
 
         {isLoadingParetoTrending || isValidating ? (
@@ -140,7 +189,11 @@ export default function Page() {
           </div>
         ) : (
           <div className={`w-full h-full`}>
-            <EChartsStackedLine chartData={paretoTrendingChart} />
+            <EChartsStackedLine
+              chartData={paretoTrendingChart}
+              selectedSeries={selectedSeries}
+              setSelectedSeries={setSelectedSeries}
+            />
           </div>
         )}
       </section>

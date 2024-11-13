@@ -37,11 +37,13 @@ export function useGetDataPareto(
   token: string | undefined,
   data_id: string | undefined,
   thresholdValue: string | number | null,
-  potential_timeframe: string | number | null,
+  potential_timeframe?: string | number | null,
   commision_id?: string | null
 ): HookReply<ParetoResultDataList> {
   return useApiFetch(
-    `${EFFICIENCY_API_URL}/data/${data_id}/pareto?percent_threshold=${thresholdValue}${
+    `${EFFICIENCY_API_URL}/data/${
+      data_id ? `${data_id}` : `new`
+    }/pareto?percent_threshold=${thresholdValue}${
       commision_id ? `&commision_id=${commision_id}` : ""
     }${
       potential_timeframe ? `&potential_timeframe=${potential_timeframe}` : ``

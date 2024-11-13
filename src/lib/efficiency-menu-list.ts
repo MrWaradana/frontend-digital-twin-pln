@@ -5,6 +5,7 @@ import {
   ChartCandlestick,
   DiamondPlus,
   Gauge,
+  Factory,
   ChartNetwork,
   CircleDollarSign,
 } from "lucide-react";
@@ -48,8 +49,15 @@ export function getMenuList(pathname: string): Group[] {
       menus: [
         {
           href: "/efficiency-app",
-          label: "All Efficiency Data",
+          label: "Engine Flow",
           active: pathname === "/efficiency-app" ? true : false,
+          icon: Factory,
+          submenus: [],
+        },
+        {
+          href: "/efficiency-app/all-data",
+          label: "All Efficiency Data",
+          active: pathname === "/efficiency-app/all-data" ? true : false,
           icon: DiamondPlus,
           submenus: [],
         },

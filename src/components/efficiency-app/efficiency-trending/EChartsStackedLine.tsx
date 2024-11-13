@@ -1,16 +1,36 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactECharts from "echarts-for-react";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import { useTheme } from "next-themes";
 import { offsetPositive } from "recharts/types/util/ChartUtils";
 import { Smokum } from "next/font/google";
+import MultipleLineChart from "@/components/efficiency-app/nett-plant-heat-rate/MultipleLineChart";
+import { useGetDataNPHR } from "@/lib/APIs/useGetDataNPHR";
+import { useSession } from "next-auth/react";
 
-export default function EChartsStackedLine({ chartData }: any) {
+export default function EChartsStackedLine({
+  chartData,
+  selectedSeries,
+  setSelectedSeries,
+}: any) {
+  const { data: session } = useSession();
   const { theme } = useTheme(); // Detect the current theme
   const [echartsTheme, setEchartsTheme] = useState("light");
-  const [selectedSeries, setSelectedSeries]: any = useState(null);
+  const [dataId, setDataId] = useState("");
+  const [selectedPareto, setSelectedPareto] = useState(false);
+
   const [selectedCategory, setSelectedCategory]: any = useState(null);
+
+  const {
+    data,
+    mutate,
+    isLoading: isLoadingNPHR,
+    isValidating,
+    error,
+  } = useGetDataNPHR(session?.user.access_token, dataId);
+
+  console.log(selectedSeries, "selected series");
 
   // Custom color palettes
   const mainChartColors = [
@@ -87,6 +107,58 @@ export default function EChartsStackedLine({ chartData }: any) {
     })
     .filter((item: any) => item.name === "total_nilai");
 
+  const summaryData = data ?? [];
+  const paretoData: any = data?.pareto_result ?? [];
+  const chartParetoData = data?.chart_result ?? [];
+  const chartDataRef = useRef<any | null>(null);
+
+  const chartParetoDataWithCumFeq = useMemo(() => {
+    const mapped_data = chartParetoData
+      .map((item: any, index: number) => {
+        const cum_frequency = chartParetoData
+          .slice(0, index + 1) // Get all previous items up to the current index
+          .reduce(
+            (acc: any, current: { total_persen_losses: any }) =>
+              acc + current.total_persen_losses,
+            0
+          ); // Accumulate total_persen_losses
+        return {
+          ...item, // Spread the original item
+          cum_frequency, // Add the accumulated frequency
+        };
+      })
+      // .filter((item: any) => item.cum_frequency <= 300 && );
+      .filter((item: any) => item.category);
+
+    // console.log(mapped_data, "mapped chart data");
+    //   return mapped_data;
+    // }, [tableData]);
+
+    // Ensure that chartDataRef is always updated correctly
+    if (!chartDataRef.current) {
+      chartDataRef.current = mapped_data;
+    } else if (chartDataRef.current.length === mapped_data.length) {
+      // Preserve array length and only update necessary fields
+      chartDataRef.current = chartDataRef.current.map(
+        (item: any, index: number) => ({
+          ...item,
+          total_persen_losses: mapped_data[index].total_persen_losses,
+          total_nilai_losses: mapped_data[index].total_nilai_losses,
+          cum_frequency: mapped_data[index].cum_frequency,
+        })
+      );
+    } else {
+      // In case of mismatch, reset chartDataRef to match the mapped_data
+      chartDataRef.current = mapped_data;
+    }
+
+    // if (chartDataRef.current != null && mapped_data.length > 0) {
+    //   chartDataRef.current = mapped_data;
+    // }
+
+    return chartDataRef.current;
+  }, [chartParetoData]);
+
   // Event handler for chart clicks
   const onChartClick = (params) => {
     // Get the index of the clicked point
@@ -104,10 +176,11 @@ export default function EChartsStackedLine({ chartData }: any) {
       }))
       .filter((item: any) => item.name != "total_nilai");
 
-    setSelectedSeries({
-      clickedName: clickedSeriesName,
-      allSeries: allSeriesData,
-    });
+    setSelectedPareto(true);
+    // setSelectedSeries({
+    //   clickedName: clickedSeriesName,
+    //   allSeries: allSeriesData,
+    // });
   };
 
   const onModalChartClick = (params) => {
@@ -560,13 +633,13 @@ export default function EChartsStackedLine({ chartData }: any) {
             onClick={() => setSelectedSeries(null)}
           >
             <div
-              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-[80vw] max-w-4xl"
+              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-[90vw] max-w-5xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-semibold">
-                  Detailed Analysis: {selectedSeries.name}
-                </h3>
+              <div className="flex justify-end items-center mb-4">
+                {/* <h3 className="text-xl font-semibold">
+                  Detailed Analysis: {selectedSeries.clickedName}
+                </h3> */}
                 <button
                   className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                   onClick={() => setSelectedSeries(null)}
@@ -584,14 +657,64 @@ export default function EChartsStackedLine({ chartData }: any) {
                   </svg>
                 </button>
               </div>
+              <div
+                className="relative w-full"
+                style={{ height: "calc(70vh - 4rem)" }}
+              >
+                <div className="absolute inset-0">
+                  <ReactECharts
+                    option={getModalChartOptions(selectedSeries)}
+                    theme={echartsTheme}
+                    style={{ height: "100%", width: "100%" }}
+                    onEvents={onModalEvents}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
-              <div className="h-[60vh]">
-                <ReactECharts
-                  option={getModalChartOptions(selectedSeries)}
-                  theme={echartsTheme}
-                  style={{ height: "100%", width: "100%" }}
-                  onEvents={onModalEvents}
-                />
+        {selectedPareto && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setSelectedPareto(false)}
+          >
+            <div
+              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-[90vw] max-w-5xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-end items-center mb-4">
+                {/* <h3 className="text-xl font-semibold">
+                  Detailed Analysis: {selectedSeries.clickedName}
+                </h3> */}
+                <button
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  onClick={() => setSelectedPareto(false)}
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+              <div
+                className="relative w-full"
+                style={{ height: "calc(70vh - 4rem)" }}
+              >
+                <div className="absolute inset-0">
+                  <MultipleLineChart
+                    data={chartParetoDataWithCumFeq}
+                    summaryData={summaryData}
+                    paretoData={paretoData}
+                  />
+                </div>
               </div>
             </div>
           </div>
