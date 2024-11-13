@@ -111,10 +111,10 @@ export default function Page() {
         <Image
           src={BGImage}
           alt="background image"
-          className="w-[60vw] absolute right-0 h-full"
+          className="w-[100vw] absolute right-0 h-full"
         />
       </div>
-      <div className="absolute top-16 w-full max-h-[100dvh] flex flex-col justify-center items-start pt-12 px-12">
+      <div className="absolute top-36 w-full left-12 hover:-translate-y-1 transition ease-soft-spring flex flex-col justify-center items-start pt-12 px-12 bg-blue-300/20 rounded-xl pb-12 pr-12 backdrop-blur-xl max-w-[85dvh]">
         <motion.a
           href="/"
           className="text-base cursor-pointer hover:underline text-blue-500 font-bold mb-6"
@@ -125,15 +125,22 @@ export default function Page() {
         <motion.h1 className="text-4xl font-bold mb-2" {...ANIMATIONS.title}>
           Optimum OH App
         </motion.h1>
-        <motion.p className="text-base w-[540px] mb-6" {...ANIMATIONS.title}>
+        <motion.p className="text-base w-[500px] mb-6" {...ANIMATIONS.title}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
           aliquip ex ea commodo consequat.
         </motion.p>
 
-        <section className={`grid grid-cols-1 lg:grid-cols-3 gap-8`}>
-          {links.map((item, index) => {
+        <section className={`min-w-full`}>
+          <a
+            key={`linkdashboard`}
+            href={`#`}
+            className="px-8 py-2 inline-flex justify-center items-center rounded-3xl backdrop-blur-lg text-xl font-semibold bg-white hover:bg-blue-400 hover:text-white transition ease duration-300"
+          >
+            Go to Dashboard!
+          </a>
+          {/* {links.map((item, index) => {
             return (
               <a
                 key={item.name}
@@ -143,7 +150,7 @@ export default function Page() {
                 {item.name}
               </a>
             );
-          })}
+          })} */}
         </section>
       </div>
     </div>
