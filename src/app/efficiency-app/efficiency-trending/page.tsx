@@ -6,12 +6,21 @@ import { Button, DateRangePicker, Spinner } from "@nextui-org/react";
 import { getLocalTimeZone, today, parseDate } from "@internationalized/date";
 import { DateValue } from "@react-types/datepicker";
 import { RangeValue } from "@react-types/shared";
-import EChartsStackedLine from "@/components/efficiency-app/efficiency-trending/EChartsStackedLine";
+// import EChartsStackedLine from "@/components/efficiency-app/efficiency-trending/EChartsStackedLine";
 import { useGetDataParetoTrending } from "@/lib/APIs/useGetDataParetoTrending";
 import { useSession } from "next-auth/react";
 import DateShortcutPicker from "@/components/efficiency-app/efficiency-trending/DateShortcutPicker";
+import dynamic from "next/dynamic";
 
-export default function Page() {
+const EChartsStackedLine = dynamic(
+  () =>
+    import(
+      "@/components/efficiency-app/efficiency-trending/EChartsStackedLine"
+    ),
+  { ssr: false }
+);
+
+export default function EfficiencyTrending() {
   const [selectedSeries, setSelectedSeries]: any = useState(null);
   const [periodValue, setPeriodValue] = useState<RangeValue<DateValue>>({
     start: parseDate("2024-09-18"),
