@@ -55,6 +55,13 @@ export function getMenuList(pathname: string): Group[] {
           icon: Briefcase,
           submenus: [],
         },
+        {
+          href: "/pfi-app/tags",
+          label: "Tags Lists",
+          active: pathname === "/pfi-app/tags" ? true : false,
+          icon: Briefcase,
+          submenus: [],
+        },
       ],
     },
   ];

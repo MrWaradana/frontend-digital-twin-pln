@@ -9,9 +9,12 @@ interface ContentLayoutProps {
 export function PFIContentLayout({ title, children }: ContentLayoutProps) {
   return (
     <div>
-      <Toaster />
       <Navbar title={title} />
-      <div className="container pt-8 pb-8 px-4 sm:px-8">{children}</div>
+      <div className="container mx-auto sm:px-8">
+        <Toaster />
+
+        {/* {children} */}
+      </div>
     </div>
   );
 }

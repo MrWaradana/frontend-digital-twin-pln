@@ -79,7 +79,7 @@ const Page = () => {
     );
 
   return (
-    <PFIContentLayout title="Intelligent P-F Interval Analytics">
+    <PFIContentLayout title="i-PFI App">
       <div className="container mx-auto">
         <div className="text-wrap">
           <h1 className="text-3xl font-bold text-gray-800">TJB 3 Power Plant Systems</h1>

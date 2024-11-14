@@ -40,6 +40,8 @@ export function Menu({ isListOpen }: MenuProps) {
   const pathname = usePathname()
   const menuList = getMenuList(pathname)
 
+  console.log(menuList)
+
   return (
     <>
       {' '}
@@ -79,7 +81,7 @@ export function Menu({ isListOpen }: MenuProps) {
         </ModalContent>
       </Modal>
       <ScrollArea className="[&>div>div[style]]:!block">
-        <nav className="mt-8 h-full w-full">
+        <nav className="mt-8 h-full w-full ml-5">
           <ul className="flex flex-col min-h-[calc(100vh-48px-36px-16px-32px)] lg:min-h-[calc(100vh-32px-40px-32px)] items-start space-y-1 px-2">
             {menuList.map(({ groupLabel, menus }, index) => (
               <li
@@ -94,7 +96,7 @@ export function Menu({ isListOpen }: MenuProps) {
                   <TooltipProvider>
                     <Tooltip delayDuration={100}>
                       <TooltipTrigger className="w-full">
-                        <div className="w-full flex justify-center items-center">
+                        <div className="w-full flex justify-start items-start pl-2">
                           <Ellipsis className="h-5 w-5" />
                         </div>
                       </TooltipTrigger>
@@ -114,21 +116,17 @@ export function Menu({ isListOpen }: MenuProps) {
                           <Tooltip delayDuration={100}>
                             <TooltipTrigger asChild>
                               <Button
-                                variant={active ? 'secondary' : 'ghost'}
-                                className="w-full justify-start h-10 mb-1"
+                                variant="ghost"
+                                className={`w-10 pl-2 justify-start h-10 mb-1 ${active ? 'rounded-full bg-white' : ''}`}
                                 asChild
                               >
                                 <Link href={href}>
-                                  <span
-                                    className={cn(
-                                      isListOpen === false ? '' : 'mr-4'
-                                    )}
-                                  >
+                                  <span>
                                     <Icon size={22} />
                                   </span>
                                   <p
                                     className={cn(
-                                      'max-w-[200px] truncate',
+                                      'truncate',
                                       isListOpen === false
                                         ? '-translate-x-96 opacity-0'
                                         : 'translate-x-0 opacity-100'
