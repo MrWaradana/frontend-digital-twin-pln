@@ -61,3 +61,5 @@ All page is on `src/app/`. Here are the list of the pages:
 1. Admin &rarr; `app/admin/page.tsx`
 1. Efficiency App &rarr; `app/efficiency-app/page.tsx`
 1. Other Application &rarr; `app/[app_name]/page.tsx`
+
+New Repo Gitea
