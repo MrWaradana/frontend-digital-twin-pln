@@ -19,63 +19,81 @@ export default async function Home() {
     {
       name: "Efficiency App",
       url: "/efficiency-app",
+      bgColor: "bg-yellow-400",
+      textColor: "text-black",
       icon: (
-        <Image src={efficiencyLogo} alt="i-PFI App" width={150} height={150} />
+        <Image src={efficiencyLogo} alt="i-PFI App" width={90} height={90} />
       ),
     },
     {
       name: "i-PFI App",
       url: "/pfi-app",
-      icon: <Image src={pfiLogo} alt="i-PFI App" width={150} height={150} />,
+      bgColor: "bg-red-500",
+      textColor: "text-white",
+      icon: <Image src={pfiLogo} alt="i-PFI App" width={90} height={90} />,
     },
     {
       name: "Reliability Predicts App",
       url: "/#",
+      bgColor: "bg-orange-400",
+      textColor: "text-white",
       icon: (
         <Image
           src={reliableLogo}
           alt="reliable Logo App"
-          width={150}
-          height={150}
+          width={90}
+          height={90}
         />
       ),
     },
     {
       name: "Risk Matrix App",
       url: "/#",
-      icon: <Image src={riskLogo} alt="i-PFI App" width={150} height={150} />,
+      bgColor: "bg-gradient-to-b from-[#E714D8] to-[#AF01D3]",
+      textColor: "text-white",
+      icon: <Image src={riskLogo} alt="i-PFI App" width={90} height={90} />,
     },
     {
       name: "RBD App",
       url: "/#",
-      icon: <Image src={rdbLogo} alt="i-PFI App" width={150} height={150} />,
+      bgColor: "bg-purple-700",
+      textColor: "text-white",
+      icon: <Image src={rdbLogo} alt="i-PFI App" width={90} height={90} />,
     },
     {
       name: "LCCA App",
       url: "/#",
-      icon: <Image src={lccLogo} alt="i-PFI App" width={150} height={150} />,
+      bgColor: "bg-[#4554A5]",
+      textColor: "text-white",
+      icon: <Image src={lccLogo} alt="i-PFI App" width={90} height={90} />,
     },
     {
       name: "Optimum OH App",
       url: "/optimum-oh-app",
-      icon: <Image src={ohLogo} alt="i-PFI App" width={150} height={150} />,
+      bgColor: "bg-cyan-600",
+      textColor: "text-white",
+      icon: <Image src={ohLogo} alt="i-PFI App" width={90} height={90} />,
     },
     {
       name: "i-RCFA App",
       url: "/#",
-      icon: <Image src={irfcaLogo} alt="i-PFI App" width={150} height={150} />,
+      bgColor: "bg-emerald-600",
+      textColor: "text-white",
+      icon: <Image src={irfcaLogo} alt="i-PFI App" width={90} height={90} />,
     },
     {
       name: "AHM App",
       url: "/#",
-      icon: <Image src={ahmLogo} alt="i-PFI App" width={150} height={150} />,
+      bgColor: "bg-green-500",
+      textColor: "text-white",
+      icon: <Image src={ahmLogo} alt="i-PFI App" width={90} height={90} />,
     },
   ];
 
   return (
-    <Fragment>
+    <div className="bg-black/80 min-h-[100dvh]">
       <Navbar />
-      <div className="flex justify-center items-start min-h-screen relative">
+      <div className="flex justify-center items-start relative min-h-[90dvh]">
         <div className="absolute w-full h-full overflow-hidden top-0 left-0">
           <Image
             src={BGAllApps}
@@ -83,30 +101,46 @@ export default async function Home() {
             className={`w-full h-full object-cover`}
           />
         </div>
-        <div className="absolute inset-0 w-full h-full bg-black/60"></div>
-        <Card
-          className={`w-full rounded-none bg-transparent overflow-hidden mt-[80px]`}
-        >
-          <CardBody className="felx flex-wrap h-[80%]">
-            <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 h-full w-full">
-              {appList.map((item, index) => {
-                return (
-                  <Link
-                    key={`${item}-${index}`}
-                    href={`${item.url}`}
-                    className="h-full w-full hover:bg-yellow-300 bg-white/70 text-black border-blue-400 transition ease px-6 py-4 rounded-lg border flex flex-col gap-6 justify-center items-center"
-                  >
-                    {item.icon}
-                    <p className="text-4xl font-normal leading-tight ">
-                      {item.name}
-                    </p>
-                  </Link>
-                );
-              })}
+        <div className="absolute inset-0 w-full h-full bg-black/80"></div>
+        <Card className="w-full h-full rounded-none bg-transparent overflow-hidden p-0">
+          <CardBody className="flex flex-wrap overflow-hidden justify-center w-full items-center p-0">
+            <section className="grid grid-cols-1 sm:grid-cols-3 place-items-center place-content-center gap-4">
+              {appList.map((item, index) => (
+                <Link
+                  key={`${item}-${index}`}
+                  href={`${item.url}`}
+                  className={`
+                            w-[220px]
+                            h-[195px]
+                            hover:scale-105
+                            inline-flex
+                            duration
+                            ease-in-out
+                            ${item.bgColor}
+                            ${item.textColor}
+                            transition
+                            border-transparent
+                            px-6
+                            py-4
+                            rounded-2xl
+                            border
+                            flex
+                            flex-col
+                            gap-6
+                            justify-between
+                            items-start
+                          `}
+                >
+                  <p className="text-xl font-semibold leading-tight">
+                    {item.name}
+                  </p>
+                  <span className="flex w-full justify-end">{item.icon}</span>
+                </Link>
+              ))}
             </section>
           </CardBody>
         </Card>
       </div>
-    </Fragment>
+    </div>
   );
 }

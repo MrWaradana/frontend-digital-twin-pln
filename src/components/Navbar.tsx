@@ -101,7 +101,7 @@ export default function Navbar() {
         isBordered
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
-        className="fixed top-0 z-[999]"
+        className="z-[999] backdrop-blur-xl bg-transparent"
       >
         <NavbarContent className="sm:hidden" justify="start">
           <NavbarMenuToggle
@@ -124,7 +124,10 @@ export default function Navbar() {
           </NavbarBrand>
         </NavbarContent>
 
-        <NavbarContent className="hidden sm:flex gap-4" justify="center">
+        <NavbarContent
+          className="hidden sm:flex gap-4 text-white"
+          justify="center"
+        >
           <NavbarBrand>
             <Image
               src={PlnLogo}
@@ -138,12 +141,11 @@ export default function Navbar() {
           {linkItems.map((item, index) => (
             <NavbarItem key={`${item}-${index}`}>
               <Link
-                color="foreground"
                 href={item.url}
                 className={
                   item.name != "Admin" || session?.user.user.role != "Admin"
                     ? "hidden"
-                    : "text-[20px]"
+                    : "text-xl text-white"
                 }
               >
                 {item.name}
@@ -157,23 +159,24 @@ export default function Navbar() {
           <NavbarItem>
             <Avatar
               name={session?.user.user.name}
-              color="primary"
+              color="default"
               isBordered
+              size="sm"
               className="uppercase"
             />
           </NavbarItem>
           <NavbarItem>
-            <Button onPress={onOpen} color="danger" variant="flat">
+            <Button onPress={onOpen} color="danger" variant="shadow">
               Sign Out
             </Button>
           </NavbarItem>
         </NavbarContent>
 
-        <NavbarMenu className="z-[999]">
+        <NavbarMenu className="z-[9999] text-white">
           {menuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
-                className="w-full"
+                className="w-full bg-white"
                 color={
                   index === 2
                     ? "warning"
