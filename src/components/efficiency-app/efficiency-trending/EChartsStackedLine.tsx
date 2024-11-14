@@ -680,7 +680,7 @@ export default function EChartsStackedLine({
             onClick={() => setSelectedPareto(false)}
           >
             <div
-              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-[90vw] max-w-5xl"
+              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-[140dvh] max-w-5xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-end items-center mb-4">

@@ -133,7 +133,7 @@ export default function Page() {
           ) : (
             <>
               <AsyncSelect
-                className="z-[99]"
+                className="z-[99] dark:text-black"
                 classNamePrefix="select"
                 isClearable={true}
                 placeholder={`Select Data...`}
@@ -150,7 +150,7 @@ export default function Page() {
               />
             </>
           )}
-          <div className="text-center bg-blue-300 px-2 py-1 rounded-sm">
+          <div className="text-center bg-blue-300 px-2 py-1 rounded-sm dark:text-black">
             <p className="font-bold">Coal Consumption</p>
             {isLoadingPareto ? (
               <Spinner />
@@ -160,7 +160,7 @@ export default function Page() {
               </p>
             )}
           </div>
-          <div className="text-center bg-blue-300 px-2 py-1 rounded-sm">
+          <div className="text-center bg-blue-300 px-2 py-1 rounded-sm dark:text-black">
             <p className="font-bold">Net Plant Heat Rate</p>
             {isLoadingPareto ? (
               <Spinner />
@@ -171,7 +171,7 @@ export default function Page() {
               </p>
             )}
           </div>
-          <div className="text-center bg-blue-300 px-2 py-1 rounded-sm">
+          <div className="text-center bg-blue-300 px-2 py-1 rounded-sm dark:text-black">
             <p className="font-bold">Total Heat Loss</p>
             {isLoadingPareto ? (
               <Spinner />

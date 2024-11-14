@@ -21,6 +21,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import PlnLogo from "../../public/Logo_PLN.svg";
+import PlnLogoNoText from "../../public/Logo_No_Text.png";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
@@ -101,7 +102,7 @@ export default function Navbar() {
         isBordered
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
-        className="z-[999] backdrop-blur-xl bg-transparent"
+        className="z-[999] backdrop-blur-xl bg-black/80"
       >
         <NavbarContent className="sm:hidden" justify="start">
           <NavbarMenuToggle
@@ -112,14 +113,14 @@ export default function Navbar() {
         <NavbarContent className="sm:hidden pr-3" justify="center">
           <NavbarBrand>
             <Image
-              src={PlnLogo}
-              height={95}
-              width={95}
+              src={PlnLogoNoText}
+              height={24}
+              width={24}
               alt="pln logo"
               className="mx-4"
             />
-            <p className="font-bold text-[20px] hidden lg:inline">
-              Digital Twin
+            <p className="font-semibold text-[20px] hidden lg:inline">
+              PLN Digital Twin
             </p>
           </NavbarBrand>
         </NavbarContent>
@@ -130,13 +131,13 @@ export default function Navbar() {
         >
           <NavbarBrand>
             <Image
-              src={PlnLogo}
-              height={95}
-              width={95}
+              src={PlnLogoNoText}
+              height={24}
+              width={24}
               alt="pln logo"
               className="mx-4"
             />
-            <p className="font-bold text-[20px]">Digital Twin</p>
+            <p className="font-semibold text-[20px]">PLN Digital Twin</p>
           </NavbarBrand>
           {linkItems.map((item, index) => (
             <NavbarItem key={`${item}-${index}`}>

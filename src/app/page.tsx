@@ -94,7 +94,7 @@ export default async function Home() {
     <div className="bg-black/80 min-h-[100dvh]">
       <Navbar />
       <div className="flex justify-center items-start relative min-h-[90dvh]">
-        <div className="absolute w-full h-full overflow-hidden top-0 left-0">
+        <div className="absolute w-full h-full overflow-hidden -top-10 left-0">
           <Image
             src={BGAllApps}
             alt={`background-all-apps`}
@@ -102,8 +102,8 @@ export default async function Home() {
           />
         </div>
         <div className="absolute inset-0 w-full h-full bg-black/80"></div>
-        <Card className="w-full h-full rounded-none bg-transparent overflow-hidden p-0">
-          <CardBody className="flex flex-wrap overflow-hidden justify-center w-full items-center p-0">
+        <Card className="w-full h-[91dvh] rounded-none bg-transparent overflow-hidden p-0">
+          <CardBody className="flex flex-wrap overflow-hidden justify-center w-full h-full items-center p-0">
             <section className="grid grid-cols-1 sm:grid-cols-3 place-items-center place-content-center gap-4">
               {appList.map((item, index) => (
                 <Link
