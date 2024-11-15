@@ -3,7 +3,7 @@
 import { PFIContentLayout } from "@/containers/PFIContentLayout";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import PowerPlant from "../../../public/power-plant.png";
+import PowerPlant from "../../../public/i-PFI/bg.png";
 import { useGetEquipmentByParams, useGetEquipments } from "@/lib/APIs/useGetEquipments";
 import { useSession } from "next-auth/react";
 import { CircularProgress } from "@nextui-org/react";
@@ -18,7 +18,6 @@ const Page = () => {
     isValidating,
     mutate
   } = useGetEquipmentByParams(session?.user.access_token, "TJB 3");
-
 
   const positions = [
     {
@@ -70,7 +69,7 @@ const Page = () => {
 
   if (isLoading || isValidating)
     return (
-      <div className="w-full mt-24 flex justify-center items-center">
+      <div className="w-full h-screen flex justify-center items-center">
         <CircularProgress
           color="primary"
           label={isLoading ? "Loading..." : "Validating..."}
@@ -80,45 +79,53 @@ const Page = () => {
 
   return (
     <PFIContentLayout title="i-PFI App">
-      <div className="container mx-auto">
-        <div className="text-wrap">
-          <h1 className="text-3xl font-bold text-gray-800">TJB 3 Power Plant Systems</h1>
-          <p className="text-sm text-gray-600 mt-2">
-            i PFI to support asset health management for Power Plant
-          </p>
-        </div>
-        <div className="flex flex-col justify-center mt-14">
-          {/* Content */}
-          <div className="relative w-5/6">
-            <Image src={PowerPlant} alt="power-plant" className="w-full" />
-            {Object.keys(combinedEquipments).map((key) => (
-              <div
-                key={key}
-                style={{
-                  top: combinedEquipments[key].position.top,
-                  left: combinedEquipments[key].position.left,
-                  transform: "translate(-50%, -50%)",
-                }}
-                className="absolute z-10"
-              >
-                <button
-                  className={`${combinedEquipments[key].position.status == "Normal"
-                    ? "bg-green-500"
-                    : "bg-yellow-500"
-                    } backdrop-blur-sm px-1.5 py-0.5 rounded-sm 
-                         md:text-[16px] text-xs shadow-sm border border-gray-200/50 whitespace-nowrap
-                         hover:scale-105 hover:bg-blue-500/80 hover:shadow-md
-                         transition-all duration-200 ease-in-out
-                         transform origin-center`}
-                  onClick={() => router.push(`/pfi-app/${combinedEquipments[key].id}`)}
+      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="col-span-1 md:col-span-2 px-3 rounded-3xl relative">
+          <h1 className="text-sm  sm:text-2xl font-semibold text-[#303030] absolute z-10 mx-10 mt-5">i-PFI Health</h1>
+
+          <div className="flex flex-col justify-center">
+            {/* Container gambar responsif */}
+            <div className="relative w-full h-[300px] md:h-auto rounded-xl overflow-hidden">
+              <Image
+                src={PowerPlant}
+                alt="power-plant"
+                className="rounded-xl"
+              />
+              {Object.keys(combinedEquipments).map((key) => (
+                <div
+                  key={key}
+                  style={{
+                    top: combinedEquipments[key].position.top,
+                    left: combinedEquipments[key].position.left,
+                    transform: "translate(-50%, -50%)",
+                  }}
+                  className="absolute z-10"
                 >
-                  <div className="font-semibold text-neutral-200 px-2 py-1">
-                    {combinedEquipments[key].position.status}
-                  </div>
-                </button>
-              </div>
-            ))}
+                  <button
+                    className={`${combinedEquipments[key].position.status === "Normal"
+                      ? "bg-green-500"
+                      : "bg-yellow-500"
+                      } backdrop-blur-sm 
+         px-2 py-1 sm:px-2.5 sm:py-1.5 md:px-3 md:py-2 
+         rounded-sm text-xs sm:text-sm md:text-base lg:text-lg
+         shadow-sm border border-gray-200/50 whitespace-nowrap
+         hover:scale-105 hover:bg-blue-500/80 hover:shadow-md
+         transition-all duration-200 ease-in-out
+         transform origin-center`}
+                    onClick={() => router.push(`/pfi-app/${combinedEquipments[key].id}`)}
+                  >
+                    <div className="font-semibold text-neutral-200">
+                      {combinedEquipments[key].position.status}
+                    </div>
+                  </button>
+                </div>
+              ))}
+
+            </div>
           </div>
+        </div>
+        <div className="bg-white rounded-xl p-5 mx-4 border-1">
+          Tes
         </div>
       </div>
     </PFIContentLayout>

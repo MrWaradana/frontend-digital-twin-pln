@@ -10,10 +10,10 @@ export function PFIContentLayout({ title, children }: ContentLayoutProps) {
   return (
     <div>
       <Navbar title={title} />
-      <div className="container mx-auto sm:px-8">
-        <Toaster />
+      <Toaster />
 
-        {/* {children} */}
+      <div className="mx-4 sm:mx-8 p-1">
+        {children}
       </div>
     </div>
   );
