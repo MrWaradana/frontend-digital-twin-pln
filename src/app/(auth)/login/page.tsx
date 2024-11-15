@@ -219,13 +219,13 @@ export default function Component() {
                   value={credentials.username}
                   className={`rounded-sm w-72 lg:w-96`}
                 />
-              </div>
+              </div >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password" className={`dark:text-black`}>
                     Password
                   </Label>
-                </div>
+                </div >
                 <Input
                   id="password"
                   name="password"
@@ -237,14 +237,14 @@ export default function Component() {
                   value={credentials.password}
                   className={`rounded-none w-72 lg:w-96`}
                 />
-              </div>
+              </div >
               {/* <div className="flex items-center">
             <Label htmlFor="remember" className="ml-2 text-sm font-medium">
               Remember me
             </Label>
           </div> */}
 
-              <div className="flex flex-col gap-2">
+              < div className="flex flex-col gap-2" >
                 <div className="flex flex-col gap-1 items-start justify-center">
                   <div
                     className={`flex flex-row justify-between items-center w-full`}
@@ -258,12 +258,12 @@ export default function Component() {
                     >
                       Refresh Captcha
                     </Button>
-                  </div>
+                  </div >
                   <div className="w-full bg-transparent flex justify-center items-center">
                     {/* @ts-ignore */}
                     <div ref={captchaRef} className="min-w-full" />
                   </div>
-                </div>
+                </div >
                 <p className="text-xs dark:text-black">
                   Fill the captcha above before sign in!
                 </p>
@@ -274,13 +274,13 @@ export default function Component() {
                   maxLength={5}
                   placeholder="Enter the captcha"
                   className={`rounded-xl w-72 lg:w-96`}
-                  // endContent={
-                  //   <>
-                  //     <Button onClick={handleValidate} color="success" size="sm">
-                  //       Validate
-                  //     </Button>
-                  //   </>
-                  // }
+                // endContent={
+                //   <>
+                //     <Button onClick={handleValidate} color="success" size="sm">
+                //       Validate
+                //     </Button>
+                //   </>
+                // }
                 />
               </div>
               <Button
@@ -294,10 +294,10 @@ export default function Component() {
               >
                 Sign in
               </Button>
-            </form>
-          </div>
-        </div>
-      </div>
+            </form >
+          </div >
+        </div >
+      </div >
     </>
   );
 }

@@ -207,7 +207,7 @@ export default function Page() {
               placeholder="Select start date"
               value={formatDate(startDateValue)}
               onChange={handleStartDateChange}
-              // startContent={<CalendarIcon className="text-gray-400" size={20} />}
+            // startContent={<CalendarIcon className="text-gray-400" size={20} />}
             />
             <Input
               type="date"
@@ -294,7 +294,6 @@ export default function Page() {
                       htmlFor={item.id}
                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-
                       {item.name}
                     </Label>
                   </div>

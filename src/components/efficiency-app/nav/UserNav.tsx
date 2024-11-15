@@ -113,9 +113,8 @@ export function UserNav() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
-              className={`hover:cursor-pointer ${
-                session.data?.user.user.role === "Admin" ? "" : "hidden"
-              }`}
+              className={`hover:cursor-pointer ${session.data?.user.user.role === "Admin" ? "" : "hidden"
+                }`}
               asChild
             >
               <Link href="/admin/users" className="flex items-center">

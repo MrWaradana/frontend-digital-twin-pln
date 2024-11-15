@@ -128,7 +128,7 @@ export default function Page() {
         {/* {JSON.stringify(paretoTopData)} */}
         <div className={`w-full flex justify-between pl-12 `}>
           <h2 className={`text-3xl font-semibold`}>Engine Flow</h2>
-          
+
         </div>
         <div className="grid grid-cols-4 gap-4 text-md md:text-lg">
           {isLoadingEfficiencyData || isValidatingEfficiencyData ? (

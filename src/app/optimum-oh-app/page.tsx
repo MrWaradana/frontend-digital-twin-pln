@@ -109,7 +109,7 @@ export default function Page() {
             y={position.y}
           />
         ))}
-      </div>
+      </div >
       <div className=" w-full transition ease-soft-spring flex flex-col justify-center items-start ml-12 pt-12 px-12 bg-blue-300/20 rounded-xl pb-12 pr-12 backdrop-blur-xl max-w-[85dvh]">
         <motion.a
           href="/"
@@ -149,6 +149,6 @@ export default function Page() {
           })} */}
         </section>
       </div>
-    </div>
+    </div >
   );
 }
