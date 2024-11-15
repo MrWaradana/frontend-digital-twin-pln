@@ -53,7 +53,7 @@ export default async function Home() {
     },
     {
       name: "Risk Matrix App",
-      url: "/#",
+      url: "/risk-matrix-app",
       bgColor: "bg-gradient-to-b from-[#E714D8] to-[#AF01D3]",
       textColor: "text-white",
       icon: (

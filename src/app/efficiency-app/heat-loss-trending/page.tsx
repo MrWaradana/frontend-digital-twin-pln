@@ -80,11 +80,13 @@ export default function Page() {
 
   // variables checked state
   const [checkedVariables, setCheckedVariables] = useState<any[]>([]);
-  // Tags checked state
-  const [checkedTags, setCheckedTags] = useState<any[]>([]);
+  // Tags checked state (WIP)
+  // const [checkedTags, setCheckedTags] = useState<any[]>([]);
 
   const [variableRawData, setVariableRawData] = useState<any[]>([]);
-  const [tagRawData, setTagRawData] = useState<any[]>([]);
+
+  // (WIP)
+  // const [tagRawData, setTagRawData] = useState<any[]>([]);
 
   // GET LIST VARIABLE
   const {
@@ -93,12 +95,12 @@ export default function Page() {
     mutate: mutateVariableData,
   } = useGetVariables(session?.data?.user.access_token, excelId, type);
 
-  // GET LIST TAGS
-  const {
-    data: tagData,
-    isLoading: isLoadingTagData,
-    mutate: mutateTagData,
-  } = useGetTags(session?.data?.user.access_token);
+  // GET LIST TAGS (WIP)
+  // const {
+  //   data: tagData,
+  //   isLoading: isLoadingTagData,
+  //   mutate: mutateTagData,
+  // } = useGetTags(session?.data?.user.access_token);
 
   // console.log(`ini tokennya: ${session?.data?.user.access_token}`);
   // console.log("WOWO");
@@ -117,18 +119,18 @@ export default function Page() {
     endDateValue
   );
 
-  // GET TAG VALUE DATA BY TAG
-  const {
-    data: tagValueDatas,
-    isLoading: isLoadingTagValueDatas,
-    mutate: mutateTagValueDatas,
-    error: errorTagValueDatas,
-  } = useGetTagValue(
-    session?.data?.user.access_token,
-    checkedTags,
-    startDateValue,
-    endDateValue
-  );
+  // GET TAG VALUE DATA BY TAG (WIP)
+  // const {
+  //   data: tagValueDatas,
+  //   isLoading: isLoadingTagValueDatas,
+  //   mutate: mutateTagValueDatas,
+  //   error: errorTagValueDatas,
+  // } = useGetTagValue(
+  //   session?.data?.user.access_token,
+  //   checkedTags,
+  //   startDateValue,
+  //   endDateValue
+  // );
 
   const handleVariableCheckboxChange = useCallback(
     (item: any, isChecked: any) => {
@@ -139,11 +141,12 @@ export default function Page() {
     []
   );
 
-  const handleTagCheckboxChange = useCallback((item: any, isChecked: any) => {
-    setCheckedTags((prev) =>
-      isChecked ? [...prev, item] : prev.filter((i) => i !== item)
-    );
-  }, []);
+  // (WIP)
+  // const handleTagCheckboxChange = useCallback((item: any, isChecked: any) => {
+  //   setCheckedTags((prev) =>
+  //     isChecked ? [...prev, item] : prev.filter((i) => i !== item)
+  //   );
+  // }, []);
 
   // console.log("CHECKED VARIABLES");
   // console.log(checkedVariables);
@@ -167,7 +170,8 @@ export default function Page() {
 
   useEffect(() => {
     mutateTrendingDatas();
-    mutateTagValueDatas();
+    // (WIP)
+    // mutateTagValueDatas();
     // console.log("HARUSNYA SEH MUTATE YGY?!?!");
   }, [
     startDateValue,
@@ -175,7 +179,7 @@ export default function Page() {
     checkedVariables,
 
     mutateTrendingDatas,
-    mutateTagValueDatas,
+    // mutateTagValueDatas,
   ]);
 
   useEffect(() => {
@@ -183,11 +187,12 @@ export default function Page() {
       setVariableRawData(variableData);
     }
 
-    if (tagData) {
-      setTagRawData(tagData);
-    }
+    // (WIP)
+    // if (tagData) {
+    //   setTagRawData(tagData);
+    // }
     // console.log(variableRawData, "variable raw state");
-  }, [variableData, tagData]);
+  }, [variableData]);
 
   return (
     <EfficiencyContentLayout title="Heat Loss Trending">
@@ -216,22 +221,18 @@ export default function Page() {
           </div>
           {/* PeriodeDatePicker */}
 
-          <HeatLossTrendingChartNew
+          <HeatLossTrendingChart
             session={session}
             isLoadingTrendingDatas={isLoadingTrendingDatas}
             errorTrendingDatas={errorTrendingDatas}
             trendingDatas={trendingDatas || []}
-            isLoadingTagValueDatas={[]}
-            errorTagValueDatas={[]}
-            tagValueDatas={[]}
             checkedVariables={checkedVariables}
-            checkedTags={checkedTags}
             startDate={formatDate(startDateValue)}
             endDate={formatDate(endDateValue)}
             variableRawData={variableRawData}
-            tagRawData={tagRawData}
-          ></HeatLossTrendingChartNew>
+          ></HeatLossTrendingChart>
 
+          {/* (WIP)
           <TagValueChart
             session={session}
             checkedTags={checkedTags}
@@ -241,7 +242,7 @@ export default function Page() {
             errorTagValueDatas={errorTagValueDatas}
             tagValueDatas={tagValueDatas}
             tagRawData={tagRawData}
-          ></TagValueChart>
+          ></TagValueChart> */}
         </div>
 
         {/* Aside on the right: (variable checkbox component) */}
@@ -263,7 +264,7 @@ export default function Page() {
                       htmlFor={item.id}
                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      {item.short_name}
+                      {item.excel_variable_name}
                     </Label>
                   </div>
                 ))}
@@ -275,6 +276,7 @@ export default function Page() {
             </p>
           </Card>
 
+          {/* (WIP)
           <Card className="w-64 bg-muted/50 p-4 overflow-hidden flex flex-1 flex-col border-l">
             <h2 className="text-lg font-semibold mb-4">Select Tags</h2>
             <ScrollArea className="flex-1 rounded-md border">
@@ -292,7 +294,7 @@ export default function Page() {
                       htmlFor={item.id}
                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      {/* {item.short_name} */}
+
                       {item.name}
                     </Label>
                   </div>
@@ -303,7 +305,7 @@ export default function Page() {
             <p className="text-sm text-muted-foreground">
               Selected: {checkedTags.length} tag(s)
             </p>
-          </Card>
+          </Card> */}
         </div>
       </div>
     </EfficiencyContentLayout>
