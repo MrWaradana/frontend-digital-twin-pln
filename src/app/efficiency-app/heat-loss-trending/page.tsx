@@ -50,8 +50,20 @@ import dynamic from "next/dynamic";
 // const excelId = "add1cefb-1231-423c-8942-6bcd56998106";
 // const excelId = "5c220f24-b7e4-410a-b52e-8ffe25047fb6";
 const type = "out";
-const HeatLossTrendingChartNew = dynamic(() => import('@/components/efficiency-app/HeatLossTrendingChartNew').then(mod => mod.HeatLossTrendingChartNew), { ssr: false });
-const TagValueChart = dynamic(() => import('@/components/efficiency-app/TagValueChart').then(mod => mod.TagValueChart), { ssr: false });
+const HeatLossTrendingChartNew = dynamic(
+  () =>
+    import("@/components/efficiency-app/HeatLossTrendingChartNew").then(
+      (mod) => mod.HeatLossTrendingChartNew
+    ),
+  { ssr: false }
+);
+const TagValueChart = dynamic(
+  () =>
+    import("@/components/efficiency-app/TagValueChart").then(
+      (mod) => mod.TagValueChart
+    ),
+  { ssr: false }
+);
 export default function Page() {
   const session = useSession();
   const excels = useExcelStore((state) => state.excels);
@@ -190,7 +202,7 @@ export default function Page() {
               placeholder="Select start date"
               value={formatDate(startDateValue)}
               onChange={handleStartDateChange}
-            // startContent={<CalendarIcon className="text-gray-400" size={20} />}
+              // startContent={<CalendarIcon className="text-gray-400" size={20} />}
             />
             <Input
               type="date"

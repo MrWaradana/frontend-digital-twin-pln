@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import CanvasJSReact from '@canvasjs/react-charts';
+import CanvasJSReact from "@canvasjs/react-charts";
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 import { Variable } from "@/lib/APIs/useGetVariables";
