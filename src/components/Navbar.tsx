@@ -33,20 +33,6 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
-
-  const linkItems = [
-    {
-      name: "All Apps",
-      role: ["Admin", "Engineer", "Management"],
-      url: "/",
-    },
-    {
-      name: "Admin",
-      role: ["Admin"],
-      url: "/admin/users",
-    },
-  ];
-
   const menuItems = [
     "Profile",
     "Dashboard",
@@ -139,35 +125,34 @@ export default function Navbar() {
             />
             <p className="font-semibold text-[20px]">PLN Digital Twin</p>
           </NavbarBrand>
-          {linkItems.map((item, index) => (
-            <NavbarItem key={`${item}-${index}`}>
-              <Link
-                href={item.url}
-                className={
-                  item.name != "Admin" || session?.user.user.role != "Admin"
-                    ? "hidden"
-                    : "text-xl text-white"
-                }
-              >
-                {item.name}
-              </Link>
-            </NavbarItem>
-          ))}
         </NavbarContent>
 
-        <NavbarContent justify="end">
+        <NavbarContent
+          justify={"center"}
+          className={`flex w-full justify-center`}
+        >
           <ModeToggle />
+        </NavbarContent>
+        <NavbarContent justify={"end"} className={`flex justify-around`}>
           <NavbarItem>
-            <Avatar
-              name={session?.user.user.name}
-              color="default"
-              isBordered
-              size="sm"
-              className="uppercase"
-            />
+            <Button
+              variant="bordered"
+              as={Link}
+              href={session?.user.user.role === "Admin" ? "/admin/users" : "#"}
+              className={`text-white rounded-full`}
+            >
+              {session?.user.user.name.length > 8
+                ? `${session?.user.user.name.slice(0, 8)}...`
+                : session?.user.user.name}
+            </Button>
           </NavbarItem>
           <NavbarItem>
-            <Button onPress={onOpen} color="danger" variant="shadow">
+            <Button
+              onPress={onOpen}
+              color="default"
+              className={`rounded-full`}
+              variant="solid"
+            >
               Sign Out
             </Button>
           </NavbarItem>

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import BGImage from "../../../public/optimum-oh-app/bg.jpg";
+import newBGImage from "../../../public/optimum-oh-app/new_power_plant.png";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Animation configurations
@@ -109,7 +110,7 @@ export default function Page() {
           />
         ))}
         <Image
-          src={BGImage}
+          src={newBGImage}
           alt="background image"
           className="w-[100vw] absolute right-0 h-full"
         />

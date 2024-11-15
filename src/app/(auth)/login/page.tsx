@@ -14,20 +14,17 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import PlnLogo from "../../../../public/Logo_PLN.png";
-import BGLogin from "../../../../public/bg-login.jpg";
 import { useSession } from "next-auth/react";
 import useCaptcha from "use-offline-captcha";
 import { AUTH_API_URL } from "../../../lib/api-url";
 
 // Import BG Images
-import bg1 from "../../../../public/bg-images/6 (11).jpg";
-import bg2 from "../../../../public/bg-images/apik.jpg";
-import bg3 from "../../../../public/bg-images/AZM03189.jpg";
-import bg4 from "../../../../public/bg-images/DSC09120.jpg";
-import bg5 from "../../../../public/bg-images/DJI_0029.jpg";
-import bg6 from "../../../../public/bg-images/DJI_0031.jpg";
-import bg7 from "../../../../public/bg-images/DSC06770.jpg";
-import bg8 from "../../../../public/bg-images/DSC06779.jpg";
+import bg1 from "../../../../public/bg-images/bg1.jpg";
+import bg2 from "../../../../public/bg-images/bg2.jpg";
+import bg3 from "../../../../public/bg-images/bg3.jpg";
+import bg4 from "../../../../public/bg-images/bg4.png";
+import bg5 from "../../../../public/bg-images/bg5.jpg";
+import bg6 from "../../../../public/bg-images/bg6.jpg";
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -64,7 +61,7 @@ export default function Component() {
     background: "#000",
   };
 
-  const bgImages = [BGLogin, bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8];
+  const bgImages = [bg1, bg2, bg3, bg4, bg5, bg6];
   //@ts-ignore
   const { gen, validate } = useCaptcha(captchaRef, userOpt);
 
@@ -201,7 +198,7 @@ export default function Component() {
             />
           </div>
           <div className="bg-white/80 backdrop-blue-xl rounded-xl py-8 px-10">
-            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl text-center mb-8">
+            <h1 className="text-xl font-bold tracking-tight dark:text-black sm:text-2xl text-center mb-8">
               Welcome to Digital Twin!
             </h1>
             <form
@@ -210,7 +207,9 @@ export default function Component() {
               onSubmit={handleSubmit}
             >
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username" className={`dark:text-black`}>
+                  Username
+                </Label>
                 <Input
                   id="username"
                   name="username"
@@ -223,7 +222,9 @@ export default function Component() {
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password" className={`dark:text-black`}>
+                    Password
+                  </Label>
                 </div>
                 <Input
                   id="password"
@@ -248,7 +249,7 @@ export default function Component() {
                   <div
                     className={`flex flex-row justify-between items-center w-full`}
                   >
-                    <p className="text-xs">Captcha</p>
+                    <p className="text-xs dark:text-black">Captcha</p>
                     <Button
                       onClick={handleRefresh}
                       color="secondary"
@@ -263,7 +264,7 @@ export default function Component() {
                     <div ref={captchaRef} className="min-w-full" />
                   </div>
                 </div>
-                <p className="text-xs">
+                <p className="text-xs dark:text-black">
                   Fill the captcha above before sign in!
                 </p>
                 <Input
