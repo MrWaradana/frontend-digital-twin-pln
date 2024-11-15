@@ -115,7 +115,7 @@ export default function Page() {
           className="w-[100vw] absolute right-0 h-full"
         />
       </div>
-      <div className="absolute top-36 w-full left-12 transition ease-soft-spring flex flex-col justify-center items-start pt-12 px-12 bg-blue-300/20 rounded-xl pb-12 pr-12 backdrop-blur-xl max-w-[85dvh]">
+      <div className="absolute m-auto top-0 translate-y-1/3 w-full left-12 transition ease-soft-spring flex flex-col justify-center items-start pt-12 px-12 bg-blue-300/20 rounded-xl pb-12 pr-12 backdrop-blur-xl max-w-[85dvh]">
         <motion.a
           href="/"
           className="text-base cursor-pointer hover:underline text-blue-500 font-bold mb-6"
@@ -126,7 +126,7 @@ export default function Page() {
         <motion.h1 className="text-4xl font-bold mb-2" {...ANIMATIONS.title}>
           Optimum OH App
         </motion.h1>
-        <motion.p className="text-base w-[500px] mb-6" {...ANIMATIONS.title}>
+        <motion.p className="text-base w-[30dvw] mb-6" {...ANIMATIONS.title}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
