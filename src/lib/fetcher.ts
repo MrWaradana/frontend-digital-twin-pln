@@ -36,13 +36,14 @@ export async function fetcherNoToken<T = any>(url: string): Promise<T> {
 
   const res = await fetch(url, {
     headers,
-    credentials: "include",
+    // credentials: "include",
   });
 
   const body = await res.json();
 
   if (res.ok) {
-    return body.data;
+    // return body.data;
+    return body;
   }
   if (body.error) {
     throw new Error(body.error);
