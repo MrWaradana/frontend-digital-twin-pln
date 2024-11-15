@@ -98,8 +98,8 @@ const FloatingCloud = ({ baseX, offsetX, duration, y }) => {
 
 export default function Page() {
   return (
-    <div className="relative ">
-      <div className="absolute top-0  overflow-hidden bg-blue-300 min-h-[100dvh] min-w-full">
+    <div className="min-h-[100dvh] bg-[url('/optimum-oh-app/new_power_plant.png')] bg-no-repeat bg-[length:100dvw_100dvh] w-full flex flex-col justify-center items-start">
+      <div className="absolute top-0  overflow-hidden bg-transparent min-h-[100dvh] min-w-full">
         {CLOUD_POSITIONS.map((position, index) => (
           <FloatingCloud
             key={index}
@@ -109,13 +109,8 @@ export default function Page() {
             y={position.y}
           />
         ))}
-        <Image
-          src={newBGImage}
-          alt="background image"
-          className="w-[100vw] absolute right-0 h-full"
-        />
       </div>
-      <div className="absolute m-auto top-0 translate-y-1/3 w-full left-12 transition ease-soft-spring flex flex-col justify-center items-start pt-12 px-12 bg-blue-300/20 rounded-xl pb-12 pr-12 backdrop-blur-xl max-w-[85dvh]">
+      <div className=" w-full transition ease-soft-spring flex flex-col justify-center items-start ml-12 pt-12 px-12 bg-blue-300/20 rounded-xl pb-12 pr-12 backdrop-blur-xl max-w-[85dvh]">
         <motion.a
           href="/"
           className="text-base cursor-pointer hover:underline text-blue-500 font-bold mb-6"

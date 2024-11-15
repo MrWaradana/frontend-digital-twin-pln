@@ -14,7 +14,7 @@ export function EfficiencyContentLayout({
     <div>
       <Toaster />
       <Navbar title={title} />
-      <div className="container p-1">{children}</div>
+      <div className="mx-4 sm:mx-8 p-1">{children}</div>
     </div>
   );
 }

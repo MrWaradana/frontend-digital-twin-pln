@@ -1,24 +1,85 @@
-import { ModeToggle } from "@/components/ModeToggle";
 import { UserNav } from "@/components/efficiency-app/nav/UserNav";
 import { SheetMenu } from "@/components/efficiency-app/nav/SheetMenu";
+import {
+  Avatar,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  Button,
+} from "@nextui-org/react";
+import { signOut } from "next-auth/react";
+import router from "next/router";
 
 interface NavbarProps {
   title: string;
 }
 
 export function Navbar({ title }: NavbarProps) {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
-    <header className="sticky top-0 z-10 w-full bg-background/95 shadow backdrop-blur bg-blue-400 supports-[backdrop-filter]:bg-background/60 dark:shadow-secondary">
-      <div className="mx-4 sm:mx-8 flex h-14 items-center">
-        <div className="flex items-center space-x-4 lg:space-x-0">
-          <SheetMenu />
-          <h1 className="font-bold">{title}</h1>
+    <>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} hideCloseButton={true}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Sign Out Confirmation
+              </ModalHeader>
+              <ModalBody>
+                <p>Are you sure you want to Sign Out?</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="light" onPress={onClose} radius="full">
+                  Cancel
+                </Button>
+                <Button
+                  radius="full"
+                  className={`bg-[#D4CA2F] text-white`}
+                  onPress={async () => {
+                    try {
+                      await signOut();
+                      router.push("/login");
+                    } catch (err) {
+                      console.error("Unable to sign out!");
+                    }
+                  }}
+                >
+                  Yes, Sign Out
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <header className="sticky top-0 z-10 w-full bg-transparent">
+        <div className="mx-4 sm:mx-8 flex items-center h-[16dvh]">
+          <div className="flex items-center space-x-4 lg:space-x-0">
+            <SheetMenu />
+            <h1 className="font-semibold text-4xl">{title}</h1>
+          </div>
+          <div className="flex flex-1 items-center space-x-2 justify-end">
+            <UserNav />
+            <Button
+              variant={`bordered`}
+              radius="full"
+              className="border-[#D4CA2F] "
+            >
+              Apps Library
+            </Button>
+            <Button
+              variant={`solid`}
+              radius="full"
+              className="bg-[#D4CA2F] text-white"
+              onClick={onOpen}
+            >
+              Sign out
+            </Button>
+          </div>
         </div>
-        <div className="flex flex-1 items-center space-x-2 justify-end">
-          <ModeToggle />
-          <UserNav />
-        </div>
-      </div>
-    </header>
+      </header>
+    </>
   );
 }

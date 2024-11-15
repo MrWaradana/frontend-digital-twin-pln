@@ -123,10 +123,13 @@ export default function Page() {
   };
 
   return (
-    <EfficiencyContentLayout title="Engine Flow">
-      <div className="w-full flex flex-col justify-center items-center">
+    <EfficiencyContentLayout title="Efficiency & Heat Loss App">
+      <div className="w-full flex flex-col justify-center items-center bg-white rounded-xl shadow-xl pt-8">
         {/* {JSON.stringify(paretoTopData)} */}
-
+        <div className={`w-full flex justify-between pl-12 `}>
+          <h2 className={`text-3xl font-semibold`}>Engine Flow</h2>
+          
+        </div>
         <div className="grid grid-cols-4 gap-4 text-md md:text-lg">
           {isLoadingEfficiencyData || isValidatingEfficiencyData ? (
             "Loading..."
