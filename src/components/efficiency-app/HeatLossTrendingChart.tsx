@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { TrendingUp } from "lucide-react";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import CanvasJSReact from "@canvasjs/react-charts";
+const CanvasJS = CanvasJSReact.CanvasJS;
+const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 import { Variable } from "@/lib/APIs/useGetVariables";
 import {
   // DataTrending,
@@ -18,16 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "../ui/chart";
-import { trim } from "lodash";
 // import { compareAsc, format, isAfter, isBefore, isValid } from "date-fns";
-
-export const description = "A multiple line chart";
 
 const monthName = [
   "January",
@@ -55,48 +47,39 @@ const chartDummyData = [
   { month: "July", year: "2016", desktop: 233, laptop: 790, mobile: 200 },
 ];
 
-const chartDummyConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-1))",
-  },
-  laptop: {
-    label: "Laptop",
-    color: "hsl(var(--chart-2))",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "hsl(var(--chart-3))",
-  },
-} satisfies ChartConfig;
+// const chartDummyConfig = {
+//   desktop: {
+//     label: "Desktop",
+//     color: "hsl(var(--chart-1))",
+//   },
+//   laptop: {
+//     label: "Laptop",
+//     color: "hsl(var(--chart-2))",
+//   },
+//   mobile: {
+//     label: "Mobile",
+//     color: "hsl(var(--chart-3))",
+//   },
+// } satisfies ChartConfig;
 
 export function HeatLossTrendingChart({
   session,
   isLoadingTrendingDatas,
   errorTrendingDatas,
   trendingDatas,
-  isLoadingTagValueDatas,
-  errorTagValueDatas,
-  tagValueDatas,
   checkedVariables,
   startDate,
   endDate,
   variableRawData,
-  tagRawData,
 }: {
   session: any;
   isLoadingTrendingDatas: any;
   errorTrendingDatas: any;
   trendingDatas: any;
-  isLoadingTagValueDatas: any;
-  errorTagValueDatas: any;
-  tagValueDatas: any;
   checkedVariables: any | Variable[];
-  checkedTags: any | Variable[];
   startDate: Date | any | null;
   endDate: Date | any | null;
   variableRawData: any;
-  tagRawData: any;
 }) {
   // const [variables, setVariables] = useState(null);
   // const [trendingDataChart, setTrendingDataChart] = useState(null);
@@ -120,17 +103,44 @@ export function HeatLossTrendingChart({
   const chartData = useMemo(() => {
     if (!trendingDatas) return [];
 
-    return trendingDatas.map((data: any) => {
-      const dataPoint: any = {
-        periode: new Date(data.periode),
-      };
-      data.pareto.forEach((pareto: any) => {
-        dataPoint[pareto.variable_id] = pareto.persen_losses;
-      });
+    const groupedData = {};
 
-      return dataPoint;
+    trendingDatas.forEach((dataEntry: any) => {
+      // const dataPoint: any = {
+      //   periode: new Date(data.periode),
+      // };
+      // const datasets = {
+      //   type: "line",
+      //   name: data.name,
+      //   showInLegend: false,
+      // };
+
+      // datasets["dataPoints"] = datasets["dataPoints"] || [];
+      dataEntry.pareto.forEach((paretoItem: any) => {
+        const { id, variable_id, variable_name, persen_losses } = paretoItem;
+        // If the variable_id group doesn't exist yet, initialize it
+        if (!groupedData[variable_id]) {
+          groupedData[variable_id] = {
+            // id: dataEntry.id, // Retain the original id
+            type: "line",
+            name: variable_name,
+            showInLegend: false,
+            dataPoints: [],
+          };
+        }
+
+        groupedData[variable_id].dataPoints.push({
+          x: new Date(dataEntry["periode"]),
+          y: persen_losses,
+        });
+      });
     });
+
+    return Object.values(groupedData);
   }, [trendingDatas]);
+
+  // console.log("chartDataHEATLOSS");
+  // console.log(chartData);
   // console.log("typeof periode: ", chartData[0].periode);
   // chartData.length > 0
   //   ? console.log(
@@ -147,21 +157,58 @@ export function HeatLossTrendingChart({
   /**
    * (START): GET CHART TRENDING CONFIG========================================================================================
    */
-  const chartConfig = useMemo(() => {
-    return variableRawData.reduce((config: any, variable: any) => {
-      if (checkedVariables.includes(variable.id)) {
-        config[variable.id] = {
-          name: variable.short_name,
-          color: `${randomColor()}`,
-        };
-      }
-      return config;
-    }, {});
-  }, [variableRawData, checkedVariables]);
+  // const chartConfig = useMemo(() => {
+  //   return variableRawData.reduce((config: any, variable: any) => {
+  //     if (checkedVariables.includes(variable.id)) {
+  //       config[variable.id] = {
+  //         name: variable.short_name,
+  //         color: `${randomColor()}`,
+  //       };
+  //     }
+  //     return config;
+  //   }, {});
+  // }, [variableRawData, checkedVariables]);
 
   /**
    * (END): GET CHART TRENDING CONFIG===========================================================================================
    */
+
+  // CREATE OPTION FOR LINE CHART
+  const options = {
+    responsive: true,
+    zoomEnabled: true,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+      title: {
+        display: true,
+        text: "Tag Value Chart",
+      },
+    },
+    toolTip: {
+      shared: true,
+    },
+    data: chartData,
+    //   scales: {
+    //     x: {
+    //       type: "linear",
+    //       position: "bottom",
+    //       title: {
+    //         display: true,
+    //         text: "Data Point",
+    //       },
+    //     },
+    //     y: {
+    //       type: "linear",
+    //       position: "left",
+    //       title: {
+    //         display: true,
+    //         text: "Value",
+    //       },
+    //     },
+    //   },
+  };
 
   if (isLoadingTrendingDatas)
     return (
@@ -183,77 +230,11 @@ export function HeatLossTrendingChart({
             <CardDescription>{`${startDate} to ${endDate}`}</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig}>
-              <LineChart
-                accessibilityLayer
-                data={chartData}
-                margin={{
-                  left: 0,
-                  right: 12,
-                  bottom: 32,
-                }}
-              >
-                <CartesianGrid vertical={true} stroke="#DEE5D4" />
-                <XAxis
-                  angle={-45}
-                  textAnchor="end"
-                  dataKey="periode"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={2}
-                  tickFormatter={(value) =>
-                    value
-                      ? `${value.getDate()} ${monthName[value.getMonth()].slice(
-                          0,
-                          3
-                        )} ${value.getFullYear()}`
-                      : "undefined"
-                  }
-                />
-                {/* <XAxis dataKey="periode" /> */}
-                <YAxis />
-
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent />}
-                />
-                {Object.entries(chartConfig)?.map(
-                  ([id, config]: [string, any]) => (
-                    <Line
-                      key={id}
-                      type="monotone"
-                      dataKey={id}
-                      name={config.name}
-                      stroke={config.color}
-                      activeDot={{ r: 8 }}
-                    />
-                  )
-                )}
-                {/* For Example */}
-                {/* <Line
-                dataKey="f8be624b-ffee-4d22-a36a-d3a80add5402"
-                type="monotone"
-                stroke={randomColor()}
-                strokeWidth={2}
-                dot={false}
-              /> */}
-              </LineChart>
-            </ChartContainer>
-            {/* {JSON.stringify(checkedVariables)} */}
+            <div className="h-[500px]">
+              <CanvasJSChart options={options} />
+            </div>
           </CardContent>
           <CardFooter>
-            {/* <div className="flex w-full items-start gap-2 text-sm"> 
-            <div className="grid gap-2">
-              <div className="flex items-center gap-2 font-medium leading-none">
-                Trending up by 5.2% this month{" "}
-                <TrendingUp className="h-4 w-4" />
-              </div>
-              <div className="flex items-center gap-2 leading-none text-muted-foreground">
-                Showing total visitors for the last 6 months
-              </div>
-            </div>
-          </div> */}
-
             {/* FOR TESTING PURPOSE */}
             {/* <div>
             <h4>YOHOHO</h4>
