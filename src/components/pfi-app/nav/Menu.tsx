@@ -42,8 +42,6 @@ export function Menu({ isListOpen }: MenuProps) {
   const pathname = usePathname()
   const menuList = getMenuList(pathname)
 
-  console.log(menuList)
-
   return (
     <>
       {" "}

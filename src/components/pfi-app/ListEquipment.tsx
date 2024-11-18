@@ -40,7 +40,6 @@ const ListEquipment = ({
   const renderCell = React.useCallback(
     (rowData: EquipmentType, columnKey: React.Key, index: any) => {
       const cellValue = rowData[columnKey as keyof EquipmentType];
-      console.log(cellValue);
 
       switch (columnKey) {
         case "no":

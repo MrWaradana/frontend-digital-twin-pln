@@ -118,7 +118,7 @@ export default async function Home() {
           />
         </div>
         <div className="absolute inset-0 w-full h-full bg-black/80"></div>
-        <Card className="w-full h-[92dvh] rounded-none bg-transparent overflow-hidden p-0">
+        <Card className="w-full h-auto sm:h-[92vh] rounded-none bg-transparent overflow-hidden p-0">
           <CardBody className="flex flex-wrap overflow-hidden justify-center w-full h-full items-center p-0">
             <section className="grid grid-cols-1 sm:grid-cols-3 place-items-center place-content-center gap-4">
               {appList.map((item, index) => (
