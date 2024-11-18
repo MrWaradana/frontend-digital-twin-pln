@@ -1,52 +1,21 @@
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue, SortDescriptor, Input, Pagination, Button, Spinner } from "@nextui-org/react";
+import { Button, Input, Pagination, SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Link } from "@nextui-org/react";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, CircleCheck } from "lucide-react";
 import { useSession } from "next-auth/react";
 import React from "react";
-
-const rows = [
-  {
-    key: "1",
-    counter: "1",
-    name: "Tony Reichert",
-    role: "CEO",
-    status: "Active",
-  },
-  {
-    key: "2",
-    counter: "2",
-    name: "Zoey Lang",
-    role: "Technical Lead",
-    status: "Paused",
-  },
-  {
-    key: "3",
-    counter: "3",
-    name: "Jane Fisher",
-    role: "Senior Developer",
-    status: "Active",
-  },
-  {
-    key: "4",
-    counter: "4",
-    name: "William Howard",
-    role: "Community Manager",
-    status: "Vacation",
-  },
-];
 
 const ListEquipment = ({
   dataRow,
   mutate,
   isValidating,
   parent_id,
-  isCreated
+  title
 }: {
   dataRow: any;
   mutate: any;
   isValidating: boolean;
   parent_id?: string | null;
-  isCreated: boolean;
+  title: string
 }) => {
   type EquipmentType = (typeof dataRow)[0];
 
@@ -58,25 +27,31 @@ const ListEquipment = ({
   const hasSearchFilter = Boolean(filterValue);
 
   const [page, setPage] = React.useState(1);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const columns = [
+    { name: "NO", uid: "no", sortable: true },
     { name: "NAME", uid: "name", sortable: true },
     { name: "ACTIONS", uid: "actions" },
   ];
 
   const renderCell = React.useCallback(
-    (rowData: EquipmentType, columnKey: React.Key) => {
+    (rowData: EquipmentType, columnKey: React.Key, index: any) => {
       const cellValue = rowData[columnKey as keyof EquipmentType];
 
       switch (columnKey) {
+        case "no":
+          return index;
         case "name":
-          return cellValue;
+          return (
+            <Link href="#" className="text-[#918E8E]">{cellValue}</Link>
+          );
         case "actions":
           return (
-            <div className="relative flex justify-left items-left gap-2">
-              TEST
-            </div>
+            <span className="flex bg-[#1C9EB6] text-neutral-200 py-1 rounded-full justify-center">
+              <CircleCheck className="inline-block me-2 w-4" />
+              Normal
+            </span>
           );
         default:
           return cellValue;
@@ -150,16 +125,18 @@ const ListEquipment = ({
       const second = b[sortDescriptor.column as keyof EquipmentType] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
+    }).map((item, index) => ({
+      ...item, index: index + 1
+    }));
   }, [sortDescriptor, items]);
 
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between col-span-4 gap-3 items-end">
+        <div className="flex justify-between  gap-3 items-end">
           <Input
             isClearable
-            className="w-full sm:max-w-[44%]"
+            className="w-full sm:max-w-[44%] rounded-full"
             placeholder="Search by name..."
             startContent={<MagnifyingGlassIcon />}
             value={filterValue}
@@ -207,25 +184,9 @@ const ListEquipment = ({
           page={page}
           total={pages}
           onChange={setPage}
+          variant="light"
         />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onPreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onNextPage}
-          >
-            Next
-          </Button>
-        </div>
+
       </div>
     );
   }, [onNextPage, onPreviousPage, page, pages]);
@@ -252,7 +213,7 @@ const ListEquipment = ({
     <div className="bg-white rounded-3xl p-3 sm:p-5 mx-2 sm:mx-4 border border-gray-200 shadow-xl ">
       <div className="flex mb-5 mt-3 px-5">
         <h1 className="text-xl font-semibold">
-          Turbine equipment health
+          {title}
         </h1>
         <CircleAlert className="inline-block text-red-600 ms-5" />
       </div>
@@ -292,7 +253,7 @@ const ListEquipment = ({
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
+                <TableCell className="text-[#918E8E]">{renderCell(item, columnKey, item.index)}</TableCell>
               )}
             </TableRow>
           )}

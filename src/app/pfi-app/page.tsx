@@ -132,7 +132,7 @@ const Page = () => {
           mutate={mutate}
           isValidating={isValidating}
           parent_id={null}
-          isCreated={false} />
+          title={"TJB 3 Master Equipment Healt"} />
       </div>
     </PFIContentLayout>
   );
