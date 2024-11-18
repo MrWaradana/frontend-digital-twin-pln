@@ -39,7 +39,7 @@ export default async function Home() {
     },
     {
       name: "Reliability Predicts App",
-      url: "/#",
+      url: "/reliability-app",
       bgColor: "bg-gradient-to-b from-[#FFA201] to-[#EE6E01]",
       textColor: "text-white",
       icon: (
