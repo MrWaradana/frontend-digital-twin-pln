@@ -1,22 +1,24 @@
-
-import { StaticImageData } from "next/image";
-
-import Book from "../../public/i-PFI/book.png";
-import Dashboard from "../../public/i-PFI/dashboard.png";
-
-type Menu = {
-  href: string;
-  label: string;
-  active: boolean;
-  icon: StaticImageData;
-  submenus: Submenu[];
-};
+import {
+  LayoutGrid,
+  LucideIcon,
+  Briefcase,
+  LayoutDashboard,
+  Book
+} from "lucide-react";
 
 
 type Submenu = {
   href: string;
   label: string;
   active: boolean;
+};
+
+type Menu = {
+  href: string;
+  label: string;
+  active: boolean;
+  icon: LucideIcon;
+  submenus: Submenu[];
 };
 
 type Group = {
@@ -33,7 +35,7 @@ export function getMenuList(pathname: string): Group[] {
           href: "/",
           label: "All Apps",
           active: pathname.includes("/dashboard"),
-          icon: Dashboard,
+          icon: LayoutGrid,
           submenus: [],
         },
       ],
@@ -45,21 +47,21 @@ export function getMenuList(pathname: string): Group[] {
           href: "/pfi-app",
           label: "Dashboard",
           active: pathname === "/pfi-app" ? true : false,
-          icon: Dashboard,
+          icon: LayoutDashboard,
+          submenus: [],
+        },
+        {
+          href: "/pfi-app/tags",
+          label: "Tags",
+          active: pathname === "/pfi-app/tags" ? true : false,
+          icon: Book,
           submenus: [],
         },
         {
           href: "/pfi-app/equipments",
           label: "Equipment Lists",
           active: pathname === "/pfi-app/equipments" ? true : false,
-          icon: Book,
-          submenus: [],
-        },
-        {
-          href: "/pfi-app/tags",
-          label: "Tags Lists",
-          active: pathname === "/pfi-app/tags" ? true : false,
-          icon: Dashboard,
+          icon: Briefcase,
           submenus: [],
         },
       ],

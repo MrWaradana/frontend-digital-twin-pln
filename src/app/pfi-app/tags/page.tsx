@@ -9,6 +9,7 @@ import { ChevronLeftIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useGetDataTag } from "@/lib/APIs/useGetDataTag";
+import ListTag from "@/components/pfi-app/ListTag";
 
 export default function Page() {
   const router = useRouter()
@@ -24,36 +25,26 @@ export default function Page() {
 
   if (isLoading) {
     return (
-      <div className="w-full mt-24 flex justify-center items-center">
-        <CircularProgress color="primary" />
-        Loading ...
+      <div className="w-full h-screen flex justify-center items-center">
+        <CircularProgress
+          color="primary"
+          label={isLoading ? "Loading..." : "Validating..."}
+        />
       </div>
     );
   }
   const tags = tagData?.tags ?? [];
 
   return (
-    <PFIContentLayout title="Intelligent P-F Interval Equipments">
-      <div className="flex flex-col items-center justify-center mt-8">
-        {/* Content */}
-        <div className="flex flex-col gap-8 justify-center items-center w-full">
-          <div className="w-full text-left">
-            <h1 className="text-3xl font-bold text-gray-800">
-              Tags Lists
-            </h1>
-            <p className="text-sm text-gray-600 mt-2">
-              Manage your tags efficiently by viewing the list below.
-            </p>
-          </div>
-
-          <TableTag
-            dataRow={tags}
-            mutate={mutate}
-            isValidating={isValidating}
-          />
+    <PFIContentLayout title="i-PFI App">
+      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-1">
+        <ListTag dataRow={tags}
+          mutate={mutate}
+          isValidating={isValidating} />
+        <div className="bg-white rounded-3xl p-3 sm:p-5 mx-2 sm:mx-4 border border-gray-200 shadow-xl col-span-1 md:col-span-2">
+          TEST
         </div>
       </div>
-
     </PFIContentLayout>
   );
 }
