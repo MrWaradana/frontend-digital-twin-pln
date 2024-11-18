@@ -37,7 +37,7 @@ export function useGetDataTag(
   token: string | undefined,
 ): HookReply<DataList> {
   return useApiFetch(
-    `${PFI_API_URL}/selected-tags?page=1&limit=100`,
+    `${PFI_API_URL}/tags?page=1&limit=6112`,
     !!token,
     token
   )

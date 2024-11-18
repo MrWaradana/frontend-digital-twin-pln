@@ -1,20 +1,22 @@
-import { Button, Input, Link, Pagination, SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import { Input, Link, Pagination, SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { useRouter } from "next/navigation";
-import React from "react"
+import React from "react";
 import { Toaster } from "react-hot-toast";
 
 const ListTag = ({
   dataRow,
   mutate,
   isValidating,
+  selectedKeys,
+  setSelectedKeys
 }: {
   dataRow: any;
   mutate: any;
   isValidating: boolean;
+  selectedKeys: any;
+  setSelectedKeys: any;
 }) => {
   type TagType = (typeof dataRow)[0];
-  const router = useRouter()
 
   const [filterValue, setFilterValue] = React.useState("");
   const hasSearchFilter = Boolean(filterValue);
@@ -35,14 +37,7 @@ const ListTag = ({
         case "no":
           return index;
         case "name":
-          return (
-            <Link
-              href={`/pfi-app/${rowData.id}`}
-              className="text-[#918E8E] break-words w-92 block"
-            >
-              {cellValue}
-            </Link>
-          );
+          return cellValue
       }
     },
     []
@@ -210,6 +205,9 @@ const ListTag = ({
         sortDescriptor={sortDescriptor}
         classNames={classNames}
         hideHeader
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        selectionMode="single"
       >
         <TableHeader columns={columns} className="bg-blue-300">
           {(column: any) => (

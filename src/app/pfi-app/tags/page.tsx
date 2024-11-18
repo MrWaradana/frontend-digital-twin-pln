@@ -1,19 +1,18 @@
 "use client";
 
-import { PFIContentLayout } from "@/containers/PFIContentLayout";
-import boiler from "../../../../public/boiler-system.png";
-import Image from "next/image";
-import TableTag from "@/components/pfi-app/TableTag";
-import { Button, CircularProgress, Link } from "@nextui-org/react";
-import { ChevronLeftIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { useGetDataTag } from "@/lib/APIs/useGetDataTag";
 import ListTag from "@/components/pfi-app/ListTag";
+import Analytics from "@/components/pfi-app/tags/Analytics";
+import ShowPredict from "@/components/pfi-app/tags/ShowPredict";
+import { PFIContentLayout } from "@/containers/PFIContentLayout";
+import { useGetDataTag } from "@/lib/APIs/useGetDataTag";
+import { CircularProgress } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
+import React from "react";
 
 export default function Page() {
-  const router = useRouter()
   const { data: session } = useSession();
+  const [selectedKeys, setSelectedKeys]: any = React.useState(new Set(["1"]));
+
 
   const {
     data: tagData,
@@ -21,7 +20,6 @@ export default function Page() {
     isValidating,
     mutate,
   } = useGetDataTag(session?.user?.access_token)
-
 
   if (isLoading) {
     return (
@@ -38,12 +36,14 @@ export default function Page() {
   return (
     <PFIContentLayout title="i-PFI App">
       <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-1">
-        <ListTag dataRow={tags}
+        <ListTag
+          selectedKeys={selectedKeys}
+          setSelectedKeys={setSelectedKeys}
+          dataRow={tags}
           mutate={mutate}
           isValidating={isValidating} />
-        <div className="bg-white rounded-3xl p-3 sm:p-5 mx-2 sm:mx-4 border border-gray-200 shadow-xl col-span-1 md:col-span-2">
-          TEST
-        </div>
+
+        <Analytics selectedKeys={selectedKeys} />
       </div>
     </PFIContentLayout>
   );
