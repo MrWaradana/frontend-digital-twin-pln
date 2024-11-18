@@ -59,21 +59,21 @@ export function Navbar({ title }: NavbarProps) {
         <div className="mx-4 sm:mx-8 flex items-center h-[16dvh]">
           <div className="flex items-center space-x-4 lg:space-x-0">
             <SheetMenu />
-            <h1 className="font-semibold text-4xl">{title}</h1>
+            <h1 className="font-semibold text-sm sm:text-4xl">{title}</h1>
           </div>
           <div className="flex flex-1 items-center space-x-2 justify-end">
             <UserNav />
             <Button
               variant={`bordered`}
               radius="full"
-              className="border-[#E2523F] "
+              className="border-[#E2523F] text-sm sm:text-lg"
             >
               Apps Library
             </Button>
             <Button
               variant={`solid`}
               radius="full"
-              className="bg-[#E2523F] text-white"
+              className="bg-[#E2523F] text-white text-sm sm:text-lg"
               onClick={onOpen}
             >
               Sign out
