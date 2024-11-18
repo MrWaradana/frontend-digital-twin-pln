@@ -1,3 +1,5 @@
+'use client'
+
 import { UserNav } from "@/components/efficiency-app/nav/UserNav";
 import { SheetMenu } from "@/components/efficiency-app/nav/SheetMenu";
 import {
@@ -11,13 +13,14 @@ import {
   Button,
 } from "@nextui-org/react";
 import { signOut } from "next-auth/react";
-import router from "next/router";
+import {useRouter} from "next/navigation";
 
 interface NavbarProps {
   title: string;
 }
 
 export function Navbar({ title }: NavbarProps) {
+  const router = useRouter()
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <>

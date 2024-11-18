@@ -221,7 +221,7 @@ export default function Page() {
           </div>
           {/* PeriodeDatePicker */}
 
-          <HeatLossTrendingChart
+          {/* <HeatLossTrendingChart
             session={session}
             isLoadingTrendingDatas={isLoadingTrendingDatas}
             errorTrendingDatas={errorTrendingDatas}
@@ -230,7 +230,7 @@ export default function Page() {
             startDate={formatDate(startDateValue)}
             endDate={formatDate(endDateValue)}
             variableRawData={variableRawData}
-          ></HeatLossTrendingChart>
+          ></HeatLossTrendingChart> */}
 
           {/* (WIP)
           <TagValueChart

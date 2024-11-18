@@ -54,7 +54,6 @@ export default async function Home() {
     {
       name: "Risk Matrix App",
       url: "/risk-matrix-app",
-<<<<<<< HEAD
       bgColor: "bg-gradient-to-b from-[#E714D8] to-[#AF01D3]",
       textColor: "text-white",
       icon: (
@@ -65,9 +64,6 @@ export default async function Home() {
           height={100}
         />
       ),
-=======
-      icon: <Image src={riskLogo} alt="i-PFI App" width={150} height={150} />,
->>>>>>> 983dda9 (progress: risk-matrix-app)
     },
     {
       name: "RBD App",
