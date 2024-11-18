@@ -1,7 +1,8 @@
 import { Button, Input, Pagination, SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Link } from "@nextui-org/react";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { CircleAlert, CircleCheck } from "lucide-react";
+import { ChevronLeftIcon, CircleAlert, CircleCheck } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const ListEquipment = ({
@@ -18,6 +19,7 @@ const ListEquipment = ({
   title: string
 }) => {
   type EquipmentType = (typeof dataRow)[0];
+  const router = useRouter()
 
   const [isOpen, setIsOpen] = React.useState(false);
   const [selectedRow, setSelectedRow] = React.useState<any>(null);
@@ -38,17 +40,24 @@ const ListEquipment = ({
   const renderCell = React.useCallback(
     (rowData: EquipmentType, columnKey: React.Key, index: any) => {
       const cellValue = rowData[columnKey as keyof EquipmentType];
+      console.log(cellValue);
 
       switch (columnKey) {
         case "no":
           return index;
         case "name":
           return (
-            <Link href="#" className="text-[#918E8E]">{cellValue}</Link>
+            <Link
+              href={`/pfi-app/${rowData.id}`}
+              className="text-[#918E8E] break-words w-52 block"
+            >
+              {cellValue}
+            </Link>
+
           );
         case "actions":
           return (
-            <span className="flex bg-[#1C9EB6] text-neutral-200 py-1 rounded-full justify-center">
+            <span className="flex bg-[#1C9EB6] text-neutral-200 py-1 rounded-full justify-center px-3 sm:px-1">
               <CircleCheck className="inline-block me-2 w-4" />
               Normal
             </span>
@@ -136,7 +145,7 @@ const ListEquipment = ({
         <div className="flex justify-between  gap-3 items-end">
           <Input
             isClearable
-            className="w-full sm:max-w-[44%] rounded-full"
+            className="w-full sm:max-w-[100%] rounded-full"
             placeholder="Search by name..."
             startContent={<MagnifyingGlassIcon />}
             value={filterValue}
@@ -145,13 +154,13 @@ const ListEquipment = ({
           />
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">
+          <span className="text-[#E2523F] text-small">
             Total {dataRow.length} data
           </span>
-          <label className="flex items-center text-default-400 text-small">
+          <label className="flex items-center text-[#E2523F] text-small">
             Rows per page:
             <select
-              className="bg-transparent outline-none text-default-400 text-small"
+              className="bg-transparent outline-none text-[#E2523F] text-small"
               onChange={onRowsPerPageChange}
             >
               <option value="5">5</option>
@@ -174,8 +183,18 @@ const ListEquipment = ({
 
   const bottomContent = React.useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400"></span>
+      <div className="py-2 px-2 flex items-center justify-between">
+        {/* <Button
+          as={Link}
+          onPress={() => router.back()}
+          size="sm"
+          className="mr-auto bg-[#E2523F]"
+        >
+          <ChevronLeftIcon size={12} />
+          Back
+        </Button> */}
+
+
         <Pagination
           isCompact
           showControls
@@ -185,9 +204,11 @@ const ListEquipment = ({
           total={pages}
           onChange={setPage}
           variant="light"
+          className="ml-auto"
         />
-
       </div>
+
+
     );
   }, [onNextPage, onPreviousPage, page, pages]);
 
