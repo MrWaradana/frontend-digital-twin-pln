@@ -17,10 +17,8 @@ export const useSelectedPaginationTagsStore = create<SelectedPaginationTagsState
     (set) => ({
       selectedPaginationTagState: 1,
       limitPaginationTagState: 20,
-      setSelectedPaginationTagState: (data) =>
-        set({ selectedPaginationTagState: data }),
-      setLimitPaginationTagState: (data) =>
-        set({ selectedPaginationTagState: data }),
+      setSelectedPaginationTagState: (data) => set({ selectedPaginationTagState: data }),
+      setLimitPaginationTagState: (data) => set({ limitPaginationTagState: data }),
     }),
     {
       name: "pagination-tags",

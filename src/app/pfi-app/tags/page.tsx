@@ -16,35 +16,26 @@ export default function Page() {
   const selectedPaginationTags = useSelectedPaginationTagsStore(
     (state) => state.selectedPaginationTagState
   )
+  const limitPaginationTags = useSelectedPaginationTagsStore(
+    (state) => state.limitPaginationTagState
+  )
 
-  const selectedLimitTags = useSelectedPaginationTagsStore(
-    (state) => state.setLimitPaginationTagState
-  );
 
   const [page, setPage] = React.useState(selectedPaginationTags);
-  // const [limit, setLimit] = React.useState(selectedLimitTags);
+  const [limit, setLimit] = React.useState(limitPaginationTags);
 
   useEffect(() => {
     setPage(selectedPaginationTags);
-  }, [selectedPaginationTags]);
+    setLimit(limitPaginationTags);
+  }, [selectedPaginationTags, limitPaginationTags]);
 
 
   const {
     data: tagData,
     isLoading,
     mutate,
-  } = useGetDataTag(session?.user?.access_token, page)
+  } = useGetDataTag(session?.user?.access_token, page, limit)
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="w-full h-screen flex justify-center items-center">
-  //       <CircularProgress
-  //         color="primary"
-  //         label={isLoading ? "Loading..." : "Validating..."}
-  //       />
-  //     </div>
-  //   );
-  // }
   const tags = tagData?.tags ?? [];
   const pagination = tagData?.pagination ?? {};
 

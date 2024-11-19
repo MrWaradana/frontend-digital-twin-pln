@@ -36,9 +36,10 @@ export interface DataList {
 export function useGetDataTag(
   token: string | undefined,
   page: number,
+  limit: number
 ): HookReply<DataList> {
   return useApiFetch(
-    `${PFI_API_URL}/tags?page=${page}&limit=100`,
+    `${PFI_API_URL}/tags?page=${page}&limit=${limit}`,
     !!token,
     token,
   )

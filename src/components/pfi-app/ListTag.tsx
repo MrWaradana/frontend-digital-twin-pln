@@ -21,13 +21,12 @@ const ListTag = ({
 }) => {
   type TagType = (typeof dataRow)[0];
 
-
-
-  const [filterValue, setFilterValue] = React.useState("");
-  const hasSearchFilter = Boolean(filterValue);
-
-  const [page, setPage]: any = React.useState(1);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const selectedPaginationTags = useSelectedPaginationTagsStore(
+    (state) => state.selectedPaginationTagState
+  )
+  const limitPaginationTags = useSelectedPaginationTagsStore(
+    (state) => state.limitPaginationTagState
+  )
 
   const setSelectedPaginationTags = useSelectedPaginationTagsStore(
     (state) => state.setSelectedPaginationTagState
@@ -35,7 +34,12 @@ const ListTag = ({
 
   const setLimitPaginationTags = useSelectedPaginationTagsStore(
     (state) => state.setLimitPaginationTagState
-  )
+  );
+
+  const [page, setPage]: any = React.useState(selectedPaginationTags);
+  const [rowsPerPage, setRowsPerPage]: any = React.useState(limitPaginationTags);
+  const [filterValue, setFilterValue] = React.useState("");
+  const hasSearchFilter = Boolean(filterValue);
 
   const columns = [
     { name: "NO", uid: "no", sortable: true },
@@ -55,10 +59,10 @@ const ListTag = ({
     },
     []
   );
+
   const onSearchChange = React.useCallback((value?: string) => {
     if (value) {
       setFilterValue(value);
-      setPage(1);
     } else {
       setFilterValue("");
     }
@@ -66,7 +70,6 @@ const ListTag = ({
 
   const onClear = React.useCallback(() => {
     setFilterValue("");
-    setPage(1);
   }, []);
 
   const filteredItems = React.useMemo(() => {
@@ -80,9 +83,8 @@ const ListTag = ({
     return filteredData;
   }, [dataRow, filterValue, hasSearchFilter]);
 
-  // const pages = Math.ceil(62);
   const pages = React.useMemo(() => {
-    return Math.ceil(pagination.total_pages)
+    return pagination.total_pages;
   }, [pagination.total_pages]);
 
   const onNextPage = React.useCallback(() => {
@@ -97,83 +99,10 @@ const ListTag = ({
     }
   }, [page]);
 
-  const onRowsPerPageChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setRowsPerPage(Number(e.target.value));
-      setPage(1);
-    },
-    []
-  );
-
-  const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-    column: "name",
-    direction: "ascending",
-  });
-
-  const items = React.useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
-
-  const sortedItems = React.useMemo(() => {
-    return [...items].sort((a: TagType, b: TagType) => {
-      const first = a[sortDescriptor.column as keyof TagType] as number;
-      const second = b[sortDescriptor.column as keyof TagType] as number;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
-  }, [sortDescriptor, items]);
-
   useEffect(() => {
     setSelectedPaginationTags(page)
-    // setLimitPaginationTags(rowsPerPage)
+    setLimitPaginationTags(rowsPerPage)
   }, [page, pages, rowsPerPage]);
-
-  const topContent = React.useMemo(() => {
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end">
-          <Input
-            isClearable
-            className="w-full sm:max-w-full"
-            placeholder="Search by name..."
-            startContent={<MagnifyingGlassIcon />}
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          />
-          <div className="flex gap-3">
-
-          </div>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-[#E2523F] text-small">
-            Total {dataRow.length} data
-          </span>
-          <label className="flex items-center text-[#E2523F] text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-none text-[#E2523F] text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-            </select>
-          </label>
-        </div>
-      </div>
-    );
-  }, [
-    mutate,
-    filterValue,
-    onSearchChange,
-    onClear,
-    onRowsPerPageChange,
-    dataRow,
-  ]);
 
   const bottomContent = React.useMemo(() => {
     return (
@@ -191,6 +120,55 @@ const ListTag = ({
       </div>
     );
   }, [onNextPage, onPreviousPage, page, pages]);
+
+  const onRowsPerPageChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setRowsPerPage(Number(e.target.value));
+    },
+    []
+  );
+
+  const topContent = React.useMemo(() => {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between gap-3 items-end">
+          <Input
+            isClearable
+            className="w-full sm:max-w-full"
+            placeholder="Search by name..."
+            startContent={<MagnifyingGlassIcon />}
+            value={filterValue}
+            onClear={() => onClear()}
+            onValueChange={onSearchChange}
+          />
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-[#E2523F] text-small">
+            Total {dataRow.length} data
+          </span>
+          <label className="flex items-center text-[#E2523F] text-small">
+            Rows per page:
+            <select
+              className="bg-transparent outline-none text-[#E2523F] text-small"
+              onChange={onRowsPerPageChange}
+            >
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    );
+  }, [
+    mutate,
+    filterValue,
+    onSearchChange,
+    onClear,
+    onRowsPerPageChange,
+    dataRow,
+  ]);
+
 
   const classNames = React.useMemo(
     () => ({
@@ -215,15 +193,17 @@ const ListTag = ({
       <Toaster />
 
       <Table
-        aria-label="Example static collection table"
-        topContent={topContent}
+        aria-label="Example table with client async pagination"
+        topContent={
+          topContent
+        }
         topContentPlacement="outside"
-        bottomContent={bottomContent}
+        bottomContent={
+          bottomContent
+        }
         bottomContentPlacement="outside"
-        onSortChange={setSortDescriptor}
-        sortDescriptor={sortDescriptor}
-        classNames={classNames}
         hideHeader
+        classNames={classNames}
         selectedKeys={selectedKeys}
         onSelectionChange={setSelectedKeys}
         selectionMode="single"
@@ -240,16 +220,15 @@ const ListTag = ({
           )}
         </TableHeader>
         <TableBody
-          isLoading={isLoading}
-          emptyContent="No data found"
+          items={filteredItems}
           loadingContent={
             <>
               <Spinner color="primary" label="loading..." />
             </>
           }
-          items={sortedItems}
+          isLoading={isLoading}
         >
-          {(item) => (
+          {(item: TagType) => (
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey, item.index)}</TableCell>
@@ -258,7 +237,6 @@ const ListTag = ({
           )}
         </TableBody>
       </Table>
-
     </div>
   )
 }
