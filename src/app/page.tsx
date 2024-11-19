@@ -74,7 +74,7 @@ export default async function Home() {
     },
     {
       name: "LCCA App",
-      url: "/#",
+      url: "/lcca-app",
       bgColor: "bg-gradient-to-b from-[#42509F] to-[#272363]",
       textColor: "text-white",
       icon: <Image src={newLccLogo} alt="LCCA App" width={100} height={100} />,
