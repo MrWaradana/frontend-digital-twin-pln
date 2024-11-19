@@ -1,28 +1,41 @@
+import { useSelectedPaginationTagsStore } from "@/store/iPFI/setPaginationTags";
 import { Input, Link, Pagination, SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import React from "react";
+import React, { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 
 const ListTag = ({
   dataRow,
   mutate,
-  isValidating,
+  isLoading,
   selectedKeys,
-  setSelectedKeys
+  setSelectedKeys,
+  pagination,
 }: {
   dataRow: any;
   mutate: any;
-  isValidating: boolean;
+  isLoading: boolean;
   selectedKeys: any;
   setSelectedKeys: any;
+  pagination: any;
 }) => {
   type TagType = (typeof dataRow)[0];
+
+
 
   const [filterValue, setFilterValue] = React.useState("");
   const hasSearchFilter = Boolean(filterValue);
 
-  const [page, setPage] = React.useState(1);
+  const [page, setPage]: any = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const setSelectedPaginationTags = useSelectedPaginationTagsStore(
+    (state) => state.setSelectedPaginationTagState
+  )
+
+  const setLimitPaginationTags = useSelectedPaginationTagsStore(
+    (state) => state.setLimitPaginationTagState
+  )
 
   const columns = [
     { name: "NO", uid: "no", sortable: true },
@@ -67,7 +80,10 @@ const ListTag = ({
     return filteredData;
   }, [dataRow, filterValue, hasSearchFilter]);
 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
+  // const pages = Math.ceil(62);
+  const pages = React.useMemo(() => {
+    return Math.ceil(pagination.total_pages)
+  }, [pagination.total_pages]);
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
@@ -107,10 +123,13 @@ const ListTag = ({
       const second = b[sortDescriptor.column as keyof TagType] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    }).map((item, index) => ({
-      ...item, index: index + 1
-    }));
+    });
   }, [sortDescriptor, items]);
+
+  useEffect(() => {
+    setSelectedPaginationTags(page)
+    // setLimitPaginationTags(rowsPerPage)
+  }, [page, pages, rowsPerPage]);
 
   const topContent = React.useMemo(() => {
     return (
@@ -221,7 +240,7 @@ const ListTag = ({
           )}
         </TableHeader>
         <TableBody
-          isLoading={isValidating}
+          isLoading={isLoading}
           emptyContent="No data found"
           loadingContent={
             <>

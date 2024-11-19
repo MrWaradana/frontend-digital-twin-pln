@@ -19,7 +19,7 @@ export default function Page() {
     isLoading,
     isValidating,
     mutate,
-  } = useGetDataTag(session?.user?.access_token)
+  } = useGetDataTag(session?.user?.access_token, 1)
 
 
   if (isLoading) {
