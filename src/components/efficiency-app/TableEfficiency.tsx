@@ -87,6 +87,11 @@ export default function TableEfficiency({
   efficiencyLoading,
   isValidating,
   thermoStatus,
+  page,
+  setPage,
+  rowsPerPage,
+  setRowsPerPage,
+  pages,
 }: {
   tableData: any;
   addNewUrl?: string;
@@ -94,6 +99,11 @@ export default function TableEfficiency({
   efficiencyLoading: any;
   isValidating: boolean;
   thermoStatus: any;
+  page: any;
+  setPage: any;
+  rowsPerPage: any;
+  setRowsPerPage: any;
+  pages: any;
 }) {
   const router = useRouter();
   const [tableState, setTableState] = React.useState(tableData);
@@ -155,11 +165,12 @@ export default function TableEfficiency({
   const [parameterFilter, setParameterFilter] = React.useState<Selection>(
     new Set(INITIAL_VISIBLE_PARAMETER)
   );
-  const [rowsPerPage, setRowsPerPage] = React.useState(15);
-  const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-    column: "age",
-    direction: "ascending",
-  });
+
+  const [sortDescriptor, setSortDescriptor]: any =
+    React.useState<SortDescriptor>({
+      column: "age",
+      direction: "ascending",
+    });
 
   const StatusThermoflow = useStatusThermoflowStore(
     (state) => state.statusThermoflow
@@ -173,8 +184,6 @@ export default function TableEfficiency({
   //     setSelectedKeys(new Set([selectedEfficiencyData])); // Convert currentKey to Set and update the state
   //   }
   // }, [selectedEfficiencyData]);
-
-  const [page, setPage] = React.useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -220,30 +229,53 @@ export default function TableEfficiency({
     });
 
     return filteredData;
-  }, [tableData, filterValue, parameterFilter, statusFilter]);
+  }, [tableData, hasSearchFilter, parameterFilter, statusFilter, filterValue]);
 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
+  // const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const items = React.useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
+  const loadingState =
+    efficiencyLoading || tableData?.length === 0 ? "loading" : "idle";
 
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
+  // const items = React.useMemo(() => {
+  //   const start = (page - 1) * rowsPerPage;
+  //   const end = start + rowsPerPage;
+  //   return filteredItems.slice(start, end);
+  // }, [page, filteredItems, rowsPerPage,]);
 
   const sortedItems = React.useMemo(() => {
-    return [...items].sort((a: TransactionsType, b: TransactionsType) => {
-      const first = a[
-        sortDescriptor.column as keyof TransactionsType
-      ] as number;
-      const second = b[
-        sortDescriptor.column as keyof TransactionsType
-      ] as number;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-      setLoadingEfficiency(false);
+    // Since we're using server-side pagination, we only sort the current page
+    if (!filteredItems || filteredItems.length === 0) return [];
+
+    return [...filteredItems].sort((a, b) => {
+      const first = a[sortDescriptor.column];
+      const second = b[sortDescriptor.column];
+
+      // Handle null/undefined values
+      if (first === null || first === undefined) return 1;
+      if (second === null || second === undefined) return -1;
+
+      // Handle different data types
+      if (typeof first === "number" && typeof second === "number") {
+        return sortDescriptor.direction === "descending"
+          ? second - first
+          : first - second;
+      }
+
+      // Handle dates
+      if (first instanceof Date && second instanceof Date) {
+        return sortDescriptor.direction === "descending"
+          ? second.getTime() - first.getTime()
+          : first.getTime() - second.getTime();
+      }
+
+      // Default string comparison
+      const firstStr = String(first).toLowerCase();
+      const secondStr = String(second).toLowerCase();
+      const cmp = firstStr.localeCompare(secondStr);
+
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
-  }, [sortDescriptor, items, tableState]);
+  }, [filteredItems, sortDescriptor, tableData]);
 
   // Function to delete the selected row
   const handleDelete = async () => {
@@ -386,7 +418,8 @@ export default function TableEfficiency({
                       isIconOnly
                       size="sm"
                       variant="solid"
-                      color="primary"
+                      radius="full"
+                      className=" bg-[#D4CA2F]"
                       // isDisabled={!thermoStatus}
                     >
                       <DotsVerticalIcon className="text-white dark:text-black text-2xl" />
@@ -625,9 +658,7 @@ export default function TableEfficiency({
             >
               <option value="5">5</option>
               <option value="10">10</option>
-              <option value="15" selected>
-                15
-              </option>
+              <option value="15">15</option>
             </select>
           </label>
         </div>
@@ -652,6 +683,7 @@ export default function TableEfficiency({
             ? "All items selected"
             : `${selectedKeys.size} of ${filteredItems.length} selected`} */}
         </span>
+
         <Pagination
           isCompact
           showControls
@@ -659,7 +691,7 @@ export default function TableEfficiency({
           color="primary"
           page={page}
           total={pages}
-          onChange={setPage}
+          onChange={(page) => setPage(page)}
         />
         <div className="hidden sm:flex w-[30%] justify-end gap-2">
           <Button
@@ -681,7 +713,7 @@ export default function TableEfficiency({
         </div>
       </div>
     );
-  }, [items.length, page, pages, hasSearchFilter]);
+  }, [filteredItems.length, page, pages, hasSearchFilter]);
 
   // The modal that shows up when attempting to delete an item
   const deleteConfirmationModal = (
@@ -853,13 +885,14 @@ export default function TableEfficiency({
         </TableHeader>
         <TableBody
           emptyContent={`No data found`}
-          isLoading={(efficiencyLoading ?? false) || (isValidating ?? false)}
+          // isLoading={(efficiencyLoading ?? false) || (isValidating ?? false)}
+          loadingState={loadingState}
           loadingContent={
             <>
               <Spinner color="primary" label="loading..." />
             </>
           }
-          items={sortedItems}
+          items={sortedItems ?? []}
         >
           {(item) => (
             <TableRow key={item.id}>

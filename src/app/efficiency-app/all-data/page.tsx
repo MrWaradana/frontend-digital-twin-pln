@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Card,
   CardHeader,
@@ -33,6 +33,8 @@ export default function Page() {
   // const [efficiencyData, setEfficiencyData] = useState([]);
   const router = useRouter();
   const { data: session, status, update } = useSession();
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(1);
 
   const {
     data: excelData,
@@ -58,7 +60,7 @@ export default function Page() {
     mutate: mutateEfficiency,
     isValidating: isValidatingEfficiency,
     error: errorEfficiency,
-  } = useGetData(session?.user.access_token);
+  } = useGetData(session?.user.access_token, 0, page, rowsPerPage);
 
   if (error || errorEfficiency) {
     // console.log(error, "ERROOOOOOOR");
@@ -100,10 +102,16 @@ export default function Page() {
   );
 
   const thermoStatus = efficiencyData?.thermo_status ?? StatusThermoflow;
-  const efficiency = efficiencyData?.transactions ?? [];
+  const efficiency = useMemo(() => {
+    return efficiencyData?.transactions ?? [];
+  }, [efficiencyData]);
   // const efficiencyFiltered = efficiency.filter(
   //   (item: any) => item.created_by === session?.user.user.id
   // );
+
+  const pages = useMemo(() => {
+    return efficiencyData?.total_pages ? efficiencyData?.total_pages : 0;
+  }, [efficiencyData, rowsPerPage]);
 
   useEffect(() => {
     useExcelStore.getState().setExcels(excel);
@@ -142,7 +150,7 @@ export default function Page() {
     // };
   }, []);
 
-  if (isLoading || isValidating)
+  if (isLoading)
     return (
       <EfficiencyContentLayout title="All Efficiency Data">
         <div className="w-full mt-24 flex justify-center items-center">
@@ -179,6 +187,11 @@ export default function Page() {
             efficiencyLoading={efficiencyLoading}
             mutate={mutateEfficiency}
             isValidating={isValidatingEfficiency}
+            page={page}
+            setPage={setPage}
+            rowsPerPage={rowsPerPage}
+            setRowsPerPage={setRowsPerPage}
+            pages={pages}
           />
         </div>
       </div>

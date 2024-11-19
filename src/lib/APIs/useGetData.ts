@@ -16,10 +16,12 @@ interface DataList {
 
 export function useGetData(
   token: string | undefined,
-  isPerformance: number | undefined = 0
+  isPerformance: number | undefined = 0,
+  page: number | string | undefined = 1,
+  size: number | string | undefined = 20
 ): HookReply<DataList> {
   return useApiFetch(
-    `${EFFICIENCY_API_URL}/data?page=1&size=100&is_performance_test=${isPerformance}`,
+    `${EFFICIENCY_API_URL}/data?page=${page}&size=${size}&is_performance_test=${isPerformance}`,
     !!token,
     token,
     {
