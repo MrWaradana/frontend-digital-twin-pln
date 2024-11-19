@@ -144,12 +144,14 @@ export default function Page() {
 
   if (isLoading || isValidating)
     return (
-      <div className="w-full mt-24 flex justify-center items-center">
-        <CircularProgress
-          color="primary"
-          label={isLoading ? "Loading..." : "Validating..."}
-        />
-      </div>
+      <EfficiencyContentLayout title="All Efficiency Data">
+        <div className="w-full mt-24 flex justify-center items-center">
+          <CircularProgress
+            color="primary"
+            label={isLoading ? "Loading..." : "Validating..."}
+          />
+        </div>
+      </EfficiencyContentLayout>
     );
 
   if (!excel)

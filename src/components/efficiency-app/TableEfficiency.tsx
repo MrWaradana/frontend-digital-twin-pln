@@ -155,7 +155,7 @@ export default function TableEfficiency({
   const [parameterFilter, setParameterFilter] = React.useState<Selection>(
     new Set(INITIAL_VISIBLE_PARAMETER)
   );
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(15);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
     column: "age",
     direction: "ascending",
@@ -341,15 +341,7 @@ export default function TableEfficiency({
 
       switch (columnKey) {
         case "name":
-          return (
-            <Link
-              size="sm"
-              href={`/efficiency-app/${rowData.id}/output`}
-              underline={"hover"}
-            >
-              {cellValue}
-            </Link>
-          );
+          return cellValue;
         case "jenis_parameter":
           return (
             <Chip
@@ -486,7 +478,10 @@ export default function TableEfficiency({
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
-            className="w-full sm:max-w-[44%]"
+            className="w-full sm:max-w-[44%] bg-white rounded-full"
+            classNames={{
+              mainWrapper: ["!rounded-full"],
+            }}
             placeholder="Search by name..."
             startContent={<MagnifyingGlassIcon />}
             value={filterValue}
@@ -611,7 +606,16 @@ export default function TableEfficiency({
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {nonPerformanceData.length} data
+            Showing{" "}
+            {filterValue
+              ? filteredItems.length
+              : rowsPerPage > nonPerformanceData.length
+              ? nonPerformanceData.length
+              : rowsPerPage}{" "}
+            {filterValue
+              ? ""
+              : `item from total of ${nonPerformanceData.length}${" "}`}
+            {filterValue ? ` for \"${filterValue}\"` : ""}
           </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
@@ -621,7 +625,9 @@ export default function TableEfficiency({
             >
               <option value="5">5</option>
               <option value="10">10</option>
-              <option value="15">15</option>
+              <option value="15" selected>
+                15
+              </option>
             </select>
           </label>
         </div>
@@ -782,31 +788,59 @@ export default function TableEfficiency({
   //   );
   // }
 
+  const classNames = React.useMemo(
+    () => ({
+      wrapper: ["max-h-full"],
+      th: ["bg-transparent", "text-default-500", "border-b", "border-divider"],
+      thead: [
+        "bg-transparent",
+        "shadow-none",
+        "![&>tr]:first:shadow-none",
+        "![&_tr]:shadow-none",
+        "![&>tr]:first:!shadow-none",
+      ],
+      tr: ["shadow-none", "bg-transparent", "border-b", "border-divider"],
+      td: [
+        // changing the rows border radius
+        // first
+        "group-data-[first=true]:first:before:rounded-none",
+        "group-data-[first=true]:last:before:rounded-none",
+        // middle
+        "group-data-[middle=true]:before:rounded-none",
+        // last
+        "group-data-[last=true]:first:before:rounded-none",
+        "group-data-[last=true]:last:before:rounded-none",
+      ],
+    }),
+    []
+  );
+
   return (
     <>
       {deleteConfirmationModal}
       {choosePeriodicModal}
       <Table
         aria-label="Efficiency Data Table"
-        isHeaderSticky
+        isCompact
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
         color="primary"
-        classNames={{
-          wrapper: "max-h-[442px]",
-        }}
+        classNames={classNames}
         selectedKeys={selectedKeys}
         selectionMode="single"
         selectionBehavior="replace"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
-        topContentPlacement="outside"
+        topContentPlacement="inside"
         // onSelectionChange={(value) => {
         //   handleSelectedId(value);
         // }}
         onSortChange={setSortDescriptor}
       >
-        <TableHeader columns={headerColumns} className="bg-blue-300">
+        <TableHeader
+          columns={headerColumns}
+          className="bg-transparent shadow-none"
+        >
           {(column: any) => (
             <TableColumn
               key={column.uid}

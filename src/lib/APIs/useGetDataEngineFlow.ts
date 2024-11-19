@@ -3,7 +3,7 @@ import { HookReply } from "./types";
 import { useApiFetch } from "./useApiFetch";
 
 export interface EngineFlow {
-  [key: string]: number;
+  [key: string]: { diff: number; value: number };
 }
 
 export function useGetDataEngineFlow(
