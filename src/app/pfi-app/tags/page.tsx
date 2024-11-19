@@ -1,17 +1,27 @@
 "use client";
 
 import ListTag from "@/components/pfi-app/ListTag";
-import Analytics from "@/components/pfi-app/tags/Analytics";
+// import Analytics from "@/components/pfi-app/tags/Analytics";
 import { PFIContentLayout } from "@/containers/PFIContentLayout";
 import { useGetDataTag } from "@/lib/APIs/useGetDataTag";
 import { useSelectedPaginationTagsStore } from "@/store/iPFI/setPaginationTags";
 import { useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
 import React, { useEffect } from "react";
 
 interface TagValue {
   time_stamp: string;
   value: number;
 }
+
+const Analytics = dynamic(
+  () =>
+    import(
+      "@/components/pfi-app/tags/Analytics"
+    ),
+  { ssr: false }
+);
+
 
 export default function Page() {
   const { data: session } = useSession();
