@@ -8,6 +8,11 @@ import { useSelectedPaginationTagsStore } from "@/store/iPFI/setPaginationTags";
 import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
 
+interface TagValue {
+  time_stamp: string;
+  value: number;
+}
+
 export default function Page() {
   const { data: session } = useSession();
   const [selectedKeys, setSelectedKeys]: any = React.useState(new Set(["1"]));
@@ -45,16 +50,51 @@ export default function Page() {
     }))
   }, [tags]);
 
-  const tagValues = [{
-    name: "Tag 1",
-    values: [
-      { time_stamp: "2021-10-01T00:00:00.000Z", value: 10 },
-      { time_stamp: "2021-10-02T00:00:00.000Z", value: 20 },
-      { time_stamp: "2021-10-03T00:00:00.000Z", value: 30 },
-      { time_stamp: "2021-10-04T00:00:00.000Z", value: 40 },
-      { time_stamp: "2021-10-05T00:00:00.000Z", value: 50 },
-    ]
-  }]
+  const tagValues: { name: string; values: TagValue[] }[] = [
+    {
+      name: "Tag 1 (Original)",
+      values: [] // Data asli
+    },
+    {
+      name: "Tag 1 (Predicted)",
+      values: [] // Data prediksi
+    }
+  ];
+
+  const getRandomValue = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  // Tanggal awal untuk data asli (7 hari ke belakang)
+  let startDate = new Date();
+  startDate.setDate(startDate.getDate() - 7);
+
+  // Mengisi data asli selama 7 hari terakhir
+  for (let i = 0; i < 7; i++) {
+    let newDate = new Date(startDate);
+    newDate.setDate(newDate.getDate() + i);
+
+    tagValues[0].values.push({
+      time_stamp: newDate.toISOString(),
+      value: getRandomValue(1, 100)
+    });
+  }
+
+  // Tanggal awal untuk data prediksi (hari setelah data asli berakhir)
+  let predictionStartDate = new Date(startDate);
+  predictionStartDate.setDate(predictionStartDate.getDate() + 7);
+
+  // Mengisi data prediksi selama 7 hari ke depan
+  for (let i = 0; i < 7; i++) {
+    let newDate = new Date(predictionStartDate);
+    newDate.setDate(newDate.getDate() + i);
+
+    tagValues[1].values.push({
+      time_stamp: newDate.toISOString(),
+      value: getRandomValue(5, 105)
+    });
+  }
+
+  console.log(tagValues)
 
   return (
     <PFIContentLayout title="i-PFI App">

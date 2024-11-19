@@ -9,21 +9,17 @@ const Analytics = ({ selectedKeys, tagValues }: { selectedKeys: any, tagValues: 
   const chartData: any = React.useMemo(() => {
     if (!tagValues) return {};
 
-    const dataSetAttributes = tagValues!!.map((data: any) => {
+    const dataSetAttributes = tagValues.map((data: any) => {
       const datasets = {
         type: "line",
         name: data.name,
-        showInLegend: false,
+        showInLegend: true, // Tampilkan legenda untuk membedakan dataset
       };
 
-      datasets["dataPoints"] = datasets["dataPoints"] || [];
-
-      data.values.forEach((values: any) => {
-        datasets["dataPoints"].push({
-          x: new Date(values.time_stamp),
-          y: values.value,
-        });
-      });
+      datasets["dataPoints"] = data.values.map((values: any) => ({
+        x: new Date(values.time_stamp),
+        y: values.value,
+      }));
 
       return datasets;
     });
