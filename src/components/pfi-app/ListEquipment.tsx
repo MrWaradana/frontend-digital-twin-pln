@@ -1,8 +1,6 @@
-import { Button, Input, Pagination, SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Link } from "@nextui-org/react";
+import { Input, Link, Pagination, SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { ChevronLeftIcon, CircleAlert, CircleCheck } from "lucide-react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { CircleAlert, CircleCheck } from "lucide-react";
 import React from "react";
 
 const ListEquipment = ({
@@ -19,11 +17,6 @@ const ListEquipment = ({
   title: string
 }) => {
   type EquipmentType = (typeof dataRow)[0];
-  const router = useRouter()
-
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [selectedRow, setSelectedRow] = React.useState<any>(null);
-  const session = useSession();
 
   const [filterValue, setFilterValue] = React.useState("");
   const hasSearchFilter = Boolean(filterValue);
@@ -56,7 +49,7 @@ const ListEquipment = ({
           );
         case "actions":
           return (
-            <span className="flex bg-[#1C9EB6] text-neutral-200 py-1 rounded-full justify-center px-3 sm:px-1">
+            <span className="flex bg-[#28C840] text-neutral-200 py-1 rounded-full justify-center px-3 sm:px-1">
               <CircleCheck className="inline-block me-2 w-4" />
               Normal
             </span>
@@ -153,13 +146,13 @@ const ListEquipment = ({
           />
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-[#E2523F] text-small">
+          <span className="text-[#1C9EB6] text-small">
             Total {dataRow.length} data
           </span>
-          <label className="flex items-center text-[#E2523F] text-small">
+          <label className="flex items-center text-[#1C9EB6] text-small">
             Rows per page:
             <select
-              className="bg-transparent outline-none text-[#E2523F] text-small"
+              className="bg-transparent outline-none text-[#1C9EB6] text-small"
               onChange={onRowsPerPageChange}
             >
               <option value="5">5</option>
@@ -183,17 +176,6 @@ const ListEquipment = ({
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex items-center justify-between">
-        {/* <Button
-          as={Link}
-          onPress={() => router.back()}
-          size="sm"
-          className="mr-auto bg-[#E2523F]"
-        >
-          <ChevronLeftIcon size={12} />
-          Back
-        </Button> */}
-
-
         <Pagination
           isCompact
           showControls
@@ -206,8 +188,6 @@ const ListEquipment = ({
           className="ml-auto"
         />
       </div>
-
-
     );
   }, [onNextPage, onPreviousPage, page, pages]);
 
@@ -216,13 +196,9 @@ const ListEquipment = ({
       wrapper: ["max-h-[382px]", "max-w-3xl", "shadow-none"],
       th: ["bg-transparent", "text-default-500", "border-b", "border-divider",],
       td: [
-        // changing the rows border radius
-        // first
         "group-data-[first=true]:first:before:rounded-none",
         "group-data-[first=true]:last:before:rounded-none",
-        // middle
         "group-data-[middle=true]:before:rounded-none",
-        // last
         "group-data-[last=true]:first:before:rounded-none",
         "group-data-[last=true]:last:before:rounded-none",
       ],
@@ -235,7 +211,7 @@ const ListEquipment = ({
         <h1 className="text-xl font-semibold">
           {title}
         </h1>
-        <CircleAlert className="inline-block text-red-600 ms-5" />
+        <CircleAlert className="inline-block text-[#1C9EB6] ms-5" />
       </div>
 
       <Table
