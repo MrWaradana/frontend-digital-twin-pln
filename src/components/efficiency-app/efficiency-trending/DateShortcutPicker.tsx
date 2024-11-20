@@ -83,7 +83,11 @@ const DateShortcutPicker: React.FC<DateShortcutPickerProps> = ({
               ? "primary"
               : "default"
           }
-          className="px-3 py-1 w-full"
+          className={`px-3 py-1 w-full ${
+            activeShortcut === `${shortcut.unit}-${shortcut.value}`
+              ? "bg-[#D4CA2F]"
+              : ""
+          }`}
           onClick={() => handleShortcutClick(shortcut)}
         >
           {shortcut.label}

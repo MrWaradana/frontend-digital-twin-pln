@@ -119,11 +119,11 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
           (row: any) =>
             row.depth < 1 && (
               <>
-                <tr key={row.id} className="border border-black">
+                <tr key={row.id} className="border-b-1 border-neutral-200">
                   {row.getVisibleCells().map((cell: any) => (
                     <td
                       key={cell.id}
-                      className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${
+                      className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 px-1 ${
                         cell.column.columnDef.meta?.className ?? ""
                       }`}
                       style={{
@@ -147,7 +147,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         {subRow.getVisibleCells().map((cell: any) => (
                           <td
                             key={cell.id}
-                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border border-neutral-500 print-cell ${
+                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border-b-1 border-neutral-200 print-cell px-1 ${
                               cell.column.columnDef.meta?.className ?? ""
                             }`}
                             style={{
@@ -170,7 +170,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                 {!row.original.total_nilai_losses ? null : (
                   <tr
                     key={`summary-${row.id}`}
-                    className="bg-neutral-100 dark:bg-neutral-900 border border-black"
+                    className="bg-neutral-100 dark:bg-neutral-900 border-b-1 border-neutral-200"
                   >
                     {row.getVisibleCells().map((cell: any) => {
                       // Render summary under the specific columns
@@ -188,7 +188,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right"
+                            className="font-bold border-b-1 border-neutral-200 text-right"
                           >
                             {row.original.total_nilai_losses
                               ? row.original.total_nilai_losses.toFixed(2)
@@ -200,7 +200,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right"
+                            className="font-bold border-b-1 border-neutral-200 text-right"
                           >
                             {row.original.total_persen_losses
                               ? row.original.total_persen_losses.toFixed(2)
@@ -212,7 +212,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right"
+                            className="font-bold border-b-1 border-neutral-200 text-right"
                           >
                             Rp.
                             {row.original.total_cost_benefit
@@ -227,7 +227,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right"
+                            className="font-bold border-b-1 border-neutral-200 text-right"
                           >
                             Rp.
                             {row.original.total_cost_gap
@@ -309,13 +309,13 @@ export default function TableParetoHeatlossNPHR({
     () => [
       {
         accessorKey: "category",
-        header: "Parameter",
+        header: () => <span className={`text-left`}>Parameter</span>,
         minSize: 60,
         size: 250,
         maxSize: 800,
         meta: {
           className:
-            "sticky left-0 z-20 shadow-inner overflow-hidden whitespace-nowrap text-clip print-column",
+            "sticky left-0 z-20  overflow-hidden whitespace-nowrap text-clip print-column",
         },
         cell: (props: any) => (
           <div
@@ -338,7 +338,7 @@ export default function TableParetoHeatlossNPHR({
                 )}
               </button>
             ) : (
-              `🔵 ${props.row.original.variable.input_name}`
+              `${props.row.original.variable.input_name}`
             )}{" "}
             <span className="text-base print-cell">
               {" "}
@@ -357,6 +357,7 @@ export default function TableParetoHeatlossNPHR({
         size: 25,
         cell: (props: any) => (
           <div
+            className="text-center"
             style={{
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
@@ -603,25 +604,25 @@ export default function TableParetoHeatlossNPHR({
 
                   if (goodIndicator === "minus" && gap < 0) {
                     return (
-                      <span className="py-1 px-3 bg-green-500 rounded-md text-white">
+                      <span className="py-1 px-3 my-2 bg-[#1C9EB6] rounded-full text-white">
                         Lower
                       </span>
                     );
                   } else if (goodIndicator === "plus" && gap > 0) {
                     return (
-                      <span className="py-1 px-3 bg-green-500 rounded-md text-white">
+                      <span className="py-1 px-3 my-2 bg-[#1C9EB6] rounded-full text-white">
                         Higher
                       </span>
                     );
                   } else if (gap === 0) {
                     return (
-                      <span className="py-1 px-3 bg-yellow-400 dark:bg-yellow-600 rounded-md text-white">
+                      <span className="py-1 px-3 my-2 bg-neutral-200 dark:bg-yellow-600 rounded-full text-black">
                         Normal
                       </span>
                     );
                   } else {
                     return (
-                      <span className="py-1 px-3 bg-red-500 rounded-md text-white">
+                      <span className="py-1 px-3 my-2 bg-[#D93832] rounded-full text-white">
                         {gap < 0 ? "Lower" : "Higher"}
                       </span>
                     );
@@ -995,10 +996,10 @@ export default function TableParetoHeatlossNPHR({
         paretoMutate={mutate}
       /> */}
 
-      <div className=" flex justify-end gap-2">
+      <div className="flex justify-end gap-2">
         <Button
           onClick={() => handleExportExcel()}
-          color="success"
+          color={`default`}
           size="sm"
           endContent={<DownloadIcon size={16} />}
         >
@@ -1006,7 +1007,7 @@ export default function TableParetoHeatlossNPHR({
         </Button>
         <Button
           onClick={() => handleExportData()}
-          color="success"
+          color={`default`}
           size="sm"
           endContent={<DownloadIcon size={16} />}
         >
@@ -1014,7 +1015,7 @@ export default function TableParetoHeatlossNPHR({
         </Button>
         <Button
           onClick={() => handleExportPDFData()}
-          color="danger"
+          color={`default`}
           size="sm"
           endContent={<DownloadIcon size={16} />}
         >
@@ -1039,7 +1040,7 @@ export default function TableParetoHeatlossNPHR({
           }}
           id="table-pareto-nphr"
         >
-          <thead className="sticky top-0 z-50 border-2">
+          <thead className="sticky top-0 z-50 border-b-1">
             {table.getHeaderGroups().map((headerGroup: any) => {
               return (
                 <tr key={`${headerGroup.id}`}>
@@ -1047,7 +1048,7 @@ export default function TableParetoHeatlossNPHR({
                     return (
                       <th
                         key={header.id}
-                        className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 ${
+                        className={`relative group text-sm capitalize font-light border-b-1 border-neutral-200 ${
                           header.column.columnDef.meta?.className ?? ""
                         } `}
                         style={{
@@ -1078,27 +1079,25 @@ export default function TableParetoHeatlossNPHR({
           <MemoizedTableBody table={table} />
           {/* Initial Table Body for expanding row works */}
           {/* <TableBody table={table} /> */}
-          <tfoot className="sticky bottom-0 z-50 border-2">
+          <tfoot className="sticky bottom-0 z-50 border-b-1">
             <tr className="text-left">
-              <th className="sticky left-0 bg-blue-200 dark:bg-blue-600">
-                Total Summary
-              </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right">
+              <th className="sticky left-0 bg-[#FFFAB4]">Total Summary</th>
+              <th className="bg-[#FFFAB4]" colSpan={4}></th>
+              <th className="bg-[#FFFAB4] text-right">
                 {formattedNumber(summaryData.total_persen_losses.toFixed(2))}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right">
+              <th className="bg-[#FFFAB4] text-right">
                 {formattedNumber(summaryData.total_nilai_losses.toFixed(2))}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right">
+              <th className="bg-[#FFFAB4]" colSpan={1}></th>
+              <th className="bg-[#FFFAB4] text-right">
                 Rp.{formatCurrency(summaryData.total_cost_benefit.toFixed(2))}
               </th>
-              {/* <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th> */}
-              <th className="bg-blue-200 dark:bg-blue-600 text-right">
+              {/* <th className="bg-[#FFFAB4]" colSpan={1}></th> */}
+              <th className="bg-[#FFFAB4] text-right">
                 Rp.{formatCurrency(summaryData.total_cost_gap.toFixed(2))}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={2}></th>
+              <th className="bg-[#FFFAB4]" colSpan={2}></th>
             </tr>
           </tfoot>
         </table>

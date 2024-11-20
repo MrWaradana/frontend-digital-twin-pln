@@ -166,7 +166,7 @@ export default function EfficiencyTrending() {
   return (
     <EfficiencyContentLayout title={`Efficiency Trending`}>
       <section
-        className={`flex flex-row justify-start items-start w-full h-[90dvh] gap-4`}
+        className={`flex flex-row justify-start items-start w-full h-[90dvh] gap-4 p-8 bg-white rounded-xl shadow-xl`}
       >
         <div className={`flex flex-col gap-5 items-center justify-start`}>
           <DateShortcutPicker
@@ -182,10 +182,9 @@ export default function EfficiencyTrending() {
             size="sm"
           />
           <Button
-            color={`primary`}
             variant={`solid`}
             size={`sm`}
-            className="w-full"
+            className="w-full bg-[#D4CA2F] text-white"
             onClick={onDetailedAnalysisClicked}
           >
             Open Detailed per Category
@@ -197,7 +196,7 @@ export default function EfficiencyTrending() {
             <Spinner color="primary" />
           </div>
         ) : (
-          <div className={`w-full h-full`}>
+          <div className={`w-full h-[75dvh]`}>
             <EChartsStackedLine
               chartData={paretoTrendingChart}
               selectedSeries={selectedSeries}

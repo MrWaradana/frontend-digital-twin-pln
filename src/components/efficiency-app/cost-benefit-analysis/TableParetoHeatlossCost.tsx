@@ -118,7 +118,7 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
         <tr>
           <td
             colSpan={table.getVisibleLeafColumns().length}
-            className="text-center"
+            className="text-center px-1"
           >
             No data!
           </td>
@@ -128,11 +128,11 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
           (row: any) =>
             row.depth < 1 && (
               <>
-                <tr key={row.id} className="border border-black">
+                <tr key={row.id} className="border-b-1 border-neutral-200">
                   {row.getVisibleCells().map((cell: any) => (
                     <td
                       key={cell.id}
-                      className={`text-sm font-normal bg-neutral-50 border-r-1 border-black dark:bg-neutral-700 ${
+                      className={`text-sm font-normal bg-neutral-50 border-b-1 border-neutral-200 dark:bg-neutral-700 px-1 ${
                         cell.column.columnDef.meta?.className ?? ""
                       }`}
                       style={{
@@ -156,7 +156,7 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
                         {subRow.getVisibleCells().map((cell: any) => (
                           <td
                             key={cell.id}
-                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border border-neutral-500 print-cell ${
+                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border-b-1 border-neutral-200 print-cell ${
                               cell.column.columnDef.meta?.className ?? ""
                             }`}
                             style={{
@@ -179,7 +179,7 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
                 {!row.original.total_nilai_losses ? null : (
                   <tr
                     key={`summary-${row.id}`}
-                    className="bg-neutral-100 dark:bg-neutral-900 border border-black"
+                    className="bg-neutral-100 dark:bg-neutral-900 border-b-1 border-neutral"
                   >
                     {row.getVisibleCells().map((cell: any) => {
                       // Render summary under the specific columns
@@ -197,7 +197,7 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right"
+                            className="font-bold border-b-1 border-neutral-200 text-right"
                           >
                             {row.original.total_nilai_losses
                               ? row.original.total_nilai_losses.toFixed(2)
@@ -209,7 +209,7 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right"
+                            className="font-bold border-b-1 border-neutral-200 text-right"
                           >
                             {row.original.total_persen_losses
                               ? row.original.total_persen_losses.toFixed(2)
@@ -221,7 +221,7 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right"
+                            className="font-bold border-b-1 border-neutral-200 text-right"
                           >
                             Rp.
                             {row.original.total_cost_benefit
@@ -236,7 +236,7 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right"
+                            className="font-bold border-b-1 border-neutral-200 text-right"
                           >
                             Rp.
                             {row.original.total_cost_gap
@@ -325,7 +325,7 @@ const FormattedTooltipCell = ({ row, getValue }) => {
         className="max-w-md"
       >
         <p className="truncate cursor-help">
-          {cellContent ? cellContent.split(",")[0] + "..." : "-"}
+          {cellContent ? cellContent.split(",")[0].slice(0, 5) + "..." : "-"}
         </p>
       </Tooltip>
     </div>
@@ -387,15 +387,16 @@ export default function TableParetoHeatlossCost({
   const columns = useMemo(
     () => [
       {
+        id: "parameter",
+        header: () => <div className="text-left">Parameter</div>,
         accessorFn: (row: any) =>
-          row.depth != 0 ? null : row.variable?.excel_variable_name || "",
-        header: "Parameter",
+          row.depth > 0 ? null : row.variable?.excel_variable_name || "",
         minSize: 60,
         size: 250,
         maxSize: 800,
         meta: {
           className:
-            "sticky left-0 z-20 shadow-inner overflow-hidden whitespace-nowrap text-clip print-column",
+            "sticky left-0 z-20 overflow-hidden whitespace-nowrap text-clip print-column",
         },
         cell: (props: any) => (
           <div
@@ -418,7 +419,7 @@ export default function TableParetoHeatlossCost({
                 )}
               </button>
             ) : (
-              `🔵 ${props.row.original.variable.input_name}`
+              `${props.row.original.variable.input_name}`
             )}{" "}
             <span className="text-base print-cell">
               {" "}
@@ -707,25 +708,25 @@ export default function TableParetoHeatlossCost({
 
                   if (goodIndicator === "minus" && gap < 0) {
                     return (
-                      <span className="py-1 px-3 bg-green-500 rounded-md text-white">
+                      <span className="py-1 px-3 my-2 bg-[#1C9EB6] rounded-full text-white">
                         Lower
                       </span>
                     );
                   } else if (goodIndicator === "plus" && gap > 0) {
                     return (
-                      <span className="py-1 px-3 bg-green-500 rounded-md text-white">
+                      <span className="py-1 px-3 my-2 bg-[#1C9EB6] rounded-full text-white">
                         Higher
                       </span>
                     );
                   } else if (gap === 0) {
                     return (
-                      <span className="py-1 px-3 bg-yellow-300 dark:bg-yellow-600 rounded-md text-black dark:text-white">
+                      <span className="py-1 px-3 my-2 bg-gray-200 dark:bg-yellow-600 rounded-full text-black dark:text-white">
                         Normal
                       </span>
                     );
                   } else {
                     return (
-                      <span className="py-1 px-3 bg-red-500 rounded-md text-white">
+                      <span className="py-1 px-3 my-2 bg-[#D93832] rounded-full text-white">
                         {gap < 0 ? "Lower" : "Higher"}
                       </span>
                     );
@@ -769,27 +770,27 @@ export default function TableParetoHeatlossCost({
         id: "actionMenutupGap",
         header: "Action Menutup Gap",
         meta: {
-          className: "shadow-inner overflow-hidden whitespace-nowrap text-clip",
+          className: "shadow-inner overflow-hidden",
         },
         accessorFn: (row) =>
           row.action_menutup_gap.length > 0
             ? row.action_menutup_gap.join(",")
             : "-",
-        size: 45,
+        size: 25,
         cell: (props) => <FormattedTooltipCell {...props} />,
       },
       {
         id: "biayaClosingGap",
         accessorKey: "total_biaya",
         meta: {
-          className: "text-right pr-2",
+          className: "text-right pr-2 whitespace-nowrap",
         },
         header: () => (
           <div className="text-center">
             Biaya untuk Closing Gap <br /> (Juta)
           </div>
         ),
-        size: 55,
+        size: 65,
         cell: (props: any) => {
           const value = props.getValue();
           const gap = props.row.original.gap;
@@ -1137,13 +1138,16 @@ export default function TableParetoHeatlossCost({
             }}
             type="text" // Changed to "text" so we can handle formatted values
             min="0"
+            size="sm"
+            variant={`bordered`}
             pattern="\d*\.?\d*" // Correct use of pattern for numbers only (including decimals)
           />
           <Button
-            color="primary"
             size="md"
+            radius="sm"
             onPress={() => handleFilterClick()} // Apply filter on button click
             endContent={<FilterIcon size={36} />}
+            className={`bg-[#D4CA2F] text-white`}
           >
             Filter
           </Button>
@@ -1151,7 +1155,7 @@ export default function TableParetoHeatlossCost({
         <div className="flex gap-2">
           <Button
             onClick={handleExportExcel}
-            color="success"
+            color="default"
             size="sm"
             endContent={<DownloadIcon size={16} />}
           >
@@ -1159,7 +1163,7 @@ export default function TableParetoHeatlossCost({
           </Button>
           <Button
             onClick={handleExportData}
-            color="success"
+            color="default"
             size="sm"
             endContent={<DownloadIcon size={16} />}
           >
@@ -1167,7 +1171,7 @@ export default function TableParetoHeatlossCost({
           </Button>
           <Button
             onClick={handleExportPDFData}
-            color="danger"
+            color="default"
             size="sm"
             endContent={<DownloadIcon size={16} />}
           >
@@ -1175,7 +1179,7 @@ export default function TableParetoHeatlossCost({
           </Button>
         </div>
       </div>
-      <div className="max-w-full max-h-[568px] mb-3 mt-1 overflow-auto relative printable-table">
+      <div className="max-w-full mb-3 mt-1 overflow-auto relative printable-table">
         <table
           cellPadding=".25"
           cellSpacing="0"
@@ -1186,7 +1190,7 @@ export default function TableParetoHeatlossCost({
           }}
           id="table-pareto-cost"
         >
-          <thead className="sticky top-0 z-50 border-2">
+          <thead className="sticky top-0 z-40 border-b-1 border-neutral-200">
             {table.getHeaderGroups().map((headerGroup: any) => {
               return (
                 <tr key={`${headerGroup.id}`}>
@@ -1194,7 +1198,7 @@ export default function TableParetoHeatlossCost({
                     return (
                       <th
                         key={header.id}
-                        className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 ${
+                        className={`relative group text-sm capitalize font-light border-b-1 border-neutral-200 ${
                           header.column.columnDef.meta?.className ?? ""
                         } `}
                         style={{
@@ -1225,30 +1229,30 @@ export default function TableParetoHeatlossCost({
           <MemoizedTableBody table={table} />
           {/* Initial Table Body for expanding row works */}
           {/* <TableBody table={table} /> */}
-          <tfoot className="sticky bottom-0 z-50 border-2 print-column">
+          <tfoot className="sticky bottom-0 z-40 border border-neutral-200 print-column">
             <tr className="text-left">
-              <th className="sticky left-0 bg-blue-200 dark:bg-blue-600 print-cell">
+              <th className="sticky left-0 bg-[#FFFAB4] print-cell">
                 Total Summary
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right pr-2">
+              <th className="bg-[#FFFAB4]" colSpan={4}></th>
+              <th className="bg-[#FFFAB4] text-right pr-2">
                 {formattedNumber(summaryData?.total_persen.toFixed(2) || 0)}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right pr-2">
+              <th className="bg-[#FFFAB4] text-right pr-2">
                 {formattedNumber(summaryData?.total_nilai.toFixed(2) || 0)}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right">
+              <th className="bg-[#FFFAB4]" colSpan={1}></th>
+              <th className="bg-[#FFFAB4] text-right">
                 Rp.
                 {formatCurrency(
                   summaryData?.total_cost_benefit.toFixed(2) ?? 0
                 )}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right">
+              <th className="bg-[#FFFAB4]" colSpan={1}></th>
+              <th className="bg-[#FFFAB4] text-right">
                 Rp.{formatCurrency(summaryData?.total_biaya.toFixed(2) ?? 0)}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={2}></th>
+              <th className="bg-[#FFFAB4]" colSpan={2}></th>
             </tr>
           </tfoot>
         </table>

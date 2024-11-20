@@ -65,13 +65,13 @@ export function Navbar({ title }: NavbarProps) {
           </div>
           <div className="flex flex-1 items-center space-x-2 justify-end">
             <UserNav />
-            <Button
+            {/* <Button
               variant={`bordered`}
               radius="full"
               className="border-[#D4CA2F] "
             >
               Apps Library
-            </Button>
+            </Button> */}
             <Button
               variant={`solid`}
               radius="full"

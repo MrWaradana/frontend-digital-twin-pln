@@ -354,14 +354,13 @@ function ModalRootCause({
             <ModalFooter>
               <Button
                 variant="light"
-                color="danger"
                 isLoading={loadingSubmit}
                 onPress={onClose}
               >
                 Cancel
               </Button>
               <Button
-                color="success"
+                className={`bg-[#D4CA2F]`}
                 // type="submit" // This submits the form
                 isLoading={loadingSubmit}
                 onPress={() => {

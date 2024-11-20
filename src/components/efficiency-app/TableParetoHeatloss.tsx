@@ -125,11 +125,11 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
           (row: any) =>
             row.depth < 1 && (
               <>
-                <tr key={row.id} className="border border-black">
+                <tr key={row.id} className="border-b-1 border-neutral-400 ">
                   {row.getVisibleCells().map((cell: any) => (
                     <td
                       key={cell.id}
-                      className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${
+                      className={`text-sm font-normal bg-gray-200 dark:bg-neutral-700 ${
                         cell.column.columnDef.meta?.className ?? ""
                       }`}
                       style={{
@@ -153,7 +153,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         {subRow.getVisibleCells().map((cell: any) => (
                           <td
                             key={cell.id}
-                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border border-neutral-500 print-cell ${
+                            className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 border-b-1 border-neutral-500 print-cell ${
                               cell.column.columnDef.meta?.className ?? ""
                             }`}
                             style={{
@@ -179,7 +179,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                 row.original.total_cost_gap ? (
                   <tr
                     key={`summary-${row.id}`}
-                    className="bg-neutral-100 dark:bg-neutral-900 border border-black py-8"
+                    className="bg-[#FFFAB4] dark:bg-neutral-900 border-b-1 border-neutral-400 py-8"
                   >
                     {row.getVisibleCells().map((cell: any) => {
                       // Render summary under the specific columns
@@ -187,7 +187,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold sticky left-0 bg-neutral-100 dark:bg-neutral-900 print-cell"
+                            className="font-bold sticky left-0 bg-[#FFFAB4] dark:bg-neutral-900 print-cell px-1"
                           >
                             Summary
                           </td>
@@ -197,7 +197,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right pb-4"
+                            className="font-bold border-b-1 border-neutral-400 text-right pb-4"
                           >
                             {row.original.total_nilai_losses
                               ? formattedNumber(
@@ -211,7 +211,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right pb-4"
+                            className="font-bold border-b-1 border-neutral-400 text-right pb-4"
                           >
                             {row.original.total_persen_losses
                               ? formattedNumber(
@@ -225,7 +225,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right pb-4"
+                            className="font-bold border-b-1 border-neutral-400 text-right pb-4"
                           >
                             Rp.
                             {row.original.total_cost_benefit
@@ -240,7 +240,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold border border-neutral-700 text-right pb-4"
+                            className="font-bold border-b-1 border-neutral-400 text-right pb-4"
                           >
                             Rp.
                             {row.original.total_cost_gap
@@ -382,20 +382,22 @@ export default function TableParetoHeatloss({
       {
         id: "category",
         accessorKey: "category",
-        header: "Parameter",
+        header: () => <div className={`text-left`}>Parameter</div>,
         minSize: 60,
         size: 250,
         maxSize: 800,
         meta: {
           className:
-            "sticky left-0 z-20 shadow-inner overflow-hidden whitespace-nowrap text-clip print-column",
+            "sticky left-0 z-20 overflow-hidden whitespace-nowrap text-clip print-column",
         },
         cell: (props: any) => (
           <div
             style={{
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
-            className="print-cell"
+            className={`print-cell ${
+              props.cell.row.depth > 0 ? "" : "bg-gray-200"
+            }`}
           >
             {props.row.getCanExpand() ? (
               <button
@@ -411,7 +413,7 @@ export default function TableParetoHeatloss({
                 )}
               </button>
             ) : (
-              `🔵 ${props.row.original.variable.input_name}`
+              ` ${props.row.original.variable.input_name}`
             )}{" "}
             <span className="text-base print-cell">
               {" "}
@@ -430,14 +432,14 @@ export default function TableParetoHeatloss({
           row.depth === 0 ? null : row.variable?.satuan || "",
         size: 25,
         cell: (props: any) => (
-          <div className="text-center">
+          <div className={`text-center`}>
             {props.getValue() != "NaN" ? props.getValue() : ""}
           </div>
         ),
       },
       {
         id: "referenceData",
-        size: 45,
+        size: 85,
         header: () => (
           <Tooltip
             content={
@@ -711,25 +713,25 @@ export default function TableParetoHeatloss({
 
                   if (goodIndicator === "minus" && gap < 0) {
                     return (
-                      <span className="py-1 px-3 bg-green-500 rounded-md text-white">
+                      <span className="py-1 px-3 bg-[#1C9EB6] rounded-full text-white">
                         Lower
                       </span>
                     );
                   } else if (goodIndicator === "plus" && gap > 0) {
                     return (
-                      <span className="py-1 px-3 bg-green-500 rounded-md text-white">
+                      <span className="py-1 px-3 bg-[#1C9EB6] rounded-full text-white">
                         Higher
                       </span>
                     );
                   } else if (gap === 0) {
                     return (
-                      <span className="py-1 px-3 bg-yellow-400 dark:bg-yellow-600 rounded-md text-white">
+                      <span className="py-1 px-3 bg-neutral-200 dark:bg-yellow-600 rounded-full text-black">
                         Normal
                       </span>
                     );
                   } else {
                     return (
-                      <span className="py-1 px-3 bg-red-500 rounded-md text-white">
+                      <span className="py-1 px-3 bg-[#D93832] rounded-full text-white">
                         {gap < 0 ? "Lower" : "Higher"}
                       </span>
                     );
@@ -892,7 +894,7 @@ export default function TableParetoHeatloss({
             const done = countData?.done || 0; // Default to 0 if countData is undefined
             // const total = countData?.total || 0; // Default to 0 if countData is undefined
             return (
-              <div key={row.id} className="flex gap-1">
+              <div key={row.id} className="flex gap-1 w-full justify-center">
                 {/* <Badge
                   content={`${done}/${total}`}
                   // content={`1`}
@@ -914,10 +916,10 @@ export default function TableParetoHeatloss({
                     (goodIndicator === "plus" && gap > 0) ||
                     gap === 0
                       ? "success"
-                      : "danger"
+                      : "default"
                   }
                   size="sm"
-                  className={`m-0 p-1 ${
+                  className={`m-0 py-1 px-3 rounded-full my-2 ${
                     done != 0 ||
                     (goodIndicator === "minus" && gap < 0) ||
                     (goodIndicator === "plus" && gap > 0) ||
@@ -947,7 +949,7 @@ export default function TableParetoHeatloss({
                       : "primary"
                   }
                   size="sm"
-                  className={`m-0 p-1 ${
+                  className={`m-0 py-1 px-3 rounded-full my-2 ${
                     done != 0 ||
                     (goodIndicator === "minus" && gap < 0) ||
                     (goodIndicator === "plus" && gap > 0) ||
@@ -1208,65 +1210,79 @@ export default function TableParetoHeatloss({
         paretoMutate={mutate}
       />
 
-      <div className=" flex justify-end gap-2">
-        <AsyncSelect
-          className="z-[99] w-1/2"
-          classNamePrefix="select"
-          isClearable={true}
-          placeholder={`Select Reference Data...`}
-          isSearchable={true}
-          loadOptions={loadOptions}
-          defaultOptions={EfficiencyDataOptions} // Optional: Show default options initially
-          defaultValue={dataId ? { value: dataId, label: selectedLabel } : null}
-          cacheOptions // Caches the loaded options
-          isLoading={isValidating}
-          onChange={(e: any) => {
-            const newValue = e?.value ?? null;
-            const newLabel = e?.label ?? "";
-            setDataId(newValue);
-            setSelectedLabel(newLabel);
-          }}
-          name="efficiencyData"
-        />
-        <Input
-          type="number"
-          className="max-w-xs"
-          size="sm"
-          onChange={(e) => {
-            const newValue = e.target.value;
-            setInputValueTimeframe(newValue);
-            debouncedSetTimeframe(newValue);
-          }}
-          min={0}
-          value={String(inputValueTimeframe)}
-          endContent={`jam`}
-          label={`Potential Timeframe`}
-          variant="bordered"
-        />
-        <Button
-          onClick={() => handleExportExcel()}
-          color="success"
-          size="sm"
-          endContent={<DownloadIcon size={16} />}
-        >
-          Export to Excel
-        </Button>
-        <Button
-          onClick={() => handleExportData()}
-          color="success"
-          size="sm"
-          endContent={<DownloadIcon size={16} />}
-        >
-          Export to CSV
-        </Button>
-        <Button
-          onClick={() => handleExportPDFData()}
-          color="danger"
-          size="sm"
-          endContent={<DownloadIcon size={16} />}
-        >
-          Export to PDF
-        </Button>
+      <div className="flex justify-between gap-2">
+        <div className={`flex gap-3 w-full`}>
+          <AsyncSelect
+            className="z-50"
+            classNamePrefix="select"
+            isClearable={true}
+            placeholder={`Select Reference Data...`}
+            isSearchable={true}
+            loadOptions={loadOptions}
+            defaultOptions={EfficiencyDataOptions} // Optional: Show default options initially
+            defaultValue={
+              dataId ? { value: dataId, label: selectedLabel } : null
+            }
+            cacheOptions // Caches the loaded options
+            isLoading={isValidating}
+            onChange={(e: any) => {
+              const newValue = e?.value ?? null;
+              const newLabel = e?.label ?? "";
+              setDataId(newValue);
+              setSelectedLabel(newLabel);
+            }}
+            styles={{
+              control: (baseStyles, state) => ({
+                ...baseStyles,
+                borderRadius: 8,
+                height: 49,
+                borderColor: "rgb(229 229 229)",
+                borderWidth: 2,
+              }),
+            }}
+            name="efficiencyData"
+          />
+          <Input
+            type="number"
+            className="max-w-xs"
+            radius="sm"
+            size="sm"
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setInputValueTimeframe(newValue);
+              debouncedSetTimeframe(newValue);
+            }}
+            min={0}
+            value={String(inputValueTimeframe)}
+            endContent={`jam`}
+            label={`Potential Timeframe`}
+            variant="bordered"
+          />
+        </div>
+        <div className={`flex gap-3`}>
+          <Button
+            onClick={() => handleExportExcel()}
+            size="sm"
+            endContent={<DownloadIcon size={16} />}
+          >
+            Export to Excel
+          </Button>
+          <Button
+            onClick={() => handleExportData()}
+            size="sm"
+            endContent={<DownloadIcon size={16} />}
+          >
+            Export to CSV
+          </Button>
+          <Button
+            onClick={() => handleExportPDFData()}
+            size="sm"
+            endContent={<DownloadIcon size={16} />}
+          >
+            Export to PDF
+          </Button>
+        </div>
+
         {/* <Button
           onClick={() => handlePrint()}
           color="secondary"
@@ -1275,11 +1291,11 @@ export default function TableParetoHeatloss({
           Print table
         </Button> */}
       </div>
-      <div className="max-w-full max-h-[568px] mb-3 mt-1 overflow-auto relative printable-table">
+      <div className="min-w-full mb-3 mt-1 overflow-auto relative printable-table p-12 shadow-xl rounded-xl">
         <table
           cellPadding=".25"
           cellSpacing="0"
-          className={`overflow-y-scroll relative ${
+          className={`overflow-y-scroll relative min-w-full ${
             session?.user.user.role === "Management" ? "min-w-full" : ""
           }`}
           style={{
@@ -1288,7 +1304,7 @@ export default function TableParetoHeatloss({
           }}
           id="table-pareto"
         >
-          <thead className="sticky top-0 z-50 border-2 print-cell">
+          <thead className="sticky top-0 z-40  print-cell">
             {table.getHeaderGroups().map((headerGroup: any) => {
               return (
                 <tr key={`${headerGroup.id}`}>
@@ -1296,7 +1312,7 @@ export default function TableParetoHeatloss({
                     return (
                       <th
                         key={header.id}
-                        className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 border-r-1 border-neutral-800 ${
+                        className={`relative group text-sm capitalize font-light border-b-1 border-neutral-800 ${
                           header.column.columnDef.meta?.className ?? ""
                         } ${
                           header.column.id === "toDoChecklist" &&
@@ -1332,27 +1348,27 @@ export default function TableParetoHeatloss({
           <MemoizedTableBody table={table} />
           {/* Initial Table Body for expanding row works */}
           {/* <TableBody table={table} /> */}
-          <tfoot className="sticky bottom-0 z-50 border-2 print-cell">
+          <tfoot className="sticky bottom-0 z-50 border-b-1 print-cell">
             <tr className="text-left pb-8">
-              <th className="sticky left-0 bg-blue-200 dark:bg-blue-600 pb-4">
+              <th className="sticky left-0 bg-[#FFFAB4] dark:bg-blue-600 pb-4 px-1">
                 Total Summary
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
+              <th className="bg-[#FFFAB4] dark:bg-blue-600" colSpan={4}></th>
+              <th className="bg-[#FFFAB4] dark:bg-blue-600 text-right pb-4">
                 {formattedNumber(summaryData.total_persen.toFixed(2))}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
+              <th className="bg-[#FFFAB4] dark:bg-blue-600 text-right pb-4">
                 {formattedNumber(summaryData.total_nilai.toFixed(2))}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th>
-              <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
+              <th className="bg-[#FFFAB4] dark:bg-blue-600" colSpan={1}></th>
+              <th className="bg-[#FFFAB4] dark:bg-blue-600 text-right pb-4">
                 Rp.{formatCurrency(summaryData.total_cost_benefit.toFixed(2))}
               </th>
-              {/* <th className="bg-blue-200 dark:bg-blue-600" colSpan={1}></th> */}
-              <th className="bg-blue-200 dark:bg-blue-600 text-right pb-4">
+              {/* <th className="bg-[#FFFAB4] dark:bg-blue-600" colSpan={1}></th> */}
+              <th className="bg-[#FFFAB4] dark:bg-blue-600 text-right pb-4">
                 Rp.{formatCurrency(summaryData.total_cost_gap.toFixed(2))}
               </th>
-              <th className="bg-blue-200 dark:bg-blue-600" colSpan={4}></th>
+              <th className="bg-[#FFFAB4] dark:bg-blue-600" colSpan={4}></th>
             </tr>
           </tfoot>
         </table>

@@ -120,14 +120,14 @@ export default function CostBenefitContainer() {
   };
 
   return (
-    <div className="flex flex-col gap-4 relative">
-      <div className="flex flex-row xl:w-1/3 xl:absolute xl:top-2 xl:left-[27rem] gap-4">
+    <div className="flex flex-col gap-4 relative p-8 bg-white rounded-xl shadow-xl">
+      <div className="flex flex-row justify-between w-full items-center gap-4">
         {isLoadingEfficiencyData ? (
           "Loading..."
         ) : (
-          <>
+          <div className="flex flex-row justify-between w-full items-center gap-4">
             <AsyncSelect
-              className="z-[99] w-1/2"
+              className="z-50 w-1/4"
               classNamePrefix="select"
               isClearable={true}
               placeholder={`Select Data...`}
@@ -141,6 +141,15 @@ export default function CostBenefitContainer() {
                 setDataId(e?.value ?? "new");
               }}
               name="efficiencyData"
+              styles={{
+                control: (baseStyles, state) => ({
+                  ...baseStyles,
+                  borderRadius: 8,
+                  height: 49,
+                  borderColor: "rgb(229 229 229)",
+                  borderWidth: 2,
+                }),
+              }}
             />
             <Input
               type="number"
@@ -155,9 +164,9 @@ export default function CostBenefitContainer() {
               }}
               value={String(inputValueTimeframe)}
               variant="bordered"
-              className="z-[99] w-1/2 bg-white -translate-y-1"
+              className="z-50 bg-white max-w-sm"
             />
-          </>
+          </div>
         )}
         <hr />
       </div>

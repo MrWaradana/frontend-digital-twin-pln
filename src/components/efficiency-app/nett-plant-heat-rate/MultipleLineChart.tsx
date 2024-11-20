@@ -58,6 +58,7 @@ const chartConfig = {
 
 export default function MultipleLineChart({
   data,
+  nphrData,
   summaryData,
   thresholdNumber,
   paretoData,
@@ -136,7 +137,7 @@ export default function MultipleLineChart({
           <CardTitle>Pareto Heat Loss</CardTitle>
           <CardDescription>{new Date().getFullYear()}</CardDescription>
         </CardHeader>
-        <CardContent className="flex-1 min-h-0 overflow-auto w-[140dvh] self-center">
+        <CardContent className="flex-1 min-h-0 overflow-auto w-full self-center">
           <ChartContainer
             config={chartConfig}
             className="flex w-full h-full overflow-auto"
@@ -183,7 +184,7 @@ export default function MultipleLineChart({
               <Bar
                 dataKey={"total_nilai_losses"}
                 name={"Total Nilai Loss"}
-                fill="#559e83"
+                fill="#D4CA2F"
                 className="hover:cursor-pointer"
                 barSize={20}
                 onClick={(e) => handleBarClick(e)}
@@ -191,7 +192,7 @@ export default function MultipleLineChart({
               <Bar
                 dataKey={"total_persen_losses"}
                 name={"Total Persen Loss"}
-                fill="#1b85b8"
+                fill="#42C023"
                 className="hover:cursor-pointer"
                 barSize={20}
                 onClick={(e) => handleBarClick(e)}

@@ -79,13 +79,14 @@ export function UserNav() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="relative bg-transparent border-none p-0 rounded-full"
+                  className="relative bg-transparent border-[#D4CA2F] rounded-full"
                 >
-                  <Avatar
+                  {/* <Avatar
                     name={session.data?.user.user.name}
                     isBordered
                     className="uppercase"
-                  />
+                  /> */}
+                  {session.data?.user.user.name}
                 </Button>
               </DropdownMenuTrigger>
             </TooltipTrigger>
@@ -113,8 +114,9 @@ export function UserNav() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
-              className={`hover:cursor-pointer ${session.data?.user.user.role === "Admin" ? "" : "hidden"
-                }`}
+              className={`hover:cursor-pointer ${
+                session.data?.user.user.role === "Admin" ? "" : "hidden"
+              }`}
               asChild
             >
               <Link href="/admin/users" className="flex items-center">

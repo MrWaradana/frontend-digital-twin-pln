@@ -26,9 +26,11 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Slider, SliderValue } from "@nextui-org/react";
+import { Button, Slider, SliderValue } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { debounce } from "lodash";
+import Link from "next/link";
+import { CaretLeftIcon } from "@radix-ui/react-icons";
 
 const chartConfig = {
   category: {
@@ -43,11 +45,13 @@ const chartConfig = {
 
 export default function MultipleLineChart({
   data,
+  setOpenDetails,
   onThresholdChange,
   thresholdNumber,
   onBarClick,
   totalPersen,
   efficiencyData,
+  openDetails,
 }: any) {
   const [sliderValue, setSliderValue] = useState<SliderValue>(thresholdNumber);
   const [internalSliderValue, setInternalSliderValue] =
@@ -64,17 +68,38 @@ export default function MultipleLineChart({
   }, [internalSliderValue]);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          {" "}
-          <span className={`px-1`}>Data Pareto {efficiencyData.name}</span>{" "}
-        </CardTitle>
+    <Card className="rounded-xl shadow-xl h-[85dvh]">
+      <CardHeader className={`flex flex-row pb-0 justify-between`}>
+        <div className={`flex items-center gap-4`}>
+          <Link href={`/efficiency-app`} className={`text-xl`}>
+            <CaretLeftIcon width={44} height={44} />
+          </Link>
+          <CardTitle>
+            {" "}
+            <span className={`px-1`}>
+              Data Pareto {efficiencyData.name}
+            </span>{" "}
+          </CardTitle>
+        </div>
+        <Button
+          className={`text-white bg-[#D4CA2F]`}
+          onClick={() => {
+            setOpenDetails(!openDetails);
+            setTimeout(() => {
+              window.scrollTo({
+                top: 850,
+                behavior: "smooth",
+              });
+            }, 1000);
+          }}
+        >
+          {openDetails ? "Close" : "See"} Details
+        </Button>
       </CardHeader>
-      <CardContent className="grid grid-cols-12 h-[75dvh] mt-12">
+      <CardContent className="grid grid-cols-12 mt-12 h-2/3">
         <ChartContainer
           config={chartConfig}
-          className="col-span-11 w-full h-[75dvh]"
+          className="col-span-11 w-full h-2/3"
         >
           <ComposedChart
             accessibilityLayer
@@ -115,20 +140,25 @@ export default function MultipleLineChart({
               allowDataOverflow={true}
             />
             {/* <YAxis allowDataOverflow={true} /> */}
-            <Legend className="" />
+            <Legend
+              className="text-black"
+              formatter={(value, entry, index) => (
+                <span className="text-black dark:text-white">{value}</span>
+              )}
+            />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Bar
               dataKey={"total_nilai_losses"}
               name={"Total Nilai Loss"}
-              fill="#559e83"
+              fill="#F7ED53"
               className=""
               barSize={20}
             />
             <Bar
               dataKey={"total_persen_losses"}
               name={"Total Persen Loss"}
-              fill="#1b85b8"
-              className=""
+              fill="#A2DE32"
+              className="bg-gradient-to-b from-[#A2DE32] to-[#42C023]"
               barSize={20}
               yAxisId={"total_persen_losses"}
             />
@@ -163,21 +193,45 @@ export default function MultipleLineChart({
               name={`Cummulative Frequency`}
               dataKey="cum_frequency"
               type="monotone"
-              stroke="#f1c232"
+              stroke="#D93832"
               strokeWidth={2}
               dot={true}
               yAxisId={"total_persen_losses"}
             />
           </ComposedChart>
         </ChartContainer>
-        <div className="h-full col-span-1">
+        <div className="h-2/3 col-span-1">
           <Slider
             size="md"
             label="Persentase"
             step={1}
-            onChange={setInternalSliderValue}
+            onChange={(e) => {
+              setInternalSliderValue(e);
+              setOpenDetails(true);
+              setTimeout(() => {
+                window.scrollTo({
+                  top: 850,
+                  behavior: "smooth",
+                });
+              }, 1000);
+            }}
             maxValue={100}
             minValue={0}
+            className={`border-[#D4CA2F]`}
+            classNames={{
+              base: "max-w-md ",
+              filler:
+                "bg-gradient-to-b from-[#D4CA2F] to-[#D4CA2F] bg-[#D4CA2F]",
+              labelWrapper: "mb-2",
+              label: "font-medium text-default-700 text-medium",
+              track: "border-[#D4CA2F] border-b-[#D4CA2F]",
+              value: "font-medium text-default-500 text-small",
+              thumb: [
+                "transition-size",
+                "bg-gradient-to-b from-[#D4CA2F] to-[#D4CA2F]",
+              ],
+              step: "data-[in-range=true]:bg-black/30 dark:data-[in-range=true]:bg-white/50",
+            }}
             formatOptions={{ style: "decimal" }}
             orientation="vertical"
             defaultValue={sliderValue}

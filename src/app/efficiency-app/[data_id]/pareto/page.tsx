@@ -22,6 +22,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
   const [potentialTimeframe, setPotentialTimeframe]: any = useState(
     searchParams.get("potential-timeframe")
   );
+  const [openDetails, setOpenDetails] = useState(false);
   const [tableParetoData, setTableParetoData] = useState([]);
   const [dataId, setDataId]: any = useState(null);
   const [isMutating, setIsMutating] = useState(false);
@@ -164,9 +165,11 @@ export default function Page({ params }: { params: { data_id: string } }) {
         >
           Back to all data
         </Button> */}
-        <div className="min-w-full h-full overflow-hidden">
+        <div className="min-w-full h-full overflow-hidden  px-8">
           <MultipleLineChart
             data={chartData}
+            setOpenDetails={setOpenDetails}
+            openDetails={openDetails}
             efficiencyData={efficiencyData}
             onThresholdChange={setPercentageThreshold}
             thresholdNumber={percentageThreshold}
@@ -177,7 +180,11 @@ export default function Page({ params }: { params: { data_id: string } }) {
         {isLoading || isLoadingRootCauseCount ? (
           <Spinner color="primary" label="Calculating pareto..." />
         ) : (
-          <div className="max-w-full mb-6 mt-4 overflow-hidden relative">
+          <div
+            className={`min-w-full mb-6 mt-4 overflow-hidden relative px-8 ${
+              openDetails ? "" : "hidden"
+            }`}
+          >
             {isValidating || isMutating || isValidatingRootCauseCount ? (
               <div className="h-36 mt-4">
                 <Spinner color="primary" label="validating..." />

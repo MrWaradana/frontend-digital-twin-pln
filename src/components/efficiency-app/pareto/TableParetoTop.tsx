@@ -91,11 +91,11 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
           (row: any) =>
             row.depth < 1 && (
               <>
-                <tr key={row.id} className="border border-black">
+                <tr key={row.id} className="border-b-1 border-neutral-400">
                   {row.getVisibleCells().map((cell: any) => (
                     <td
                       key={cell.id}
-                      className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 ${
+                      className={`text-sm font-normal bg-neutral-50 dark:bg-neutral-700 py-3 px-1 ${
                         cell.column.columnDef.meta?.className ?? ""
                       }`}
                       style={{
@@ -115,7 +115,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                 {row.getIsExpanded() && row.subRows.length > 0 && (
                   <>
                     {row.subRows.map((subRow: any) => (
-                      <tr key={subRow.id}>
+                      <tr key={subRow.id} className="py-6">
                         {subRow.getVisibleCells().map((cell: any) => (
                           <td
                             key={cell.id}
@@ -194,13 +194,13 @@ export default function TableParetoTop({
     () => [
       {
         accessorKey: "category",
-        header: "Parameter",
+        header: () => <div className="text-left">Parameter</div>,
         minSize: 60,
         size: 550,
         maxSize: 800,
         meta: {
           className:
-            "sticky left-0 z-20 shadow-inner overflow-hidden whitespace-nowrap text-clip print-column",
+            "sticky left-0 z-20 overflow-hidden whitespace-nowrap text-clip print-column",
         },
         cell: (props: any) => (
           <div
@@ -223,7 +223,7 @@ export default function TableParetoTop({
                 )}
               </button>
             ) : (
-              `🔵 ${props.row.original.variable.input_name}`
+              `${props.row.original.variable.input_name}`
             )}{" "}
             <span className="text-base print-cell">
               {" "}
@@ -247,14 +247,16 @@ export default function TableParetoTop({
             }}
             className="text-center"
           >
-            {props.getValue() != "NaN" ? props.getValue() : ""}
+            <span className="rounded-full px-4 py-1 bg-[#D4CA2F] text-white">
+              {props.getValue() != "NaN" ? props.getValue() : ""}
+            </span>
           </div>
         ),
       },
       {
         id: "referenceData",
         header: () => (
-          <div className="text-center">
+          <div className="text-right">
             Reference Data <br />
             (Commision)
           </div>
@@ -282,7 +284,7 @@ export default function TableParetoTop({
       {
         id: "existingData",
         header: () => (
-          <div className="text-center">
+          <div className="text-right">
             Existing Data <br />
             (Current)
           </div>
@@ -308,7 +310,7 @@ export default function TableParetoTop({
       },
       {
         id: "gap",
-        header: () => <div className="text-center">Gap</div>,
+        header: () => <div className="text-right">Gap</div>,
         meta: {
           className: "text-right",
         },
@@ -512,7 +514,7 @@ export default function TableParetoTop({
 
   return (
     <>
-      <div className="max-w-full max-h-[568px] mb-3 mt-1 overflow-auto relative printable-table">
+      <div className="max-w-full max-h-[568px] mb-3 mt-1 overflow-auto relative printable-table shadow-xl p-12 rounded-2xl bg-white">
         <table
           cellPadding="1"
           cellSpacing="0"
@@ -523,7 +525,7 @@ export default function TableParetoTop({
           }}
           id="table-pareto-top"
         >
-          <thead className="sticky top-0 z-50 border-2">
+          <thead className="sticky top-0 z-50">
             {table.getHeaderGroups().map((headerGroup: any) => {
               return (
                 <tr key={`${headerGroup.id}`}>
@@ -531,7 +533,7 @@ export default function TableParetoTop({
                     return (
                       <th
                         key={header.id}
-                        className={`relative group text-sm capitalize font-bold bg-blue-200 dark:bg-blue-700 border-r-1 border-neutral-800 ${
+                        className={`relative group text-sm capitalize bg-white border-b-1 font-light  ${
                           header.column.columnDef.meta?.className ?? ""
                         } `}
                         style={{

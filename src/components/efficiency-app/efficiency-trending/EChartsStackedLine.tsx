@@ -623,7 +623,7 @@ export default function EChartsStackedLine({
         <ReactECharts
           option={option}
           theme={echartsTheme}
-          className="rounded-md p-4 min-h-[90dvh]"
+          className="rounded-md p-4 min-h-[75dvh]"
           onEvents={onEvents}
         />
 
