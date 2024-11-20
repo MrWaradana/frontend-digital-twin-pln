@@ -32,6 +32,9 @@ export interface DataList {
   },
   tags: Tags[]
 }
+export interface SingleDataList {
+  tag: Tags
+}
 
 export function useGetDataTag(
   token: string | undefined,
@@ -40,6 +43,16 @@ export function useGetDataTag(
 ): HookReply<DataList> {
   return useApiFetch(
     `${PFI_API_URL}/tags?page=${page}&limit=${limit}`,
+    !!token,
+    token,
+  )
+}
+export function useSingleDataTag(
+  token: string | undefined,
+  tag_id: number,
+): HookReply<SingleDataList> {
+  return useApiFetch(
+    `${PFI_API_URL}/tag/${tag_id}`,
     !!token,
     token,
   )
