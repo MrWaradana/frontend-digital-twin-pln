@@ -93,8 +93,8 @@ const Page = () => {
   ];
   return (
     <RPContentLayout title="Reliability Predicts App">
-      <div className="gap-4 flex flex-row flex-wrap">
-        <div className="bg-white rounded-3xl p-3 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)] w-full md:w-fit">
+      <div className="w-full gap-4 flex flex-row flex-wrap lg:flex-nowrap justify-center">
+        <div className="bg-white rounded-3xl p-6 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)] w-full lg:w-1/3">
           <p className="text-[10px] text-gray-400">Dashboard One</p>
           <h1 className="text-xs sm:text-sm font-semibold text-[#303030] mb-6">
             Potential Failure
@@ -102,12 +102,12 @@ const Page = () => {
           <ul className="flex gap-2 flex-col">
             {items.map((item, index) => (
               <li key={item.id} className="flex flex-row items-center">
-                <div className="w-full grid gap-2 grid-cols-4">
-                  <div className="col-span-3 text-[10px] text-gray-500">
+                <div className="w-full flex flex-row gap-2 justify-between">
+                  <div className="text-[12px] text-gray-500">
                     <span className="w-4">{index + 1}. </span>
                     {item.text}
                   </div>
-                  <div className="col-span-1 bg-red-600 text-white rounded-[100px] flex justify-center items-center text-[9px] px-3 py-1">
+                  <div className="bg-red-600 text-white rounded-[100px] flex justify-end items-center text-[9px] px-2 py-1">
                     {item.unit}
                   </div>
                 </div>
@@ -115,7 +115,7 @@ const Page = () => {
             ))}
           </ul>
         </div>
-        <div className="bg-white rounded-3xl p-3 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)] w-full md:w-fit">
+        <div className="bg-white rounded-3xl p-6 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)] w-full lg:w-1/3">
           <p className="text-[10px] text-gray-400">Dashboard Two</p>
           <h1 className="text-xs sm:text-sm font-semibold text-[#303030] mb-6">
             Worst Reliability
@@ -123,12 +123,12 @@ const Page = () => {
           <ul className="flex gap-2 flex-col">
             {WorstReliability.map((reliability, index) => (
               <li key={reliability.id} className="flex flex-row items-center">
-                <div className="w-full grid gap-4 grid-cols-4">
-                  <div className="col-span-3 text-[10px] text-gray-500">
+                <div className="w-full flex flex-row gap-2 justify-between">
+                  <div className="text-[12px] text-gray-500">
                     <span className="w-4">{index + 1}. </span>
                     {reliability.text}
                   </div>
-                  <div className="col-span-1 bg-red-600 text-white rounded-[100px] flex justify-center items-center text-[9px] px-3 py-1">
+                  <div className=" bg-red-600 text-white rounded-[100px] flex justify-end items-center text-[9px] px-2 py-1">
                     {reliability.percent}
                   </div>
                 </div>
@@ -136,8 +136,8 @@ const Page = () => {
             ))}
           </ul>
         </div>
-        <div className="flex flex-col gap-4">
-          <div className="bg-white rounded-3xl p-3 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)]">
+        <div className="flex flex-col gap-4 w-full lg:w-1/2">
+          <div className="bg-white rounded-3xl p-6 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)] w-full">
             <p className="text-[10px] text-gray-400">Dashboard Three</p>
             <h1 className="text-xs sm:text-sm font-semibold text-[#303030] mb-6">
               Mean Time to Repair
@@ -145,17 +145,17 @@ const Page = () => {
             <ul className="flex gap-2 flex-col">
               {mttr.map((mttr, index) => (
                 <li key={mttr.id} className="flex flex-row items-center">
-                  <div className="w-full grid gap-4 grid-cols-4">
-                    <div className="md:col-span-2 col-span-3 text-[10px] text-gray-500">
+                  <div className="w-full flex flex-row gap-2 justify-between">
+                    <div className=" text-[12px] text-gray-500">
                       <span className="w-4">{index + 1}. </span>
                       {mttr.text}
                     </div>
-                    <div className="md:col-span-2 col-span-1 flex flex-row gap-1">
-                      <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-3 py-1">
+                    <div className=" flex flex-row gap-1 justify-end">
+                      <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-2 py-1">
                         {mttr.hour}
                       </div>
                       <div className="text-sm text-gray-300">|</div>
-                      <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-3 py-1">
+                      <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-2 py-1">
                         {mttr.day}
                       </div>
                     </div>
@@ -164,7 +164,7 @@ const Page = () => {
               ))}
             </ul>
           </div>
-          <div className="bg-white rounded-3xl p-3 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)]">
+          <div className="bg-white rounded-3xl p-6 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)] w-full">
             <p className="text-[10px] text-gray-400">Dashboard Four</p>
             <h1 className="text-xs sm:text-sm font-semibold text-[#303030] mb-6">
               Mean Down Time
@@ -172,17 +172,17 @@ const Page = () => {
             <ul className="flex gap-2 flex-col">
               {mdt.map((mdt, index) => (
                 <li key={mdt.id} className="flex flex-row items-center">
-                  <div className="w-full grid gap-4 grid-cols-4">
-                    <div className="md:col-span-2 col-span-3 text-[10px] text-gray-500">
+                  <div className="w-full flex flex-row gap-2 justify-between">
+                    <div className=" text-[12px] text-gray-500">
                       <span className="w-4">{index + 1}. </span>
                       {mdt.text}
                     </div>
-                    <div className="md:col-span-2 col-span-1 flex flex-row gap-1">
-                      <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-3 py-1">
+                    <div className=" flex flex-row gap-1 justify-end">
+                      <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-2 py-1">
                         {mdt.hour}
                       </div>
                       <div className="text-sm text-gray-300">|</div>
-                      <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-3 py-1">
+                      <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-2 py-1">
                         {mdt.day}
                       </div>
                     </div>

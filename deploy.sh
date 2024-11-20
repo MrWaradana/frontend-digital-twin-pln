@@ -7,7 +7,7 @@ cd /home/aimo/fe-front-end
 
 # Pull the latest changes
 echo "Pulling latest changes..."
-git pull gitea main
+git pull gitea-ssh main
 
 # Install dependencies
 echo "Installing dependencies..."
