@@ -6,6 +6,8 @@ import { useStore } from "@/hooks/use-store";
 import Sidebar from "@/components/efficiency-app/nav/Sidebar";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 
+
+
 export default function LCCALayout({
   children,
   className = "bg-gradient-to-b from-[#FFFAB4] to-[#FFFFFF] to-[45%]",
@@ -19,6 +21,7 @@ export default function LCCALayout({
 
   return (
     <>
+ 
       <Sidebar className={className} />
       <main
         className={cn(

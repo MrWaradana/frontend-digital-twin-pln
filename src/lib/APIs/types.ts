@@ -16,6 +16,12 @@ interface HookLoadedReply<T = unknown> {
   mutate: KeyedMutator<T>;
 }
 
+// types.ts
+export interface ApiError extends Error {
+  status: number;
+  message: string;
+}
+
 export type HookReply<T = unknown> = HookLoadingReply | HookLoadedReply<T>;
 
 

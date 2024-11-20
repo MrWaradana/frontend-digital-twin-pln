@@ -1,7 +1,7 @@
 "use client";
 import useSWR, { KeyedMutator, SWRConfiguration } from "swr";
 
-import { HookReply } from "./types";
+import { ApiError, HookReply } from "./types";
 import { useGeneralErrorToast } from "./useGeneralErrorToast";
 import { fetcher, fetcherNoToken } from "../fetcher";
 import { AUTH_API_URL } from "../api-url";
@@ -13,7 +13,7 @@ export function useApiFetch<T, RawT = T>(
   fetchUrl: string,
   isReadyCondition = true,
   token?: string,
-  swrConfig?: SWRConfiguration<RawT | T, Error>,
+  swrConfig?: SWRConfiguration<RawT | T, ApiError>,
   customFetcher?: ([url, token]: [string, string]) => Promise<RawT | T>
 ): HookReply<RawT | T> {
   const router = useRouter();
@@ -28,10 +28,30 @@ export function useApiFetch<T, RawT = T>(
     mutate,
     isLoading: isDataLoading,
     isValidating,
-  } = useSWR<RawT | T, Error>(
+  } = useSWR<RawT | T, ApiError>(
     isReady ? (token ? [fetchUrl, token] : fetchUrl) : null,
     fetcherToUse,
-    swrConfig
+    {
+      ...swrConfig,
+      onError: (err) => {
+        if (err.status === 401 || err.message.toLowerCase().includes("unauthorized") || err.message.toLowerCase().includes("invalid")) {
+          toast.error("Unauthorized, redirecting to login...");
+          setTimeout(() => {
+            router.push("/login");
+          }, 1000);
+
+          return;
+        } else {
+          toast.error(`${err.message}`);
+          setTimeout(() => {
+            // push to previous page
+            router.back();
+          }, 1000);
+        }
+
+
+      }
+    }
   );
 
   // async function updateSessionToken(newToken: any) {
@@ -68,19 +88,21 @@ export function useApiFetch<T, RawT = T>(
   //       console.error("Error refreshing token:", error);
   //     });
   // }
-  useGeneralErrorToast(error);
+  // useGeneralErrorToast(error);
 
-  // Check if token invalid, force user to login again
-  if (error?.message.toLocaleLowerCase() === "token is invalid") {
-    router.push("/login");
-  }
+  // // Check if token invalid, force user to login again
+  // if (error?.message.toLocaleLowerCase().includes("invalid")) {
 
-  if (error) {
-    toast.error(`${error} redirecting to all apps...`);
-    setTimeout(() => {
-      router.push("/");
-    }, 1000);
-  }
+  //   router.push("/login");
+  // }
+
+  // if (error) {
+  //   console.error(error.);
+  //   // toast.error(`${error} redirecting to all apps...`);
+  //   // setTimeout(() => {
+  //   //   router.push("/");
+  //   // }, 1000);
+  // }
 
   // Must include the isReady check, otherwise isLoading is false, but there is no data or error
   const isLoading = !isReady || isDataLoading;

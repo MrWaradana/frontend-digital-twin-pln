@@ -1,4 +1,4 @@
-import LCCALayout from "@/containers/LCCALayout.tsx";
+import LCCALayout from "@/containers/LCCALayout";
 
 
 export default function Layout({ children }: { children: React.ReactNode }) {
