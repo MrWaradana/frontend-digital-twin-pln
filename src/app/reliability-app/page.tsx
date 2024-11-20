@@ -69,7 +69,7 @@ const Page = () => {
     {
       id: 2,
       text: "Lorem ipsum dolor sit amet",
-      hour: "100 jam",
+      hour: "10 jam",
       day: "10 hari",
     },
     {
@@ -93,8 +93,8 @@ const Page = () => {
   ];
   return (
     <RPContentLayout title="Reliability Predicts App">
-      <div className="gap-4 flex flex-row">
-        <div className="bg-white rounded-3xl p-3 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)]">
+      <div className="gap-4 flex flex-row flex-wrap">
+        <div className="bg-white rounded-3xl p-3 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)] w-full md:w-fit">
           <p className="text-[10px] text-gray-400">Dashboard One</p>
           <h1 className="text-xs sm:text-sm font-semibold text-[#303030] mb-6">
             Potential Failure
@@ -115,7 +115,7 @@ const Page = () => {
             ))}
           </ul>
         </div>
-        <div className="bg-white rounded-3xl p-3 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)]">
+        <div className="bg-white rounded-3xl p-3 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)] w-full md:w-fit">
           <p className="text-[10px] text-gray-400">Dashboard Two</p>
           <h1 className="text-xs sm:text-sm font-semibold text-[#303030] mb-6">
             Worst Reliability
@@ -146,15 +146,18 @@ const Page = () => {
               {mttr.map((mttr, index) => (
                 <li key={mttr.id} className="flex flex-row items-center">
                   <div className="w-full grid gap-4 grid-cols-4">
-                    <div className="col-span-2 text-[10px] text-gray-500">
+                    <div className="md:col-span-2 col-span-3 text-[10px] text-gray-500">
                       <span className="w-4">{index + 1}. </span>
                       {mttr.text}
                     </div>
-                    <div className="col-span-1 bg-red-600 text-white rounded-[100px] flex justify-center items-center text-[9px] px-3 py-1">
-                      {mttr.hour}
-                    </div>
-                    <div className="col-span-1 bg-red-600 text-white rounded-[100px] flex justify-center items-center text-[9px] px-3 py-1">
-                      {mttr.day}
+                    <div className="md:col-span-2 col-span-1 flex flex-row gap-1">
+                      <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-3 py-1">
+                        {mttr.hour}
+                      </div>
+                      <div className="text-sm text-gray-300">|</div>
+                      <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-3 py-1">
+                        {mttr.day}
+                      </div>
                     </div>
                   </div>
                 </li>
@@ -170,15 +173,18 @@ const Page = () => {
               {mdt.map((mdt, index) => (
                 <li key={mdt.id} className="flex flex-row items-center">
                   <div className="w-full grid gap-4 grid-cols-4">
-                    <div className="col-span-2 text-[10px] text-gray-500">
+                    <div className="md:col-span-2 col-span-3 text-[10px] text-gray-500">
                       <span className="w-4">{index + 1}. </span>
                       {mdt.text}
                     </div>
-                    <div className="col-span-1 bg-red-600 text-white rounded-[100px] flex justify-center items-center text-[9px] px-3 py-1">
-                      {mdt.hour}
-                    </div>
-                    <div className="col-span-1 bg-red-600 text-white rounded-[100px] flex justify-center items-center text-[9px] px-3 py-1">
-                      {mdt.day}
+                    <div className="md:col-span-2 col-span-1 flex flex-row gap-1">
+                      <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-3 py-1">
+                        {mdt.hour}
+                      </div>
+                      <div className="text-sm text-gray-300">|</div>
+                      <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-3 py-1">
+                        {mdt.day}
+                      </div>
                     </div>
                   </div>
                 </li>

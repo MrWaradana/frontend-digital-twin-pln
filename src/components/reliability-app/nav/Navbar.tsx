@@ -9,7 +9,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  useDisclosure
+  useDisclosure,
 } from "@nextui-org/react";
 import { signOut } from "@/auth";
 
@@ -18,7 +18,7 @@ interface NavbarProps {
 }
 
 export function Navbar({ title }: NavbarProps) {
-  const router = useRouter()
+  const router = useRouter();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <>
@@ -59,7 +59,9 @@ export function Navbar({ title }: NavbarProps) {
         <div className="mx-4 sm:mx-8 flex items-center h-[16dvh]">
           <div className="flex items-center space-x-4 lg:space-x-0">
             <SheetMenu />
-            <h1 className="font-semibold text-4xl">{title}</h1>
+            <h1 className="font-semibold text-sm md:text-4xl sm:text-xl">
+              {title}
+            </h1>
           </div>
           <div className="flex flex-1 items-center space-x-2 justify-end">
             <UserNav />
