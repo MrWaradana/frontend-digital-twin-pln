@@ -116,6 +116,12 @@ const ListTag = ({
           page={page}
           total={pages}
           onChange={setPage}
+          classNames={{
+            wrapper: "gap-0 h-8 rounded border border-divider",
+            item: "w-8 h-8 text-small rounded-none bg-transparent",
+            cursor:
+              "shadow-lg bg-[#1C9EB6]  dark:bg-[#fff] text-white font-bold",
+          }}
         />
       </div>
     );
@@ -143,13 +149,13 @@ const ListTag = ({
           />
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-[#E2523F] text-small">
+          <span className="text-[#1C9EB6] text-small">
             Total {dataRow.length} data
           </span>
-          <label className="flex items-center text-[#E2523F] text-small">
+          <label className="flex items-center text-[#1C9EB6] text-small">
             Rows per page:
             <select
-              className="bg-transparent outline-none text-[#E2523F] text-small"
+              className="bg-transparent outline-none text-[#1C9EB6] text-small"
               onChange={onRowsPerPageChange}
             >
               <option value="20">20</option>
@@ -173,6 +179,7 @@ const ListTag = ({
   const classNames = React.useMemo(
     () => ({
       wrapper: ["max-h-[382px]", "max-w-3xl", "shadow-none"],
+      cursor: ["shadow-lg bg-[#1C9EB6]  dark:bg-[#fff] text-white font-bold"],
       th: ["bg-transparent", "text-default-500", "border-b", "border-divider",],
       td: [
         // first
