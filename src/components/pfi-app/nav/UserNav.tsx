@@ -83,7 +83,6 @@ export function UserNav() {
                 >
                   <Avatar
                     name={session.data?.user.user.name}
-                    color="primary"
                     isBordered
                     className="uppercase"
                   />

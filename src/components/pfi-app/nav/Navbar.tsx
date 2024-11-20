@@ -56,24 +56,24 @@ export function Navbar({ title }: NavbarProps) {
         </ModalContent>
       </Modal>
       <header className="sticky top-0 z-10 w-full bg-transparent">
-        <div className="mx-4 sm:mx-8 flex items-center h-[16dvh]">
+        <div className="mx-4 sm:mx-12 flex items-center h-[16dvh]">
           <div className="flex items-center space-x-4 lg:space-x-0">
             <SheetMenu />
-            <h1 className="font-semibold text-sm sm:text-4xl">{title}</h1>
+            <h1 className="font-semibold text-sm sm:text-4xl text-[#0099AD]">{title}</h1>
           </div>
           <div className="flex flex-1 items-center space-x-2 justify-end">
             <UserNav />
             <Button
               variant={`bordered`}
               radius="full"
-              className="border-[#E2523F] text-sm sm:text-lg"
+              className="border-[#0099AD] text-sm sm:text-lg md:text-xl text-[#0099AD]"
             >
               Apps Library
             </Button>
             <Button
               variant={`solid`}
               radius="full"
-              className="bg-[#E2523F] text-white text-sm sm:text-lg"
+              className="bg-[#0099AD] text-white text-sm sm:text-lg"
               onClick={onOpen}
             >
               Sign out

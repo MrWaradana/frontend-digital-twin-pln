@@ -7,7 +7,7 @@ import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import { useStore } from "@/hooks/use-store";
 import { cn } from "@/lib/utils";
 
-import PlnLogoBlack from "../../../../public/Logo_Black.png";
+import logoPLN from "../../../../public/Logo_PLN.png";
 
 
 export default function Sidebar({ className }: { className?: string }) {
@@ -18,7 +18,7 @@ export default function Sidebar({ className }: { className?: string }) {
   return (
     <aside
       className={cn(
-        "fixed top-0 left-0 z-20 h-screen -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300",
+        "fixed top-0 left-0 z-20 h-screen -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300 pt-12",
         sidebar?.isOpen === false ? "w-[90px]" : "w-72",
         `${className}`
       )}
@@ -34,7 +34,7 @@ export default function Sidebar({ className }: { className?: string }) {
           asChild
         >
           <Link href="#" className="flex items-center gap-2">
-            <Image src={PlnLogoBlack} alt="Logo PLN" />
+            <Image src={logoPLN} alt="Logo PLN" />
           </Link>
         </Button>
         <Menu isListOpen={sidebar?.isOpen} />
