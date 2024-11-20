@@ -1,4 +1,4 @@
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
+import { Button, Dropdown, DropdownItem, DropdownMenu } from "@nextui-org/react";
 import * as echarts from "echarts";
 import { useEffect, useRef, useState } from "react";
 
@@ -105,37 +105,6 @@ const RadarChart = () => {
         className="min-h-[400px] sm:min-h-[500px] lg:min-h-[600px]"
       />
 
-      {/* Dropdown Menu */}
-      {dropdownVisible && (
-        <Dropdown
-          isOpen={dropdownVisible}
-          onClose={() => setDropdownVisible(false)} // Tutup dropdown saat di luar klik
-          style={{
-            position: "absolute",
-            left: `${dropdownPosition.x}px`,
-            top: `${dropdownPosition.y}px`,
-            zIndex: 1000,
-          }}
-        >
-          <DropdownTrigger>
-            <Button>
-              Menu
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu
-            aria-label="Data Options"
-            onAction={(key) => console.log(`Action selected: ${key}`)}
-          >
-            <DropdownItem key="details">
-              Details: {clickedData?.data.name}
-            </DropdownItem>
-            <DropdownItem key="edit">Edit</DropdownItem>
-            <DropdownItem key="delete" >
-              Delete
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
-      )}
     </div>
   );
 };
