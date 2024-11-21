@@ -3,6 +3,7 @@ import { useSingleDataTag } from "@/lib/APIs/useGetDataTag";
 import { CircularProgress } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import React from "react";
 
 interface TagValue {
@@ -53,14 +54,24 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
     }
   ];
 
+  const radarChartData: { name: string; value: number[] }[] = [
+    {
+      name: "Tag 1 (Radarchart Original)",
+      value: []
+    },
+    {
+      name: "Tag 1 (Radarchart Predicted)",
+      value: []
+    }
+  ]
+
   const getRandomValue = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
-  // Tanggal awal untuk data asli (7 hari ke belakang)
+
   let startDate = new Date();
   startDate.setDate(startDate.getDate() - 7);
 
-  // Mengisi data asli selama 7 hari terakhir
   for (let i = 0; i < 7; i++) {
     let newDate = new Date(startDate);
     newDate.setDate(newDate.getDate() + i);
@@ -69,13 +80,13 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
       time_stamp: newDate.toISOString(),
       value: getRandomValue(1, 100)
     });
+
+    radarChartData[0].value.push(getRandomValue(500, 10000));
   }
 
-  // Tanggal awal untuk data prediksi (hari setelah data asli berakhir)
   let predictionStartDate = new Date(startDate);
   predictionStartDate.setDate(predictionStartDate.getDate() + 7);
 
-  // Mengisi data prediksi selama 7 hari ke depan
   for (let i = 0; i < 7; i++) {
     let newDate = new Date(predictionStartDate);
     newDate.setDate(newDate.getDate() + i);
@@ -84,6 +95,8 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
       time_stamp: newDate.toISOString(),
       value: getRandomValue(5, 105)
     });
+
+    radarChartData[1].value.push(getRandomValue(500, 10000));
   }
 
   return (
@@ -128,8 +141,16 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
         </div>
 
         {/* Right Section */}
-        <div className="p-4 rounded-lg">
-          <RadarChart />
+        <div className="p-4 rounded-lg relative">
+          <div className="absolute z-20 top-20 right-0 left-92 m-auto bg-[#1C9EB6] rounded-lg w-60 py-4 sm:top-8 md:top-14 px-3">
+            <div className="flex">
+              <span className="text-white text-sm me-auto">Sensor A</span>
+              <span className="text-white text-sm">12.021</span>
+            </div>
+            <Link href="#" className="text-sm text-neutral-200 pt-5 ">
+              see details {">"}</Link>
+          </div>
+          <RadarChart dataRow={radarChartData} />
         </div>
       </div>
     </div>

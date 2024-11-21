@@ -2,7 +2,7 @@ import { Button, Dropdown, DropdownItem, DropdownMenu } from "@nextui-org/react"
 import * as echarts from "echarts";
 import { useEffect, useRef, useState } from "react";
 
-const RadarChart = () => {
+const RadarChart = ({ dataRow }: { dataRow: any }) => {
   const chartRef = useRef(null); // Referensi ke elemen DOM untuk chart
   const [dropdownVisible, setDropdownVisible] = useState(false); // State untuk visibilitas dropdown
   const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 }); // Posisi dropdown
@@ -49,17 +49,11 @@ const RadarChart = () => {
         },
         series: [
           {
-            name: "Budget vs spending",
+            name: "I-PFI Prediction",
             type: "radar",
             data: [
-              {
-                value: [4200, 3000, 20000, 35000, 50000, 18000],
-                name: "Allocated Budget",
-              },
-              {
-                value: [5000, 14000, 28000, 26000, 42000, 21000],
-                name: "Actual Spending",
-              },
+              dataRow[0],
+              dataRow[1],
             ],
           },
         ],

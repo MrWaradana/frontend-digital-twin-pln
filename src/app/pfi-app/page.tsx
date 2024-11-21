@@ -6,6 +6,7 @@ import { PFIContentLayout } from "@/containers/PFIContentLayout";
 import { useGetEquipmentByParams } from "@/lib/APIs/useGetEquipments";
 import { CircularProgress } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
+import React from "react";
 
 const Page = () => {
   const { data: session } = useSession();
@@ -17,7 +18,13 @@ const Page = () => {
     mutate
   } = useGetEquipmentByParams(session?.user.access_token, "TJB 3");
 
+
   const equipments = equipmentsData?.equipments ?? [];
+  const data = React.useMemo(() => {
+    return equipments.map(((item, index) => {
+      return { ...item, index: index + 1 }
+    }))
+  }, [equipments])
 
   if (isLoading || isValidating)
     return (
@@ -34,7 +41,7 @@ const Page = () => {
       <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
         <PowerPlant equipments={equipments} />
 
-        <ListEquipment dataRow={equipments}
+        <ListEquipment dataRow={data}
           mutate={mutate}
           isValidating={isValidating}
           parent_id={null}
