@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import React from "react";
-import { encrypt, decrypt } from "@/lib/utils";
+import { encrypt } from "@/lib/utils";
 
 interface TagValue {
   time_stamp: string;
@@ -15,7 +15,7 @@ interface TagValue {
 const ShowPredict = dynamic(
   () =>
     import(
-      "@/components/pfi-app/tags/ShowPredict"
+      "@/components/pfi-app/tags/PredictChart"
     ),
   { ssr: false }
 );
@@ -47,18 +47,6 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
       </div>
     );
 
-
-  const tagValues: { name: string; values: TagValue[] }[] = [
-    {
-      name: "Tag 1 (Original)",
-      values: [] // Data asli
-    },
-    {
-      name: "Tag 1 (Predicted)",
-      values: [] // Data prediksi
-    }
-  ];
-
   const radarChartData: { name: string; value: number[] }[] = [
     {
       name: "Tag 1 (Radarchart Original)",
@@ -74,33 +62,11 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  let startDate = new Date();
-  startDate.setDate(startDate.getDate() - 7);
-
   for (let i = 0; i < 7; i++) {
-    let newDate = new Date(startDate);
-    newDate.setDate(newDate.getDate() + i);
-
-    tagValues[0].values.push({
-      time_stamp: newDate.toISOString(),
-      value: getRandomValue(1, 100)
-    });
-
     radarChartData[0].value.push(getRandomValue(500, 10000));
   }
 
-  let predictionStartDate = new Date(startDate);
-  predictionStartDate.setDate(predictionStartDate.getDate() + 7);
-
   for (let i = 0; i < 7; i++) {
-    let newDate = new Date(predictionStartDate);
-    newDate.setDate(newDate.getDate() + i);
-
-    tagValues[1].values.push({
-      time_stamp: newDate.toISOString(),
-      value: getRandomValue(5, 105)
-    });
-
     radarChartData[1].value.push(getRandomValue(500, 10000));
   }
 
