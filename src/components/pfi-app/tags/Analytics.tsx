@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import React from "react";
+import { encrypt, decrypt } from "@/lib/utils";
 
 interface TagValue {
   time_stamp: string;
@@ -31,6 +32,10 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
   const tag = React.useMemo(() => {
     return tagData?.tag ?? ({} as { name?: string });
   }, [tagData]);
+
+  const encryptedKey = React.useMemo(() => {
+    return encrypt(selectedKeys?.anchorKey ?? "1");
+  }, [selectedKeys?.anchorKey ?? "1"]);
 
   if (isLoading)
     return (
@@ -147,7 +152,7 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
               <span className="text-white text-sm me-auto">Sensor A</span>
               <span className="text-white text-sm">12.021</span>
             </div>
-            <Link href="#" className="text-sm text-neutral-200 pt-5 ">
+            <Link href={`/pfi-app/tags/${encodeURIComponent(encryptedKey)}`} className="text-sm text-neutral-200 pt-5 ">
               see details {">"}</Link>
           </div>
           <RadarChart dataRow={radarChartData} />
