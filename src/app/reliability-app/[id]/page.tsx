@@ -4,11 +4,15 @@ import { useState } from "react";
 import { RPContentLayout } from "@/containers/RPContentLayout";
 import DropdownEquipmentLevel from "@/components/reliability-app/DropdownEquipmentLevel";
 import { Calculator, CircleAlert, CircleCheck, Loader } from "lucide-react";
+import { PredictionCalculator } from "@/components/reliability-app/PredictionCalculator";
 
 const Page = () => {
   const [selectedOption1, setSelectedOption1] = useState("");
   const [selectedOption2, setSelectedOption2] = useState("");
   const [selectedOption3, setSelectedOption3] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
 
   const options = ["Option 1", "Option 2", "Option 3"];
 
@@ -55,12 +59,23 @@ const Page = () => {
                     aliqua. Ut enim ad minim veniam, quis.
                   </p>
                 </div>
-                <div className="flex flex-row gap-2 justify-center items-center bg-[#F49C38] rounded-[100px] py-2 px-8 text-white text-sm w-fit text-[13px]">
+
+                {/* Prediction Calculator Button */}
+                <div
+                  onClick={openModal}
+                  className="flex flex-row gap-2 justify-center items-center bg-[#F49C38] hover:bg-[#e58c2d] rounded-[100px] py-2 px-8 text-white text-sm w-fit text-[13px] cursor-pointer"
+                >
                   <div>
                     <Calculator className="text-white w-4 h-4" />
                   </div>
                   <div>Prediction Calculator</div>
                 </div>
+
+                {/* Modal Container */}
+                <PredictionCalculator
+                  isModalOpen={isModalOpen}
+                  setIsModalOpen={setIsModalOpen}
+                />
               </div>
               <div className="flex-1 flex flex-col justify-start w-full">
                 <div className="text-2xl font-bold">Distribution Profile</div>
@@ -87,7 +102,7 @@ const Page = () => {
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
                     <div className="text-4xl font-bold">12</div>
-                    <div className="text-[10px] text-[#918E8E]">jam</div>
+                    <div className="text-[10px] text-[#918E8E]">Jam</div>
                   </div>
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
@@ -111,12 +126,12 @@ const Page = () => {
                 <div className="flex flex-row">
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">12</div>
-                    <div className="text-[10px] text-[#918E8E]">jam</div>
+                    <div className="text-4xl font-bold">17</div>
+                    <div className="text-[10px] text-[#918E8E]">Jam</div>
                   </div>
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">120</div>
+                    <div className="text-4xl font-bold">147</div>
                     <div className="text-[10px] text-[#918E8E]">Hari</div>
                   </div>
                 </div>
@@ -139,13 +154,8 @@ const Page = () => {
                 <div className="flex flex-row">
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">12</div>
-                    <div className="text-[10px] text-[#918E8E]">jam</div>
-                  </div>
-                  <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
-                  <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">120</div>
-                    <div className="text-[10px] text-[#918E8E]">Hari</div>
+                    <div className="text-4xl font-bold">1.287</div>
+                    <div className="text-[10px] text-[#918E8E]">Unit</div>
                   </div>
                 </div>
               </div>
@@ -164,13 +174,8 @@ const Page = () => {
                 <div className="flex flex-row">
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">12</div>
-                    <div className="text-[10px] text-[#918E8E]">jam</div>
-                  </div>
-                  <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
-                  <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">120</div>
-                    <div className="text-[10px] text-[#918E8E]">Hari</div>
+                    <div className="text-4xl font-bold">86</div>
+                    <div className="text-[10px] text-[#918E8E]">%</div>
                   </div>
                 </div>
               </div>
@@ -189,13 +194,8 @@ const Page = () => {
                 <div className="flex flex-row">
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">12</div>
-                    <div className="text-[10px] text-[#918E8E]">jam</div>
-                  </div>
-                  <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
-                  <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">120</div>
-                    <div className="text-[10px] text-[#918E8E]">Hari</div>
+                    <div className="text-4xl font-bold">78</div>
+                    <div className="text-[10px] text-[#918E8E]">%</div>
                   </div>
                 </div>
               </div>
