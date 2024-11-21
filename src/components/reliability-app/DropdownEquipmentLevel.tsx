@@ -33,16 +33,14 @@ const DropdownEquipmentLevel = ({ selectedOption, onSelect, options }) => {
   const extendedOptions = ["Select an option", ...options];
 
   return (
-    <div ref={dropdownRef} className="relative w-1/3">
+    <div ref={dropdownRef} className="relative sm:w-1/3 w-full">
       <div
         onClick={() => setIsOpen(!isOpen)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         tabIndex={0}
         className={`w-full px-5 py-3 rounded-[50px] placeholder:text-slate-400 text-sm cursor-pointer flex justify-between items-center ${
-          selectedOption
-            ? "shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)]"
-            : "shadow-none"
+          selectedOption ? "shadow-xl" : "shadow-none"
         } transition-all duration-300 ${
           !selectedOption || selectedOption === "Select an option"
             ? "bg-[#7B7A7A] shadow-none"
@@ -70,7 +68,7 @@ const DropdownEquipmentLevel = ({ selectedOption, onSelect, options }) => {
       {/* Dropdown List */}
       {isOpen && (
         <div
-          className="absolute mt-2 w-full rounded-[30px] bg-white shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)]"
+          className="absolute mt-2 w-full rounded-[30px] bg-white shadow-xl"
           style={{ zIndex: 10 }}
         >
           {extendedOptions.map((option, index) => (

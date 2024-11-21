@@ -94,7 +94,7 @@ const Page = () => {
   return (
     <RPContentLayout title="Reliability Predicts App">
       <div className="w-full gap-4 flex flex-row flex-wrap lg:flex-nowrap justify-center">
-        <div className="bg-white rounded-3xl p-6 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)] w-full lg:w-1/3">
+        <div className="bg-white rounded-3xl p-6 sm:px-12 sm:py-9 border border-gray-200 shadow-xl w-full lg:w-1/3">
           <p className="text-[10px] text-gray-400">Dashboard One</p>
           <h1 className="text-xs sm:text-sm font-semibold text-[#303030] mb-6">
             Potential Failure
@@ -115,7 +115,7 @@ const Page = () => {
             ))}
           </ul>
         </div>
-        <div className="bg-white rounded-3xl p-6 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)] w-full lg:w-1/3">
+        <div className="bg-white rounded-3xl p-6 sm:px-12 sm:py-9 border border-gray-200 shadow-xl w-full lg:w-1/3">
           <p className="text-[10px] text-gray-400">Dashboard Two</p>
           <h1 className="text-xs sm:text-sm font-semibold text-[#303030] mb-6">
             Worst Reliability
@@ -137,7 +137,7 @@ const Page = () => {
           </ul>
         </div>
         <div className="flex flex-col gap-4 w-full lg:w-1/2">
-          <div className="bg-white rounded-3xl p-6 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)] w-full">
+          <div className="bg-white rounded-3xl p-6 sm:px-12 sm:py-9 border border-gray-200 shadow-xl w-full">
             <p className="text-[10px] text-gray-400">Dashboard Three</p>
             <h1 className="text-xs sm:text-sm font-semibold text-[#303030] mb-6">
               Mean Time to Repair
@@ -164,7 +164,7 @@ const Page = () => {
               ))}
             </ul>
           </div>
-          <div className="bg-white rounded-3xl p-6 sm:px-12 sm:py-9 border border-gray-200 shadow-[5px_5px_10px_0_rgba(0,0,0,0.25)] w-full">
+          <div className="bg-white rounded-3xl p-6 sm:px-12 sm:py-9 border border-gray-200 shadow-xl w-full">
             <p className="text-[10px] text-gray-400">Dashboard Four</p>
             <h1 className="text-xs sm:text-sm font-semibold text-[#303030] mb-6">
               Mean Down Time
