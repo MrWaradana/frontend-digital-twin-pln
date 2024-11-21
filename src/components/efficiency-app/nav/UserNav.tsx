@@ -79,7 +79,7 @@ export function UserNav() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="relative bg-transparent border-[#D4CA2F] rounded-full"
+                  className="relative bg-transparent border-[#1C9EB6] rounded-full"
                 >
                   {/* <Avatar
                     name={session.data?.user.user.name}

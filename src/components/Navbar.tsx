@@ -85,10 +85,17 @@ export default function Navbar() {
         </ModalContent>
       </Modal>
       <NavbarLinks
-        isBordered
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
-        className="z-[999] backdrop-blur-xl bg-black/80"
+        classNames={{
+          base: ["w-full"],
+          wrapper: ["w-full"],
+        }}
+        position={`static`}
+        maxWidth={`full`}
+        isBlurred={false}
+        isBordered={false}
+        className="z-[999] bg-transparent flex flex-row !w-full justify-center px-4"
       >
         <NavbarContent className="sm:hidden" justify="start">
           <NavbarMenuToggle
@@ -96,7 +103,7 @@ export default function Navbar() {
           />
         </NavbarContent>
 
-        <NavbarContent className="sm:hidden pr-3" justify="center">
+        <NavbarContent className="sm:hidden pr-3 w-full" justify="center">
           <NavbarBrand>
             <Image
               src={PlnLogoNoText}
@@ -141,7 +148,9 @@ export default function Navbar() {
               href={session?.user.user.role === "Admin" ? "/admin/users" : "#"}
               className={`text-white rounded-full`}
             >
-              {session?.user.user.name.length > 8
+              {!session
+                ? "..."
+                : session?.user.user.name.length > 8
                 ? `${session?.user.user.name.slice(0, 8)}...`
                 : session?.user.user.name}
             </Button>
@@ -158,7 +167,7 @@ export default function Navbar() {
           </NavbarItem>
         </NavbarContent>
 
-        <NavbarMenu className="z-[9999] text-white">
+        {/* <NavbarMenu className="z-[9999] text-white">
           {menuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
@@ -167,8 +176,8 @@ export default function Navbar() {
                   index === 2
                     ? "warning"
                     : index === menuItems.length - 1
-                      ? "danger"
-                      : "foreground"
+                    ? "danger"
+                    : "foreground"
                 }
                 href="#"
                 size="lg"
@@ -177,7 +186,7 @@ export default function Navbar() {
               </Link>
             </NavbarMenuItem>
           ))}
-        </NavbarMenu>
+        </NavbarMenu> */}
       </NavbarLinks>
     </>
   );

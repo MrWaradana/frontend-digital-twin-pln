@@ -918,11 +918,7 @@ export default function TableParetoHeatlossNPHR({
     });
 
     // Restore classes after generating the PDF
-    tableContainer?.classList.add(
-      "max-h-[568px]",
-      "max-w-full",
-      "overflow-auto"
-    );
+    tableContainer?.classList.add("max-w-full", "overflow-auto");
     stickyColumns.forEach((column) => column.classList.add("sticky"));
     stickyCells.forEach((cell) => cell.classList.add("sticky"));
 
@@ -1081,23 +1077,23 @@ export default function TableParetoHeatlossNPHR({
           {/* <TableBody table={table} /> */}
           <tfoot className="sticky bottom-0 z-50 border-b-1">
             <tr className="text-left">
-              <th className="sticky left-0 bg-[#FFFAB4]">Total Summary</th>
-              <th className="bg-[#FFFAB4]" colSpan={4}></th>
-              <th className="bg-[#FFFAB4] text-right">
+              <th className="sticky left-0 bg-[#D9E9EE]">Total Summary</th>
+              <th className="bg-[#D9E9EE]" colSpan={4}></th>
+              <th className="bg-[#D9E9EE] text-right">
                 {formattedNumber(summaryData.total_persen_losses.toFixed(2))}
               </th>
-              <th className="bg-[#FFFAB4] text-right">
+              <th className="bg-[#D9E9EE] text-right">
                 {formattedNumber(summaryData.total_nilai_losses.toFixed(2))}
               </th>
-              <th className="bg-[#FFFAB4]" colSpan={1}></th>
-              <th className="bg-[#FFFAB4] text-right">
+              <th className="bg-[#D9E9EE]" colSpan={1}></th>
+              <th className="bg-[#D9E9EE] text-right">
                 Rp.{formatCurrency(summaryData.total_cost_benefit.toFixed(2))}
               </th>
-              {/* <th className="bg-[#FFFAB4]" colSpan={1}></th> */}
-              <th className="bg-[#FFFAB4] text-right">
+              {/* <th className="bg-[#D9E9EE]" colSpan={1}></th> */}
+              <th className="bg-[#D9E9EE] text-right">
                 Rp.{formatCurrency(summaryData.total_cost_gap.toFixed(2))}
               </th>
-              <th className="bg-[#FFFAB4]" colSpan={2}></th>
+              <th className="bg-[#D9E9EE]" colSpan={2}></th>
             </tr>
           </tfoot>
         </table>

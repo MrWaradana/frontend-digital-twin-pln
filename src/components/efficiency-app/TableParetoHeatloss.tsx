@@ -179,7 +179,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                 row.original.total_cost_gap ? (
                   <tr
                     key={`summary-${row.id}`}
-                    className="bg-[#FFFAB4] dark:bg-neutral-900 border-b-1 border-neutral-400 py-8"
+                    className="bg-[#D9E9EE] dark:bg-neutral-900 border-b-1 border-neutral-400 py-8"
                   >
                     {row.getVisibleCells().map((cell: any) => {
                       // Render summary under the specific columns
@@ -187,7 +187,7 @@ function TableBody({ table }: { table: Table<ParetoType> }) {
                         return (
                           <td
                             key={cell.id}
-                            className="font-bold sticky left-0 bg-[#FFFAB4] dark:bg-neutral-900 print-cell px-1"
+                            className="font-bold sticky left-0 bg-[#D9E9EE] dark:bg-neutral-900 print-cell px-1"
                           >
                             Summary
                           </td>
@@ -1109,7 +1109,7 @@ export default function TableParetoHeatloss({
 
     // Restore classes after generating the PDF
     tableContainer?.classList.add(
-      "max-h-[568px]",
+      // "max-h-[568px]",
       "max-w-full",
       "overflow-auto"
     );
@@ -1350,25 +1350,25 @@ export default function TableParetoHeatloss({
           {/* <TableBody table={table} /> */}
           <tfoot className="sticky bottom-0 z-50 border-b-1 print-cell">
             <tr className="text-left pb-8">
-              <th className="sticky left-0 bg-[#FFFAB4] dark:bg-blue-600 pb-4 px-1">
+              <th className="sticky left-0 bg-[#D9E9EE] dark:bg-blue-600 pb-4 px-1">
                 Total Summary
               </th>
-              <th className="bg-[#FFFAB4] dark:bg-blue-600" colSpan={4}></th>
-              <th className="bg-[#FFFAB4] dark:bg-blue-600 text-right pb-4">
+              <th className="bg-[#D9E9EE] dark:bg-blue-600" colSpan={4}></th>
+              <th className="bg-[#D9E9EE] dark:bg-blue-600 text-right pb-4">
                 {formattedNumber(summaryData.total_persen.toFixed(2))}
               </th>
-              <th className="bg-[#FFFAB4] dark:bg-blue-600 text-right pb-4">
+              <th className="bg-[#D9E9EE] dark:bg-blue-600 text-right pb-4">
                 {formattedNumber(summaryData.total_nilai.toFixed(2))}
               </th>
-              <th className="bg-[#FFFAB4] dark:bg-blue-600" colSpan={1}></th>
-              <th className="bg-[#FFFAB4] dark:bg-blue-600 text-right pb-4">
+              <th className="bg-[#D9E9EE] dark:bg-blue-600" colSpan={1}></th>
+              <th className="bg-[#D9E9EE] dark:bg-blue-600 text-right pb-4">
                 Rp.{formatCurrency(summaryData.total_cost_benefit.toFixed(2))}
               </th>
-              {/* <th className="bg-[#FFFAB4] dark:bg-blue-600" colSpan={1}></th> */}
-              <th className="bg-[#FFFAB4] dark:bg-blue-600 text-right pb-4">
+              {/* <th className="bg-[#D9E9EE] dark:bg-blue-600" colSpan={1}></th> */}
+              <th className="bg-[#D9E9EE] dark:bg-blue-600 text-right pb-4">
                 Rp.{formatCurrency(summaryData.total_cost_gap.toFixed(2))}
               </th>
-              <th className="bg-[#FFFAB4] dark:bg-blue-600" colSpan={4}></th>
+              <th className="bg-[#D9E9EE] dark:bg-blue-600" colSpan={4}></th>
             </tr>
           </tfoot>
         </table>

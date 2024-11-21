@@ -36,6 +36,7 @@ import {
   PlusIcon,
   ChevronDownIcon,
   MagnifyingGlassIcon,
+  CaretDownIcon,
 } from "@radix-ui/react-icons";
 import { parameterOptions, statusOptions } from "@/lib/efficiency-data";
 import { capitalize } from "@/lib/utils";
@@ -65,7 +66,7 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 
 const INITIAL_VISIBLE_COLUMNS = [
   "name",
-  "jenis_parameter",
+  // "jenis_parameter",
   "input_type",
   "periodic_start_date",
   "periodic_end_date",
@@ -92,6 +93,7 @@ export default function TableEfficiency({
   rowsPerPage,
   setRowsPerPage,
   pages,
+  total_items,
 }: {
   tableData: any;
   addNewUrl?: string;
@@ -104,6 +106,7 @@ export default function TableEfficiency({
   rowsPerPage: any;
   setRowsPerPage: any;
   pages: any;
+  total_items: any;
 }) {
   const router = useRouter();
   const [tableState, setTableState] = React.useState(tableData);
@@ -127,7 +130,7 @@ export default function TableEfficiency({
     { name: "ID", uid: "id", sortable: true },
     { name: "NAMA", uid: "name", sortable: true },
     { name: "JENIS PARAMETER", uid: "jenis_parameter", sortable: true },
-    { name: "TIPE", uid: "input_type", sortable: true },
+    { name: "TIPE PARAMETER", uid: "input_type", sortable: true },
     { name: "START DATE", uid: "periodic_start_date", sortable: true },
     { name: "END DATE", uid: "periodic_end_date", sortable: true },
     { name: "PERIODE", uid: "periode", sortable: true },
@@ -388,7 +391,19 @@ export default function TableEfficiency({
         case "periode":
           return cellValue;
         case "input_type":
-          return cellValue;
+          return (
+            <span
+              className={`rounded-full px-3 py-1 capitalize ${
+                rowData.input_type
+                  ? rowData.input_type === "periodic"
+                    ? "bg-amber-200"
+                    : "bg-emerald-300"
+                  : ""
+              }`}
+            >
+              {cellValue}
+            </span>
+          );
         case "periodic_start_date":
           if (cellValue === null) return "";
           return new Date(cellValue).toLocaleDateString("id");
@@ -419,7 +434,7 @@ export default function TableEfficiency({
                       size="sm"
                       variant="solid"
                       radius="full"
-                      className=" bg-[#D4CA2F]"
+                      className=" bg-[#1C9EB6]"
                       // isDisabled={!thermoStatus}
                     >
                       <DotsVerticalIcon className="text-white dark:text-black text-2xl" />
@@ -606,12 +621,12 @@ export default function TableEfficiency({
                   as={Link}
                   // isDisabled={thermoStatus ?? false}
                   // isLoading={thermoStatus ?? false}
-                  color="primary"
-                  startContent={
+                  color="default"
+                  endContent={
                     // <PlusIcon className={`${thermoStatus ? "hidden" : ""}`} />
-                    <PlusIcon />
+                    <CaretDownIcon />
                   }
-                  className={`${
+                  className={`bg-gray-200 ${
                     session?.data?.user.user.role === "Management"
                       ? "hidden"
                       : ""
@@ -639,15 +654,12 @@ export default function TableEfficiency({
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Showing{" "}
-            {filterValue
-              ? filteredItems.length
-              : rowsPerPage > nonPerformanceData.length
-              ? nonPerformanceData.length
-              : rowsPerPage}{" "}
+            Showing {filteredItems.length}{" "}
             {filterValue
               ? ""
-              : `item from total of ${nonPerformanceData.length}${" "}`}
+              : `item from total of ${
+                  total_items ? total_items : nonPerformanceData.length
+                }${" "}`}
             {filterValue ? ` for \"${filterValue}\"` : ""}
           </span>
           <label className="flex items-center text-default-400 text-small">
@@ -658,7 +670,9 @@ export default function TableEfficiency({
             >
               <option value="5">5</option>
               <option value="10">10</option>
-              <option value="15">15</option>
+              <option value="15" selected>
+                15
+              </option>
             </select>
           </label>
         </div>
@@ -692,6 +706,9 @@ export default function TableEfficiency({
           page={page}
           total={pages}
           onChange={(page) => setPage(page)}
+          classNames={{
+            cursor: "bg-[#1C9EB6]",
+          }}
         />
         <div className="hidden sm:flex w-[30%] justify-end gap-2">
           <Button
@@ -876,7 +893,14 @@ export default function TableEfficiency({
           {(column: any) => (
             <TableColumn
               key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
+              align={
+                column.uid === "actions" ||
+                column.uid === "jenis_parameter" ||
+                column.uid === "input_type" ||
+                column.uid === "status"
+                  ? "center"
+                  : "start"
+              }
               allowsSorting={column.sortable}
             >
               {column.name}

@@ -34,10 +34,14 @@ export function useApiFetch<T, RawT = T>(
     {
       ...swrConfig,
       onError: (err) => {
-        if (err.status === 401 || err.message.toLowerCase().includes("unauthorized") || err.message.toLowerCase().includes("invalid")) {
+        if (
+          err.status === 401 ||
+          err.message.toLowerCase().includes("unauthorized") ||
+          err.message.toLowerCase().includes("invalid")
+        ) {
           toast.error("Unauthorized, redirecting to login...");
           setTimeout(() => {
-            router.push("/login");
+            router.push(`${process.env.NEXT_AUTH_URL}/login`);
           }, 1000);
 
           return;
@@ -48,9 +52,7 @@ export function useApiFetch<T, RawT = T>(
             router.back();
           }, 1000);
         }
-
-
-      }
+      },
     }
   );
 

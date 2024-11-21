@@ -9,7 +9,7 @@ export interface EngineFlow {
 export function useGetDataEngineFlow(
   token: string | undefined,
   data_id: string | undefined
-): HookReply<EngineFlow> {
+): HookReply<any> {
   return useApiFetch(
     `${EFFICIENCY_API_URL}/data/${data_id ? `${data_id}` : `new`}/engine-flow`,
     !!token,

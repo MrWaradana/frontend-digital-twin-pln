@@ -27,17 +27,22 @@ export default function Sidebar({ className }: { className?: string }) {
       )}
     >
       {/* <SidebarToggle isOpen={sidebar?.isOpen} setIsOpen={sidebar?.setIsOpen} /> */}
-      <div className="relative h-full flex flex-col px-3 py-4 overflow-y-auto bg-transparent">
+      <div className="relative h-full flex flex-col px-3 py-4 mt-6 overflow-y-auto bg-transparent">
         <Button
           className={cn(
-            "transition-transform ease-in-out duration-300 mb-1 p-3",
+            "transition-transform ease-in-out duration-300 mb-1",
             sidebar?.isOpen === false ? "translate-x-1" : "translate-x-0"
           )}
           variant="link"
           asChild
         >
-          <Link href="#" className="flex items-center gap-2">
-            <Image src={PlnLogoBlack} alt="Logo PLN" />
+          <Link href="#" className="flex items-center gap-2 !p-0 !m-0">
+            <Image
+              src={PlnLogoVertical}
+              alt="Logo PLN"
+              width={90}
+              height={90}
+            />
           </Link>
         </Button>
         <Menu isListOpen={sidebar?.isOpen} />

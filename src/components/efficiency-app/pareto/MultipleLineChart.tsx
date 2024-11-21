@@ -87,19 +87,19 @@ export default function MultipleLineChart({
             setOpenDetails(!openDetails);
             setTimeout(() => {
               window.scrollTo({
-                top: 850,
+                top: 830,
                 behavior: "smooth",
               });
-            }, 1000);
+            }, 300);
           }}
         >
           {openDetails ? "Close" : "See"} Details
         </Button>
       </CardHeader>
-      <CardContent className="grid grid-cols-12 mt-12 h-2/3">
+      <CardContent className="grid grid-cols-12 mt-12 relative">
         <ChartContainer
           config={chartConfig}
-          className="col-span-11 w-full h-2/3"
+          className="col-span-11 w-full h-[65dvh]"
         >
           <ComposedChart
             accessibilityLayer
@@ -200,7 +200,7 @@ export default function MultipleLineChart({
             />
           </ComposedChart>
         </ChartContainer>
-        <div className="h-2/3 col-span-1">
+        <div className="col-span-1">
           <Slider
             size="md"
             label="Persentase"
@@ -210,10 +210,10 @@ export default function MultipleLineChart({
               setOpenDetails(true);
               setTimeout(() => {
                 window.scrollTo({
-                  top: 850,
+                  top: 830,
                   behavior: "smooth",
                 });
-              }, 1000);
+              }, 300);
             }}
             maxValue={100}
             minValue={0}

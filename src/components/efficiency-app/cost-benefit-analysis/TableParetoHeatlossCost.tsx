@@ -118,7 +118,7 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
         <tr>
           <td
             colSpan={table.getVisibleLeafColumns().length}
-            className="text-center px-1"
+            className="text-center px-1 pb-2"
           >
             No data!
           </td>
@@ -132,7 +132,7 @@ function TableBody({ table }: { table: Table<CostBenefitDataType> }) {
                   {row.getVisibleCells().map((cell: any) => (
                     <td
                       key={cell.id}
-                      className={`text-sm font-normal bg-neutral-50 border-b-1 border-neutral-200 dark:bg-neutral-700 px-1 ${
+                      className={`text-sm font-normal bg-neutral-50 border-b-1 border-neutral-200 dark:bg-neutral-700 dark:text-white px-1 pb-2 ${
                         cell.column.columnDef.meta?.className ?? ""
                       }`}
                       style={{
@@ -325,7 +325,7 @@ const FormattedTooltipCell = ({ row, getValue }) => {
         className="max-w-md"
       >
         <p className="truncate cursor-help">
-          {cellContent ? cellContent.split(",")[0].slice(0, 5) + "..." : "-"}
+          {cellContent ? cellContent.split(",")[0] + "..." : "-"}
         </p>
       </Tooltip>
     </div>
@@ -396,7 +396,7 @@ export default function TableParetoHeatlossCost({
         maxSize: 800,
         meta: {
           className:
-            "sticky left-0 z-20 overflow-hidden whitespace-nowrap text-clip print-column",
+            "sticky left-0 overflow-hidden whitespace-nowrap text-clip print-column",
         },
         cell: (props: any) => (
           <div
@@ -405,12 +405,13 @@ export default function TableParetoHeatlossCost({
             }}
             className="print-cell"
           >
-            {props.row.getCanExpand() ? (
+            {/* {props.row.getCanExpand() ? (
               <button
                 {...{
                   onClick: props.row.getToggleExpandedHandler(),
                   style: { cursor: "pointer" },
                 }}
+                
               >
                 {props.row.getIsExpanded() ? (
                   <CaretDownIcon fontSize={12} />
@@ -420,7 +421,7 @@ export default function TableParetoHeatlossCost({
               </button>
             ) : (
               `${props.row.original.variable.input_name}`
-            )}{" "}
+            )}{" "} */}
             <span className="text-base print-cell">
               {" "}
               {props.getValue() || props.row.depth > 0 ? props.getValue() : ""}
@@ -783,7 +784,7 @@ export default function TableParetoHeatlossCost({
         id: "biayaClosingGap",
         accessorKey: "total_biaya",
         meta: {
-          className: "text-right pr-2 whitespace-nowrap",
+          className: "text-right pr-2",
         },
         header: () => (
           <div className="text-center">
@@ -1032,7 +1033,7 @@ export default function TableParetoHeatlossCost({
 
     // Restore classes after generating the PDF
     tableContainer?.classList.add(
-      "max-h-[568px]",
+      // "max-h-[568px]",
       "max-w-full",
       "overflow-auto"
     );
@@ -1147,7 +1148,7 @@ export default function TableParetoHeatlossCost({
             radius="sm"
             onPress={() => handleFilterClick()} // Apply filter on button click
             endContent={<FilterIcon size={36} />}
-            className={`bg-[#D4CA2F] text-white`}
+            className={`bg-[#1C9EB6] text-white`}
           >
             Filter
           </Button>
@@ -1190,7 +1191,7 @@ export default function TableParetoHeatlossCost({
           }}
           id="table-pareto-cost"
         >
-          <thead className="sticky top-0 z-40 border-b-1 border-neutral-200">
+          <thead className="sticky top-0 border-b-1 border-neutral-200">
             {table.getHeaderGroups().map((headerGroup: any) => {
               return (
                 <tr key={`${headerGroup.id}`}>
@@ -1198,7 +1199,7 @@ export default function TableParetoHeatlossCost({
                     return (
                       <th
                         key={header.id}
-                        className={`relative group text-sm capitalize font-light border-b-1 border-neutral-200 ${
+                        className={`relative group text-sm capitalize font-light border-b-1 pb-2 border-neutral-200 ${
                           header.column.columnDef.meta?.className ?? ""
                         } `}
                         style={{
@@ -1229,30 +1230,30 @@ export default function TableParetoHeatlossCost({
           <MemoizedTableBody table={table} />
           {/* Initial Table Body for expanding row works */}
           {/* <TableBody table={table} /> */}
-          <tfoot className="sticky bottom-0 z-40 border border-neutral-200 print-column">
+          <tfoot className="sticky bottom-0 border border-neutral-200 print-column">
             <tr className="text-left">
-              <th className="sticky left-0 bg-[#FFFAB4] print-cell">
+              <th className="sticky left-0 bg-[#D9E9EE] print-cell">
                 Total Summary
               </th>
-              <th className="bg-[#FFFAB4]" colSpan={4}></th>
-              <th className="bg-[#FFFAB4] text-right pr-2">
+              <th className="bg-[#D9E9EE]" colSpan={4}></th>
+              <th className="bg-[#D9E9EE] text-right pr-2">
                 {formattedNumber(summaryData?.total_persen.toFixed(2) || 0)}
               </th>
-              <th className="bg-[#FFFAB4] text-right pr-2">
+              <th className="bg-[#D9E9EE] text-right pr-2">
                 {formattedNumber(summaryData?.total_nilai.toFixed(2) || 0)}
               </th>
-              <th className="bg-[#FFFAB4]" colSpan={1}></th>
-              <th className="bg-[#FFFAB4] text-right">
+              <th className="bg-[#D9E9EE]" colSpan={1}></th>
+              <th className="bg-[#D9E9EE] text-right">
                 Rp.
                 {formatCurrency(
                   summaryData?.total_cost_benefit.toFixed(2) ?? 0
                 )}
               </th>
-              <th className="bg-[#FFFAB4]" colSpan={1}></th>
-              <th className="bg-[#FFFAB4] text-right">
+              <th className="bg-[#D9E9EE]" colSpan={1}></th>
+              <th className="bg-[#D9E9EE] text-right">
                 Rp.{formatCurrency(summaryData?.total_biaya.toFixed(2) ?? 0)}
               </th>
-              <th className="bg-[#FFFAB4]" colSpan={2}></th>
+              <th className="bg-[#D9E9EE]" colSpan={2}></th>
             </tr>
           </tfoot>
         </table>

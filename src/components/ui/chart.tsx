@@ -191,7 +191,8 @@ const ChartTooltipContent = React.forwardRef<
           {payload.map((item, index) => {
             const key = `${nameKey || item.name || item.dataKey || "value"}`;
             const itemConfig = getPayloadConfigFromPayload(config, item, key);
-            const indicatorColor = color || item.payload.fill || item.color;
+            const indicatorColor =
+              itemConfig?.color || color || item.payload.fill || item.color;
 
             // Check if item value is 0 and skip rendering if so
             if (item.value === 0) {
@@ -311,7 +312,7 @@ const ChartLegendContent = React.forwardRef<
                 <div
                   className="h-2 w-2 shrink-0 rounded-[2px]"
                   style={{
-                    backgroundColor: item.color,
+                    backgroundColor: itemConfig?.color || item.color,
                   }}
                 />
               )}

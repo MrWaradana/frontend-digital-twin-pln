@@ -3,6 +3,7 @@
 import Image from "next/image";
 import EngineFlow from "../../../public/engine-flow-v2.jpg";
 import NewEngineFlow from "../../../public/efficiency-app/engine-flow-infografis.png";
+import NewEngineFlow2 from "../../../public/efficiency-app/v2-engine-flow-infografis.png";
 import {
   Tooltip,
   Button,
@@ -24,6 +25,7 @@ import {
   Input,
   Accordion,
   AccordionItem,
+  useDisclosure,
 } from "@nextui-org/react";
 import { ChevronLeftIcon, PlusIcon } from "lucide-react";
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
@@ -39,6 +41,7 @@ import { getLocalTimeZone, today, parseDate } from "@internationalized/date";
 import { DateValue } from "@react-types/datepicker";
 import { useRouter } from "next/navigation";
 import { useGetDataCompare } from "@/lib/APIs/useGetDataCompare";
+import { useGetDataActions } from "@/lib/APIs/useGetDataActions";
 import { formattedNumber } from "@/lib/formattedNumber";
 import { EFFICIENCY_API_URL } from "../../lib/api-url";
 import React from "react";
@@ -61,6 +64,7 @@ import { useSearchParams } from "next/navigation";
 import { useGetVariables } from "../../lib/APIs/useGetVariables";
 import { useExcelStore } from "../../store/excels";
 import { useGetMasterData } from "../../lib/APIs/useGetMasterData";
+import ActionsTable from "../../components/efficiency-app/ActionsTable";
 
 interface Variable {
   category: string;
@@ -78,6 +82,7 @@ export default function Page() {
   const [modalChoosePeriod, setModalChoosePeriod] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [actionModalOpen, setActionModalOpen] = useState(false);
   const [selectedParameter, setSelectedParameter] = useState("current");
   const [loading, setLoading] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
@@ -135,6 +140,13 @@ export default function Page() {
   } = useGetDataEngineFlow(session?.user.access_token, dataId);
 
   const {
+    data: actionData,
+    isLoading: isLoadingActionData,
+    isValidating: isValidatingActionData,
+    error: erroActionData,
+  } = useGetDataActions(session?.user.access_token, engineFlow?.id);
+
+  const {
     data,
     mutate,
     isLoading: isLoadingPareto,
@@ -175,6 +187,7 @@ export default function Page() {
   const paretoBottomData = tableData.filter((item) => item.category != null);
   const categoriesCompareData = compareData?.categories_data ?? [];
   const paretoCompareData = compareData?.pareto_data ?? [];
+  const actionsData = actionData ?? [];
 
   const statusData = selectedEfficiencyData.find(
     (item: any) => item.id === engineFlow?.id
@@ -183,27 +196,27 @@ export default function Page() {
 
   const positions = {
     // Top row - turbines
-    EG: { name: "Output Generator:", top: "14%", left: "91%", unit: "MW" },
-    LPT: { name: "Efficiency:", top: "12%", left: "76%", unit: "%" },
-    IPT: { name: "Efficiency:", top: "14%", left: "53%", unit: "%" },
-    HPT: { name: "Efficiency:", top: "15%", left: "29.8%", unit: "%" },
+    EG: { name: "Output Generator", top: "14%", left: "91%", unit: "MW" },
+    LPT: { name: "Efficiency", top: "12%", left: "76%", unit: "%" },
+    IPT: { name: "Efficiency", top: "14%", left: "53%", unit: "%" },
+    HPT: { name: "Efficiency", top: "15%", left: "29.8%", unit: "%" },
 
     //Boiler
-    Boiler: { name: "Boiler:", top: "74%", left: "8.7%", unit: "%" },
+    Boiler: { name: "Boiler", top: "65%", left: "7%", unit: "%" },
 
     // Bottom row - RH components
-    RH7: { name: "TTD:", top: "74%", left: "28.7%", unit: "°C" },
-    RH6: { name: "TTD:", top: "74%", left: "36.6%", unit: "°C" },
-    RH5: { name: "TTD:", top: "74%", left: "45.5%", unit: "°C" },
-    RH3: { name: "TTD:", top: "74%", left: "61.5%", unit: "°C" },
-    RH2: { name: "TTD:", top: "74%", left: "70.5%", unit: "°C" },
-    RH1: { name: "TTD:", top: "74%", left: "79.5%", unit: "°C" },
+    RH7: { name: "TTD", top: "74%", left: "28%", unit: "°C" },
+    RH6: { name: "TTD", top: "74%", left: "36%", unit: "°C" },
+    RH5: { name: "TTD", top: "74%", left: "45.5%", unit: "°C" },
+    RH3: { name: "TTD", top: "74%", left: "62.3%", unit: "°C" },
+    RH2: { name: "TTD", top: "74%", left: "71.5%", unit: "°C" },
+    RH1: { name: "TTD", top: "74%", left: "81%", unit: "°C" },
 
     // Condensor
     Condensor_Value: {
       name: "Pressure:",
-      top: "80%",
-      left: "90%",
+      top: "65%",
+      left: "92%",
       unit: "mbara",
     },
   };
@@ -482,6 +495,36 @@ export default function Page() {
               >
                 Confirm Submit
               </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
+  );
+
+  const actionTableModal = (
+    <Modal
+      isOpen={actionModalOpen}
+      size="5xl"
+      scrollBehavior="inside"
+      onOpenChange={setActionModalOpen}
+    >
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader className="flex flex-col gap-1">Actions</ModalHeader>
+            <ModalBody>
+              <div className={`h-full overflow-y-auto`}>
+                <ActionsTable data={actionsData} />
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              {/* <Button color="danger" variant="light" onPress={onClose}>
+                Close
+              </Button>
+              <Button color="primary" onPress={onClose}>
+                Action
+              </Button> */}
             </ModalFooter>
           </>
         )}
@@ -781,14 +824,16 @@ export default function Page() {
   return (
     <>
       {deleteConfirmationModal}
+      {actionTableModal}
       {choosePeriodicModal}
       <EfficiencyContentLayout title="Efficiency & Heat Loss App">
         <div className="w-full flex flex-col justify-center items-center bg-white rounded-xl shadow-xl pt-8">
           {/* {JSON.stringify(dataCompare)}{" "} */}
-          <div className={`w-full flex justify-between px-12 items-center`}>
+          <div className={`w-full flex justify-between px-8 items-center`}>
             <div className={`min-w-fit flex justify-start items-center gap-4`}>
-              <h2 className={`text-2xl font-semibold mr-4`}>Engine Flow</h2>
+              <h2 className={`text-2xl font-semibold mr-1`}>Engine Flow</h2>
               <Button
+                size="sm"
                 className={`bg-[#1C9EB6] text-white dark:text-white !px-4 !py-2`}
               >
                 {statusData ? statusData.status : "-"}
@@ -851,12 +896,20 @@ export default function Page() {
               >
                 All Simulation
               </Button>
-              <Button
+              {/* <Button
                 as={Link}
                 href={`/efficiency-app/${engineFlow?.id}/pareto?percent-threshold=${statusData?.persen_threshold}&potential-timeframe=${statusData?.potential_timeframe}`}
                 className="bg-gray-100 px-4 !min-w-12"
               >
                 Pareto
+              </Button> */}
+              <Button
+                className="bg-gray-100 px-4 !min-w-12"
+                onClick={() => {
+                  setActionModalOpen(true);
+                }}
+              >
+                Actions
               </Button>
               <Dropdown>
                 <DropdownTrigger>
@@ -920,7 +973,7 @@ export default function Page() {
               </Button>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-4 gap-4 text-md md:text-lg">
             <div
               className={`flex flex-col gap-4 col-span-1 my-4 px-6 py-3 h-[70dvh] overflow-y-auto`}
@@ -965,7 +1018,9 @@ export default function Page() {
                                   <ArrowUpIcon
                                     className={`${
                                       Number(paretoCompareData[key]) > 0
-                                        ? "text-[#1C9EB6]"
+                                        ? "text-green-500"
+                                        : Number(paretoCompareData[key]) == 0
+                                        ? "hidden"
                                         : "text-[#D93832] rotate-180"
                                     }`}
                                     width={36}
@@ -1003,7 +1058,11 @@ export default function Page() {
                                           className={`${
                                             Number(categoriesCompareData[key]) >
                                             0
-                                              ? "text-[#1C9EB6]"
+                                              ? "text-green-500"
+                                              : Number(
+                                                  categoriesCompareData[key]
+                                                ) == 0
+                                              ? "hidden"
                                               : "text-[#D93832] rotate-180"
                                           }`}
                                           width={24}
@@ -1047,7 +1106,9 @@ export default function Page() {
                                   <ArrowUpIcon
                                     className={`${
                                       Number(paretoCompareData[key]) > 0
-                                        ? "text-[#1C9EB6]"
+                                        ? "text-green-500"
+                                        : Number(paretoCompareData[key]) == 0
+                                        ? "hidden"
                                         : "text-[#D93832] rotate-180"
                                     }`}
                                     width={36}
@@ -1085,7 +1146,11 @@ export default function Page() {
                                           className={`${
                                             Number(categoriesCompareData[key]) >
                                             0
-                                              ? "text-[#1C9EB6]"
+                                              ? "text-green-500"
+                                              : Number(
+                                                  categoriesCompareData[key]
+                                                ) == 0
+                                              ? "hidden"
                                               : "text-[#D93832] rotate-180"
                                           }`}
                                           width={24}
@@ -1124,7 +1189,9 @@ export default function Page() {
                               <ArrowUpIcon
                                 className={`${
                                   Number(paretoCompareData[key]) > 0
-                                    ? "text-[#1C9EB6]"
+                                    ? "text-green-500"
+                                    : Number(paretoCompareData[key]) == 0
+                                    ? "hidden"
                                     : "text-[#D93832] rotate-180"
                                 }`}
                                 width={36}
@@ -1138,7 +1205,11 @@ export default function Page() {
                 })}
             </div>
             <div className="relative w-full col-span-3">
-              <Image src={NewEngineFlow} alt="engine-flow" className="w-full" />
+              <Image
+                src={NewEngineFlow2}
+                alt="engine-flow"
+                className="h-[75dvh]"
+              />
               {Object.keys(positions).map((key) => (
                 <div
                   key={key}
@@ -1150,25 +1221,71 @@ export default function Page() {
                   className="absolute z-10"
                 >
                   <div
-                    className={`${
-                      engineFlowData[key]?.diff > 0
-                        ? "bg-[#1C9EB6]"
-                        : "bg-[#D93832] animate-pulse"
-                    } backdrop-blur-sm px-1.5 py-0.5 rounded-sm 
+                    className={`relative ${
+                      engineFlowData[key]?.diff >= 0 ? "" : "animate-pulse"
+                    }`}
+                  >
+                    <div
+                      className={`${
+                        engineFlowData[key]?.diff > 0
+                          ? "bg-green-500"
+                          : engineFlowData[key]?.diff == 0
+                          ? "bg-gray-400 "
+                          : "bg-[#D93832]"
+                      } backdrop-blur-sm px-1.5 py-0.5 rounded-sm 
                          md:text-[14px] text-xs shadow-sm border border-gray-200/50 whitespace-nowrap
                          hover:scale-105  hover:shadow-md
                          transition-all ease-in-out
-                         transform origin-center`}
-                  >
-                    <div className="font-semibold text-neutral-200 pb-2">
-                      {" "}
-                      {positions[key].name}
+                         transform origin-center text-center`}
+                    >
+                      <div
+                        className={`font-semibold ${
+                          engineFlowData[key]?.diff == 0
+                            ? "text-white"
+                            : "text-neutral-200"
+                        } pb-2`}
+                      >
+                        {" "}
+                        {positions[key].name}
+                      </div>
+                      <div
+                        className={`font-bold text-lg
+                      ${
+                        engineFlowData[key]?.diff == 0
+                          ? "text-white"
+                          : "text-neutral-200"
+                      }
+                      `}
+                      >
+                        {formatValue(
+                          engineFlowData[key]?.value,
+                          positions[key].unit
+                        )}
+                      </div>
                     </div>
-                    <div className="text-slate-50">
-                      {formatValue(
-                        engineFlowData[key]?.value,
-                        positions[key].unit
-                      )}
+                    <div className="absolute -bottom-3 left-0 right-0 mx-auto w-full">
+                      <div className={`relative`}>
+                        <div
+                          className={`rounded-full w-5 h-5 absolute left-0 right-0 mx-auto border-2   ${
+                            engineFlowData[key]?.diff > 0
+                              ? "bg-green-500 border-[#75eaff]"
+                              : engineFlowData[key]?.diff == 0
+                              ? "bg-gray-400 border-white/30"
+                              : "bg-[#D93832] border-[#ffb5b3]"
+                          }`}
+                        ></div>
+                        <div className="w-6 overflow-hidden inline-block absolute bottom-0 right-0 left-0 m-auto">
+                          <div
+                            className={`h-4 w-4 ${
+                              engineFlowData[key]?.diff > 0
+                                ? "bg-green-500"
+                                : engineFlowData[key]?.diff == 0
+                                ? "bg-gray-400 "
+                                : "bg-[#D93832]"
+                            } -rotate-45 transform origin-top-left`}
+                          ></div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

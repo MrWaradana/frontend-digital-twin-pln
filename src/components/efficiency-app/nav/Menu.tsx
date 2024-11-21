@@ -122,7 +122,7 @@ export function Menu({ isListOpen }: MenuProps) {
                                     isListOpen === false ? "" : "mr-4"
                                   )}
                                 >
-                                  <Icon size={22} className="text-[#D4CA2F]" />
+                                  <Icon size={22} className="text-[#1C9EB6]" />
                                 </span>
                                 <p
                                   className={cn(

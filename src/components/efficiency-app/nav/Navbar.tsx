@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { UserNav } from "@/components/efficiency-app/nav/UserNav";
 import { SheetMenu } from "@/components/efficiency-app/nav/SheetMenu";
@@ -20,7 +20,7 @@ interface NavbarProps {
 }
 
 export function Navbar({ title }: NavbarProps) {
-  const router = useRouter()
+  const router = useRouter();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <>
@@ -40,7 +40,7 @@ export function Navbar({ title }: NavbarProps) {
                 </Button>
                 <Button
                   radius="full"
-                  className={`bg-[#D4CA2F] text-white`}
+                  className={`bg-[#D9E9EE] text-white`}
                   onPress={async () => {
                     try {
                       await signOut();
@@ -57,11 +57,11 @@ export function Navbar({ title }: NavbarProps) {
           )}
         </ModalContent>
       </Modal>
-      <header className="z-10 w-full bg-transparent">
+      <header className="z-10 w-full ">
         <div className="mx-4 sm:mx-8 flex items-center h-[12dvh]">
           <div className="flex items-center space-x-4 lg:space-x-0">
             <SheetMenu />
-            <h1 className="font-semibold text-3xl">{title}</h1>
+            <h1 className="font-semibold text-3xl text-[#0099AD]">{title}</h1>
           </div>
           <div className="flex flex-1 items-center space-x-2 justify-end">
             <UserNav />
@@ -75,7 +75,7 @@ export function Navbar({ title }: NavbarProps) {
             <Button
               variant={`solid`}
               radius="full"
-              className="bg-[#D4CA2F] text-white"
+              className="bg-[#1C9EB6] text-white"
               onClick={onOpen}
             >
               Sign out

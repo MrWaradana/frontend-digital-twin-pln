@@ -33,7 +33,7 @@ export default function Page() {
   // const [efficiencyData, setEfficiencyData] = useState([]);
   const router = useRouter();
   const { data: session, status, update } = useSession();
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const [page, setPage] = useState(1);
 
   const {
@@ -111,6 +111,10 @@ export default function Page() {
 
   const pages = useMemo(() => {
     return efficiencyData?.total_pages ? efficiencyData?.total_pages : 0;
+  }, [efficiencyData, rowsPerPage]);
+
+  const total_items = useMemo(() => {
+    return efficiencyData?.total_items ? efficiencyData?.total_items : 0;
   }, [efficiencyData, rowsPerPage]);
 
   useEffect(() => {
@@ -192,6 +196,7 @@ export default function Page() {
             rowsPerPage={rowsPerPage}
             setRowsPerPage={setRowsPerPage}
             pages={pages}
+            total_items={total_items}
           />
         </div>
       </div>

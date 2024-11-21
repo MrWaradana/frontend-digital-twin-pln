@@ -48,11 +48,11 @@ import AsyncSelect from "react-select/async";
 const chartConfig = {
   nphr: {
     label: "Net Plant Heat Rate",
-    color: "hsl(var(--chart-1))",
+    color: "#D4CA2F",
   },
   gap: {
     label: "Heat Loss Gap",
-    color: "hsl(var(--chart-2))",
+    color: "#42C023",
   },
 } satisfies ChartConfig;
 
@@ -148,7 +148,7 @@ export default function BarChartNPHR({
         </ModalContent>
       </Modal>
 
-      <Card>
+      <Card className="h-full">
         <CardHeader>
           <CardTitle>{`${data ? `${data?.name} Data` : ""}`} </CardTitle>
           <CardDescription>{new Date().getFullYear()}</CardDescription>
@@ -182,7 +182,7 @@ export default function BarChartNPHR({
                 isLoading={isLoadingNPHR}
                 size="sm"
                 onPress={onOpenTarget}
-                className={`bg-[#D4CA2F] text-white py-3 ${
+                className={`bg-[#1C9EB6] text-white py-3 ${
                   session?.data?.user.user.role === "Management" ? "hidden" : ""
                 }`}
               >
@@ -199,10 +199,21 @@ export default function BarChartNPHR({
           ) : (
             <ChartContainer
               config={chartConfig}
-              className={`max-h-[428px] w-full z-0`}
+              className={`h-full w-full z-0`}
             >
               <BarChart accessibilityLayer data={chartData}>
                 <CartesianGrid vertical={false} />
+                {/* Define gradients */}
+                <defs>
+                  <linearGradient id="nphrGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#FFE664" />
+                    <stop offset="100%" stopColor="#D4CA2F" />
+                  </linearGradient>
+                  <linearGradient id="gapGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#87E878" />
+                    <stop offset="100%" stopColor="#42C023" />
+                  </linearGradient>
+                </defs>
                 <XAxis
                   dataKey="month"
                   tickLine={false}
@@ -225,8 +236,8 @@ export default function BarChartNPHR({
                 <Bar
                   dataKey="nphr"
                   stackId="a"
-                  fill="#D4CA2F"
-                  radius={[0, 0, 0, 0]}
+                  fill="url(#nphrGradient)"
+                  radius={[14, 14, 0, 0]}
                 >
                   <LabelList
                     dataKey={`nphr`}
@@ -240,9 +251,9 @@ export default function BarChartNPHR({
                 <Bar
                   dataKey="gap"
                   stackId="a"
-                  fill="#42C023"
-                  radius={[4, 4, 0, 0]}
-                  // className="hover:cursor-pointer"
+                  fill="url(#gapGradient)"
+                  radius={[14, 14, 0, 0]}
+                  className="translate-y-3 transform pointer"
                   // onClick={onOpen}
                 >
                   <LabelList
@@ -254,7 +265,7 @@ export default function BarChartNPHR({
               ${formattedNumber(Number(value).toFixed(2))}`
                         : ``
                     }
-                    className="fill-white text-xs"
+                    className="fill-white text-xs translate-y-3"
                   />{" "}
                 </Bar>
               </BarChart>

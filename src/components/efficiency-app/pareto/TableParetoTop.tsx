@@ -457,7 +457,7 @@ export default function TableParetoTop({
 
     // Restore classes after generating the PDF
     tableContainer?.classList.add(
-      "max-h-[568px]",
+      // "max-h-[568px]",
       "max-w-full",
       "overflow-auto"
     );
@@ -514,7 +514,7 @@ export default function TableParetoTop({
 
   return (
     <>
-      <div className="max-w-full max-h-[568px] mb-3 mt-1 overflow-auto relative printable-table shadow-xl p-12 rounded-2xl bg-white">
+      <div className="max-w-full mb-3 mt-1 overflow-auto relative printable-table shadow-xl p-12 rounded-2xl bg-white">
         <table
           cellPadding="1"
           cellSpacing="0"

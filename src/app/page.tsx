@@ -107,17 +107,16 @@ export default async function Home() {
   ];
 
   return (
-    <div className="bg-black/80 min-h-[100dvh]">
+    <div className="bg-gradient-to-b from-[#065970] to-[#0099AD] min-h-[100dvh]">
       <Navbar />
       <div className="flex justify-center items-start relative min-h-[90dvh]">
-        <div className="absolute w-full h-full overflow-hidden -top-10 left-0">
+        {/* <div className="absolute w-full h-full overflow-hidden -top-10 left-0">
           <Image
             src={BGAllApps}
             alt={`background-all-apps`}
             className={`w-full h-full object-cover`}
           />
-        </div>
-        <div className="absolute inset-0 w-full h-full bg-black/80"></div>
+        </div> */}
         <Card className="w-full h-auto sm:h-[92vh] rounded-none bg-transparent overflow-hidden p-0">
           <CardBody className="flex flex-wrap overflow-hidden justify-center w-full h-full items-center p-0">
             <section className="grid grid-cols-1 sm:grid-cols-3 place-items-center place-content-center gap-4">

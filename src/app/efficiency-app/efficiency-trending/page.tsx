@@ -184,7 +184,7 @@ export default function EfficiencyTrending() {
           <Button
             variant={`solid`}
             size={`sm`}
-            className="w-full bg-[#D4CA2F] text-white"
+            className="w-full bg-[#1C9EB6] text-white"
             onClick={onDetailedAnalysisClicked}
           >
             Open Detailed per Category

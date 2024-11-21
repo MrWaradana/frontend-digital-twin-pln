@@ -108,7 +108,7 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
   ];
 
   const [page, setPage] = React.useState(1);
-  const rowsPerPage = 15;
+  const rowsPerPage = 12;
 
   const pages = Math.ceil(mappedData.length / rowsPerPage);
 
@@ -169,13 +169,41 @@ export default function TableOutputs({ data_id }: { data_id: string }) {
   //   );
   // }
 
+  const classNames = React.useMemo(
+    () => ({
+      wrapper: ["max-h-full"],
+      th: ["bg-transparent", "text-default-500", "border-b", "border-divider"],
+      thead: [
+        "bg-transparent",
+        "shadow-none",
+        "![&>tr]:first:shadow-none",
+        "![&_tr]:shadow-none",
+        "![&>tr]:first:!shadow-none",
+      ],
+      tr: ["shadow-none", "bg-transparent", "border-b", "border-divider"],
+      td: [
+        // changing the rows border radius
+        // first
+        "group-data-[first=true]:first:before:rounded-none",
+        "group-data-[first=true]:last:before:rounded-none",
+        // middle
+        "group-data-[middle=true]:before:rounded-none",
+        // last
+        "group-data-[last=true]:first:before:rounded-none",
+        "group-data-[last=true]:last:before:rounded-none",
+      ],
+    }),
+    []
+  );
+
   return (
     <>
       {/* {JSON.stringify(mappedData)} */}
       <Table
         aria-label="Output table efficiency"
         topContent={topContent}
-        topContentPlacement="outside"
+        topContentPlacement="inside"
+        classNames={classNames}
         bottomContent={
           <div className="flex w-full justify-center">
             <Pagination

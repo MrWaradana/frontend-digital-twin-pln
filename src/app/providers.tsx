@@ -20,6 +20,9 @@ import { Session } from "next-auth";
 import { usePathname } from "next/navigation";
 import { useGetExcel } from "@/lib/APIs/useGetExcel";
 import { useExcelStore } from "@/store/excels";
+import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css"; //if using mantine date picker features
+import "mantine-react-table/styles.css"; //make sure MRT styles were imported in your app root (once)
 
 const timeout = 600_000; // 10 minutes in milliseconds
 // const timeout = 80_000; // 10 minutes in milliseconds
@@ -111,16 +114,22 @@ export function Providers({
     if (seconds >= 60) {
       const minutes = Math.floor(seconds / 60);
       const remainingSeconds = seconds % 60;
-      return `${minutes} minute${minutes > 1 ? "s" : ""
-        } ${remainingSeconds} second${remainingSeconds !== 1 ? "s" : ""}`;
+      return `${minutes} minute${
+        minutes > 1 ? "s" : ""
+      } ${remainingSeconds} second${remainingSeconds !== 1 ? "s" : ""}`;
     } else {
       return `${seconds} second${seconds !== 1 ? "s" : ""}`;
     }
   };
 
   const excels = useExcelStore((state) => state.excels);
-  const { data: excelData, isLoading, isValidating, error, mutate } =
-    useGetExcel(session?.user.access_token, excels.length > 0);
+  const {
+    data: excelData,
+    isLoading,
+    isValidating,
+    error,
+    mutate,
+  } = useGetExcel(session?.user.access_token, excels.length > 0);
 
   // Use useEffect for side effects
   useEffect(() => {
@@ -129,7 +138,6 @@ export function Providers({
       useExcelStore.getState().setExcels(excelData);
     }
   }, [excelData, excels.length]);
-
 
   // const seconds = timeTillPrompt > 1 ? "seconds" : "second";
   // const secondsIdle = timeTillIdle > 1 ? "seconds" : "second";

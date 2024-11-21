@@ -18,7 +18,8 @@ const BarChartNPHR = dynamic(
   () => import("@/components/efficiency-app/nett-plant-heat-rate/BarChartNPHR")
 );
 const MultipleLineChart = dynamic(
-  () => import("@/components/efficiency-app/nett-plant-heat-rate/MultipleLineChart")
+  () =>
+    import("@/components/efficiency-app/nett-plant-heat-rate/MultipleLineChart")
 );
 
 export default function Page({ params }: { params: { data_id: string } }) {
@@ -155,28 +156,26 @@ export default function Page({ params }: { params: { data_id: string } }) {
         setNiagaValue={setNiagaNphr}
         niagaValue={niagaNphr}
       />
-      <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6`}>
+      <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 h-[85dvh]`}>
         <div>
-          <div>
-            <BarChartNPHR
-              data={dataNPHR}
-              isLoading={isLoadingNPHR}
-              isValidating={isValidating}
-              error={error}
-              niagaLoading={isLoading}
-              niagaNPHR={niagaNphr}
-              chartParetoDataWithCumFeq={chartParetoDataWithCumFeq}
-              summaryData={summaryData}
-              paretoData={paretoData}
-              nphrData={nphrData}
-              isLoadingEfficiencyData={isLoadingEfficiencyData}
-              loadOptions={loadOptions}
-              EfficiencyDataOptions={EfficiencyDataOptions}
-              isLoadingNPHR={isLoadingNPHR}
-              onOpenTarget={onOpenTarget}
-              setDataId={setDataId}
-            />
-          </div>
+          <BarChartNPHR
+            data={dataNPHR}
+            isLoading={isLoadingNPHR}
+            isValidating={isValidating}
+            error={error}
+            niagaLoading={isLoading}
+            niagaNPHR={niagaNphr}
+            chartParetoDataWithCumFeq={chartParetoDataWithCumFeq}
+            summaryData={summaryData}
+            paretoData={paretoData}
+            nphrData={nphrData}
+            isLoadingEfficiencyData={isLoadingEfficiencyData}
+            loadOptions={loadOptions}
+            EfficiencyDataOptions={EfficiencyDataOptions}
+            isLoadingNPHR={isLoadingNPHR}
+            onOpenTarget={onOpenTarget}
+            setDataId={setDataId}
+          />
         </div>
         <div>
           <MultipleLineChart

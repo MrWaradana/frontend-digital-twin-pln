@@ -8,7 +8,7 @@ import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 
 export default function EfficiencyLayout({
   children,
-  className = "bg-gradient-to-b from-[#FFFAB4] to-[#FFFFFF] to-[45%]",
+  className = "bg-gradient-to-b from-[#D9E9EE] to-[#FFFFFF] to-[45%]",
 }: {
   children: React.ReactNode;
   className?: string;

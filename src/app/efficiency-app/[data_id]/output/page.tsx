@@ -16,22 +16,18 @@ export default async function Page({
 
   return (
     <EfficiencyContentLayout title={`Output Efficiency Data`}>
-      <section className="w-full flex flex-col items-center justify-center mt-4">
+      <section className="w-full flex flex-col items-center justify-center">
         <Toaster />
         <div className="flex justify-around w-full"></div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 p-4">
+        <div className="grid grid-cols-1 p-1 w-full">
           {/* <div> */}
           {/* <h2 className="mb-4">Input {formatFilename(params.data_id)}</h2> */}
           {/* <div>
               <TableInputs data_id={data_id} />
             </div> */}
           {/* </div> */}
-          <div className="col-span-2">
-            {/* <h2 className="mb-4">Output {formatFilename(params.data_id)}</h2> */}
-            <div>
-              <TableOutputs data_id={data_id} />
-            </div>
-          </div>
+          {/* <h2 className="mb-4">Output {formatFilename(params.data_id)}</h2> */}
+          <TableOutputs data_id={data_id} />
         </div>
       </section>
     </EfficiencyContentLayout>
