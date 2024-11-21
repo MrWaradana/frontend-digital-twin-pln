@@ -12,10 +12,13 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import AsyncSelect from "react-select/async";
 import { useSelectedEfficiencyDataStore } from "@/store/selectedEfficiencyData";
 import { useGetData } from "@/lib/APIs/useGetData";
-import MultipleLineChart from "@/components/efficiency-app/nett-plant-heat-rate/MultipleLineChart";
+// import MultipleLineChart from "@/components/efficiency-app/nett-plant-heat-rate/MultipleLineChart";
 
 const BarChartNPHR = dynamic(
   () => import("@/components/efficiency-app/nett-plant-heat-rate/BarChartNPHR")
+);
+const MultipleLineChart = dynamic(
+  () => import("@/components/efficiency-app/nett-plant-heat-rate/MultipleLineChart")
 );
 
 export default function Page({ params }: { params: { data_id: string } }) {
