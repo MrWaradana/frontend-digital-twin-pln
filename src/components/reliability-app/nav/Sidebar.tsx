@@ -1,12 +1,16 @@
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
+import { PanelsTopLeft } from "lucide-react";
 
-import { Menu } from "@/components/reliability-app/nav/Menu";
-import { Button } from "@/components/ui/button";
-import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
-import { useStore } from "@/hooks/use-store";
 import { cn } from "@/lib/utils";
+import { useStore } from "@/hooks/use-store";
+import { Button } from "@/components/ui/button";
+import { Menu } from "@/components/reliability-app/nav/Menu";
+import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
+import { SidebarToggle } from "@/components/efficiency-app/nav/SidebarToggle";
 
+import PlnLogo from "../../../../public/Logo_PLN.svg";
+import PlnLogoVertical from "../../../../public/Logo_PLN.png";
 import PlnLogoBlack from "../../../../public/Logo_Black.png";
 
 export default function Sidebar({ className }: { className?: string }) {

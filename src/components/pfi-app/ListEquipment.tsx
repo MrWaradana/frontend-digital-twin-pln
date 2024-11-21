@@ -126,9 +126,7 @@ const ListEquipment = ({
       const second = b[sortDescriptor.column as keyof EquipmentType] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    }).map((item, index) => ({
-      ...item, index: index + 1
-    }));
+    })
   }, [sortDescriptor, items]);
 
   const topContent = React.useMemo(() => {

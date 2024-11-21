@@ -21,13 +21,6 @@ const ListTag = ({
 }) => {
   type TagType = (typeof dataRow)[0];
 
-  const selectedPaginationTags = useSelectedPaginationTagsStore(
-    (state) => state.selectedPaginationTagState
-  )
-  const limitPaginationTags = useSelectedPaginationTagsStore(
-    (state) => state.limitPaginationTagState
-  )
-
   const setSelectedPaginationTags = useSelectedPaginationTagsStore(
     (state) => state.setSelectedPaginationTagState
   )
@@ -36,8 +29,8 @@ const ListTag = ({
     (state) => state.setLimitPaginationTagState
   );
 
-  const [page, setPage]: any = React.useState(selectedPaginationTags);
-  const [rowsPerPage, setRowsPerPage]: any = React.useState(limitPaginationTags);
+  const [page, setPage]: any = React.useState(1);
+  const [rowsPerPage, setRowsPerPage]: any = React.useState(20);
   const [filterValue, setFilterValue] = React.useState("");
   const hasSearchFilter = Boolean(filterValue);
 

@@ -38,7 +38,7 @@ export function Navbar({ title }: NavbarProps) {
                 </Button>
                 <Button
                   radius="full"
-                  className={`bg-[#E2523F] text-white`}
+                  className={`bg-[#F49C38] text-white`}
                   onPress={async () => {
                     try {
                       await signOut();
@@ -68,14 +68,14 @@ export function Navbar({ title }: NavbarProps) {
             <Button
               variant={`bordered`}
               radius="full"
-              className="border-[#E2523F] "
+              className="border-[#F49C38] "
             >
               Apps Library
             </Button>
             <Button
               variant={`solid`}
               radius="full"
-              className="bg-[#E2523F] text-white"
+              className="bg-[#F49C38] text-white"
               onClick={onOpen}
             >
               Sign out
