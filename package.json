@@ -20,7 +20,7 @@
     "@mantine/dates": "^7.13.4",
     "@mantine/form": "^7.13.4",
     "@mantine/hooks": "^7.13.4",
-    "@nextui-org/date-picker": "^2.1.6",
+    "@nextui-org/date-picker": "^2.1.8",
     "@nextui-org/react": "^2.4.8",
     "@nextui-org/select": "^2.2.7",
     "@nextui-org/system": "^2.2.5",

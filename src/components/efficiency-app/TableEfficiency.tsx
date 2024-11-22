@@ -159,7 +159,7 @@ export default function TableEfficiency({
   type TransactionsType = (typeof tableData)[0];
 
   const [periodValue, setPeriodValue] = React.useState<RangeValue<DateValue>>({
-    start: parseDate("2024-09-18"),
+    start: today(getLocalTimeZone()).subtract({ months: 1 }),
     end: today(getLocalTimeZone()),
   });
   // const [periodValue, setPeriodValue] = React.useState(
@@ -675,6 +675,7 @@ export default function TableEfficiency({
                   key="periodic"
                   onClick={() => {
                     setModalChoosePeriod(true);
+                    setSelectedParameter("periodic");
                   }}
                 >
                   Periodic

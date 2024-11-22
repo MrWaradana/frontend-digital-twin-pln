@@ -89,7 +89,7 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [periodValue, setPeriodValue] = useState<RangeValue<DateValue>>({
-    start: parseDate("2024-09-18"),
+    start: today(getLocalTimeZone()).subtract({ months: 1 }),
     end: today(getLocalTimeZone()),
   });
 

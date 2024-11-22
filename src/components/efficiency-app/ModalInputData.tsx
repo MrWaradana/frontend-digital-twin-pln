@@ -313,16 +313,22 @@ export default function ModalInputData({
                       <div className={`${showVariables ? "col-span-1" : ""}`}>
                         <DateRangePicker
                           label="Date period"
+                          showMonthAndYearPickers={true}
+                          calendarProps={{ showMonthAndYearPickers: true }}
+                          visibleMonths={3}
+                          pageBehavior="single"
                           className={`max-w-xs ${
                             selectedParameter === "current" ? "hidden" : ""
                           }`}
+                          aria-label="Date (Show Month and Year Picker)"
                           maxValue={today(getLocalTimeZone())}
                           value={periodValue}
                           defaultValue={{
-                            start: today(getLocalTimeZone()),
+                            start: today(getLocalTimeZone()).subtract({
+                              months: 1,
+                            }),
                             end: today(getLocalTimeZone()),
                           }}
-                          showMonthAndYearPickers
                           description="Select a date range (maximum 30 days)"
                           onChange={handleDateRangeChange}
                         />
