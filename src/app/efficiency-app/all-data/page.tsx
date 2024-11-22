@@ -9,6 +9,7 @@ import {
   Divider,
   Link,
   Button,
+  Selection,
 } from "@nextui-org/react";
 import { GearIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
@@ -35,6 +36,13 @@ export default function Page() {
   const { data: session, status, update } = useSession();
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [page, setPage] = useState(1);
+  const [filterSearch, setFilterSearch] = useState("");
+  const [filterParameter, setFilterParameter] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+  const [statusFilter, setStatusFilter] = useState<Selection>(
+    // new Set(INITIAL_VISIBLE_STATUS)
+    "all"
+  );
 
   const {
     data: excelData,
@@ -60,7 +68,15 @@ export default function Page() {
     mutate: mutateEfficiency,
     isValidating: isValidatingEfficiency,
     error: errorEfficiency,
-  } = useGetData(session?.user.access_token, 0, page, rowsPerPage);
+  } = useGetData(
+    session?.user.access_token,
+    0,
+    page,
+    rowsPerPage,
+    filterSearch,
+    filterParameter,
+    statusFilter
+  );
 
   if (error || errorEfficiency) {
     // console.log(error, "ERROOOOOOOR");
@@ -177,29 +193,39 @@ export default function Page() {
     );
 
   return (
-    <EfficiencyContentLayout title="All Efficiency Data">
-      <div className="flex flex-col items-center justify-center">
-        <div className="flex flex-col gap-8 justify-center items-center w-full min-h-full p-2">
-          {/* {JSON.stringify(excels)} */}
-          {/* <h1>{excels[3].excel_filename}</h1> */}
-          <TableEfficiency
-            tableData={
-              session?.user.user.role === "Admin" ? efficiency : efficiency
-            }
-            thermoStatus={thermoStatus}
-            addNewUrl={`/efficiency-app/input`}
-            efficiencyLoading={efficiencyLoading}
-            mutate={mutateEfficiency}
-            isValidating={isValidatingEfficiency}
-            page={page}
-            setPage={setPage}
-            rowsPerPage={rowsPerPage}
-            setRowsPerPage={setRowsPerPage}
-            pages={pages}
-            total_items={total_items}
-          />
+    <>
+      <EfficiencyContentLayout title="All Efficiency Data">
+        <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col gap-8 justify-center items-center w-full min-h-full p-2">
+            {/* {JSON.stringify(excels)} */}
+            {/* <h1>{excels[3].excel_filename}</h1> */}
+            <TableEfficiency
+              tableData={
+                session?.user.user.role === "Admin" ? efficiency : efficiency
+              }
+              thermoStatus={thermoStatus}
+              addNewUrl={`/efficiency-app/input`}
+              efficiencyLoading={efficiencyLoading}
+              mutate={mutateEfficiency}
+              isValidating={isValidatingEfficiency}
+              page={page}
+              setPage={setPage}
+              rowsPerPage={rowsPerPage}
+              setRowsPerPage={setRowsPerPage}
+              pages={pages}
+              total_items={total_items}
+              // filterSearch
+              setFilterSearch={setFilterSearch}
+              // filterParameter
+              setFilterParameter={setFilterParameter}
+              // filterStatus
+              setFilterStatus={setFilterStatus}
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+            />
+          </div>
         </div>
-      </div>
-    </EfficiencyContentLayout>
+      </EfficiencyContentLayout>
+    </>
   );
 }

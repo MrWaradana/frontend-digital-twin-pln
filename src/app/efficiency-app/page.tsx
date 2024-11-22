@@ -65,6 +65,7 @@ import { useGetVariables } from "../../lib/APIs/useGetVariables";
 import { useExcelStore } from "../../store/excels";
 import { useGetMasterData } from "../../lib/APIs/useGetMasterData";
 import ActionsTable from "../../components/efficiency-app/ActionsTable";
+import ModalInputData from "@/components/efficiency-app/ModalInputData";
 
 interface Variable {
   category: string;
@@ -83,6 +84,7 @@ export default function Page() {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [actionModalOpen, setActionModalOpen] = useState(false);
+  const [showVariables, setShowVariables] = useState(false);
   const [selectedParameter, setSelectedParameter] = useState("current");
   const [loading, setLoading] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
@@ -469,39 +471,6 @@ export default function Page() {
     </Modal>
   );
 
-  // The modal that shows up when attempting to input new Data
-  const ConfirmationModal = (
-    <Modal
-      isOpen={confirmationModalOpen}
-      onOpenChange={setConfirmationModalOpen}
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader>Confirm Submission</ModalHeader>
-            <ModalBody>Are you sure you want to submit this data?</ModalBody>
-            <ModalFooter>
-              <Button variant="light" color="danger" onPress={onClose}>
-                Cancel
-              </Button>
-              <Button
-                color="success"
-                // type="submit" // This submits the form
-                isLoading={loading}
-                onPress={() => {
-                  formRef.current?.requestSubmit(); // Programmatically submit the form
-                  onClose(); // Close modal after submission
-                }}
-              >
-                Confirm Submit
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
-  );
-
   const actionTableModal = (
     <Modal
       isOpen={actionModalOpen}
@@ -532,300 +501,25 @@ export default function Page() {
     </Modal>
   );
 
-  const choosePeriodicModal = (
-    <Modal
-      isOpen={modalChoosePeriod}
-      onOpenChange={setModalChoosePeriod}
-      size="3xl"
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader>
-              {selectedParameter === "current" ? (
-                <>Add new current data</>
-              ) : (
-                <>Add new periodic data with max 30 days</>
-              )}
-            </ModalHeader>
-            <ModalBody>
-              {isLoadingVariable || isLoadingMasterData ? (
-                <Spinner label={`Loading...`} />
-              ) : (
-                <Form {...formInput}>
-                  <form
-                    ref={formRef}
-                    onSubmit={formInput.handleSubmit(onSubmit, onError)} // Handles form submission
-                    className="space-y-1 "
-                  >
-                    <div className={`grid grid-cols-1 lg:grid-cols-3 `}>
-                      <div className={`col-span-1 `}>
-                        <DateRangePicker
-                          label="Date period"
-                          className={`max-w-[284px] ${
-                            selectedParameter === "current" ? "hidden" : ""
-                          }`}
-                          maxValue={today(getLocalTimeZone())}
-                          value={periodValue}
-                          defaultValue={{
-                            start: today(getLocalTimeZone()),
-                            end: today(getLocalTimeZone()),
-                          }}
-                          showMonthAndYearPickers
-                          description="Select a date range (maximum 30 days)"
-                          onChange={handleDateRangeChange}
-                        />
-                        {/* Name Input Field */}
-                        <div className="mb-4">
-                          <FormField
-                            control={formInput.control}
-                            name="name"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                  <Input
-                                    placeholder="Enter name"
-                                    label="Name*"
-                                    size="md"
-                                    className="max-w-xs lg:max-w-full border-b-1 pb-1"
-                                    labelPlacement="inside"
-                                    type="text"
-                                    required
-                                    {...field}
-                                    onChange={async ({ target: { value } }) => {
-                                      field.onChange(value);
-                                      await formInput.trigger("name");
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                        <Input
-                          type={`text`}
-                          label={`Coal Price*`}
-                          value={formatNumber(coalPrice)}
-                          required
-                          startContent={`Rp.`}
-                          endContent={<p className={`text-xs`}>per KG</p>}
-                          className={`max-w-xs mt-4`}
-                          onChange={(e) => {
-                            const unformattedValue = unformatNumber(
-                              e.target.value
-                            );
-                            setCoalPrice(unformattedValue);
-                          }}
-                        />
-                      </div>
-                      <div
-                        className={`col-span-2 relative max-h-[200px] overflow-y-auto px-8 py-2 mx-2 bg-default-100 rounded-xl`}
-                      >
-                        <hr />
-                        <h2 className="font-bold text-xs sticky top-0 bg-white p-1 rounded-md dark:bg-black ">
-                          Input Variables
-                        </h2>
-                        <Accordion
-                          className="min-w-full"
-                          selectionMode="multiple"
-                          isCompact
-                        >
-                          {Object.entries(categorizedData).map(
-                            ([category, variables]: any) => (
-                              <AccordionItem
-                                key={category}
-                                textValue={
-                                  category === "null"
-                                    ? "Tidak Ada Kategori"
-                                    : `${category}${
-                                        variables.some((v: any) => v.web_id)
-                                          ? " => PI SERVER"
-                                          : ""
-                                      }`
-                                }
-                                title={
-                                  <span
-                                    style={{
-                                      color: variables.some(
-                                        (v: any) => v.web_id
-                                      )
-                                        ? "black"
-                                        : "inherit",
-                                      backgroundColor: variables.some(
-                                        (v: any) => v.web_id
-                                      )
-                                        ? "rgba(205, 254, 194,0.8)"
-                                        : "inherit",
-                                      padding: "2px",
-                                      borderRadius: "8px",
-                                    }}
-                                  >
-                                    {category === "null"
-                                      ? "Tidak Ada Kategori"
-                                      : variables.some((v: any) => v.web_id)
-                                      ? `${category} => PI SERVER`
-                                      : `${category}`}
-                                  </span>
-                                }
-                              >
-                                {variables.map((v: any) => (
-                                  <Fragment key={v.id}>
-                                    <FormField
-                                      control={formInput.control}
-                                      name={`inputs.${v.id}`} // Ensure correct nesting in form data
-                                      render={({ field }) => (
-                                        <FormItem>
-                                          <FormControl>
-                                            <Input
-                                              placeholder={`${""}`}
-                                              label={
-                                                v.web_id
-                                                  ? `${v.input_name} => PI Server`
-                                                  : v.input_name
-                                              }
-                                              color={`${
-                                                v.web_id ? "success" : "default"
-                                              }`}
-                                              defaultValue={v.base_case.toString()}
-                                              size="md"
-                                              className={`justify-between max-w-xs lg:max-w-full  border-b-1 pb-1 pt-4`}
-                                              labelPlacement="outside"
-                                              type={
-                                                v.base_case.toString() === "N/A"
-                                                  ? "hidden"
-                                                  : "text"
-                                                // "text"
-                                              }
-                                              required
-                                              {...field}
-                                              onChange={async ({
-                                                target: { value },
-                                              }) => {
-                                                // Allow empty string
-                                                if (value === "") {
-                                                  field.onChange("");
-                                                }
-                                                // Allow "N/A"
-                                                else if (
-                                                  value.toUpperCase() === "N/A"
-                                                ) {
-                                                  field.onChange("N/A");
-                                                }
-                                                // Allow numbers (including decimals, negative numbers, and standalone decimal points)
-                                                else if (
-                                                  /^-?\.?\d*\.?\d*$/.test(value)
-                                                ) {
-                                                  field.onChange(value);
-                                                }
-                                                // If the input is invalid, don't update the field
-                                                await formInput.trigger(
-                                                  `inputs.${v.id}`
-                                                );
-                                              }}
-                                              endContent={
-                                                <p className="text-sm">
-                                                  {v.satuan == "NaN"
-                                                    ? ""
-                                                    : v.satuan}
-                                                </p>
-                                              }
-                                            />
-                                          </FormControl>
-                                          <FormMessage />
-                                        </FormItem>
-                                      )}
-                                    />
-                                  </Fragment>
-                                ))}
-                              </AccordionItem>
-                            )
-                          )}
-                        </Accordion>
-                        {/* Submit Button */}
-                        {/* <Button
-                          type="button"
-                          color="primary"
-                          size="md"
-                          //@ts-ignore
-                          isDisabled={thermoStatusData?.thermo_status}
-                          isLoading={loading}
-                          onClick={() => {
-                            setConfirmationModalOpen(true); // Open modal to confirm submission
-                          }}
-                          className="flex min-w-full translate-y-4"
-                        >
-                          {thermoStatusData?.thermo_status
-                            ? "Thermolink is processing data, please wait..."
-                            : "Submit Data"}
-                        </Button> */}
-                        {/* Confirmation Modal */}
-                        {ConfirmationModal}{" "}
-                        {/* Modal should be part of the form */}
-                      </div>
-                    </div>
-
-                    {/* <ModalHeader>Select Max Date for 30 Days Period</ModalHeader>
-            <ModalBody>
-              <DatePicker
-                label="Max Date"
-                className="max-w-[284px]"
-                maxValue={today(getLocalTimeZone())}
-                defaultValue={today(getLocalTimeZone())}
-                // formatOptions={dateFormat}
-                showMonthAndYearPickers
-                description={
-                  "This date will serve as the end point for calculating the average over those 30 days."
-                }
-                //@ts-ignore
-                onChange={setPeriodValue}
-              /> */}
-                    {/* <input type={`date`} /> */}
-                    {/* <MomentInput
-                // max={moment().add(5, "days")}
-                // min={moment()}
-                format="YYYY-MM-DD"
-                options={true}
-                readOnly={false}
-                icon={false}
-                onChange={(date) => {
-                  console.log(date);
-                }}
-              /> */}
-                  </form>
-                </Form>
-              )}
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="light" onPress={onClose}>
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                className={`bg-[#D4CA2F] text-white`}
-                size="md"
-                //@ts-ignore
-                isDisabled={thermoStatusData?.thermo_status}
-                isLoading={loading}
-                onClick={() => {
-                  setConfirmationModalOpen(true); // Open modal to confirm submission
-                }}
-                // onPress={handlePeriod}
-              >
-                Submit
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
-  );
-
   return (
     <>
       {deleteConfirmationModal}
       {actionTableModal}
-      {choosePeriodicModal}
+      <ModalInputData
+        modalChoosePeriod={modalChoosePeriod}
+        setModalChoosePeriod={setModalChoosePeriod}
+        showVariables={showVariables}
+        setShowVariables={setShowVariables}
+        selectedParameter={selectedParameter}
+        setSelectedParameter={setSelectedParameter}
+        loading={loading}
+        setLoading={setLoading}
+        confirmationModalOpen={confirmationModalOpen}
+        setConfirmationModalOpen={setConfirmationModalOpen}
+        periodValue={periodValue}
+        setPeriodValue={setPeriodValue}
+        thermoStatusData={thermoStatusData}
+      />
       <EfficiencyContentLayout title="Efficiency & Heat Loss App">
         <div className="w-full flex flex-col justify-center items-center bg-white rounded-xl shadow-xl pt-8">
           {/* {JSON.stringify(dataCompare)}{" "} */}

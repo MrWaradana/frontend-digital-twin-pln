@@ -57,7 +57,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
 
   // const tableIsPareto = filter flag is Pareto Hari Senen
   const chartRawData = data?.chart_result ?? [];
-  const summaryData = data ?? [];
+  const summaryData: any = data ?? [];
   const chartDataRef = useRef<any | null>(null);
   // Recalculate chartData every time tableData or validation state changes
   const chartData = useMemo(() => {
@@ -173,12 +173,18 @@ export default function Page({ params }: { params: { data_id: string } }) {
             efficiencyData={efficiencyData}
             onThresholdChange={setPercentageThreshold}
             thresholdNumber={percentageThreshold}
-            // @ts-ignore
+            summaryData={summaryData}
             totalPersen={summaryData.total_persen}
+            isLoading={isLoading}
+            isValidating={isValidating}
           />
         </div>
         {isLoading || isLoadingRootCauseCount ? (
-          <Spinner color="primary" label="Calculating pareto..." />
+          <Spinner
+            color="primary"
+            label="Calculating pareto..."
+            className="mt-12"
+          />
         ) : (
           <div
             className={`min-w-full mb-6 mt-4 overflow-hidden relative px-8 ${

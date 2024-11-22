@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Modal,
   ModalBody,
@@ -41,6 +41,7 @@ import {
 import { parameterOptions, statusOptions } from "@/lib/efficiency-data";
 import { capitalize } from "@/lib/utils";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
+import { useGetThermoStatus } from "@/lib/APIs/useGetThermoStatus";
 import { useSession } from "next-auth/react";
 import { useSelectedEfficiencyDataStore } from "../../store/selectedEfficiencyData";
 import toast from "react-hot-toast";
@@ -51,6 +52,8 @@ import { useRouter } from "next/navigation";
 import { RangeValue } from "@react-types/shared";
 import { DateValue } from "@react-types/datepicker";
 import { useDateFormatter } from "@react-aria/i18n";
+import ModalInputData from "@/components/efficiency-app/ModalInputData";
+import { debounce } from "lodash";
 
 const parameterColorMap: Record<string, ChipProps["color"]> = {
   current: "success",
@@ -78,7 +81,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "actions",
 ];
 
-const INITIAL_VISIBLE_PARAMETER = ["current"];
+const INITIAL_VISIBLE_PARAMETER = ["current", "periodic"];
 const INITIAL_VISIBLE_STATUS = ["Done", "Pending", "Processing"];
 
 export default function TableEfficiency({
@@ -94,30 +97,43 @@ export default function TableEfficiency({
   setRowsPerPage,
   pages,
   total_items,
-}: {
-  tableData: any;
-  addNewUrl?: string;
-  mutate: any;
-  efficiencyLoading: any;
-  isValidating: boolean;
-  thermoStatus: any;
-  page: any;
-  setPage: any;
-  rowsPerPage: any;
-  setRowsPerPage: any;
-  pages: any;
-  total_items: any;
-}) {
+  setFilterSearch,
+  setFilterParameter,
+  setFilterStatus,
+  statusFilter,
+  setStatusFilter,
+}: any) {
   const router = useRouter();
-  const [tableState, setTableState] = React.useState(tableData);
-  const [isDeleteLoading, setIsDeleteLoading] = React.useState(false);
+  const [tableState, setTableState] = useState(tableData);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [selectedRowId, setSelectedRowId] = React.useState<string | null>(null);
-  const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const session = useSession();
   let formatter = useDateFormatter({ dateStyle: "long" });
 
-  // console.log(tableData, "table data");
+  //state modal input data
+  const [showVariables, setShowVariables] = useState(false);
+
+  const [selectedParameter, setSelectedParameter] = useState("current");
+
+  const [loading, setLoading] = useState(false);
+
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSetFilterSearch = useCallback(
+    debounce((value) => {
+      setFilterSearch(value);
+    }, 500), // 500ms delay
+    [] // Empty dependency array since we don't want to recreate the debounced function
+  );
+
+  const {
+    data: thermoStatusData,
+    isLoading: isLoadingThermoStatus,
+    isValidating: isValidatingThermoStatus,
+  } = useGetThermoStatus();
 
   const dateFormat = {
     year: "numeric",
@@ -161,10 +177,10 @@ export default function TableEfficiency({
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = React.useState<Selection>(
-    // new Set(INITIAL_VISIBLE_STATUS)
-    "all"
-  );
+  // const [statusFilter, setStatusFilter] = React.useState<Selection>(
+  //   // new Set(INITIAL_VISIBLE_STATUS)
+  //   "all"
+  // );
   const [parameterFilter, setParameterFilter] = React.useState<Selection>(
     new Set(INITIAL_VISIBLE_PARAMETER)
   );
@@ -215,7 +231,7 @@ export default function TableEfficiency({
       Array.from(parameterFilter).length !== parameterOptions.length
     ) {
       filteredData = filteredData.filter((item) =>
-        Array.from(parameterFilter).includes(item.jenis_parameter)
+        Array.from(parameterFilter).includes(item.input_type)
       );
     }
     if (
@@ -236,8 +252,7 @@ export default function TableEfficiency({
 
   // const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const loadingState =
-    efficiencyLoading || tableData?.length === 0 ? "loading" : "idle";
+  const loadingState = efficiencyLoading ? "loading" : "idle";
 
   // const items = React.useMemo(() => {
   //   const start = (page - 1) * rowsPerPage;
@@ -444,12 +459,12 @@ export default function TableEfficiency({
                     {/* <DropdownItem href={`/efficiency-app/heat-rate`}>
                   Heat Rate
                 </DropdownItem> */}
-                    <DropdownItem
+                    {/* <DropdownItem
                       className={rowData.status != "Done" ? "hidden" : ""}
                       href={`/efficiency-app/${rowData.id}/engine-flow`}
                     >
                       Engine Flow
-                    </DropdownItem>
+                    </DropdownItem> */}
                     <DropdownItem
                       className={rowData.status != "Done" ? "hidden" : ""}
                       href={`/efficiency-app/${rowData.id}/pareto?percent-threshold=${rowData.persen_threshold}&potential-timeframe=${rowData.potential_timeframe}`}
@@ -534,7 +549,10 @@ export default function TableEfficiency({
             startContent={<MagnifyingGlassIcon />}
             value={filterValue}
             onClear={() => onClear()}
-            onValueChange={onSearchChange}
+            onValueChange={(value) => {
+              onSearchChange(value);
+              debouncedSetFilterSearch(value);
+            }}
           />
           <div className="flex gap-3">
             <Dropdown>
@@ -552,7 +570,10 @@ export default function TableEfficiency({
                 closeOnSelect={false}
                 selectedKeys={statusFilter}
                 selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
+                onSelectionChange={(value) => {
+                  setStatusFilter(value);
+                  setFilterStatus(JSON.stringify(statusFilter));
+                }}
               >
                 {statusOptions.map((status: any) => {
                   return (
@@ -578,8 +599,11 @@ export default function TableEfficiency({
                 closeOnSelect={false}
                 selectedKeys={parameterFilter}
                 selectionMode="multiple"
-                onSelectionChange={setParameterFilter}
-                disabledKeys={["commision", "Niaga"]}
+                onSelectionChange={(value) => {
+                  setParameterFilter(value);
+                  setFilterParameter(value);
+                }}
+                // disabledKeys={["commision"]}
               >
                 {parameterOptions.map((parameter: any) => {
                   return (
@@ -637,11 +661,18 @@ export default function TableEfficiency({
                 </Button>
               </DropdownTrigger>
               <DropdownMenu aria-label="Actions">
-                <DropdownItem key="new" href={`${addNewUrl}?parameter=current`}>
+                <DropdownItem
+                  key="current"
+                  // href={`${addNewUrl}?parameter=current`}
+                  onClick={() => {
+                    setModalChoosePeriod(true);
+                    setSelectedParameter("current");
+                  }}
+                >
                   Current
                 </DropdownItem>
                 <DropdownItem
-                  key="new"
+                  key="periodic"
                   onClick={() => {
                     setModalChoosePeriod(true);
                   }}
@@ -706,6 +737,7 @@ export default function TableEfficiency({
           page={page}
           total={pages}
           onChange={(page) => setPage(page)}
+          hidden={total_items > 0 ? false : true}
           classNames={{
             cursor: "bg-[#1C9EB6]",
           }}
@@ -715,14 +747,16 @@ export default function TableEfficiency({
             isDisabled={pages === 1}
             size="sm"
             variant="flat"
+            hidden={total_items > 0 ? false : true}
             onPress={onPreviousPage}
           >
             Previous
           </Button>
           <Button
-            isDisabled={pages === 1}
+            isDisabled={pages === 1 || pages === 0 || pages - page == 0}
             size="sm"
             variant="flat"
+            hidden={total_items > 0 ? false : true}
             onPress={onNextPage}
           >
             Next
@@ -767,8 +801,6 @@ export default function TableEfficiency({
         {(onClose) => (
           <>
             <ModalHeader>Select Period Date for Max 30 Days Period</ModalHeader>
-            {JSON.stringify(periodValue.start.toDate)}
-            {JSON.stringify(periodValue.end.toDate)}
             <ModalBody>
               <DateRangePicker
                 label="Date period"
@@ -783,33 +815,6 @@ export default function TableEfficiency({
                 description="Select a date range (maximum 30 days)"
                 onChange={handleDateRangeChange}
               />
-              {/* <ModalHeader>Select Max Date for 30 Days Period</ModalHeader>
-            <ModalBody>
-              <DatePicker
-                label="Max Date"
-                className="max-w-[284px]"
-                maxValue={today(getLocalTimeZone())}
-                defaultValue={today(getLocalTimeZone())}
-                // formatOptions={dateFormat}
-                showMonthAndYearPickers
-                description={
-                  "This date will serve as the end point for calculating the average over those 30 days."
-                }
-                //@ts-ignore
-                onChange={setPeriodValue}
-              /> */}
-              {/* <input type={`date`} /> */}
-              {/* <MomentInput
-                // max={moment().add(5, "days")}
-                // min={moment()}
-                format="YYYY-MM-DD"
-                options={true}
-                readOnly={false}
-                icon={false}
-                onChange={(date) => {
-                  console.log(date);
-                }}
-              /> */}
             </ModalBody>
             <ModalFooter>
               <Button
@@ -828,14 +833,6 @@ export default function TableEfficiency({
       </ModalContent>
     </Modal>
   );
-
-  // if (isDeleteLoading) {
-  //   return (
-  //     <div>
-  //       <Spinner label="Validating..." />
-  //     </div>
-  //   );
-  // }
 
   const classNames = React.useMemo(
     () => ({
@@ -867,7 +864,22 @@ export default function TableEfficiency({
   return (
     <>
       {deleteConfirmationModal}
-      {choosePeriodicModal}
+      {/* {choosePeriodicModal} */}
+      <ModalInputData
+        modalChoosePeriod={modalChoosePeriod}
+        setModalChoosePeriod={setModalChoosePeriod}
+        showVariables={showVariables}
+        setShowVariables={setShowVariables}
+        selectedParameter={selectedParameter}
+        setSelectedParameter={setSelectedParameter}
+        loading={loading}
+        setLoading={setLoading}
+        confirmationModalOpen={confirmationModalOpen}
+        setConfirmationModalOpen={setConfirmationModalOpen}
+        periodValue={periodValue}
+        setPeriodValue={setPeriodValue}
+        thermoStatusData={thermoStatusData}
+      />
       <Table
         aria-label="Efficiency Data Table"
         isCompact

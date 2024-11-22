@@ -11,10 +11,10 @@ export default auth(async (req) => {
       req.nextUrl.pathname.startsWith("/login") &&
       req.nextUrl.searchParams.toString()
     ) {
-      const newUrl = new URL("/login", req.nextUrl.origin); // clean URL without parameters
+      const newUrl = new URL("/login", process.env.NEXT_AUTH_URL); // clean URL without parameters
       return Response.redirect(newUrl);
     }
-    const newUrl = new URL("/login", req.nextUrl.origin);
+    const newUrl = new URL("/login", process.env.NEXT_AUTH_URL);
     return Response.redirect(newUrl);
   }
 
@@ -30,7 +30,7 @@ export default auth(async (req) => {
       });
 
       if (!response.ok) {
-        const newUrl = new URL("/login", req.nextUrl.origin);
+        const newUrl = new URL("/login", process.env.NEXT_AUTH_URL);
         return Response.redirect(newUrl);
       }
 

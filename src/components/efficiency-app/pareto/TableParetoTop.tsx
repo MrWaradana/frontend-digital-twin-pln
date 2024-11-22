@@ -247,7 +247,7 @@ export default function TableParetoTop({
             }}
             className="text-center"
           >
-            <span className="rounded-full px-4 py-1 bg-[#D4CA2F] text-white">
+            <span className="rounded-full px-4 py-1 bg-[#1C9EB6] text-white">
               {props.getValue() != "NaN" ? props.getValue() : ""}
             </span>
           </div>
@@ -518,7 +518,7 @@ export default function TableParetoTop({
         <table
           cellPadding="1"
           cellSpacing="0"
-          className="overflow-y-scroll relative min-w-full"
+          className="overflow-y-scroll relative min-w-full scroll-mt-12"
           style={{
             ...columnSizeVars,
             width: table.getTotalSize(),

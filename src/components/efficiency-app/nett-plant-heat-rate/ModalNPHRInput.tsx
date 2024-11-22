@@ -129,7 +129,7 @@ function ModalNPHRInput({
               <ModalFooter>
                 <Button
                   color="danger"
-                  variant="light"
+                  variant="solid"
                   onPress={() => {
                     onClose();
                   }}
@@ -138,8 +138,7 @@ function ModalNPHRInput({
                   Cancel
                 </Button>
                 <Button
-                  color="success"
-                  variant="light"
+                  className={`bg-[#1C9EB6] text-white`}
                   onClick={() => {
                     handleSave();
                     // onClose();

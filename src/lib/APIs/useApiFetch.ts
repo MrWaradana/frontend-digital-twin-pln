@@ -39,9 +39,15 @@ export function useApiFetch<T, RawT = T>(
           err.message.toLowerCase().includes("unauthorized") ||
           err.message.toLowerCase().includes("invalid")
         ) {
-          toast.error("Unauthorized, redirecting to login...");
+          toast.error(
+            `${
+              err.message.toLowerCase().includes("unauthorized")
+                ? "Unauthorized Token"
+                : "Invalid Token"
+            }, redirecting to login...`
+          );
           setTimeout(() => {
-            router.push(`${process.env.NEXT_AUTH_URL}/login`);
+            router.replace(`${process.env.NEXT_AUTH_URL}/login`);
           }, 1000);
 
           return;

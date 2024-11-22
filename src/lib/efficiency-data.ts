@@ -8,8 +8,7 @@ const columns = [
 ];
 
 const parameterOptions = [
-  { name: "Commision", uid: "commision" },
-  { name: "Niaga", uid: "Niaga" },
+  { name: "Periodic", uid: "periodic" },
   { name: "Current", uid: "current" },
 ];
 const statusOptions = [
