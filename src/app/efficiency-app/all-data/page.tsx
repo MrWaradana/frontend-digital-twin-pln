@@ -102,8 +102,6 @@ export default function Page() {
       });
   }
 
-  const excel = excelData ?? [];
-
   // console.log(efficiencyData, "data efficiency");
   const StatusThermoflow = useStatusThermoflowStore(
     (state) => state.statusThermoflow
@@ -132,11 +130,6 @@ export default function Page() {
   const total_items = useMemo(() => {
     return efficiencyData?.total_items ? efficiencyData?.total_items : 0;
   }, [efficiencyData, rowsPerPage]);
-
-  useEffect(() => {
-    useExcelStore.getState().setExcels(excel);
-    console.log(excel);
-  }, [excel]);
 
   useEffect(() => {
     const api = `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/stream`;
@@ -182,7 +175,7 @@ export default function Page() {
       </EfficiencyContentLayout>
     );
 
-  if (!excel)
+  if (error)
     return (
       <div className="w-full mt-24 flex flex-col gap-6 justify-center items-center">
         <Button as={Link} href="/" color="primary">
