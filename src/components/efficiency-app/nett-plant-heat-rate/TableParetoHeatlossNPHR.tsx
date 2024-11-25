@@ -650,8 +650,8 @@ export default function TableParetoHeatlossNPHR({
           const gap = props.row.original.gap;
           const goodIndicator = props.row.original.good_indicator;
           if (
-            (goodIndicator === "minus" && gap < 0) ||
-            (goodIndicator === "plus" && gap > 0)
+            (goodIndicator === "minus" && gap <= 0) ||
+            (goodIndicator === "plus" && gap >= 0)
           ) {
             return "";
           }
@@ -684,8 +684,8 @@ export default function TableParetoHeatlossNPHR({
           const gap = props.row.original.gap;
           const goodIndicator = props.row.original.good_indicator;
           if (
-            (goodIndicator === "minus" && gap < 0) ||
-            (goodIndicator === "plus" && gap > 0)
+            (goodIndicator === "minus" && gap <= 0) ||
+            (goodIndicator === "plus" && gap >= 0)
           ) {
             return "";
           }
@@ -708,8 +708,8 @@ export default function TableParetoHeatlossNPHR({
           const gap = props.row.original.gap;
           const goodIndicator = props.row.original.good_indicator;
           if (
-            (goodIndicator === "minus" && gap < 0) ||
-            (goodIndicator === "plus" && gap > 0)
+            (goodIndicator === "minus" && gap <= 0) ||
+            (goodIndicator === "plus" && gap >= 0)
           ) {
             return "";
           }

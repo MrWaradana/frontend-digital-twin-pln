@@ -529,7 +529,9 @@ export default function Page() {
               <h2 className={`text-2xl font-semibold mr-1`}>Engine Flow</h2>
               <Button
                 size="sm"
-                className={`bg-[#1C9EB6] text-white dark:text-white !px-4 !py-2`}
+                variant="flat"
+                isDisabled={true}
+                className={`bg-[#1C9EB6] text-white dark:text-white !px-3 !py-2 !opacity-100`}
               >
                 {statusData ? statusData.status : "-"}
               </Button>
@@ -569,21 +571,25 @@ export default function Page() {
                   />
                 </>
               )}
-              <Button
-                className="bg-gray-100 px-0 !min-w-12"
-                onPress={() => {
-                  setDeleteModalOpen(true);
-                }}
-              >
-                <img src={`/icons/trash.png`} alt={`Delete Icon`} />
-              </Button>
-              <Button
-                className="bg-gray-100 px-0 !min-w-12"
-                as={Link}
-                href={`/efficiency-app/${engineFlow?.id}/pareto?percent-threshold=${statusData?.persen_threshold}&potential-timeframe=${statusData?.potential_timeframe}`}
-              >
-                <img src={`/icons/eye.png`} alt={`Show Icon`} />
-              </Button>
+              <Tooltip content={`Delete Data`}>
+                <Button
+                  className="bg-gray-100 px-0 !min-w-12"
+                  onPress={() => {
+                    setDeleteModalOpen(true);
+                  }}
+                >
+                  <img src={`/icons/trash.png`} alt={`Delete Icon`} />
+                </Button>
+              </Tooltip>
+              <Tooltip content={`Pareto Details`}>
+                <Button
+                  className="bg-gray-100 px-0 !min-w-12"
+                  as={Link}
+                  href={`/efficiency-app/${engineFlow?.id}/pareto?percent-threshold=${statusData?.persen_threshold}&potential-timeframe=${statusData?.potential_timeframe}`}
+                >
+                  <img src={`/icons/eye.png`} alt={`Show Icon`} />
+                </Button>
+              </Tooltip>
               <Button
                 as={Link}
                 href={`/efficiency-app/all-data`}
@@ -692,7 +698,10 @@ export default function Page() {
                           isOpen={false}
                         >
                           <PopoverTrigger>
-                            <Button className="text-center bg-gray-100 px-2 py-7 inline-flex items-center justify-between rounded-xl dark:text-black">
+                            <Button
+                              isDisabled={true}
+                              className="text-center bg-gray-100 px-2 py-7 inline-flex items-center justify-between rounded-xl dark:text-black !opacity-100"
+                            >
                               <div className="flex flex-col gap-1 justify-start items-start">
                                 <p className="font-bold text-base">
                                   Total Persen Loss
@@ -986,7 +995,7 @@ export default function Page() {
                             }`}
                           ></div>
                         </div>
-                        <p className=" text-white drop-shadow-[0_1.8px_1.8px_rgba(0,0,0,1)] inline-flex font-semibold text-center rounded-md absolute -bottom-12 right-0 left-0 m-auto max-w-fit px-1 py-0.5 !animate-none">
+                        <p className="bg-[#1C9EB6] text-white drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,1)] inline-flex font-semibold text-center rounded-md absolute -bottom-16 right-0 left-0 m-auto max-w-fit px-1.5 py-0.5 !animate-none">
                           {formatUnderscoreToSpace(key) === "Condensor Value"
                             ? "Condensor"
                             : formatUnderscoreToSpace(key)}
