@@ -66,6 +66,7 @@ import { useExcelStore } from "../../store/excels";
 import { useGetMasterData } from "../../lib/APIs/useGetMasterData";
 import ActionsTable from "../../components/efficiency-app/ActionsTable";
 import ModalInputData from "@/components/efficiency-app/ModalInputData";
+import { formatUnderscoreToSpace } from "@/lib/format-text";
 
 interface Variable {
   category: string;
@@ -914,11 +915,7 @@ export default function Page() {
                   }}
                   className="absolute z-10"
                 >
-                  <div
-                    className={`relative ${
-                      engineFlowData[key]?.diff >= 0 ? "" : "animate-pulse"
-                    }`}
-                  >
+                  <div className={`relative `}>
                     <div
                       className={`${
                         engineFlowData[key]?.diff > 0
@@ -930,7 +927,9 @@ export default function Page() {
                          md:text-[14px] text-xs shadow-sm border border-gray-200/50 whitespace-nowrap
                          hover:scale-105  hover:shadow-md
                          transition-all ease-in-out
-                         transform origin-center text-center`}
+                         transform origin-center text-center ${
+                           engineFlowData[key]?.diff >= 0 ? "" : "animate-pulse"
+                         }`}
                     >
                       <div
                         className={`font-semibold ${
@@ -960,7 +959,11 @@ export default function Page() {
                     <div className="absolute -bottom-3 left-0 right-0 mx-auto w-full">
                       <div className={`relative`}>
                         <div
-                          className={`rounded-full w-5 h-5 absolute left-0 right-0 mx-auto border-2   ${
+                          className={`rounded-full w-5 h-5 absolute left-0 right-0 mx-auto border-2 ${
+                            engineFlowData[key]?.diff >= 0
+                              ? ""
+                              : "animate-pulse"
+                          }  ${
                             engineFlowData[key]?.diff > 0
                               ? "bg-green-500 border-[#75eaff]"
                               : engineFlowData[key]?.diff == 0
@@ -976,9 +979,18 @@ export default function Page() {
                                 : engineFlowData[key]?.diff == 0
                                 ? "bg-gray-400 "
                                 : "bg-[#D93832]"
-                            } -rotate-45 transform origin-top-left`}
+                            } -rotate-45 transform origin-top-left ${
+                              engineFlowData[key]?.diff >= 0
+                                ? ""
+                                : "animate-pulse"
+                            }`}
                           ></div>
                         </div>
+                        <p className=" text-white drop-shadow-[0_1.8px_1.8px_rgba(0,0,0,1)] inline-flex font-semibold text-center rounded-md absolute -bottom-12 right-0 left-0 m-auto max-w-fit px-1 py-0.5 !animate-none">
+                          {formatUnderscoreToSpace(key) === "Condensor Value"
+                            ? "Condensor"
+                            : formatUnderscoreToSpace(key)}
+                        </p>
                       </div>
                     </div>
                   </div>

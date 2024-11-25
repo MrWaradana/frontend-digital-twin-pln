@@ -9,3 +9,8 @@ export function formatFilename(filename: string): string {
 
   return formattedName.trim(); // Trim any extra spaces
 }
+
+export const formatUnderscoreToSpace = (text: string): string => {
+  if (!text) return "";
+  return text.replace(/_/g, " ");
+};
