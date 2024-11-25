@@ -45,7 +45,8 @@ export default function Sidebar({ className }: { className?: string }) {
             />
           </Link>
         </Button>
-        <Menu isListOpen={sidebar?.isOpen} />
+        {/* <Menu isListOpen={sidebar?.isOpen} /> */}
+        <Menu isListOpen={false} />
       </div>
     </aside>
   );

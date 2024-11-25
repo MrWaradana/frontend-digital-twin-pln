@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 
 import logoPLN from "../../../../public/Logo_PLN.png";
 
-
 export default function Sidebar({ className }: { className?: string }) {
   const sidebar = useStore(useSidebarToggle, (state) => state);
 
@@ -37,7 +36,7 @@ export default function Sidebar({ className }: { className?: string }) {
             <Image src={logoPLN} alt="Logo PLN" />
           </Link>
         </Button>
-        <Menu isListOpen={sidebar?.isOpen} />
+        <Menu isListOpen={false} />
       </div>
     </aside>
   );
