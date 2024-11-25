@@ -58,7 +58,6 @@ export default function ModalInputData({
 }: any) {
   const router = useRouter();
   const { data: session, status } = useSession();
-
   // coal price ==================================================
   const {
     data: masterData,
@@ -573,15 +572,16 @@ export default function ModalInputData({
               </Button>
               <Button
                 type="button"
-                className={`bg-[#1C9EB6] text-white`}
+                className="bg-[#1C9EB6] text-white"
                 size="md"
-                //@ts-ignore
-                isDisabled={thermoStatusData?.thermo_status}
+                isDisabled={
+                  thermoStatusData?.thermo_status ||
+                  process.env.NEXT_PUBLIC_ENVIRONMENT == "development"
+                }
                 isLoading={loading}
-                onClick={() => {
-                  setConfirmationModalOpen(true); // Open modal to confirm submission
+                onClick={() => {                            
+                  setConfirmationModalOpen(true);
                 }}
-                // onPress={handlePeriod}
               >
                 Submit
               </Button>
