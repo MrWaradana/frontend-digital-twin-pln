@@ -40,7 +40,7 @@ export function Navbar({ title }: NavbarProps) {
                 </Button>
                 <Button
                   radius="full"
-                  className={`bg-[#D9E9EE] text-white`}
+                  className={`bg-[#1C9EB6] text-white`}
                   onPress={async () => {
                     try {
                       await signOut();
