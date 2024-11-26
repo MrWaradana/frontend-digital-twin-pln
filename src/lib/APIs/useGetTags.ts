@@ -1,7 +1,7 @@
 import { API_V1_LIVE_URL } from "../api-url";
 import { HookReply } from "./types";
 import { useApiFetch } from "./useApiFetch";
-import {format} from "date-fns";
+import { format } from "date-fns";
 
 interface TagValues {
     id: string;
@@ -33,17 +33,29 @@ interface Tags {
 
     // FOR LINECHART CONFIG
     // color: string | null;
-    
+
 }
 // ${EFFICIENCY_API_URL}/variables?excel_id=${selectedExcel.id}
+
+export interface DataList {
+    tag: Tags;
+}
 
 export function useGetTags(
     token: string | undefined,
 ): HookReply<Array<Tags>> {
-
-    
     return useApiFetch(
         `${API_V1_LIVE_URL}/tags`,
+        !!token,
+        token,
+    )
+}
+export function useGetTag(
+    token: string | undefined,
+    tag_id: string,
+): HookReply<Array<DataList>> {
+    return useApiFetch(
+        `${API_V1_LIVE_URL}/tag/${tag_id}`,
         !!token,
         token,
     )

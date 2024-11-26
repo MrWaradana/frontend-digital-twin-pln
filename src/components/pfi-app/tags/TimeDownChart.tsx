@@ -47,26 +47,21 @@ const TimeDownChart = () => {
   ];
 
   return (
-    <div>
-      <span>TEST</span>
-      <LineChart
-        width={500}
-        height={300}
-        data={data}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-      </LineChart>
+    <div className="flex flex-col items-center w-full">
+      <span className="text-center mb-4">TEST</span>
+      <div className="w-full">
+        <LineChart
+          width={500} height={300}
+          data={data}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+        </LineChart>
+      </div>
     </div>
   )
 }
