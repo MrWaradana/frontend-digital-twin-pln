@@ -21,16 +21,34 @@ export interface Tags {
   zero: number
 }
 
-export interface DataList {
-  pagination: {
-    current_page: number;
-    has_next_page: boolean;
-    has_previous_page: boolean;
-    page_size: number;
-    total_items: number;
-    total_pages: number;
+export interface equipment {
+  assetnum: string,
+  category_id: string,
+  created_at: string,
+  equipment_tree: {
+    id: string,
+    level_no: number,
+    name: string
   },
-  tags: Tags[]
+  equipment_tree_id: string,
+  id: string,
+  location_tag: string,
+  name: string,
+  parent_id: string,
+  system_tag: string,
+  updated_at: string
+}
+
+export interface pagination {
+  limit: number,
+  page: number,
+  total_data: number
+  total_pages: number
+}
+
+export interface DataList {
+  pagination: pagination,
+  equipments: equipment[]
 }
 export interface SingleDataList {
   tag: Tags
@@ -42,7 +60,7 @@ export function useGetDataTag(
   limit: number
 ): HookReply<DataList> {
   return useApiFetch(
-    `${PFI_API_URL}/tags?page=${page}&limit=${limit}`,
+    `${PFI_API_URL}/equipment?level=3&page=${page}&limit=${limit}`,
     !!token,
     token,
   )
@@ -52,7 +70,7 @@ export function useSingleDataTag(
   tag_id: number,
 ): HookReply<SingleDataList> {
   return useApiFetch(
-    `${PFI_API_URL}/tag/${tag_id}`,
+    `${PFI_API_URL}/equipment/${tag_id}`,
     !!token,
     token,
   )
