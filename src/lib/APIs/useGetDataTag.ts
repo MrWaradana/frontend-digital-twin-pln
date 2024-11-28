@@ -49,10 +49,10 @@ export function useGetDataTag(
 }
 export function useSingleDataTag(
   token: string | undefined,
-  tag_id: number,
+  equipment_id: string,
 ): HookReply<SingleDataList> {
   return useApiFetch(
-    `${PFI_API_URL}/equipment/${tag_id}`,
+    `${PFI_API_URL}/equipment/${equipment_id}`,
     !!token,
     token,
   )

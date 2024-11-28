@@ -26,10 +26,6 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
     return tagData?.equipments ?? ({} as { name?: string });
   }, [tagData]);
 
-  const encryptedKey = React.useMemo(() => {
-    return encrypt(selectedKeys?.anchorKey);
-  }, [selectedKeys?.anchorKey]);
-
   if (isLoading)
     return (
       <div className="w-full h-screen flex justify-center items-center">
@@ -40,14 +36,35 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
       </div>
     );
 
-  const radarChartData: { subject: string; A: number; B: number; fullMark: number }[] = [
-    { subject: 'Feature 1', A: 120, B: 110, fullMark: 150 },
-    { subject: 'Feature 2', A: 98, B: 130, fullMark: 150 },
-    { subject: 'Feature 3', A: 86, B: 130, fullMark: 150 },
-    { subject: 'Feature 4', A: 99, B: 100, fullMark: 150 },
-    { subject: 'Feature 5', A: 85, B: 90, fullMark: 150 },
-    { subject: 'Feature 6', A: 65, B: 85, fullMark: 150 },
-    { subject: 'Feature 7', A: 65, B: 85, fullMark: 150 },
+  const radarChartData: { id: string; subject: string; A: number; B: number; fullMark: number }[] = [
+    {
+      id: "5765a11a-2f89-45dc-a37b-46d384a1ff9e",
+      subject: 'Feature 1', A: 120, B: 110, fullMark: 150
+    },
+    {
+      id: "8baab334-6e63-487d-91ea-cf8cd7f8b88d",
+      subject: 'Feature 2', A: 98, B: 130, fullMark: 150
+    },
+    {
+      id: "9b0b9845-e59b-4b85-9ba3-66ff9cb826b8",
+      subject: 'Feature 3', A: 86, B: 130, fullMark: 150
+    },
+    {
+      id: "a94a2f9a-d798-4e54-8373-ff68f486f266",
+      subject: 'Feature 4', A: 86, B: 130, fullMark: 150
+    },
+    {
+      id: "88a07a75-1f84-4436-bcf0-12739900bf4a",
+      subject: 'Feature 5', A: 86, B: 130, fullMark: 150
+    },
+    {
+      id: "c0e9494d-443e-4515-ba2a-34a15400c551",
+      subject: 'Feature 6', A: 86, B: 130, fullMark: 150
+    },
+    {
+      id: "5cf62522-a140-4b26-bbfb-d76e4ae10a81",
+      subject: 'Feature 7', A: 86, B: 130, fullMark: 150
+    },
   ]
 
   return (
@@ -101,7 +118,7 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
             <Link href={`/pfi-app/tags/${encodeURIComponent(encryptedKey)}`} className="text-sm text-neutral-200 pt-5 ">
               see details {">"}</Link>
           </div> */}
-          <RadarChart dataRow={radarChartData} encryptedKey={encryptedKey} />
+          <RadarChart dataRow={radarChartData} selectedKeys={selectedKeys?.anchorKey} />
         </div>
       </div>
     </div>

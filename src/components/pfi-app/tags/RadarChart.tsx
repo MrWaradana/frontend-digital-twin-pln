@@ -10,7 +10,7 @@ import {
   Tooltip
 } from 'recharts';
 
-const RadarComponent = ({ dataRow, encryptedKey }: { dataRow: any, encryptedKey: string }) => {
+const RadarComponent = ({ dataRow, selectedKeys }: { dataRow: any; selectedKeys: string }) => {
   const router = useRouter();
 
   const tooltipContent = (props: any) => {
@@ -18,26 +18,30 @@ const RadarComponent = ({ dataRow, encryptedKey }: { dataRow: any, encryptedKey:
     if (!payload || !payload.length) return null;
 
     return (
-      <div className="m-auto bg-[#1C9EB6] rounded-lg w-60 py-4 px-3">
+      <div className="m-auto bg-[#1C9EB6] rounded-lg w-60 py-4 px-3 top-0">
         <div className="flex">
           <span className="text-white text-sm me-auto">{payload[0].payload.subject}</span>
           <span className="text-white text-sm">{payload[0].value}</span>
         </div>
-        <Link href={`/pfi-app/tags/#}`} className="text-sm text-neutral-200 pt-5 ">
-          see details {">"}</Link>
+        <Link href={`/pfi-app/tags/${selectedKeys}?features_id=${payload[0].payload.id}`} className="text-sm text-neutral-200 pt-5">
+          see details {">"}
+        </Link>
       </div>
     );
   };
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <RadarChart cx="50%" cy="50%" outerRadius="80%" data={dataRow} onClick={() => router.push(`/pfi-app/tags/${encodeURIComponent(encryptedKey)}`)}>
+    <ResponsiveContainer width="100%" height="100%" className='relative'>
+      <RadarChart cx="50%" cy="50%" outerRadius="80%" data={dataRow} >
         <PolarGrid />
         <Tooltip
           content={tooltipContent}
           isAnimationActive={false}
           cursor={false}
-          wrapperStyle={{ pointerEvents: 'auto' }} // Allow interaction with tooltip content
+          wrapperStyle={{ pointerEvents: 'auto' }}
+          viewBox={{ x: 0, y: 0, width: 100, height: 100 }}
+          active={true}
+          position={{ x: 70, y: 100 }}
         />
         <PolarAngleAxis dataKey="subject" />
         <PolarRadiusAxis />

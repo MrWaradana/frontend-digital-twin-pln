@@ -26,20 +26,10 @@ const Page = ({ params }: { params: { slug: string } }) => {
   const { data: session } = useSession();
   const router = useRouter();
 
-  const key = React.useMemo(() => {
-    const decodedSlug = decodeURIComponent(params.slug)
-    return decrypt(decodedSlug);
-  }, [params.slug]);
-
-  React.useEffect(() => {
-    isEmpty(key) && router.push("/404");
-  }, [key]);
-
-
   const {
     data: tagData,
     isLoading,
-  } = useSingleDataTag(session?.user?.access_token, key);
+  } = useSingleDataTag(session?.user?.access_token, params.slug);
 
   // const { data: tagValues, error: errorTagValues } = useSSE(`stream-values?tag_id=${key}&size=500&sleep=15`);
   // const { data: tagPredictValues, error: errorTagPredictValues } = useSSE(`stream-values?tag_id=${key}&size=200`);
@@ -69,7 +59,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
           </button>
 
           <h1 className="text-base md:text-xl font-semibold me-auto">
-            {tag?.name}
+            {params.slug}
           </h1>
 
           <button onClick={() => { router.back() }} className="text-sm md:text-md font-medium text-[#1C9EB6] border-[1px] border-[#1C9EB6] bg-transparent px-3 rounded-lg hover:bg-[#1C9EB6] hover:text-white transition-colors duration-300">
