@@ -50,15 +50,6 @@ const PowerPlant = ({
     },
   ];
 
-  const combinedEquipments = equipments.map((equipment, index) => {
-    const position = positions[index] || { top: "0%", left: "0%" };
-    return {
-      ...equipment,
-      position,
-    };
-  });
-
-
   return (
     <div className="col-span-1 md:col-span-2 px-3  relative">
       <h1 className="text-sm sm:text-2xl font-semibold text-[#303030] absolute z-10 mx-4 sm:mx-10 mt-3 sm:mt-5">
@@ -71,40 +62,40 @@ const PowerPlant = ({
             alt="power-plant"
             className="w-full h-full object-cover rounded-3xl shadow-xl border-[1px]"
           />
-          {Object.keys(combinedEquipments).map((key) => (
+          {Object.keys(positions).map((key) => (
             <div
               key={key}
               style={{
-                top: combinedEquipments[key].position.top,
-                left: combinedEquipments[key].position.left,
+                top: positions[key].top,
+                left: positions[key].left,
                 transform: "translate(-50%, -50%)",
               }}
               className="absolute z-10 rounded-xl"
             >
               <button
-                className={`${combinedEquipments[key].position.status === "normal"
+                className={`${positions[key].status === "normal"
                   ? "bg-[#28C840]"
-                  : combinedEquipments[key].position.status === "warning" ? "bg-[#F49C38]"
+                  : positions[key].status === "warning"
+                    ? "bg-[#F49C38]"
                     : "bg-[#D93832]"
-                  } px-2 py-1 sm:px-5 sm:py-2 text-xs sm:text-sm md:text-base lg:text-lg rounded-full animate-pulse hover:scale-105 transition-transform duration-1500 ease-in-out`}
-                onClick={() =>
-                  router.push(`/pfi-app/${combinedEquipments[key].id}`)
-                }
+                  } 
+                px-2 py-1 text-xs sm:px-3 sm:py-2 sm:text-sm md:px-4 md:py-3 md:text-base lg:px-4 lg:py-2 lg:text-base 
+                rounded-full animate-pulse hover:scale-105 transition-transform duration-1500 ease-in-out`}
+                onClick={() => router.push(`/pfi-app/${positions[key].id}`)}
               >
                 <div className="font-semibold text-neutral-200 flex items-center gap-2">
-                  {combinedEquipments[key].position.status === "normal" ? (
-                    <CircleCheck className="inline-block" />
-                  ) : combinedEquipments[key].position.status === "warning" ? (
+                  {positions[key].status === "normal" ? (
+                    <CircleCheck className="inline-block " />
+                  ) : positions[key].status === "warning" ? (
                     <CircleAlert className="inline-block" />
-
-                  ) :
-                    (
-                      <CircleX className="inline-block" />
-                    )}
-                  {combinedEquipments[key].position.status}
+                  ) : (
+                    <CircleX className="inline-block" />
+                  )}
+                  {positions[key].status}
                 </div>
               </button>
             </div>
+
           ))}
         </div>
       </div>

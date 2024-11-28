@@ -46,7 +46,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
 
 
   const tag = React.useMemo(() => {
-    return tagData?.tag;
+    return tagData?.equipments ?? ({} as { name?: string });
   }, [tagData]);
 
   if (isLoading)
