@@ -41,7 +41,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
     isLoading,
   } = useSingleDataTag(session?.user?.access_token, key);
 
-  const { data: tagValues, error: errorTagValues } = useSSE(`stream-values?tag_id=${key}&size=500&sleep=15`);
+  // const { data: tagValues, error: errorTagValues } = useSSE(`stream-values?tag_id=${key}&size=500&sleep=15`);
   // const { data: tagPredictValues, error: errorTagPredictValues } = useSSE(`stream-values?tag_id=${key}&size=200`);
 
 
@@ -60,13 +60,6 @@ const Page = ({ params }: { params: { slug: string } }) => {
     );
 
 
-  if (errorTagValues) {
-    return (
-      <div className="w-full h-screen flex justify-center items-center">
-        <div>Error loading data: {errorTagValues}</div>
-      </div>
-    );
-  }
   return (
     <PFIContentLayout title="i-PFI App">
       <div className="bg-neutral-100 rounded-xl shadow-xl p-3 md:p-5">

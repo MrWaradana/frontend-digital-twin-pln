@@ -3,14 +3,8 @@ import { useSingleDataTag } from "@/lib/APIs/useGetDataTag";
 import { CircularProgress } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import React from "react";
 import { encrypt } from "@/lib/utils";
-
-interface TagValue {
-  time_stamp: string;
-  value: number;
-}
 
 const ShowPredict = dynamic(
   () =>
@@ -26,16 +20,15 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
   const {
     data: tagData,
     isLoading,
-    mutate,
-  } = useSingleDataTag(session?.user?.access_token, selectedKeys?.anchorKey ?? "1");
+  } = useSingleDataTag(session?.user?.access_token, selectedKeys?.anchorKey ?? null);
 
   const tag = React.useMemo(() => {
-    return tagData?.tag ?? ({} as { name?: string });
+    return tagData?.equipments ?? ({} as { name?: string });
   }, [tagData]);
 
   const encryptedKey = React.useMemo(() => {
-    return encrypt(selectedKeys?.anchorKey ?? "1");
-  }, [selectedKeys?.anchorKey ?? "1"]);
+    return encrypt(selectedKeys?.anchorKey);
+  }, [selectedKeys?.anchorKey]);
 
   if (isLoading)
     return (
@@ -47,38 +40,25 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
       </div>
     );
 
-  const radarChartData: { name: string; value: number[] }[] = [
-    {
-      name: "Tag 1 (Radarchart Original)",
-      value: []
-    },
-    {
-      name: "Tag 1 (Radarchart Predicted)",
-      value: []
-    }
+  const radarChartData: { subject: string; A: number; B: number; fullMark: number }[] = [
+    { subject: 'Feature 1', A: 120, B: 110, fullMark: 150 },
+    { subject: 'Feature 2', A: 98, B: 130, fullMark: 150 },
+    { subject: 'Feature 3', A: 86, B: 130, fullMark: 150 },
+    { subject: 'Feature 4', A: 99, B: 100, fullMark: 150 },
+    { subject: 'Feature 5', A: 85, B: 90, fullMark: 150 },
+    { subject: 'Feature 6', A: 65, B: 85, fullMark: 150 },
+    { subject: 'Feature 7', A: 65, B: 85, fullMark: 150 },
   ]
-
-  const getRandomValue = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  for (let i = 0; i < 7; i++) {
-    radarChartData[0].value.push(getRandomValue(500, 10000));
-  }
-
-  for (let i = 0; i < 7; i++) {
-    radarChartData[1].value.push(getRandomValue(500, 10000));
-  }
 
   return (
     <div className="bg-white rounded-3xl p-3 pt-6 sm:p-5 sm:px-12 mx-2 sm:mx-4 border border-gray-200 shadow-xl col-span-1 md:col-span-2">
       <div className="flex flex-wrap items-center mb-5">
-        <h5 className="me-auto text-lg sm:text-xl font-semibold">
-          {tag?.name ?? "Belum ada data"}
+        <h5 className="me-auto font-semibold break-words w-[300px] sm:w-[500px]">
+          {tag.name}
         </h5>
-        <button className="bg-[#D93832] py-2 px-3 sm:px-5 rounded-lg text-white ms-auto text-sm sm:text-base">
+        <div className="bg-[#D93832] py-2 px-3 sm:px-5 rounded-lg text-white ms-auto text-sm sm:text-base">
           Predicted Failed
-        </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-5">
@@ -112,16 +92,16 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
         </div>
 
         {/* Right Section */}
-        <div className="p-4 rounded-lg relative">
-          <div className="absolute z-20 top-20 right-0 left-92 m-auto bg-[#1C9EB6] rounded-lg w-60 py-4 sm:top-8 md:top-14 px-3">
+        <div className="p-4 rounded-lg">
+          {/* <div className="absolute z-20 top-20 right-0 left-92 m-auto bg-[#1C9EB6] rounded-lg w-60 py-4 sm:top-8 md:top-14 px-3">
             <div className="flex">
               <span className="text-white text-sm me-auto">Sensor A</span>
               <span className="text-white text-sm">12.021</span>
             </div>
             <Link href={`/pfi-app/tags/${encodeURIComponent(encryptedKey)}`} className="text-sm text-neutral-200 pt-5 ">
               see details {">"}</Link>
-          </div>
-          <RadarChart dataRow={radarChartData} />
+          </div> */}
+          <RadarChart dataRow={radarChartData} encryptedKey={encryptedKey} />
         </div>
       </div>
     </div>

@@ -2,25 +2,6 @@ import { PFI_API_URL } from "../api-url";
 import { HookReply } from "./types";
 import { useApiFetch } from "./useApiFetch";
 
-export interface Tags {
-  created_at: string,
-  descriptor: string,
-  digital_set_name: string,
-  display_digits: number,
-  engineering_units: string,
-  future: boolean,
-  id: number,
-  name: string,
-  path: string,
-  point_class: string,
-  point_type: string,
-  span: number,
-  step: boolean,
-  updated_at: string,
-  web_id: string,
-  zero: number
-}
-
 export interface equipment {
   assetnum: string,
   category_id: string,
@@ -30,6 +11,7 @@ export interface equipment {
     level_no: number,
     name: string
   },
+  childrens: equipment[],
   equipment_tree_id: string,
   id: string,
   location_tag: string,
@@ -51,7 +33,7 @@ export interface DataList {
   equipments: equipment[]
 }
 export interface SingleDataList {
-  tag: Tags
+  equipments: equipment
 }
 
 export function useGetDataTag(
