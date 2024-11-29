@@ -4,7 +4,7 @@ import TimeDownChart from "@/components/pfi-app/tags/TimeDownChart";
 import { PFIContentLayout } from "@/containers/PFIContentLayout";
 import { useSingleDataTag } from "@/lib/APIs/useGetDataTag";
 import { useGetEquipmentValues } from "@/lib/APIs/i-PFI/useGetEquipmentValues";
-import { CircularProgress } from "@nextui-org/react";
+import { CircularProgress, Divider } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -66,12 +66,12 @@ const Page = ({ params }: { params: { slug: string } }) => {
   //   if (isEmpty(tagData)) return router.push("/404");
   // }, [tagData]);
 
-  if (isLoading)
+  if (isLoading || isLoadingEquipment)
     return (
       <div className="w-full h-screen flex justify-center items-center">
         <CircularProgress
           color="primary"
-          label={isLoading ? "Loading..." : "Validating..."}
+          label={isLoading || isLoadingEquipment ? "Loading..." : "Validating..."}
         />
       </div>
     );
@@ -106,13 +106,20 @@ const Page = ({ params }: { params: { slug: string } }) => {
         <div className="w-full grid grid-cols-1 sm:grid-cols-5 gap-3 p-3 md:p-5 lg:p-8 my-5">
           {
             information.map((item, index) => (
-              <Card className="py-4" key={index}>
-                <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-                  <h4 className="font-bold text-sm sm:text-base md:text-md lg:text-lg">{item.name}</h4>
-                </CardHeader>
-                <CardBody className="overflow-visible">
-                  <p className="font-normal text-sm sm:text-base md:text-md lg:text-lg">{item.value}</p>
-                </CardBody>
+              <Card className="p-5" key={index}>
+                <h4 className="font-bold text-sm sm:text-base md:text-md lg:text-lg mb-2">
+                  {item.name}
+                </h4>
+                <div className="flex flex-row mt-auto">
+                  <Divider orientation="vertical" className="px-[1px] py-6 me-3 bg-gradient-to-b from-[#1C9EB6] to-[#FFFFFF]" />
+
+                  <div className="flex flex-col">
+                    <p className="font-bold text-2xl sm:text-base md:text-md lg:text-lg">
+                      {item.value}
+                    </p>
+                    <span className="text-neutral-400 text-sm">{item.satuan}</span>
+                  </div>
+                </div>
               </Card>
             ))
           }

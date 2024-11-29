@@ -3,6 +3,7 @@ import { Input, Link, Pagination, SortDescriptor, Spinner, Table, TableBody, Tab
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import React, { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
+import { formatFilename } from "@/lib/format-text";
 
 const ListTag = ({
   dataRow,
@@ -47,7 +48,11 @@ const ListTag = ({
         case "no":
           return index;
         case "name":
-          return cellValue
+          return (
+            <span className="capitalize">{
+              cellValue.toLowerCase()
+            }</span>
+          )
       }
     },
     []
