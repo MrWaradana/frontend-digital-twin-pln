@@ -59,7 +59,7 @@ const PredictChart2 = ({ dataRow }: { dataRow: any }) => {
             params
               .map(
                 (data: any) =>
-                  `${data.marker} ${data.seriesName} <br/>${data.axisValue}: ${data.value}`
+                  `${data.marker} ${data.seriesName} <br/>${data.axisValue}: <strong>${data.value[1]}</strong>`
               )
               .join("<br/>"),
         },
@@ -126,15 +126,15 @@ const PredictChart2 = ({ dataRow }: { dataRow: any }) => {
   }, [values, predictions]);
 
   return (
-    <div className="col-span-2 flex flex-col items-center w-full">
+    <div className="flex flex-col items-center w-full">
       <div className="flex">
         <span className="text-center mb-4">Potential Failure Interval Chart</span>
       </div>
-      <div className="w-full h-80 md:h-[400px] lg:h-[500px]">
+      <div className="w-full h-60 sm:h-72 md:h-[400px] lg:h-[500px]">
         <div
           ref={chartRef}
           style={{ width: "100%", height: "100%" }}
-          className="w-full h-80 md:h-[400px] lg:h-[500px]"
+          className="w-full h-full"
         />
       </div>
     </div>
