@@ -1,154 +1,89 @@
-"use client";
+import { Crosshair, Cog, Calendar } from "lucide-react";
+import OverviewContainer from "@/components/containers/OverviewContainer";
+import { Button } from "@nextui-org/react";
+import Engine from "@/components/optimum-oh-app/Engine";
 
-import Image from "next/image";
-import BGImage from "../../../public/optimum-oh-app/bg.jpg";
-import newBGImage from "../../../public/optimum-oh-app/new_power_plant.png";
-import { motion, AnimatePresence } from "framer-motion";
-
-// Animation configurations
-const ANIMATIONS = {
-  title: {
-    initial: { x: -100, opacity: 0 },
-    animate: { x: 0, opacity: 1 },
-    transition: {
-      ease: "linear",
-      duration: 3,
-      type: "spring",
-      stiffness: 70,
-    },
-  },
-};
-
-// Cloud positions configuration with individual durations
-const CLOUD_POSITIONS = [
-  {
-    baseX: -400,
-    offsetX: 2400,
-    duration: 82,
-    y: 50,
-  },
-  {
-    baseX: 2000,
-    offsetX: -200,
-    duration: 96,
-    y: 30,
-  },
-  {
-    baseX: -400,
-    offsetX: 4000,
-    duration: 96,
-    y: 40,
-  },
-  {
-    baseX: 1900,
-    offsetX: -500,
-    duration: 96,
-    y: 40,
-  },
-];
-
-const links = [
-  {
-    name: "link1",
-    href: "#",
-  },
-  {
-    name: "link2",
-    href: "#",
-  },
-  {
-    name: "link3",
-    href: "#",
-  },
-  {
-    name: "link4",
-    href: "#",
-  },
-  {
-    name: "link5",
-    href: "#",
-  },
-  {
-    name: "link6",
-    href: "#",
-  },
-];
-
-// Cloud component for reusability
-const FloatingCloud = ({ baseX, offsetX, duration, y }) => {
+export default async function Page() {
   return (
-    <AnimatePresence>
-      <motion.img
-        src="/optimum-oh-app/cloud1.png"
-        alt="Floating cloud"
-        className="absolute w-80 z-10 opacity-80"
-        animate={{
-          x: [baseX, baseX + offsetX, baseX],
-          y: [y],
-        }}
-        transition={{
-          duration: duration,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-      />
-    </AnimatePresence>
-  );
-};
-
-export default function Page() {
-  return (
-    <div className="min-h-[100dvh] bg-[url('/optimum-oh-app/new_power_plant.png')] bg-no-repeat bg-[length:100dvw_100dvh] w-full flex flex-col justify-center items-start">
-      <div className="absolute top-0  overflow-hidden bg-transparent min-h-[100dvh] min-w-full">
-        {CLOUD_POSITIONS.map((position, index) => (
-          <FloatingCloud
-            key={index}
-            baseX={position.baseX}
-            offsetX={position.offsetX}
-            duration={position.duration}
-            y={position.y}
-          />
-        ))}
-      </div >
-      <div className=" w-full transition ease-soft-spring flex flex-col justify-center items-start ml-12 pt-12 px-12 bg-blue-300/20 rounded-xl pb-12 pr-12 backdrop-blur-xl max-w-[85dvh]">
-        <motion.a
-          href="/"
-          className="text-base cursor-pointer hover:underline text-blue-500 font-bold mb-6"
-          {...ANIMATIONS.title}
-        >
-          {`< `} Back to all apps
-        </motion.a>
-        <motion.h1 className="text-4xl font-bold mb-2" {...ANIMATIONS.title}>
-          Optimum OH App
-        </motion.h1>
-        <motion.p className="text-base w-[30dvw] mb-6" {...ANIMATIONS.title}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat.
-        </motion.p>
-
-        <section className={`min-w-full`}>
-          <a
-            key={`linkdashboard`}
-            href={`#`}
-            className="px-8 py-2 inline-flex justify-center items-center rounded-3xl backdrop-blur-lg text-xl font-semibold bg-white hover:bg-blue-400 hover:text-white transition ease duration-300"
-          >
-            Go to Dashboard!
-          </a>
-          {/* {links.map((item, index) => {
-            return (
-              <a
-                key={item.name}
-                href={item.href}
-                className="min-w-[150px] min-h-[120px] inline-flex justify-center items-center rounded-3xl backdrop-blur-lg bg-white/30 hover:bg-white transition ease duration-300"
+    <OverviewContainer navbarTitle={`Optimum Overhaul`}>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="col-span-3 bg-white rounded-3xl shadow-xl h-[80dvh] w-full p-8">
+          {/* above image */}
+          <div className={`flex flex-row justify-between`}>
+            <div className="flex flex-row gap-12">
+              <div className="flex flex-col gap-2 justify-center h-[7dvh] w-fit ">
+                <p className="text-neutral-400">Number of equip needs to OH:</p>
+                <p className={`text-2xl font-semibold text-black`}>30</p>
+              </div>
+              <div className="flex flex-col gap-2 justify-center h-[7dvh] w-fit p-4">
+                <p className="text-neutral-400">Nearest OH Schedule:</p>
+                <p className={`text-2xl font-semibold text-black`}>
+                  {new Date().toLocaleDateString("id", {
+                    dateStyle: "long",
+                  })}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-row gap-4 items-center">
+              <Button
+                className={`bg-[#1C9EB6] text-white`}
+                startContent={<Crosshair />}
+                size={"lg"}
               >
-                {item.name}
-              </a>
-            );
-          })} */}
-        </section>
+                Scope OH
+              </Button>
+              <Button
+                className={`bg-[#1C9EB6] text-white`}
+                startContent={<Cog />}
+                size={"lg"}
+              >
+                Calculate OH
+              </Button>
+            </div>
+          </div>
+          {/* Image Engine */}
+          <div className="h-[65dvh] relative">
+            <Engine />
+          </div>
+        </div>
+        <div className="col-span-1 h-[80dvh] w-full flex flex-col gap-6">
+          <div className={`bg-white rounded-3xl shadow-xl w-full h-1/2 p-12`}>
+            <p className={`text-3xl font-semibold mb-4`}>
+              Top 5 Critical Part:
+            </p>
+            <ol className="list-decimal list-inside text-neutral-500">
+              <li className={`mb-4`}>Boiler Feed Pump</li>
+              <li className={`mb-4`}>Boiler Reheater System</li>
+              <li className={`mb-4`}>Drum Level (Right) Root Valve A</li>
+              <li className={`mb-4`}>BCP A Discharge Velve</li>
+              <li className={`mb-4`}>BFPT A EXH Press HI Root VLV</li>
+            </ol>
+          </div>
+          <div
+            className={`bg-white rounded-3xl shadow-xl w-full h-1/2 p-12 flex flex-col justify-between`}
+          >
+            <div className={`flex flex-row`}>
+              <p className={`text-3xl font-semibold mb-4`}>
+                Upcoming OH Schedules:
+              </p>
+              <Button
+                className={`text-white bg-[#1C9EB6]`}
+                startContent={<Calendar size={128} width={15} />}
+              >
+                Date
+              </Button>
+            </div>
+            <div className="flex flex-row justify-between items-end">
+              <p className="text-neutral-400">Scope</p>
+              <p
+                className={`text-[7rem] text-[#1C9EB6] font-semibold mb-0 leading-tight`}
+              >
+                B
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
-    </div >
+    </OverviewContainer>
   );
 }

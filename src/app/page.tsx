@@ -18,7 +18,7 @@ export default async function Home() {
   const appList = [
     {
       name: "Efficiency & Heat Loss App",
-      url: "/efficiency-app",
+      url: "/landing/efficiency-app",
       bgColor: "bg-gradient-to-b from-yellow-400 to-[#FFC429]",
       textColor: "text-black",
       icon: (
@@ -67,7 +67,7 @@ export default async function Home() {
     },
     {
       name: "RBD App",
-      url: "/#",
+      url: "/landing/rbd-app",
       bgColor: "bg-gradient-to-b from-[#8919FA] to-[#63389E]",
       textColor: "text-white",
       icon: <Image src={newRbdLogo} alt="RBD App" width={100} height={100} />,
@@ -81,7 +81,7 @@ export default async function Home() {
     },
     {
       name: "Optimum OH App",
-      url: "/optimum-oh-app",
+      url: "/landing/optimum-oh-app",
       bgColor: "bg-gradient-to-b from-[#1D9DB6] to-[#2276AD]",
       textColor: "text-white",
       icon: (
@@ -117,7 +117,7 @@ export default async function Home() {
             className={`w-full h-full object-cover`}
           />
         </div> */}
-        <Card className="w-full h-auto sm:h-[92vh] rounded-none bg-transparent overflow-hidden p-0">
+        <Card className="w-full h-auto sm:h-[100dvh] rounded-none bg-transparent overflow-hidden p-0">
           <CardBody className="flex flex-wrap overflow-hidden justify-center w-full h-full items-center p-0">
             <section className="grid grid-cols-1 sm:grid-cols-3 place-items-center place-content-center gap-4">
               {appList.map((item, index) => (

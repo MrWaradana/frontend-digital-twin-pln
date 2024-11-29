@@ -1,3 +1,5 @@
+"use client";
+
 import { EFFICIENCY_API_URL } from "../api-url";
 import { HookReply } from "./types";
 import { useApiFetch } from "./useApiFetch";

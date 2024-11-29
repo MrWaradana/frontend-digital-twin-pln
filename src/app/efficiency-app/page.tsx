@@ -691,95 +691,39 @@ export default function Page() {
                   switch (String(key)) {
                     case "total_persen":
                       return (
-                        <Popover
+                        <div
                           key={key}
-                          placement="right-end"
-                          showArrow={true}
-                          isOpen={false}
+                          className="text-center bg-gray-100 px-2 py-2 flex items-center justify-between rounded-xl dark:text-black"
                         >
-                          <PopoverTrigger>
-                            <Button
-                              isDisabled={true}
-                              className="text-center bg-gray-100 px-2 py-7 inline-flex items-center justify-between rounded-xl dark:text-black !opacity-100"
-                            >
-                              <div className="flex flex-col gap-1 justify-start items-start">
-                                <p className="font-bold text-base">
-                                  Total Persen Loss
-                                </p>
-                                <p className={`text-sm text-gray-500`}>
-                                  {formattedNumber(
-                                    Number(paretoCompareData[key]).toFixed(2)
-                                  )}{" "}
-                                  %
-                                </p>
-                              </div>
-                              {isLoadingCompare ? (
-                                <Spinner />
-                              ) : (
-                                <p
-                                  className={`inline-flex items-center text-7xl`}
-                                >
-                                  <ArrowUpIcon
-                                    className={`${
-                                      Number(paretoCompareData[key]) > 0
-                                        ? "text-green-500"
-                                        : Number(paretoCompareData[key]) == 0
-                                        ? "hidden"
-                                        : "text-[#D93832] rotate-180"
-                                    }`}
-                                    width={36}
-                                    height={36}
-                                  />
-                                </p>
-                              )}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className={`bg-gray-100`}>
-                            <div className="px-1 py-2 flex flex-col divide-y-1 divide-black">
-                              {Object.keys(categoriesCompareData).map((key) => {
-                                return (
-                                  <div
-                                    key={key}
-                                    className="text-center bg-gray-100 px-2 py-2 flex items-center justify-between dark:text-black"
-                                  >
-                                    <div className="flex flex-col gap-1 justify-start items-start">
-                                      <p className="font-bold text-sm">{key}</p>
-                                      <p className={`text-xs text-gray-500`}>
-                                        {formattedNumber(
-                                          Number(
-                                            categoriesCompareData[key]
-                                          ).toFixed(2)
-                                        )}{" "}
-                                      </p>
-                                    </div>
-                                    {isLoadingCompare ? (
-                                      <Spinner />
-                                    ) : (
-                                      <p
-                                        className={`inline-flex items-center text-xl`}
-                                      >
-                                        <ArrowUpIcon
-                                          className={`${
-                                            Number(categoriesCompareData[key]) >
-                                            0
-                                              ? "text-green-500"
-                                              : Number(
-                                                  categoriesCompareData[key]
-                                                ) == 0
-                                              ? "hidden"
-                                              : "text-[#D93832] rotate-180"
-                                          }`}
-                                          width={24}
-                                          height={24}
-                                        />
-                                      </p>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </PopoverContent>
-                        </Popover>
+                          <div className="flex flex-col gap-1 justify-start items-start">
+                            <p className="font-bold text-base">
+                              Total Persen Loss
+                            </p>
+                            <p className={`text-sm text-gray-500`}>
+                              {formattedNumber(
+                                Number(paretoCompareData[key]).toFixed(2)
+                              )}{" "}
+                              %
+                            </p>
+                          </div>
+                          {isLoadingCompare ? (
+                            <Spinner />
+                          ) : (
+                            <p className={`inline-flex items-center text-7xl`}>
+                              <ArrowUpIcon
+                                className={`${
+                                  Number(paretoCompareData[key]) > 0
+                                    ? "text-green-500"
+                                    : Number(paretoCompareData[key]) == 0
+                                    ? "hidden"
+                                    : "text-[#D93832] rotate-180"
+                                }`}
+                                width={36}
+                                height={36}
+                              />
+                            </p>
+                          )}
+                        </div>
                       );
                     case "total_nilai":
                       return (
@@ -876,7 +820,9 @@ export default function Page() {
                           className="text-center bg-gray-100 px-2 py-2 flex items-center justify-between rounded-xl dark:text-black"
                         >
                           <div className="flex flex-col gap-1 justify-start items-start">
-                            <p className="font-bold text-base">{key}</p>
+                            <p className="font-bold text-base capitalize">
+                              {formatUnderscoreToSpace(key)}
+                            </p>
                             <p className={`text-sm text-gray-500`}>
                               {formattedNumber(
                                 Number(paretoCompareData[key]).toFixed(2)

@@ -91,11 +91,11 @@ export default function Navbar() {
           base: ["w-full"],
           wrapper: ["w-full"],
         }}
-        position={`static`}
+        position={`sticky`}
         maxWidth={`full`}
         isBlurred={false}
         isBordered={false}
-        className="z-[999] bg-transparent flex flex-row !w-full justify-center px-4"
+        className="z-[999] bg-transparent flex flex-row !w-full justify-center px-4 fixed top-2"
       >
         <NavbarContent className="sm:hidden" justify="start">
           <NavbarMenuToggle
@@ -134,12 +134,12 @@ export default function Navbar() {
           </NavbarBrand>
         </NavbarContent>
 
-        <NavbarContent
+        {/* <NavbarContent
           justify={"center"}
           className={`flex w-full justify-center`}
         >
           <ModeToggle />
-        </NavbarContent>
+        </NavbarContent> */}
         <NavbarContent justify={"end"} className={`flex justify-around`}>
           <NavbarItem>
             <Button
