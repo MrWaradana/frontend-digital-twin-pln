@@ -12,37 +12,52 @@ import {
 } from "recharts";
 
 const PredictChart = ({
-  tagValues,
+  equipmentValues,
 }: {
-  tagValues: any;
+  equipmentValues: any;
 }) => {
-  const [tagValuePercent, setTagValuePercent] = React.useState(0);
+
+  const formatter = new Intl.DateTimeFormat('id', {
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+  });
 
   // Proses data dengan memoized function
-  const tagValuesData = React.useMemo(() => {
-    if (!tagValues || tagValues.length === 0) return [];
-    const processedData = tagValues.flatMap((v: any) => {
-      setTagValuePercent(v.percentage || 0); // Ambil persentase dari data
-      return v.data.map((d: any) => ({
-        category: d.timestamp,
-        value: d.value,
-      }));
-    });
-    return processedData;
-  }, [tagValues]);
+  const values = React.useMemo(() => {
+    if (!equipmentValues) return [];
+    return equipmentValues.flatMap((item: any) =>
+      item.values?.map((value: any) => ({
+        category: formatter.format(new Date(value.date_time)),
+        value: value.value,
+      })) || []
+    );
+  }, [equipmentValues]);
 
-  const series = React.useMemo(
-    () => [
-      {
-        name: "Series 1",
-        data: tagValuesData,
-        stroke: "#8884d8",
-      },
-    ],
-    [tagValuesData]
-  );
+  const predictions = React.useMemo(() => {
+    if (!equipmentValues) return [];
+    return equipmentValues.flatMap((item: any) =>
+      item.predictions?.map((value: any) => ({
+        category: formatter.format(new Date(value.date_time)),
+        value: value.pfi_value,
+      })) || []
+    );
+  }, [equipmentValues]);
 
-  if (!tagValuesData || tagValuesData.length === 0) {
+  const series = [
+    {
+      name: 'Values',
+      data: values,
+      stroke: '#8884d8',
+    },
+    {
+      name: 'Predictions',
+      data: predictions,
+      stroke: '#82ca9d',
+    },
+  ];
+
+  if (!equipmentValues || equipmentValues.length === 0) {
     return <div>Loading data...</div>;
   }
 
@@ -50,12 +65,10 @@ const PredictChart = ({
     <div className="col-span-2 flex flex-col items-center w-full">
       <div className="flex">
         <span className="text-center mb-4">Potential Failure Interval Chart</span>
-        <span className="text-neutral-500 ms-4">{Math.round(tagValuePercent)} %</span>
-        <span className="text-neutral-500 ms-4">{tagValuesData.length}</span>
       </div>
       <div className="w-full h-80 md:h-[400px] lg:h-[500px]">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={tagValuesData}>
+          <LineChart data={series}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="category" type="category" allowDuplicatedCategory={false} />
             <YAxis dataKey="value" />

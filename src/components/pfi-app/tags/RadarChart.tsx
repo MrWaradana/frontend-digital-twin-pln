@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import {
   PolarAngleAxis,
   PolarGrid,
@@ -11,7 +10,6 @@ import {
 } from 'recharts';
 
 const RadarComponent = ({ dataRow, selectedKeys }: { dataRow: any; selectedKeys: string }) => {
-  const router = useRouter();
 
   const tooltipContent = (props: any) => {
     const { payload } = props;
@@ -23,7 +21,7 @@ const RadarComponent = ({ dataRow, selectedKeys }: { dataRow: any; selectedKeys:
           <span className="text-white text-sm me-auto">{payload[0].payload.subject}</span>
           <span className="text-white text-sm">{payload[0].value}</span>
         </div>
-        <Link href={`/pfi-app/tags/${selectedKeys}?features_id=${payload[0].payload.id}`} className="text-sm text-neutral-200 pt-5">
+        <Link href={`/pfi-app/tags/${selectedKeys}?features_id=${payload[0].payload.id}&sensor_id=b538d5d4-7e3c-46ac-b3f0-c35136317557`} className="text-sm text-neutral-200 pt-5">
           see details {">"}
         </Link>
       </div>

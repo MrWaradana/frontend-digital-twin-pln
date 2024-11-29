@@ -1,84 +1,86 @@
 import * as echarts from "echarts";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useMemo } from "react";
 
 const PredictChart2 = ({ dataRow }: { dataRow: any }) => {
-  const chartRef = useRef(null); // Referensi ke elemen DOM untuk chart
-  const [dropdownVisible, setDropdownVisible] = useState(false); // State untuk visibilitas dropdown
-  const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 }); // Posisi dropdown
-  const [clickedData, setClickedData]: any = useState(null); // Data dari elemen yang diklik
+  const chartRef = useRef<HTMLDivElement>(null);
 
+  const formatter = new Intl.DateTimeFormat("id", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
 
-  let data: { name: string; value: (string | number)[] }[] = [];
-  let now = new Date(1997, 9, 3);
-  let oneDay = 24 * 3600 * 1000;
-  let value = Math.random() * 1000;
-  for (var i = 0; i < 1000; i++) {
-    data.push(randomData());
-  }
+  const values = useMemo(() => {
+    if (!dataRow) return [];
+    return dataRow.flatMap((item: any) =>
+      item.values?.map((value: any) => ({
+        category: formatter.format(new Date(value.date_time)),
+        value: value.value,
+      })) || []
+    );
 
-  function randomData() {
-    now = new Date(+now + oneDay);
-    value = value + Math.random() * 21 - 10;
-    return {
-      name: now.toString(),
-      value: [
-        [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
-        Math.round(value)
-      ]
-    };
-  }
+  }, [dataRow]);
+
+  const predictions = useMemo(() => {
+    if (!dataRow) return [];
+    return dataRow.flatMap((item: any) =>
+      item.predictions?.map((value: any) => ({
+        category: formatter.format(new Date(value.date_time)),
+        value: value.pfi_value,
+      })) || []
+    );
+  }, [dataRow]);
 
   useEffect(() => {
-    let myChart;
+    let myChart: echarts.ECharts | undefined;
+
     if (chartRef.current) {
       myChart = echarts.init(chartRef.current);
 
       const option = {
-        tooltip: {
-          trigger: 'axis',
-          formatter: function (params) {
-            params = params[0];
-            var date = new Date(params.name);
-            return (
-              date.getDate() +
-              '/' +
-              (date.getMonth() + 1) +
-              '/' +
-              date.getFullYear() +
-              ' : ' +
-              params.value[1]
-            );
-          },
-          axisPointer: {
-            animation: false
-          }
-        },
         xAxis: {
-          type: 'time',
-          splitLine: {
-            show: false
-          }
+          type: "category",
+          data: [...values, ...predictions].map((item) => item.category),
+          boundaryGap: false,
+          axisLabel: {
+            formatter: (value: string) => value, // Formatter langsung karena data sudah diformat
+            rotate: 45,
+          },
         },
         yAxis: {
-          type: 'value',
-          boundaryGap: [0, '100%'],
-          splitLine: {
-            show: false
-          }
+          type: "value",
+        },
+        legend: {
+          data: ["Actual", "Predictions"],
+        },
+        tooltip: {
+          trigger: "axis",
+          formatter: (params: any) =>
+            params
+              .map(
+                (data: any) =>
+                  `${data.marker} ${data.seriesName} <br/>${data.axisValue}: ${data.value}`
+              )
+              .join("<br/>"),
         },
         series: [
           {
-            name: 'Fake Data',
-            type: 'line',
-            showSymbol: false,
-            data: data
+            name: "Actual",
+            type: "line",
+            lineStyle: {
+              color: "#1C9EB6",
+            },
+            data: values.map((item) => [item.category, item.value]),
           },
           {
-            name: '2 Data',
-            type: 'line',
-            showSymbol: false,
-            data: data
-          }
+            name: "Predictions",
+            type: "line",
+            lineStyle: {
+              type: "dashed",
+              color: "#62499D",
+            },
+            data: predictions.map((item) => [item.category, item.value]),
+          },
         ],
         dataZoom: [
           {
@@ -104,33 +106,8 @@ const PredictChart2 = ({ dataRow }: { dataRow: any }) => {
         ]
       };
 
-      setInterval(function () {
-        for (var i = 0; i < 5; i++) {
-          data.shift();
-          data.push(randomData());
-        }
-        myChart.setOption({
-          series: [
-            {
-              data: data
-            }
-          ]
-        });
-      }, 1000);
-
-      // Render chart
       myChart.setOption(option);
 
-      // Event handler untuk klik
-      myChart.on("click", (params) => {
-        if (params) {
-          setClickedData(params); // Simpan data yang diklik
-          setDropdownPosition({ x: params.event.offsetX, y: params.event.offsetY }); // Simpan posisi klik
-          setDropdownVisible(true); // Tampilkan dropdown
-        }
-      });
-
-      // Tangani resize untuk responsivitas
       const handleResize = () => {
         if (myChart) {
           myChart.resize();
@@ -139,7 +116,6 @@ const PredictChart2 = ({ dataRow }: { dataRow: any }) => {
 
       window.addEventListener("resize", handleResize);
 
-      // Bersihkan saat komponen unmount
       return () => {
         if (myChart) {
           myChart.dispose();
@@ -147,7 +123,7 @@ const PredictChart2 = ({ dataRow }: { dataRow: any }) => {
         window.removeEventListener("resize", handleResize);
       };
     }
-  }, []);
+  }, [values, predictions]);
 
   return (
     <div className="col-span-2 flex flex-col items-center w-full">
@@ -155,13 +131,11 @@ const PredictChart2 = ({ dataRow }: { dataRow: any }) => {
         <span className="text-center mb-4">Potential Failure Interval Chart</span>
       </div>
       <div className="w-full h-80 md:h-[400px] lg:h-[500px]">
-        {/* Tempat untuk ECharts */}
         <div
           ref={chartRef}
           style={{ width: "100%", height: "100%" }}
           className="w-full h-80 md:h-[400px] lg:h-[500px]"
         />
-
       </div>
     </div>
   );
