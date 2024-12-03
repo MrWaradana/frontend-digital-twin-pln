@@ -20,13 +20,22 @@ export interface EquipmentTreeNode {
     children?: EquipmentTreeNode[];
 }
 
+export interface EquipmentPagination {
+    items: EquipmentMaster[]
+    page: number
+    total: number
+    itemsPerPage: number
+    totalPages: number
+}
+
 export function useGetDataEquipmentTree(
     token: string | undefined,
+    page: number,
     parent_id?: string | undefined
-): HookReply<EquipmentMaster[]> {
+): HookReply<EquipmentPagination> {
 
     return useApiFetch(
-        `${LCCA_API_URL}/equipment-master${parent_id ? `?parent_id=${parent_id}` : ``}`,
+        `${LCCA_API_URL}/equipment-master?page=${page}${parent_id ? `&parent_id=${parent_id}` : ``}`,
         !!token,
         token
     );

@@ -9,30 +9,196 @@ import { useSession } from "next-auth/react";
 import { Tree, TreeHeaderTemplateOptions } from "primereact/tree";
 import { useEffect, useMemo, useState } from "react";
 import ReactECharts from 'echarts-for-react';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination"
+
+import {
+    Card,
+    CardContent
+} from "@/components/ui/card"
+import { cn } from "@/lib/utils";
 
 export default function Page() {
     return (
         <OverviewContainer
             containerClassName="main-container"
-            navbarTitle="LCCA"
-            headerTitle="Overview"
+            navbarTitle="LCCA App"
         >
-            <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white w-full px-4 py-4 shadow-lg rounded-lg">
+            <div className="flex justify-between">
+                <div className="bg-white w-full px-8 py-7 shadow-lg rounded-lg">
                     <h1 className="font-bold text-2xl">
-                        Test Tree
+                        TJB UNIT 3
                     </h1>
-                    <TreeExample />
-                </div>
-                <div className="bg-white w-full px-4 py-4 shadow-lg rounded-lg">
-                    <h1 className="font-bold text-2xl">
-                        Chart Example
-                    </h1>
+                    <div className={`flex flex-row gap-3 my-3`}>
+                        <HeaderCard>
+                            {/* <div className="pl-[6px] bg-gradient-to-b from-pink-500 to-purple-500">
+                                <div className="bg-white h-full w-full p-4">
+                                    Content goes here
+                                </div>
+                            </div> */}
+                            <p className="text-sm font-semibold">
+                            Nilai Aset Awal
+                            </p>
+                            <div
+                                className={`pl-[5px] bg-gradient-to-b from-[#1C9EB6] to-white flex flex-col`}
+                            >
+                                <div className="bg-white pl-3">
+                                    <h2 className="text-5xl font-bold">5.95</h2>
+                                    <small className={`text-xs text-neutral-400`}>Triliun</small>
+                                </div>
+                            </div>
+                        </HeaderCard>
+                        <HeaderCard>
+                            {/* <div className="pl-[6px] bg-gradient-to-b from-pink-500 to-purple-500">
+                                <div className="bg-white h-full w-full p-4">
+                                    Content goes here
+                                </div>
+                            </div> */}
+                            <p className="text-sm font-semibold">
+                                Masa Manfaat
+                            </p>
+                            <div
+                                className={`pl-[5px] bg-gradient-to-b from-[#1C9EB6] to-white flex flex-col`}
+                            >
+                                <div className="bg-white pl-3">
+                                    <h2 className="text-5xl font-bold">30</h2>
+                                    <small className={`text-xs text-neutral-400`}>Tahun</small>
+                                </div>
+                            </div>
+                        </HeaderCard>
+                        <HeaderCard>
+                            {/* <div className="pl-[6px] bg-gradient-to-b from-pink-500 to-purple-500">
+                                <div className="bg-white h-full w-full p-4">
+                                    Content goes here
+                                </div>
+                            </div> */}
+                            <p className="text-sm font-semibold">
+                                Tahun COD
+                            </p>
+                            <div
+                                className={`pl-[5px] bg-gradient-to-b from-[#1C9EB6] to-white flex flex-col`}
+                            >
+                                <div className="bg-white pl-3">
+                                    <h2 className="text-5xl font-bold">2013</h2>
+                                    <small className={`text-xs text-neutral-400`}>Tahun</small>
+                                </div>
+                            </div>
+                        </HeaderCard>
+                        <HeaderCard>
+                            {/* <div className="pl-[6px] bg-gradient-to-b from-pink-500 to-purple-500">
+                                <div className="bg-white h-full w-full p-4">
+                                    Content goes here
+                                </div>
+                            </div> */}
+                            <p className="text-sm font-semibold">
+                                Daya Mampu (Netto)
+                            </p>
+                            <div
+                                className={`pl-[5px] bg-gradient-to-b from-[#1C9EB6] to-white flex flex-col`}
+                            >
+                                <div className="bg-white pl-3">
+                                    <h2 className="text-5xl font-bold">615</h2>
+                                    <small className={`text-xs text-neutral-400`}>MW</small>
+                                </div>
+                            </div>
+                        </HeaderCard>
+                        <HeaderCard>
+                            {/* <div className="pl-[6px] bg-gradient-to-b from-pink-500 to-purple-500">
+                                <div className="bg-white h-full w-full p-4">
+                                    Content goes here
+                                </div>
+                            </div> */}
+                            <p className="text-sm font-semibold">
+                                Daya Terpasang
+                            </p>
+                            <div
+                                className={`pl-[5px] bg-gradient-to-b from-[#1C9EB6] to-white flex flex-col`}
+                            >
+                                <div className="bg-white pl-3">
+                                    <h2 className="text-5xl font-bold">660</h2>
+                                    <small className={`text-xs text-neutral-400`}>MW</small>
+                                </div>
+                            </div>
+                        </HeaderCard>
+                        <HeaderCard>
+                            {/* <div className="pl-[6px] bg-gradient-to-b from-pink-500 to-purple-500">
+                                <div className="bg-white h-full w-full p-4">
+                                    Content goes here
+                                </div>
+                            </div> */}
+                            <p className="text-sm font-semibold">
+                                Sisa Masa Manfaat
+                            </p>
+                            <div
+                                className={`pl-[5px] bg-gradient-to-b from-[#1C9EB6] to-white flex flex-col`}
+                            >
+                                <div className="bg-white pl-3">
+                                    <h2 className="text-5xl font-bold">19</h2>
+                                    <small className={`text-xs text-neutral-400`}>Tahun</small>
+                                </div>
+                            </div>
+                        </HeaderCard>
+                        <HeaderCard>
+                            {/* <div className="pl-[6px] bg-gradient-to-b from-pink-500 to-purple-500">
+                                <div className="bg-white h-full w-full p-4">
+                                    Content goes here
+                                </div>
+                            </div> */}
+                            <p className="text-sm font-semibold">
+                                Revenue
+                            </p>
+                            <div
+                                className={`pl-[5px] bg-gradient-to-b from-[#1C9EB6] to-white flex flex-col`}
+                            >
+                                <div className="bg-white pl-3">
+                                    <h2 className="text-5xl font-bold">10</h2>
+                                    <small className={`text-xs text-neutral-400`}>Tahun</small>
+                                </div>
+                            </div>
+                        </HeaderCard>
+                        
+                    </div>
                     <EchartExample />
                 </div>
             </div>
 
         </OverviewContainer>
+    )
+}
+
+
+interface HeaderCardProps {
+    children: React.ReactNode
+    className?: string
+}
+
+export function HeaderCard(HeaderCardProps) {
+    const { children, className } = HeaderCardProps
+    { `shadow-2xl w-full bg-white rounded-3xl hover:-translate-y-1 transition ease-soft-spring` }
+
+    return (
+        <Card className={cn("shadow-2xl w-full bg-white rounded-3xl hover:-translate-y-1 transition ease-soft-spring", `${className}`)}>
+            <CardContent className="flex flex-col justify-around pt-5 gap-4">
+                {/* <p className="text-sm font-semibold">
+                        Revenue
+                    </p>
+                    <span
+                        className={`border-l-4 pl-3 border-blue-400 flex flex-col`}
+                    >
+                        <h2 className="text-5xl font-bold">10</h2>
+                        <small className={`text-xs text-neutral-400`}>Tahun</small>
+                    </span> */}
+                {children}
+
+            </CardContent>
+        </Card>
     )
 }
 
@@ -45,8 +211,11 @@ function TreeExample(props: TreeExample) {
 
     const { data: session } = useSession()
 
-    const { data, isLoading } = useGetDataEquipmentTree(session?.user.access_token)
 
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
+    const { data, isLoading } = useGetDataEquipmentTree(session?.user.access_token, page)
 
     function customHeader({ filterContainerClassName, filterIconClasssName, filterInput, filterElement, element, props }: TreeHeaderTemplateOptions) {
         return (
@@ -76,10 +245,11 @@ function TreeExample(props: TreeExample) {
     useEffect(() => {
         if (!data) return;
 
-        const _nodes = data.map(equipment_master => transformCategory(equipment_master));
+        const _nodes = data.items.map(equipment_master => transformCategory(equipment_master));
 
         // @ts-ignore
         setNodes(_nodes);
+        setTotalPages(data.totalPages);
     }, [data]);
 
     if (isLoading) {
@@ -134,7 +304,54 @@ function TreeExample(props: TreeExample) {
                 header={customHeader}
                 filterPlaceholder="Search by name"
             />
+            <Pagination>
+                <PaginationContent>
+                    <PaginationItem>
+                        <PaginationPrevious onClick={() => setPage(prev => prev - 1)} />
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationLink href="#">{page}</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationNext onClick={() => setPage(prev => prev + 1)} />
+                    </PaginationItem>
+                </PaginationContent>
+            </Pagination>
+
         </div>
+    )
+}
+
+export function PaginationDemo() {
+
+
+    return (
+        <Pagination>
+            <PaginationContent>
+                <PaginationItem>
+                    <PaginationPrevious href="#" />
+                </PaginationItem>
+
+                <PaginationItem>
+                    <PaginationLink href="#">1</PaginationLink>
+                </PaginationItem>
+
+                <PaginationItem>
+                    <PaginationLink href="#" isActive>
+                        2
+                    </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                    <PaginationLink href="#">3</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                    <PaginationEllipsis />
+                </PaginationItem>
+                <PaginationItem>
+                    <PaginationNext href="#" />
+                </PaginationItem>
+            </PaginationContent>
+        </Pagination>
     )
 }
 
