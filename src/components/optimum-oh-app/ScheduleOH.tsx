@@ -30,7 +30,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 const now = new Date();
 
 export default function ScheduleOH({ scheduleData, overviewData }: any) {
-  const [view, setView] = useState(Views.WEEK);
+  const [view, setView] = useState(Views.AGENDA);
   const [date, setDate] = useState(new Date(2025, 0, 1));
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   let scopeASchedule = scheduleData.find((item) => item.Overhaul === "A");

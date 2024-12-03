@@ -49,7 +49,6 @@ import { useSelectedEfficiencyDataStore } from "../../store/selectedEfficiencyDa
 import toast from "react-hot-toast";
 import { useStatusThermoflowStore } from "../../store/statusThermoflow";
 import { getLocalTimeZone, today, parseDate } from "@internationalized/date";
-import { Route } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { RangeValue } from "@react-types/shared";
 import { DateValue } from "@react-types/datepicker";
@@ -57,6 +56,7 @@ import { useDateFormatter } from "@react-aria/i18n";
 import ModalInputData from "@/components/efficiency-app/ModalInputData";
 import { debounce } from "lodash";
 import { formattedNumber } from "@/lib/formattedNumber";
+import AddNewAssetModal from "@/components/optimum-oh-app/AddNewAssetModal";
 
 const scopeOptions = [
   { name: "A", uid: "A" },
@@ -137,12 +137,6 @@ export default function TableScope({
     [] // Empty dependency array since we don't want to recreate the debounced function
   );
 
-  const {
-    data: thermoStatusData,
-    isLoading: isLoadingThermoStatus,
-    isValidating: isValidatingThermoStatus,
-  } = useGetThermoStatus();
-
   const dateFormat = {
     year: "numeric",
     month: "2-digit",
@@ -167,12 +161,6 @@ export default function TableScope({
     start: today(getLocalTimeZone()).subtract({ months: 1 }),
     end: today(getLocalTimeZone()),
   });
-  // const [periodValue, setPeriodValue] = React.useState(
-  //   today(getLocalTimeZone())
-  // );
-  // const [startPeriodValue, setStartPeriodValue] = React.useState(
-  //   Number(periodValue) - 30
-  // );
   const [modalChoosePeriod, setModalChoosePeriod] = React.useState(false);
   const [loadingEfficiency, setLoadingEfficiency] = React.useState(false);
   const [filterValue, setFilterValue] = React.useState("");
@@ -183,32 +171,12 @@ export default function TableScope({
     new Set(INITIAL_VISIBLE_COLUMNS)
     // "all"
   );
-  // const [statusFilter, setStatusFilter] = React.useState<Selection>(
-  //   // new Set(INITIAL_VISIBLE_STATUS)
-  //   "all"
-  // );
-  const [parameterFilter, setParameterFilter] = React.useState<Selection>(
-    new Set(INITIAL_VISIBLE_PARAMETER)
-  );
 
   const [sortDescriptor, setSortDescriptor]: any =
     React.useState<SortDescriptor>({
       column: "age",
       direction: "ascending",
     });
-
-  const StatusThermoflow = useStatusThermoflowStore(
-    (state) => state.statusThermoflow
-  );
-  const selectedEfficiencyData = useSelectedEfficiencyDataStore(
-    (state) => state.selectedEfficiencyData
-  ); // Retrieve currentKey from Zustand
-
-  // useEffect(() => {
-  //   if (selectedEfficiencyData) {
-  //     setSelectedKeys(new Set([selectedEfficiencyData])); // Convert currentKey to Set and update the state
-  //   }
-  // }, [selectedEfficiencyData]);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -235,14 +203,6 @@ export default function TableScope({
       );
     }
     if (
-      parameterFilter !== "all" &&
-      Array.from(parameterFilter).length !== parameterOptions.length
-    ) {
-      filteredData = filteredData.filter((item) =>
-        Array.from(parameterFilter).includes(item.input_type)
-      );
-    }
-    if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
@@ -256,7 +216,7 @@ export default function TableScope({
     });
 
     return filteredData;
-  }, [tableData, hasSearchFilter, parameterFilter, statusFilter, filterValue]);
+  }, [tableData, hasSearchFilter, statusFilter, filterValue]);
 
   // const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -447,9 +407,7 @@ export default function TableScope({
                     >
                       Engine Flow
                     </DropdownItem> */}
-                    <DropdownItem href={`/efficiency-app/${rowData.id}/output`}>
-                      Edit
-                    </DropdownItem>
+                    <DropdownItem href={`#`}>Edit</DropdownItem>
                     {/* <DropdownItem href="#">Edit</DropdownItem>*/}
                     <DropdownItem
                       onPress={() => {
@@ -510,6 +468,8 @@ export default function TableScope({
       <div className="flex flex-col gap-4">
         <Select
           labelPlacement={`outside-left`}
+          disallowEmptySelection
+          size="sm"
           label="Scope"
           className="max-w-xs items-center"
           onChange={(e) => {
@@ -517,6 +477,7 @@ export default function TableScope({
             setScopeFilter(newValue);
             setFilterScope(newValue);
           }}
+          defaultSelectedKeys={["A"]}
         >
           {scopeOptions.map((scope) => (
             <SelectItem key={scope.uid}>{scope.name}</SelectItem>
@@ -539,14 +500,7 @@ export default function TableScope({
             }}
           />
           <div className="flex gap-3">
-            <Button
-              color="default"
-              className={`bg-[#1C9EB6] text-white ${
-                session?.data?.user.user.role === "Management" ? "hidden" : ""
-              } `}
-            >
-              Add New Asset
-            </Button>
+            <AddNewAssetModal filterScope={filterScope} />
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -565,9 +519,7 @@ export default function TableScope({
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
             >
-              <option value="5" selected>
-                5
-              </option>
+              <option value="5">5</option>
               <option value="10">10</option>
               <option value="15">15</option>
             </select>
@@ -646,54 +598,15 @@ export default function TableScope({
               undone.
             </ModalBody>
             <ModalFooter>
+              <Button variant="light" onPress={onClose}>
+                Cancel
+              </Button>
               <Button
                 color="danger"
                 isLoading={isDeleteLoading}
-                onPress={handleDelete}
+                // onPress={handleDelete}
               >
                 Delete
-              </Button>
-              <Button variant="light" onPress={onClose}>
-                Cancel
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
-  );
-
-  const choosePeriodicModal = (
-    <Modal isOpen={modalChoosePeriod} onOpenChange={setModalChoosePeriod}>
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader>Select Period Date for Max 30 Days Period</ModalHeader>
-            <ModalBody>
-              <DateRangePicker
-                label="Date period"
-                className="max-w-[284px]"
-                maxValue={today(getLocalTimeZone())}
-                value={periodValue}
-                defaultValue={{
-                  start: today(getLocalTimeZone()),
-                  end: today(getLocalTimeZone()),
-                }}
-                showMonthAndYearPickers
-                description="Select a date range (maximum 30 days)"
-                onChange={handleDateRangeChange}
-              />
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                color="success"
-                // isLoading={isDeleteLoading}
-                onPress={handlePeriod}
-              >
-                Submit
-              </Button>
-              <Button variant="light" onPress={onClose}>
-                Cancel
               </Button>
             </ModalFooter>
           </>
@@ -704,7 +617,7 @@ export default function TableScope({
 
   const classNames = React.useMemo(
     () => ({
-      wrapper: ["max-h-full"],
+      wrapper: ["min-h-full"],
       th: ["bg-transparent", "text-default-500", "border-b", "border-divider"],
       thead: [
         "bg-transparent",
@@ -732,22 +645,6 @@ export default function TableScope({
   return (
     <>
       {deleteConfirmationModal}
-      {/* {choosePeriodicModal} */}
-      <ModalInputData
-        modalChoosePeriod={modalChoosePeriod}
-        setModalChoosePeriod={setModalChoosePeriod}
-        showVariables={showVariables}
-        setShowVariables={setShowVariables}
-        selectedParameter={selectedParameter}
-        setSelectedParameter={setSelectedParameter}
-        loading={loading}
-        setLoading={setLoading}
-        confirmationModalOpen={confirmationModalOpen}
-        setConfirmationModalOpen={setConfirmationModalOpen}
-        periodValue={periodValue}
-        setPeriodValue={setPeriodValue}
-        thermoStatusData={thermoStatusData}
-      />
       <Table
         aria-label="Efficiency Data Table"
         isCompact

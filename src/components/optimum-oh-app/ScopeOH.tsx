@@ -24,7 +24,7 @@ export default function ScopeOH() {
   const [filterSearch, setFilterSearch] = useState("");
   const [filterParameter, setFilterParameter] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
-  const [filterScope, setFilterScope] = useState("");
+  const [filterScope, setFilterScope] = useState("A");
   const [statusFilter, setStatusFilter] = useState<Selection>(
     // new Set(INITIAL_VISIBLE_STATUS)
     "all"
