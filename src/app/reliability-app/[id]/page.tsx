@@ -5,17 +5,51 @@ import { RPContentLayout } from "@/containers/RPContentLayout";
 import DropdownEquipmentLevel from "@/components/reliability-app/DropdownEquipmentLevel";
 import { Calculator, CircleAlert, CircleCheck, Loader } from "lucide-react";
 import { PredictionCalculator } from "@/components/reliability-app/PredictionCalculator";
-
-const Page = () => {
+import { useSession } from "next-auth/react";
+import { useGetMDT } from "@/lib/APIs/reliability-predict/useGetMDT";
+import { CircularProgress } from "@nextui-org/react";
+import { useGetMTTR } from "@/lib/APIs/reliability-predict/useGetMTTR";
+import { useGetFailureRate } from "@/lib/APIs/reliability-predict/useGetFailureRate";
+import { useGetReliabilityCurrent } from "@/lib/APIs/reliability-predict/useGetReliability";
+const Page = ({ params }: { params: { id: string } }) => {
   const [selectedOption1, setSelectedOption1] = useState("");
   const [selectedOption2, setSelectedOption2] = useState("");
   const [selectedOption3, setSelectedOption3] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const id = params.id;
   const openModal = () => setIsModalOpen(true);
-
   const options = ["Option 1", "Option 2", "Option 3"];
+  const { data: session } = useSession();
+  const { data: mdtvalue, isLoading: mdtloading } = useGetMDT(
+    id,
+    session?.user.access_token
+  );
+  const { data: mttrvalue, isLoading: mttrloading } = useGetMTTR(
+    id,
+    session?.user.access_token
+  );
+  const { data: failureRatevalue, isLoading: failureRateloading } =
+    useGetFailureRate(id, session?.user.access_token);
+  const { data: reliabilityCurrentvalue, isLoading: reliabilityloading } =
+    useGetReliabilityCurrent(id, session?.user.access_token);
 
+  const failureRate = failureRatevalue?.reliability
+    ? `${(failureRatevalue.reliability * 100).toFixed(2)}%`
+    : "None";
+
+  const reliabilityCurrent = reliabilityCurrentvalue?.reliability_value
+    ? `${(reliabilityCurrentvalue.reliability_value * 100).toFixed(2)}%`
+    : "None";
+  const mttr = mttrvalue?.hours ?? 0;
+  const mdt = mdtvalue?.hours ?? 0;
+  if (mdtloading || mttrloading || failureRateloading || reliabilityloading) {
+    return (
+      <div className="w-full h-screen flex justify-center items-center">
+        <CircularProgress color="secondary" />
+        Loading ...
+      </div>
+    );
+  }
   return (
     <RPContentLayout title="Reliability Predicts App">
       <div className="flex flex-col h-[calc(100vh-135px)] ">
@@ -101,14 +135,14 @@ const Page = () => {
                 <div className="flex flex-row">
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">12</div>
+                    <div className="text-4xl font-bold">{mdt}</div>
                     <div className="text-[10px] text-[#918E8E]">Jam</div>
                   </div>
-                  <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
+                  {/* <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
                     <div className="text-4xl font-bold">120</div>
                     <div className="text-[10px] text-[#918E8E]">Hari</div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className="flex-1 flex flex-col gap-4 justify-between  shadow-xl bg-white rounded-3xl p-6">
@@ -126,14 +160,14 @@ const Page = () => {
                 <div className="flex flex-row">
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">17</div>
+                    <div className="text-4xl font-bold">{mttr}</div>
                     <div className="text-[10px] text-[#918E8E]">Jam</div>
                   </div>
-                  <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
+                  {/* <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
                     <div className="text-4xl font-bold">147</div>
                     <div className="text-[10px] text-[#918E8E]">Hari</div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className="flex-1 flex flex-col gap-4 justify-between  shadow-xl bg-white rounded-3xl p-6">
@@ -149,7 +183,9 @@ const Page = () => {
                       />
                     </div>
                   </div>
-                  <div className="text-md font-bold">Failure Value</div>
+                  <div className="text-md font-bold">
+                    Mean Time between Failure
+                  </div>
                 </div>
                 <div className="flex flex-row">
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
@@ -169,12 +205,12 @@ const Page = () => {
                       absoluteStrokeWidth
                     />
                   </div>
-                  <div className="text-md font-bold">Reliability Value</div>
+                  <div className="text-md font-bold">Failure Rate</div>
                 </div>
                 <div className="flex flex-row">
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">86</div>
+                    <div className="text-4xl font-bold">{failureRate}</div>
                     <div className="text-[10px] text-[#918E8E]">%</div>
                   </div>
                 </div>
@@ -189,12 +225,14 @@ const Page = () => {
                       absoluteStrokeWidth
                     />
                   </div>
-                  <div className="text-md font-bold">Reliability Function</div>
+                  <div className="text-md font-bold">Reliability</div>
                 </div>
                 <div className="flex flex-row">
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#F49C38] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">78</div>
+                    <div className="text-4xl font-bold">
+                      {reliabilityCurrent}
+                    </div>
                     <div className="text-[10px] text-[#918E8E]">%</div>
                   </div>
                 </div>

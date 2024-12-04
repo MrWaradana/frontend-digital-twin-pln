@@ -11,7 +11,7 @@ import { useSession } from "next-auth/react";
 import { useGetDataTag } from "@/lib/APIs/useGetDataTag";
 
 export default function Page() {
-  const router = useRouter()
+  const router = useRouter();
   const { data: session } = useSession();
 
   const {
@@ -19,8 +19,7 @@ export default function Page() {
     isLoading,
     isValidating,
     mutate,
-  } = useGetDataTag(session?.user?.access_token, 1)
-
+  } = useGetDataTag(session?.user?.access_token, 1);
 
   if (isLoading) {
     return (
@@ -66,8 +65,6 @@ export default function Page() {
             />
           </div>
         </div>
-
-
       </div>
     </PFIContentLayout>
   );

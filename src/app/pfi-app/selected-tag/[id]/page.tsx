@@ -15,10 +15,10 @@ const Page = ({ params }: { params: { id: number } }) => {
   const id = params.id;
 
   const { data: session } = useSession();
-  const {
-    data: psd_data,
-    isLoading,
-  } = useGetDataPSD(session?.user?.access_token, id);
+  const { data: psd_data, isLoading } = useGetDataPSD(
+    session?.user?.access_token,
+    id
+  );
 
   if (isLoading) {
     return (
@@ -29,7 +29,7 @@ const Page = ({ params }: { params: { id: number } }) => {
     );
   }
 
-  const values = psd_data?.psd_values ?? []
+  const values = psd_data?.psd_values ?? [];
 
   const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -44,17 +44,19 @@ const Page = ({ params }: { params: { id: number } }) => {
     animationEnabled: true,
     zoomEnabled: true,
     title: {
-      text: `PSD Values for ${psd_data?.tag.name || 'Unknown Tag'}`,
+      text: `PSD Values for ${psd_data?.tag.name || "Unknown Tag"}`,
     },
     axisX: {
       title: "Date",
       valueFormatString: "DD MMM YYYY",
       labelAngle: -45,
     },
-    data: [{
-      type: "line",
-      dataPoints: dataPoints,
-    }],
+    data: [
+      {
+        type: "line",
+        dataPoints: dataPoints,
+      },
+    ],
   };
 
   return (
@@ -90,13 +92,17 @@ const Page = ({ params }: { params: { id: number } }) => {
       <div className="container mt-5 text-wrap">
         <h6 className="text-bold">Possible cause :</h6>
         <p>
-          Insufficient Cooling: If the oil cooling system is not functioning properly, the oil temperature may rise. This could be due to a malfunction in the cooling water circuit, fan, or heat exchanger.
+          Insufficient Cooling: If the oil cooling system is not functioning
+          properly, the oil temperature may rise. This could be due to a
+          malfunction in the cooling water circuit, fan, or heat exchanger.
         </p>
         <p>
-          Oil Pump Failure: A failure in the oil pump could reduce the flow rate, leading to poor oil circulation and overheating.
+          Oil Pump Failure: A failure in the oil pump could reduce the flow
+          rate, leading to poor oil circulation and overheating.
         </p>
         <p>
-          High Ambient Temperature: Excessively high temperatures in the surrounding environment could contribute to elevated oil temperatures.
+          High Ambient Temperature: Excessively high temperatures in the
+          surrounding environment could contribute to elevated oil temperatures.
         </p>
       </div>
     </PFIContentLayout>

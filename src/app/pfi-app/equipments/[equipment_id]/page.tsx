@@ -24,7 +24,7 @@ const Page = ({ params }: { params: { equipment_id: string } }) => {
     isValidating,
     mutate,
   } = useGetEquipment(session?.user.access_token, id);
-
+  
   const { data: categoriesData } = useGetCategories(session?.user.access_token);
   const { data: eqTreesData } = useGetEqTrees(session?.user.access_token);
 
@@ -63,8 +63,11 @@ const Page = ({ params }: { params: { equipment_id: string } }) => {
               </h1>
             </div>
             <p className="text-sm text-gray-600 mt-2">
-              Manage your {childrens[0]?.parent.name + " " + childrens[0]?.equipment_tree.name}
-              {" "}by viewing the list below.
+              Manage your{" "}
+              {childrens[0]?.parent.name +
+                " " +
+                childrens[0]?.equipment_tree.name}{" "}
+              by viewing the list below.
             </p>
           </div>
 

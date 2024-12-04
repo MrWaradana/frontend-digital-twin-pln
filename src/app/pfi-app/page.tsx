@@ -18,7 +18,6 @@ const Page = () => {
     mutate
   } = useGetEquipmentByParams(session?.user.access_token, "TJB 3");
 
-
   const equipments = equipmentsData?.equipments ?? [];
   const data = React.useMemo(() => {
     return equipments.map(((item, index) => {
