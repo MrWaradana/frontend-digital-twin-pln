@@ -26,7 +26,7 @@ export default function Sidebar({ className }: { className?: string }) {
         `${className}`
       )}
     >
-      {/* <SidebarToggle isOpen={sidebar?.isOpen} setIsOpen={sidebar?.setIsOpen} /> */}
+      <SidebarToggle isOpen={sidebar?.isOpen} setIsOpen={sidebar?.setIsOpen} />
       <div className="relative h-full flex flex-col px-3 py-4 mt-6 overflow-y-auto bg-transparent">
         <Button
           className={cn(
@@ -45,8 +45,7 @@ export default function Sidebar({ className }: { className?: string }) {
             />
           </Link>
         </Button>
-        {/* <Menu isListOpen={sidebar?.isOpen} /> */}
-        <Menu isListOpen={false} />
+        <Menu isListOpen={sidebar?.isOpen} />
       </div>
     </aside>
   );

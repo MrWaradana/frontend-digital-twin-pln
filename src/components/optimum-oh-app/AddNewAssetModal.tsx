@@ -70,6 +70,7 @@ export default function AddNewAssetModal({ filterScope }: any) {
                   pagination={pagination}
                   setPagination={setPagination}
                   mutate={mutate}
+                  filterScope={filterScope}
                 />
               </div>
             </ModalBody>

@@ -18,7 +18,15 @@ export default function Commision() {
     isValidating,
     mutate,
     error,
-  } = useGetData(session?.user.access_token);
+  } = useGetData(
+    session?.user.access_token,
+    0,
+    1,
+    20,
+    "",
+    new Set(["commision"]),
+    ""
+  );
 
   const efficiency = efficiencyData?.transactions ?? [];
   const commisionData = efficiency.filter(

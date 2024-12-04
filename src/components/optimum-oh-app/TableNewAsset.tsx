@@ -8,16 +8,9 @@ import {
 import { useState } from "react";
 import { Button, JsonInput } from "@mantine/core";
 import { Spinner } from "@nextui-org/react";
-
-const data = [
-  {
-    locationTag: "asd",
-    durationOh: "asd",
-    resources: "asd",
-    cost: "asd",
-    description: "asd",
-  },
-];
+import { usePostNewAsset } from "../../lib/APIs/mutation/usePostNewAsset";
+import { useSession } from "next-auth/react";
+import toast from "react-hot-toast";
 
 export default function TableNewAsset({
   dataTable,
@@ -28,8 +21,40 @@ export default function TableNewAsset({
   setPagination,
   mutate,
   totalItems,
+  filterScope,
 }: any) {
+  const { data: session } = useSession();
   const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({}); //ts type available
+
+  const { data, trigger, error, isMutating } = usePostNewAsset(
+    session?.user.access_token
+  );
+
+  const handleSubmitNewAsset = async (values: any) => {
+    try {
+      const result = await trigger({
+        token: session?.user.access_token,
+        body: { scope_name: filterScope, assetnums: values },
+      });
+
+      // Check if values array is empty
+      if (!values || values.length === 0) {
+        toast.error("Please select at least one asset");
+        return;
+      }
+
+      // Success case
+      if (result) {
+        toast.success("Assets added successfully");
+        // Optionally refresh data or clear selection
+        mutate?.();
+        setRowSelection({});
+      }
+    } catch (err) {
+      // Error case
+      toast.error(err instanceof Error ? err.message : "Failed to add assets");
+    }
+  };
 
   const columns = useMemo(
     () =>
@@ -46,7 +71,7 @@ export default function TableNewAsset({
           accessorKey: "name",
           header: "NAME",
         },
-      ] as MRT_ColumnDef<(typeof data)[0]>[],
+      ] as MRT_ColumnDef<(typeof dataTable)[0]>[],
     []
   );
 
@@ -77,15 +102,22 @@ export default function TableNewAsset({
     },
     pageCount: totalPages,
     rowCount: totalItems,
+    positionPagination: "top",
     renderBottomToolbarCustomActions: ({ table }) => (
-      <Button
-        onClick={() => {
-          const selectedRows = table.getSelectedRowModel().rows;
-          alert(JSON.stringify(selectedRows));
-        }}
-      >
-        Download Selected Users
-      </Button>
+      <div className={`w-full flex justify-end`}>
+        <Button
+          onClick={() => {
+            const selectedRows = table.getSelectedRowModel().rows;
+            let selectedAsset = selectedRows.map(
+              (item) => item.original.assetnum
+            );
+            handleSubmitNewAsset(selectedAsset);
+          }}
+          loading={isMutating}
+        >
+          Add
+        </Button>
+      </div>
     ),
   });
 

@@ -24,7 +24,7 @@ export default function Sidebar() {
         sidebar?.isOpen === false ? "w-[90px]" : "w-72"
       )}
     >
-      {/* <SidebarToggle isOpen={sidebar?.isOpen} setIsOpen={sidebar?.setIsOpen} /> */}
+      <SidebarToggle isOpen={sidebar?.isOpen} setIsOpen={sidebar?.setIsOpen} />
       <div className="relative h-full flex flex-col px-3 py-4 overflow-y-auto shadow-md dark:shadow-zinc-800">
         <Button
           className={cn(

@@ -346,7 +346,15 @@ export default function TableParetoHeatloss({
     mutate: mutateEfficiencyData,
     isLoading: isLoadingEfficiencyData,
     isValidating: isValidatingEfficiencyData,
-  } = useGetData(session?.user.access_token, 0);
+  } = useGetData(
+    session?.user.access_token,
+    0,
+    1,
+    20,
+    "",
+    new Set(["current", "commision"]),
+    ""
+  );
 
   const selectedEfficiencyData =
     efficiencyData?.transactions.filter((i: any) => i.status === "Done") ?? [];

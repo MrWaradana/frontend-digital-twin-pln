@@ -24,6 +24,20 @@ export default function HomeContainer() {
   const overviewData = data?.overview.nextSchedule ?? [];
   const scheduleData = data?.schedules ?? [];
 
+  const findUpcomingSchedule = (scheduleData) => {
+    const today = new Date();
+
+    // Find the first upcoming date that hasn't passed
+    const upcomingSchedule = scheduleData
+      .filter((schedule) => new Date(schedule.date) > today)
+      //@ts-expect-error
+      .sort((a, b) => new Date(a.date) - new Date(b.date))[0];
+
+    return upcomingSchedule?.Overhaul || null;
+  };
+
+  let nextSchedule = findUpcomingSchedule(scheduleData);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <div className="col-span-3 bg-white rounded-3xl shadow-xl h-[80dvh] w-full p-8">
@@ -91,9 +105,11 @@ export default function HomeContainer() {
           <div className="flex flex-row justify-between items-end">
             <p className="text-neutral-400">Scope</p>
             <p
-              className={`text-[7rem] text-[#1C9EB6] font-semibold mb-0 leading-tight`}
+              className={`text-[7rem] ${
+                nextSchedule === "B" ? "text-[#1C9EB6]" : "text-[#F49C38]"
+              } font-semibold mb-0 leading-tight`}
             >
-              B
+              {nextSchedule}
             </p>
           </div>
         </div>

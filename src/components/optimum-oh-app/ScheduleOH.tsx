@@ -43,9 +43,8 @@ export default function ScheduleOH({ scheduleData, overviewData }: any) {
 
   // Define status colors
   const statusColors = {
-    upcoming: "#1C9EB6",
-    completed: "#4CAF50",
-    delayed: "#f44336",
+    A: "#F49C38",
+    B: "#1C9EB6",
   };
 
   const events = useMemo(() => {
@@ -70,13 +69,19 @@ Date: ${moment(schedule.date).format("MMMM D, YYYY")}`,
   const eventStyleGetter = (event) => {
     let backgroundColor = "#1C9EB6";
 
-    if (event.status === "upcoming") {
+    if (event.resource === "B") {
       backgroundColor = "#1C9EB6";
-    } else if (event.status === "completed") {
-      backgroundColor = "#4CAF50";
-    } else if (event.status === "delayed") {
-      backgroundColor = "#f44336";
+    } else if (event.resource === "A") {
+      backgroundColor = "#F49C38";
     }
+
+    // if (event.status === "upcoming") {
+    //   backgroundColor = "#1C9EB6";
+    // } else if (event.status === "completed") {
+    //   backgroundColor = "#4CAF50";
+    // } else if (event.status === "delayed") {
+    //   backgroundColor = "#f44336";
+    // }
 
     return {
       style: {
@@ -86,7 +91,7 @@ Date: ${moment(schedule.date).format("MMMM D, YYYY")}`,
         color: "white",
         border: "none",
         display: "block",
-        padding: "2px 5px",
+        padding: "2px 4px",
         whiteSpace: "normal", // Allow text to wrap
         overflow: "visible", // Show overflow
         height: "auto", // Allow height to adjust
@@ -139,7 +144,7 @@ Date: ${moment(schedule.date).format("MMMM D, YYYY")}`,
   const AgendaEvent = ({ event }) => (
     <div
       className="flex items-center p-2 rounded"
-      style={{ backgroundColor: statusColors[event.status] }}
+      style={{ backgroundColor: statusColors[event.resource] }}
     >
       <span className="text-white">
         Overhaul {event.resource} ({event.status})
@@ -149,13 +154,13 @@ Date: ${moment(schedule.date).format("MMMM D, YYYY")}`,
 
   const Legend = () => (
     <div className="flex gap-4 items-center justify-end mb-2 text-sm">
-      {Object.entries(statusColors).map(([status, color]) => (
-        <div key={status} className="flex items-center gap-1">
+      {Object.entries(statusColors).map(([resource, color]) => (
+        <div key={resource} className="flex items-center gap-1">
           <div
             className="w-4 h-4 rounded"
             style={{ backgroundColor: color, opacity: 0.8 }}
           />
-          <span className="capitalize">{status}</span>
+          <span className="capitalize">{resource}</span>
         </div>
       ))}
     </div>

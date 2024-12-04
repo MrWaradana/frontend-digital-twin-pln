@@ -62,7 +62,7 @@ const parameterOptions = [{ name: "Commision", uid: "commision" }];
 const parameterColorMap: Record<string, ChipProps["color"]> = {
   current: "success",
   Niaga: "primary",
-  commision: "warning",
+  Commision: "warning",
 };
 
 const statusColorMap: Record<string, ChipProps["color"]> = {

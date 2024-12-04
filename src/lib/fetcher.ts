@@ -5,7 +5,10 @@ export interface ApiError extends Error {
 }
 
 // fetcher.ts
-export async function fetcher<T = any>([url, token]: [string, string]): Promise<T> {
+export async function fetcher<T = any>([url, token]: [
+  string,
+  string
+]): Promise<T> {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
@@ -60,7 +63,6 @@ export async function fetcher<T = any>([url, token]: [string, string]): Promise<
   }
 }
 
-
 export async function fetcherNoToken<T = any>(url: string): Promise<T> {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
@@ -84,4 +86,24 @@ export async function fetcherNoToken<T = any>(url: string): Promise<T> {
     throw new Error(body.message);
   }
   throw new Error("Unknown error when fetching");
+}
+
+export async function fetcherPost(
+  url: string,
+  { arg }: { arg: { token: string; body: any } }
+) {
+  const { token, body } = arg;
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  return fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+  }).then((res) => res.json());
 }
