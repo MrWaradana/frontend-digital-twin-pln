@@ -22,16 +22,16 @@ export default function Sidebar({ className }: { className?: string }) {
     <aside
       className={cn(
         "fixed top-0 left-0 z-20 h-screen -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300",
-        sidebar?.isOpen === false ? "w-[90px]" : "w-72",
+        "w-[90px]",
         `${className}`
       )}
     >
-      <SidebarToggle isOpen={sidebar?.isOpen} setIsOpen={sidebar?.setIsOpen} />
+      {/* <SidebarToggle isOpen={sidebar?.isOpen} setIsOpen={sidebar?.setIsOpen} /> */}
       <div className="relative h-full flex flex-col px-3 py-4 mt-6 overflow-y-auto bg-transparent">
         <Button
           className={cn(
             "transition-transform ease-in-out duration-300 mb-1",
-            sidebar?.isOpen === false ? "translate-x-1" : "translate-x-0"
+            "translate-x-1"
           )}
           variant="link"
           asChild
@@ -45,7 +45,8 @@ export default function Sidebar({ className }: { className?: string }) {
             />
           </Link>
         </Button>
-        <Menu isListOpen={sidebar?.isOpen} />
+        {/* <Menu isListOpen={sidebar?.isOpen} /> */}
+        <Menu isListOpen={false} />
       </div>
     </aside>
   );

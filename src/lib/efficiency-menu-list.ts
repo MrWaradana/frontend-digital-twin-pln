@@ -93,14 +93,14 @@ export function getMenuList(pathname: string): Group[] {
           icon: ChartNetwork,
           submenus: [],
         },
-        // {
-        //   href: "/efficiency-app/performance-test",
-        //   label: "Performance Test",
-        //   active:
-        //     pathname === "/efficiency-app/performance-test" ? true : false,
-        //   icon: Gauge,
-        //   submenus: [],
-        // },
+        {
+          href: "/efficiency-app/performance-test",
+          label: "Performance Test",
+          active:
+            pathname === "/efficiency-app/performance-test" ? true : false,
+          icon: Gauge,
+          submenus: [],
+        },
       ],
     },
   ];

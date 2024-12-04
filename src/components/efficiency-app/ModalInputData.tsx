@@ -40,6 +40,12 @@ import { useExcelStore } from "@/store/excels";
 import { useStatusThermoflowStore } from "@/store/statusThermoflow";
 import { useSession } from "next-auth/react";
 import { useGetMasterData } from "@/lib/APIs/useGetMasterData";
+import AsyncCreatableSelect from "react-select/async-creatable";
+
+interface Option {
+  readonly label: string;
+  readonly value: string;
+}
 
 export default function ModalInputData({
   modalChoosePeriod,
@@ -55,6 +61,7 @@ export default function ModalInputData({
   periodValue,
   setPeriodValue,
   thermoStatusData,
+  performanceTest,
 }: any) {
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -71,19 +78,57 @@ export default function ModalInputData({
     (item: any) => item.name === "Coal Price"
   );
 
+  const [value, setValue] = useState<Option | null>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [beban, setBeban] = useState(`50`);
   const [coalPrice, setCoalPrice] = useState(`${coalPriceData?.nphr_value}`);
 
   useEffect(() => {
     setCoalPrice(`${coalPriceData?.nphr_value}`);
   }, [coalPriceData]);
 
+  const createOption = (label: string) => ({
+    label,
+    value: label.toLowerCase().replace(/\W/g, ""),
+  });
+
+  const handleCreate = (inputValue: string) => {
+    setIsLoading(true);
+    setTimeout(() => {
+      const newOption = createOption(inputValue);
+      setIsLoading(false);
+      setOptions((prev) => [...prev, newOption]);
+      setValue(newOption);
+    }, 1000);
+  };
+
+  const filterBeban = (inputValue: string = "") => {
+    return [{ value: "data1", label: "Data 1" }].filter((i) =>
+      i.label.toLowerCase().includes(inputValue.toLowerCase())
+    );
+  };
+
+  const promiseOptions: any = (inputValue: string) =>
+    new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(filterBeban(inputValue));
+      }, 1000);
+    });
+
+  const [options, setOptions] = useState(promiseOptions);
+
   //form ==========================================================
   function onError(formError: any) {
     console.log(formError);
   }
   const formatNumber = (num: number | string) => {
+    // If the input is not a valid number, return empty string or "0"
+    if (num === "" || isNaN(Number(num))) {
+      return "0";
+    }
+
     // Convert the input number to a string to avoid rounding off decimals
-    const parts = num.toString().split("."); // Use '.' to handle decimals correctly
+    const parts = num.toString().split(".");
     const integerPart = new Intl.NumberFormat("id-ID").format(Number(parts[0]));
 
     // Return the formatted number with a decimal part if present
@@ -168,7 +213,7 @@ export default function ModalInputData({
 
     const sendData = async () => {
       try {
-        const payload = {
+        let payload: any = {
           name: values.name,
           jenis_parameter: "current",
           excel_id: excels[0].id,
@@ -178,6 +223,15 @@ export default function ModalInputData({
           periodic_end_date: periodValue.end ?? null,
           coal_price: coalPrice,
         };
+
+        if (performanceTest) {
+          payload = {
+            ...payload,
+            is_performance_test: true,
+            performance_test_weight: beban,
+            group_name: "test_groupname",
+          };
+        }
 
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/data`,
@@ -359,6 +413,41 @@ export default function ModalInputData({
                             )}
                           />
                         </div>
+                        {performanceTest === true ? (
+                          <>
+                            <Input
+                              type={`text`}
+                              label={`Beban*`}
+                              value={formatNumber(beban)}
+                              required
+                              endContent={`%`}
+                              className={`max-w-xs my-4`}
+                              onChange={(e) => {
+                                const unformattedValue = unformatNumber(
+                                  e.target.value
+                                );
+                                setBeban(unformattedValue);
+                              }}
+                            />
+                            <p>Group Data</p>
+                            <AsyncCreatableSelect
+                              cacheOptions
+                              defaultOptions
+                              loadOptions={promiseOptions}
+                              className="z-50 mr-4"
+                              styles={{
+                                control: (baseStyles, state) => ({
+                                  ...baseStyles,
+                                  borderRadius: 10,
+                                  width: "100%",
+                                  height: 43,
+                                  backgroundColor: "#f3f4f6",
+                                }),
+                              }}
+                            />
+                          </>
+                        ) : null}
+
                         <Input
                           type={`text`}
                           label={`Coal Price*`}
@@ -579,7 +668,7 @@ export default function ModalInputData({
                   process.env.NEXT_PUBLIC_ENVIRONMENT == "development"
                 }
                 isLoading={loading}
-                onClick={() => {                            
+                onClick={() => {
                   setConfirmationModalOpen(true);
                 }}
               >

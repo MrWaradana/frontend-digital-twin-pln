@@ -41,7 +41,7 @@ import { capitalize } from "@/lib/utils";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { useSession } from "next-auth/react";
 import { useSelectedEfficiencyDataStore } from "@/store/selectedEfficiencyData";
-import { update } from "lodash";
+import ModalInputData from "../ModalInputData";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   current: "success",
@@ -56,7 +56,6 @@ const INITIAL_VISIBLE_COLUMNS = [
   "periode",
   "actions",
 ];
-const INITIAL_VISIBLE_PARAMETER = ["current"];
 
 export default function TablePerformanceTest({
   tableData,
@@ -73,10 +72,12 @@ export default function TablePerformanceTest({
   isValidating?: any;
   thermoStatus: any;
 }) {
+  const [modalChoosePeriod, setModalChoosePeriod] = React.useState(false);
   const [tableState, setTableState] = React.useState(tableData);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedRowId, setSelectedRowId] = React.useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
+  const [showVariables, setShowVariables] = React.useState(false);
   const session = useSession();
 
   // console.log(tableData, "table data");
@@ -87,7 +88,6 @@ export default function TablePerformanceTest({
     { name: "JENIS PARAMETER", uid: "jenis_parameter", sortable: true },
     { name: "BEBAN", uid: "performance_test_weight", sortable: true },
     { name: "PERIODE", uid: "periode", sortable: true },
-    { name: "FLAG NPHR", uid: "flag_nphr" },
     { name: "ACTIONS", uid: "actions" },
   ];
 
@@ -100,9 +100,6 @@ export default function TablePerformanceTest({
   );
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
-  );
-  const [parameterFilter, setParameterFilter] = React.useState<Selection>(
-    new Set(INITIAL_VISIBLE_PARAMETER)
   );
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
@@ -139,17 +136,9 @@ export default function TablePerformanceTest({
         item.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (
-      parameterFilter !== "all" &&
-      Array.from(parameterFilter).length !== parameterOptions.length
-    ) {
-      filteredData = filteredData.filter((item) =>
-        Array.from(parameterFilter).includes(item.jenis_parameter.toLowerCase())
-      );
-    }
 
     return filteredData;
-  }, [tableData, filterValue, parameterFilter]);
+  }, [tableData, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -211,15 +200,7 @@ export default function TablePerformanceTest({
 
       switch (columnKey) {
         case "name":
-          return (
-            <Link
-              size="sm"
-              href={`/efficiency-app/${rowData.id}/output`}
-              underline={"hover"}
-            >
-              {cellValue}
-            </Link>
-          );
+          return cellValue;
         case "jenis_parameter":
           return (
             <Chip
@@ -235,12 +216,6 @@ export default function TablePerformanceTest({
           return `${cellValue}%`;
         case "periode":
           return cellValue;
-        case "flag_nphr":
-          return (
-            <>
-              <Checkbox />
-            </>
-          );
         case "actions":
           return (
             <>
@@ -260,7 +235,7 @@ export default function TablePerformanceTest({
                     {/* <DropdownItem href={`/efficiency-app/heat-rate`}>
                   Heat Rate
                 </DropdownItem> */}
-                    <DropdownItem href={`/efficiency-app/engine-flow`}>
+                    {/* <DropdownItem href={`/efficiency-app/engine-flow`}>
                       Engine Flow
                     </DropdownItem>
                     <DropdownItem
@@ -270,7 +245,7 @@ export default function TablePerformanceTest({
                     </DropdownItem>
                     <DropdownItem href={`/efficiency-app/${rowData.id}/output`}>
                       View
-                    </DropdownItem>
+                    </DropdownItem> */}
                     {/* <DropdownItem href="#">Edit</DropdownItem>*/}
                     <DropdownItem
                       onPress={() => {
@@ -346,30 +321,6 @@ export default function TablePerformanceTest({
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Parameter
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={parameterFilter}
-                selectionMode="multiple"
-                onSelectionChange={setParameterFilter}
-              >
-                {parameterOptions.map((parameter: any) => (
-                  <DropdownItem key={parameter.uid} className="capitalize">
-                    {capitalize(parameter.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
                   Columns
                 </Button>
               </DropdownTrigger>
@@ -389,14 +340,17 @@ export default function TablePerformanceTest({
               </DropdownMenu>
             </Dropdown>
             <Button
-              as={Link}
-              href={addNewUrl}
+              // as={Link}
+              // href={addNewUrl}
+              onClick={() => {
+                setModalChoosePeriod(!modalChoosePeriod);
+              }}
               isDisabled={thermoStatus ? thermoStatus : false}
               isLoading={thermoStatus ? thermoStatus : false}
-              color="primary"
               startContent={
                 <PlusIcon className={`${thermoStatus ? "hidden" : ""}`} />
               }
+              className="bg-[#1C9EB6] text-white"
             >
               {!thermoStatus ? "Add New" : "Processing Data..."}
             </Button>
@@ -422,7 +376,6 @@ export default function TablePerformanceTest({
     );
   }, [
     filterValue,
-    parameterFilter,
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
@@ -496,6 +449,14 @@ export default function TablePerformanceTest({
 
   return (
     <>
+      <ModalInputData
+        selectedParameter={"current"}
+        modalChoosePeriod={modalChoosePeriod}
+        setModalChoosePeriod={setModalChoosePeriod}
+        performanceTest={true}
+        showVariables={showVariables}
+        setShowVariables={setShowVariables}
+      />
       {deleteConfirmationModal}
       <Table
         aria-label="Efficiency Data Table"
@@ -506,18 +467,9 @@ export default function TablePerformanceTest({
           wrapper: "max-h-[382px]",
         }}
         color="primary"
-        selectedKeys={selectedKeys}
-        selectionMode="multiple"
-        selectionBehavior={"replace"}
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
-        onSelectionChange={(value) => {
-          setSelectedKeys(value);
-          useSelectedEfficiencyDataStore
-            .getState()
-            .setSelectedEfficiencyData(value);
-        }}
         onSortChange={setSortDescriptor}
       >
         <TableHeader columns={headerColumns}>
