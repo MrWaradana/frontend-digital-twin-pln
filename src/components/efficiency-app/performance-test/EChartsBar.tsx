@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactECharts from "echarts-for-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useTheme } from "next-themes";
+import { formattedNumber } from "@/lib/formattedNumber";
 
 export default function EChartsBar({ data, selectedLabel }) {
   // Define fixed performance weight categories
@@ -65,7 +66,7 @@ export default function EChartsBar({ data, selectedLabel }) {
       formatter: function (params) {
         let result = `${params[0].axisValue}%<br/>`;
         params.forEach((param) => {
-          result += `${param.value}<br/>`;
+          result += `${formattedNumber(param.value)} kCal/kWh <br/>`;
         });
         return result;
       },
@@ -100,7 +101,7 @@ export default function EChartsBar({ data, selectedLabel }) {
       nameLocation: "middle",
       nameGap: 50,
       axisLabel: {
-        formatter: "{value}",
+        formatter: `{value}`,
         fontSize: 12,
       },
     },

@@ -62,6 +62,7 @@ export default function ModalInputData({
   setPeriodValue,
   thermoStatusData,
   performanceTest,
+  PerformanceDataOptions,
 }: any) {
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -103,7 +104,7 @@ export default function ModalInputData({
   };
 
   const filterBeban = (inputValue: string = "") => {
-    return [{ value: "data1", label: "Data 1" }].filter((i) =>
+    return PerformanceDataOptions.filter((i) =>
       i.label.toLowerCase().includes(inputValue.toLowerCase())
     );
   };

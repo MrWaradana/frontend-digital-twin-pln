@@ -64,6 +64,7 @@ export default function TablePerformanceTest({
   isLoading,
   isValidating,
   thermoStatus,
+  PerformanceDataOptions,
 }: {
   tableData: any;
   addNewUrl?: string;
@@ -71,6 +72,7 @@ export default function TablePerformanceTest({
   isLoading: any;
   isValidating?: any;
   thermoStatus: any;
+  PerformanceDataOptions: any;
 }) {
   const [modalChoosePeriod, setModalChoosePeriod] = React.useState(false);
   const [tableState, setTableState] = React.useState(tableData);
@@ -456,6 +458,7 @@ export default function TablePerformanceTest({
         performanceTest={true}
         showVariables={showVariables}
         setShowVariables={setShowVariables}
+        PerformanceDataOptions={PerformanceDataOptions}
       />
       {deleteConfirmationModal}
       <Table

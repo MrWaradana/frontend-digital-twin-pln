@@ -53,7 +53,7 @@ export default function Page() {
     }
   }, [selectPerformanceData]);
 
-  const EfficiencyDataOptions = selectPerformanceData.map((item) => {
+  const PerformanceDataOptions = selectPerformanceData.map((item) => {
     return {
       value: item.id,
       label: item.name,
@@ -62,7 +62,7 @@ export default function Page() {
 
   // Function to filter efficiency data based on user input
   const filterEfficiencyData = (inputValue: string) => {
-    return EfficiencyDataOptions.filter((i) =>
+    return PerformanceDataOptions.filter((i) =>
       i.label.toLowerCase().includes(inputValue.toLowerCase())
     );
   };
@@ -87,7 +87,7 @@ export default function Page() {
           isSearchable={true}
           loadOptions={loadOptions}
           defaultValue={dataId ? { value: dataId, label: selectedLabel } : null}
-          defaultOptions={EfficiencyDataOptions} // Optional: Show default options initially
+          defaultOptions={PerformanceDataOptions} // Optional: Show default options initially
           cacheOptions // Caches the loaded options
           isLoading={isLoadingPerformance}
           onChange={(e) => {
@@ -129,6 +129,7 @@ export default function Page() {
             isValidating={isValidating}
             thermoStatus={thermoStatus}
             addNewUrl="/efficiency-app/performance-test/input"
+            PerformanceDataOptions={PerformanceDataOptions}
           />
         </section>
       </div>
