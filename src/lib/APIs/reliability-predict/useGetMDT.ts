@@ -3,7 +3,7 @@ import { HookReply } from "../types";
 import { useApiFetch } from "../useApiFetch";
 
 export interface MDT {
-  assetnum: string;
+  location_tag: string;
   hours: number;
 }
 

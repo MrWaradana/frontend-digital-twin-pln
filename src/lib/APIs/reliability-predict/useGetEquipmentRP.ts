@@ -9,26 +9,43 @@ export interface EquipmentTree {
   level_no: number;
   name: string;
 }
+export interface Parent {
+  equipment_id: string | null;
+  name: string;
+}
+export interface Params {
+  AICc: number;
+  alpha: number;
+  beta: number;
+  gamma: number;
+  Lambda: number;
+}
 export interface Equipment {
   id: string;
   assetnum: string;
   parent_name: string;
-  description: string;
+  name: string;
   equipment_id: string;
-  equipment_tree: EquipmentTree[];
+  equipment_tree: EquipmentTree;
   reliability: number;
   equipment_name: string;
   status: string;
-  timeat: number;
+  age: number;
+  parent_id: string;
+  distribution: string;
+  params: Params;
+  location_tag: string;
+  parent: Parent;
 }
 export interface FailuresList {
-  equipment: Equipment[];
+  equipment: Equipment;
 }
 export function useGetEquipmentRP(
+  id: string | undefined,
   token: string | undefined
 ): HookReply<FailuresList> {
   return useApiFetch(
-    `${RELIABILITY_API_URL}/assets/reliability`,
+    `${RELIABILITY_API_URL}/main/equipment_master/${id}`,
     !!token,
     token
   );

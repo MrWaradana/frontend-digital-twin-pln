@@ -2,14 +2,14 @@ import { RELIABILITY_API_URL } from "../../api-url";
 import { HookReply } from "../types";
 import { useApiFetch } from "../useApiFetch";
 
-export interface MDT {
+export interface MTBF {
   location_tag: string;
   hours: number;
 }
 
-export function useGetMTTR(
+export function useGetMTBF(
   id: string | undefined,
   token: string | undefined
-): HookReply<MDT> {
-  return useApiFetch(`${RELIABILITY_API_URL}/asset/mttr/${id}`, !!token, token);
+): HookReply<MTBF> {
+  return useApiFetch(`${RELIABILITY_API_URL}/asset/mtbf/${id}`, !!token, token);
 }

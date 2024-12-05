@@ -3,7 +3,7 @@ import { HookReply } from "../types";
 import { useApiFetch } from "../useApiFetch";
 
 export interface NHPPResult {
-  assetnum: string;
+  location_tag: string;
   eta: number;
   beta: number;
   reliability: number;

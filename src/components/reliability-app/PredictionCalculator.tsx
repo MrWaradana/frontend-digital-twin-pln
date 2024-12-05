@@ -31,7 +31,7 @@ export function PredictionCalculator({
         </button>
         <div className="flex sm:flex-row flex-col justify-between items-center gap-4">
           <div className="flex flex-col gap-2 w-full">
-            <div className="bg-[#F49C38] rounded-xl py-[0.5px] px-4 text-white text-[10px] w-fit">
+            <div className="bg-[#1C9EB6] rounded-xl py-[0.5px] px-4 text-white text-[10px] w-fit">
               Equipment Level 3.7
             </div>
             <h2 className="text-2xl font-semibold">Prediction Calculator</h2>
@@ -112,15 +112,15 @@ export function PredictionCalculator({
                 </div>
                 <div className="flex-1 flex flex-row md:gap-12 gap-4 md:items-center items-start justify-start flex-wrap shadow-xl bg-white rounded-3xl p-5">
                   <div className="flex-1 flex flex-col justify-center">
-                    <div className="text-[10px] text-[#F49C38]">Time</div>
+                    <div className="text-[10px] text-[#1C9EB6]">Time</div>
                     <div className="text-[12px] font-semibold">00.00 AM</div>
                   </div>
                   <div className="flex-1 flex flex-col justify-center">
-                    <div className="text-[10px] text-[#F49C38]">Day</div>
+                    <div className="text-[10px] text-[#1C9EB6]">Day</div>
                     <div className="text-[12px] font-semibold">Sunday</div>
                   </div>
                   <div className="flex-1 flex flex-col justify-center">
-                    <div className="text-[10px] text-[#F49C38]">Date</div>
+                    <div className="text-[10px] text-[#1C9EB6]">Date</div>
                     <div className="text-[12px] font-semibold">
                       January 24, 2027
                     </div>
@@ -128,10 +128,10 @@ export function PredictionCalculator({
                 </div>
               </div>
               <div className="flex flex-row justify-start gap-4">
-                <div className="flex flex-row justify-center items-center bg-[#F49C38] hover:bg-[#e58c2d] rounded-[100px] py-2 px-5 text-white text-sm w-fit text-[13px] cursor-pointer">
+                <div className="flex flex-row justify-center items-center bg-[#1C9EB6] hover:bg-[#e58c2d] rounded-[100px] py-2 px-5 text-white text-sm w-fit text-[13px] cursor-pointer">
                   <div className="text-[12px] ">Calculate</div>
                 </div>
-                <div className="flex flex-row justify-center items-center hover:text-white text-[#F49C38] border border-[#F49C38] hover:bg-[#e58c2d] rounded-[100px] py-2 px-5 text-sm w-fit text-[13px] cursor-pointer">
+                <div className="flex flex-row justify-center items-center hover:text-white text-[#1C9EB6] border border-[#1C9EB6] hover:bg-[#e58c2d] rounded-[100px] py-2 px-5 text-sm w-fit text-[13px] cursor-pointer">
                   <div className="text-[12px]  ">Download Result</div>
                 </div>
               </div>

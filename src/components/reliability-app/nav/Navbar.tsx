@@ -38,7 +38,7 @@ export function Navbar({ title }: NavbarProps) {
                 </Button>
                 <Button
                   radius="full"
-                  className={`bg-[#F49C38] text-white`}
+                  className={`bg-[#1C9EB6] text-white`}
                   onPress={async () => {
                     try {
                       await signOut();
@@ -59,7 +59,7 @@ export function Navbar({ title }: NavbarProps) {
         <div className="mx-4 sm:mx-8 flex items-center h-[16dvh]">
           <div className="flex items-center space-x-4 lg:space-x-0">
             <SheetMenu />
-            <h1 className="font-semibold text-sm md:text-4xl sm:text-xl">
+            <h1 className="font-semibold text-sm md:text-4xl sm:text-xl text-[#1C9EB6]">
               {title}
             </h1>
           </div>
@@ -68,14 +68,14 @@ export function Navbar({ title }: NavbarProps) {
             <Button
               variant={`bordered`}
               radius="full"
-              className="border-[#F49C38] "
+              className="border-[#1C9EB6] "
             >
               Apps Library
             </Button>
             <Button
               variant={`solid`}
               radius="full"
-              className="bg-[#F49C38] text-white"
+              className="bg-[#1C9EB6] text-white"
               onClick={onOpen}
             >
               Sign out

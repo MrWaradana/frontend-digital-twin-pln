@@ -7,7 +7,7 @@ import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 
 export default function RPLayout({
   children,
-  className = "bg-gradient-to-b from-[#FDEBD7] to-[#FFFFFF] to-[45%]",
+  className = "bg-gradient-to-b from-[#D9E9EE] to-[#FFFFFF] to-[45%]",
 }: {
   children: React.ReactNode;
   className?: string;

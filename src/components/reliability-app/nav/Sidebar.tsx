@@ -1,17 +1,13 @@
-import Link from "next/link";
 import Image from "next/image";
-import { PanelsTopLeft } from "lucide-react";
+import Link from "next/link";
 
-import { cn } from "@/lib/utils";
-import { useStore } from "@/hooks/use-store";
-import { Button } from "@/components/ui/button";
 import { Menu } from "@/components/reliability-app/nav/Menu";
+import { Button } from "@/components/ui/button";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
-import { SidebarToggle } from "@/components/efficiency-app/nav/SidebarToggle";
+import { useStore } from "@/hooks/use-store";
+import { cn } from "@/lib/utils";
 
-import PlnLogo from "../../../../public/Logo_PLN.svg";
-import PlnLogoVertical from "../../../../public/Logo_PLN.png";
-import PlnLogoBlack from "../../../../public/Logo_Black.png";
+import logoPLN from "../../../../public/Logo_PLN.png";
 
 export default function Sidebar({ className }: { className?: string }) {
   const sidebar = useStore(useSidebarToggle, (state) => state);
@@ -21,7 +17,7 @@ export default function Sidebar({ className }: { className?: string }) {
   return (
     <aside
       className={cn(
-        "fixed top-0 left-0 z-20 h-screen -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300",
+        "fixed top-0 left-0 z-20 h-screen -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300 pt-12",
         sidebar?.isOpen === false ? "w-[90px]" : "w-72",
         `${className}`
       )}
@@ -37,10 +33,10 @@ export default function Sidebar({ className }: { className?: string }) {
           asChild
         >
           <Link href="#" className="flex items-center gap-2">
-            <Image src={PlnLogoBlack} alt="Logo PLN" />
+            <Image src={logoPLN} alt="Logo PLN" />
           </Link>
         </Button>
-        <Menu isListOpen={sidebar?.isOpen} />
+        <Menu isListOpen={false} />
       </div>
     </aside>
   );

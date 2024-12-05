@@ -10,7 +10,7 @@ export interface EquipmentTree {
 }
 export interface Equipment {
   id: string;
-  assetnum: string;
+  location_tag: string;
   parent_name: string;
   description: string;
   equipment_id: string;

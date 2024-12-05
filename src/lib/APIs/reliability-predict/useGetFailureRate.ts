@@ -3,8 +3,8 @@ import { HookReply } from "../types";
 import { useApiFetch } from "../useApiFetch";
 
 export interface FailureRate {
-  assetnum: string;
-  reliability: number | null | undefined;
+  location_tag: string;
+  failure_rate: number | null | undefined;
 }
 
 export function useGetFailureRate(

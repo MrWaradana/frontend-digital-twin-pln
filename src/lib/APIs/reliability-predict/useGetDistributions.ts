@@ -14,34 +14,20 @@ export interface Result {
   x: number[];
   y: number[];
 }
-export interface ReliabilityPlot {
+export interface Distribution {
+  best_distribution: string;
   current_day: number;
   location_tag: string;
+  parameters: Parameters;
   results: Result;
   message: string;
 }
-export interface ReliabilityCurrent {
-  location_tag: string;
-  reliability_value: number | null;
-}
-
-export function useGetReliabilityCurrent(
+export function useGetDistribution(
   id: string | undefined,
   token: string | undefined
-): HookReply<ReliabilityCurrent> {
+): HookReply<Distribution> {
   return useApiFetch(
-    `${RELIABILITY_API_URL}/reliability/${id}/current`,
-    !!token,
-    token
-  );
-}
-
-export function useGetReliabilityPlot(
-  id: string | undefined,
-  token: string | undefined
-): HookReply<ReliabilityPlot> {
-  return useApiFetch(
-    `${RELIABILITY_API_URL}/reliability/${id}`,
+    `${RELIABILITY_API_URL}/distributions/${id}`,
     !!token,
     token
   );
