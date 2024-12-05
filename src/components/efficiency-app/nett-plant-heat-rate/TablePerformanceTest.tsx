@@ -439,11 +439,11 @@ export default function TablePerformanceTest({
               undone.
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" onPress={handleDelete}>
-                Delete
-              </Button>
               <Button variant="light" onPress={onClose}>
                 Cancel
+              </Button>
+              <Button color="danger" onPress={handleDelete}>
+                Delete
               </Button>
             </ModalFooter>
           </>
