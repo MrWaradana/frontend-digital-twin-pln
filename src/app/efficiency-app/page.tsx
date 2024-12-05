@@ -701,7 +701,7 @@ export default function Page() {
                             </p>
                             <p className={`text-sm text-gray-500`}>
                               {formattedNumber(
-                                Number(paretoCompareData[key]).toFixed(2)
+                                Number(paretoCompareData[key].toFixed(2))
                               )}{" "}
                               %
                             </p>
@@ -740,7 +740,7 @@ export default function Page() {
                                 </p>
                                 <p className={`text-sm text-gray-500`}>
                                   {formattedNumber(
-                                    Number(paretoCompareData[key]).toFixed(2)
+                                    Number(paretoCompareData[key].toFixed(2))
                                   )}{" "}
                                   kCal/kWh
                                 </p>
@@ -779,8 +779,10 @@ export default function Page() {
                                       <p className={`text-xs text-gray-500`}>
                                         {formattedNumber(
                                           Number(
-                                            categoriesCompareData[key]
-                                          ).toFixed(2)
+                                            categoriesCompareData[key].toFixed(
+                                              2
+                                            )
+                                          )
                                         )}{" "}
                                       </p>
                                     </div>
@@ -825,7 +827,7 @@ export default function Page() {
                             </p>
                             <p className={`text-sm text-gray-500`}>
                               {formattedNumber(
-                                Number(paretoCompareData[key]).toFixed(2)
+                                Number(paretoCompareData[key].toFixed(2))
                               )}{" "}
                               {String(key) === "Total Coal Flow"
                                 ? "Kg/h"

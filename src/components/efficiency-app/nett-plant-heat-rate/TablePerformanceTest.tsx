@@ -75,10 +75,13 @@ export default function TablePerformanceTest({
   PerformanceDataOptions: any;
 }) {
   const [modalChoosePeriod, setModalChoosePeriod] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const [tableState, setTableState] = React.useState(tableData);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedRowId, setSelectedRowId] = React.useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
+  const [confirmationModalOpen, setConfirmationModalOpen] =
+    React.useState(false);
   const [showVariables, setShowVariables] = React.useState(false);
   const session = useSession();
 
@@ -456,8 +459,12 @@ export default function TablePerformanceTest({
         modalChoosePeriod={modalChoosePeriod}
         setModalChoosePeriod={setModalChoosePeriod}
         performanceTest={true}
+        loading={loading}
+        setLoading={setLoading}
         showVariables={showVariables}
         setShowVariables={setShowVariables}
+        confirmationModalOpen={confirmationModalOpen}
+        setConfirmationModalOpen={setConfirmationModalOpen}
         PerformanceDataOptions={PerformanceDataOptions}
       />
       {deleteConfirmationModal}
@@ -499,7 +506,9 @@ export default function TablePerformanceTest({
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
-                <TableCell className={`dark:text-white`}>{renderCell(item, columnKey)}</TableCell>
+                <TableCell className={`dark:text-white`}>
+                  {renderCell(item, columnKey)}
+                </TableCell>
               )}
             </TableRow>
           )}

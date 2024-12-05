@@ -66,6 +66,7 @@ export default function ModalInputData({
 }: any) {
   const router = useRouter();
   const { data: session, status } = useSession();
+
   // coal price ==================================================
   const {
     data: masterData,
@@ -98,12 +99,14 @@ export default function ModalInputData({
     setTimeout(() => {
       const newOption = createOption(inputValue);
       setIsLoading(false);
-      setOptions((prev) => [...prev, newOption]);
+      // setOptions((prev) => [...prev, newOption]);
       setValue(newOption);
     }, 1000);
   };
 
   const filterBeban = (inputValue: string = "") => {
+    if (!PerformanceDataOptions || PerformanceDataOptions.length <= 0)
+      return [];
     return PerformanceDataOptions.filter((i) =>
       i.label.toLowerCase().includes(inputValue.toLowerCase())
     );
@@ -119,7 +122,7 @@ export default function ModalInputData({
   const [options, setOptions] = useState(promiseOptions);
 
   //form ==========================================================
-  function onError(formError: any) {
+  function onError(formError) {
     console.log(formError);
   }
   const formatNumber = (num: number | string) => {
@@ -209,6 +212,7 @@ export default function ModalInputData({
     // alert(JSON.stringify(values));
     // console.log(inputValues);
     setLoading(true);
+    console.log(values, "ini masuk");
 
     // Handle 'data_outputs' event
 
@@ -220,17 +224,17 @@ export default function ModalInputData({
           excel_id: excels[0].id,
           inputs: values.inputs,
           input_type: selectedParameter,
-          periodic_start_date: periodValue.start ?? null,
-          periodic_end_date: periodValue.end ?? null,
+          periodic_start_date: periodValue?.start ?? null, // Add null fallback
+          periodic_end_date: periodValue?.end ?? null, // Add null fallback
           coal_price: coalPrice,
         };
 
-        if (performanceTest) {
+        if (performanceTest === true) {
           payload = {
             ...payload,
             is_performance_test: true,
             performance_test_weight: beban,
-            group_name: "test_groupname",
+            group_name: value?.label,
           };
         }
 
@@ -259,17 +263,8 @@ export default function ModalInputData({
         toast.success("Data input received, wait for the to be processed!");
         setStatusThermoflow(true);
         setLoading(false);
-        // router.push(`/efficiency-app/${response_data.data.data_id}/output`);
         setTimeout(() => router.push(`/efficiency-app`), 3000);
 
-        // if (response) {
-        //   setLoading(false);
-        //   toast.success("Data Sent!");
-        //   router.push("/output");
-        // }
-        // setTimeout(() => {
-
-        // }, 1000);
       } catch (error) {
         // @ts-ignore
         toast.error(`Error: ${error}`);
@@ -319,7 +314,7 @@ export default function ModalInputData({
                 isLoading={loading}
                 onPress={() => {
                   formRef.current?.requestSubmit(); // Programmatically submit the form
-                  onClose(); // Close modal after submission
+                  // onClose(); // Close modal after submission
                 }}
               >
                 Confirm Submit
@@ -438,6 +433,14 @@ export default function ModalInputData({
                               cacheOptions
                               defaultOptions
                               loadOptions={promiseOptions}
+                              // options={options}
+                              value={value}
+                              onChange={(e) => {
+                                const newValue = e?.value ?? null;
+                                const newLabel = e?.label ?? "";
+                                setValue(e);
+                              }}
+                              // onCreateOption={handleCreate}
                               className="z-50 mr-4"
                               styles={{
                                 control: (baseStyles, state) => ({
@@ -481,7 +484,9 @@ export default function ModalInputData({
                       <div
                         className={`${
                           showVariables ? "col-span-2" : ""
-                        } relative max-h-[200px] overflow-y-auto px-8 py-2 mx-2 bg-default-100 rounded-xl ${
+                        } relative ${
+                          performanceTest ? "max-h-[340px]" : "max-h-[200px]"
+                        } overflow-y-auto px-8 py-2 mx-2 bg-default-100 rounded-xl ${
                           showVariables ? "" : "hidden"
                         }`}
                       >

@@ -16,10 +16,14 @@ export default function EChartsBar({ data, selectedLabel }) {
   );
 
   // Create complete dataset with zeros for missing categories
-  const completeData = fixedCategories.map((weight) => ({
-    performance_weight: weight,
-    total_nilai_losses: dataMap.get(weight) || 0,
-  }));
+  const completeData = fixedCategories.map((weight) => {
+    const value = dataMap.get(weight);
+    // Convert 0 or undefined to null so ECharts will break the line
+    return {
+      performance_weight: weight,
+      total_nilai_losses: !value || value === 0 ? null : value,
+    };
+  });
 
   const colors = [
     "#60A5FA", // blue-400
@@ -31,30 +35,47 @@ export default function EChartsBar({ data, selectedLabel }) {
 
   const series = {
     type: "line",
-    smooth: 0.5,
+    smooth: 0,
     barGap: "10%",
+    connectNulls: false, // This ensures the line breaks at null values
     barCategoryGap: "20%",
-    data: completeData.map((item) => item.total_nilai_losses),
+    data: completeData.map((item: any) => item.total_nilai_losses),
     itemStyle: {
       borderRadius: [4, 4, 0, 0],
     },
     lineStyle: {
       color: "#5470C6",
-      width: 0.2,
+      width: 5,
     },
-    areaStyle: {
-      opacity: 0.8,
-      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-        {
-          offset: 0,
-          color: "#FD0100",
-        },
-        {
-          offset: 1,
-          color: "rgb(108, 255, 105)",
-        },
-      ]),
+    // Add label configuration here
+    label: {
+      show: true,
+      position: "top",
+      formatter: function (params) {
+        return params.value
+          ? `${formattedNumber(params.value.toFixed(2))} kCal/kWh`
+          : "";
+      },
+      fontSize: 12,
+      color: "#666",
+      backgroundColor: "rgba(255, 255, 255, 0.7)",
+      padding: [4, 8],
+      borderRadius: 4,
+      distance: 10,
     },
+    // areaStyle: {
+    //   opacity: 0.8,
+    //   color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+    //     {
+    //       offset: 0,
+    //       color: "#FD0100",
+    //     },
+    //     {
+    //       offset: 1,
+    //       color: "rgb(108, 255, 105)",
+    //     },
+    //   ]),
+    // },
     emphasis: {
       itemStyle: {
         shadowBlur: 10,
@@ -84,9 +105,10 @@ export default function EChartsBar({ data, selectedLabel }) {
         type: "shadow",
       },
       formatter: function (params) {
+        if (!params[0].value) return `Load ${params[0].axisValue}<br/>No Data`;
         let result = `${params[0].axisValue}<br/>`;
         params.forEach((param) => {
-          result += `${formattedNumber(param.value)} kCal/kWh <br/>`;
+          result += `${formattedNumber(param.value.toFixed(2))} kCal/kWh <br/>`;
         });
         return result;
       },
@@ -169,7 +191,7 @@ export default function EChartsBar({ data, selectedLabel }) {
   return (
     <Card className="w-full shadow-lg">
       <CardContent>
-        <div className="w-full h-[720px] bg-card rounded-lg">
+        <div className="w-full h-[720px] bg-card rounded-2xl">
           <ReactECharts
             option={option}
             theme={echartsTheme}
