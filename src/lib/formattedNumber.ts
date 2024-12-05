@@ -1,4 +1,4 @@
-export const formattedNumber = (value: any) =>
+export const formattedNumber = (value: number) =>
   new Intl.NumberFormat("id-ID").format(value);
 
 export const formatCurrency = (number: any) => {

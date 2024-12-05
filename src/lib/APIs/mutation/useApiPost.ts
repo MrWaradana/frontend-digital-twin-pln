@@ -31,10 +31,9 @@ export function useApiPost<T, RawT = T>(
         err.message.toLowerCase().includes("invalid")
       ) {
         toast.error(
-          `${
-            err.message.toLowerCase().includes("unauthorized")
-              ? "Unauthorized Token"
-              : "Invalid Token"
+          `${err.message.toLowerCase().includes("unauthorized")
+            ? "Unauthorized Token"
+            : "Invalid Token"
           }, redirecting to login...`
         );
         setTimeout(() => {
@@ -60,6 +59,15 @@ export function useApiPost<T, RawT = T>(
   if (isLoading) {
     return {
       isLoading: true,
+      data: undefined,
+      error: undefined,
+      trigger: trigger as any,
+    };
+  }
+
+  if (!isLoading && !data) {
+    return {
+      isLoading: false,
       data: undefined,
       error: undefined,
       trigger: trigger as any,
