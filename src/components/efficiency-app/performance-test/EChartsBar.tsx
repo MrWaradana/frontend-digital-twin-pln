@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import * as echarts from "echarts";
 import ReactECharts from "echarts-for-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useTheme } from "next-themes";
 import { formattedNumber } from "@/lib/formattedNumber";
+import { offsetPositive } from "recharts/types/util/ChartUtils";
 
 export default function EChartsBar({ data, selectedLabel }) {
   // Define fixed performance weight categories
@@ -28,12 +30,30 @@ export default function EChartsBar({ data, selectedLabel }) {
   ];
 
   const series = {
-    type: "bar",
+    type: "line",
+    smooth: 0.5,
     barGap: "10%",
     barCategoryGap: "20%",
     data: completeData.map((item) => item.total_nilai_losses),
     itemStyle: {
       borderRadius: [4, 4, 0, 0],
+    },
+    lineStyle: {
+      color: "#5470C6",
+      width: 0.2,
+    },
+    areaStyle: {
+      opacity: 0.8,
+      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+        {
+          offset: 0,
+          color: "#FD0100",
+        },
+        {
+          offset: 1,
+          color: "rgb(108, 255, 105)",
+        },
+      ]),
     },
     emphasis: {
       itemStyle: {
@@ -55,7 +75,7 @@ export default function EChartsBar({ data, selectedLabel }) {
         fontWeight: "normal",
       },
       subtextStyle: {
-        fontSize: 14,
+        fontSize: 12,
       },
     },
     tooltip: {
@@ -64,7 +84,7 @@ export default function EChartsBar({ data, selectedLabel }) {
         type: "shadow",
       },
       formatter: function (params) {
-        let result = `${params[0].axisValue}%<br/>`;
+        let result = `${params[0].axisValue}<br/>`;
         params.forEach((param) => {
           result += `${formattedNumber(param.value)} kCal/kWh <br/>`;
         });
@@ -89,10 +109,10 @@ export default function EChartsBar({ data, selectedLabel }) {
       type: "category",
       name: "Load Level",
       nameLocation: "middle",
-      nameGap: 35,
+      nameGap: 25,
       data: fixedCategories.map((w) => `${w}%`),
       axisLabel: {
-        fontSize: 12,
+        fontSize: 14,
       },
     },
     yAxis: {
@@ -149,7 +169,7 @@ export default function EChartsBar({ data, selectedLabel }) {
   return (
     <Card className="w-full shadow-lg">
       <CardContent>
-        <div className="w-full h-[600px] bg-card rounded-lg">
+        <div className="w-full h-[720px] bg-card rounded-lg">
           <ReactECharts
             option={option}
             theme={echartsTheme}

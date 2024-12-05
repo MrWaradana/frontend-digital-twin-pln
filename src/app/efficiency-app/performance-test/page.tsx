@@ -81,7 +81,7 @@ export default function Page() {
     <EfficiencyContentLayout title="Performance Test">
       <div className="flex flex-col gap-8">
         <AsyncSelect
-          className="z-20 dark:text-black rounded-full"
+          className="z-20 dark:text-black rounded-full max-w-xs"
           isClearable={true}
           placeholder={`Select Data...`}
           isSearchable={true}

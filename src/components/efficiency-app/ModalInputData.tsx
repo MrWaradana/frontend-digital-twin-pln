@@ -431,6 +431,9 @@ export default function ModalInputData({
                               }}
                             />
                             <p>Group Data</p>
+                            <small className={`text-xs text-neutral-400`}>
+                              Create new group by typing new group name
+                            </small>
                             <AsyncCreatableSelect
                               cacheOptions
                               defaultOptions

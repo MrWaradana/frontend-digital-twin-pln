@@ -228,7 +228,7 @@ export default function TablePerformanceTest({
                       isIconOnly
                       size="sm"
                       variant="solid"
-                      color="primary"
+                      className="bg-[#1C9EB6]"
                     >
                       <DotsVerticalIcon className="text-white dark:text-black text-2xl" />
                     </Button>
@@ -239,13 +239,13 @@ export default function TablePerformanceTest({
                 </DropdownItem> */}
                     {/* <DropdownItem href={`/efficiency-app/engine-flow`}>
                       Engine Flow
-                    </DropdownItem>
+                    </DropdownItem> */}
                     <DropdownItem
                       href={`/efficiency-app/${rowData.id}/pareto?percent-threshold=${rowData.persen_threshold}`}
                     >
                       Pareto Heat Loss
                     </DropdownItem>
-                    <DropdownItem href={`/efficiency-app/${rowData.id}/output`}>
+                    {/* <DropdownItem href={`/efficiency-app/${rowData.id}/output`}>
                       View
                     </DropdownItem> */}
                     {/* <DropdownItem href="#">Edit</DropdownItem>*/}
@@ -499,7 +499,7 @@ export default function TablePerformanceTest({
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
+                <TableCell className={`dark:text-white`}>{renderCell(item, columnKey)}</TableCell>
               )}
             </TableRow>
           )}
