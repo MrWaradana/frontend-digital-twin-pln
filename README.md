@@ -4,7 +4,14 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 First, clone this repository:
 
+
+Choose either option below
 ```bash
+FROM GITEA
+git clone https://git.reliabilityindonesia.com/DigitalTwin/fe-front-end
+```
+```bash
+FROM GITLAB
 git clone https://gitlab.com/tjb-digital-twin/fe-front-end.git
 ```
 
@@ -46,13 +53,6 @@ You can start editing the page by modifying `src/app/page.tsx`. The page auto-up
 
 This project uses [`Typescript`](https://www.typescriptlang.org/docs/handbook/basic-types.html). Basically Javascript but with types like string and number so that you can easily detect rendered data type error and following the best practice.
 
-All of the dependencies can be look at package.json. Some of the notable dependencies are:
-
-1. [Next UI](https://nextui.org/docs/guide/introduction)
-1. [ShadCN UI](https://ui.shadcn.com/charts)
-1. [Tailwind CSS](https://tailwindcss.com/)
-1. [TANStack for React](https://tanstack.com/)
-
 ## Structure of The Pages
 
 All page is on `src/app/`. Here are the list of the pages:
@@ -62,4 +62,15 @@ All page is on `src/app/`. Here are the list of the pages:
 1. Efficiency App &rarr; `app/efficiency-app/page.tsx`
 1. Other Application &rarr; `app/[app_name]/page.tsx`
 
-New Repo Gitea
+## Notable Dependencies
+
+All of the dependencies can be look at package.json. Some of the notable dependencies are:
+
+1. [Next UI](https://nextui.org/docs/guide/introduction)
+1. [ShadCN UI](https://ui.shadcn.com/charts)
+1. [Tailwind CSS](https://tailwindcss.com/)
+1. [TANStack for React](https://tanstack.com/)
+1. [Mantine](https://mantine.dev/)
+1. [Mantine React Table](https://www.mantine-react-table.com/)
+
+
