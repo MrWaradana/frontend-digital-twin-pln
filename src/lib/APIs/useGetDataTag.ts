@@ -9,6 +9,7 @@ export interface Part {
   type_id: string,
   web_id: string,
   values: number,
+  feature_id: string,
   part_name: string,
   created_at: string,
   updated_at: string

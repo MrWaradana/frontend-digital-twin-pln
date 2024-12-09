@@ -33,7 +33,8 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any }) => {
   const indicators = React.useMemo(() => {
     if (!featureData?.features) return [];
 
-    return featureData.features.map((feature) => ({
+    return featureData.features.map((feature, index) => ({
+      index: index,
       id: feature.id,
       name: feature.name,
       max: 100, // atau nilai maksimum yang sesuai
@@ -42,20 +43,36 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any }) => {
 
   const radarChartData = React.useMemo(() => {
     if (!tagData?.equipments?.parts) return [];
+    if (!indicators.length) return [];
 
-    const data = [
-      {
-        value: [80, 0, 0, 0, 0, 0, 0, 0], // Nilai sesuai dengan jumlah indicators
-        name: "BRG TEMP 1"
-      },
-      {
-        value: [10, 60, 20, 40, 21, 20, 20, 40], // Nilai sesuai dengan jumlah indicators
-        name: "BRG TEMP 2"
+    console.log('Parts:', tagData.equipments.parts);
+    console.log('Indicators:', indicators);
+
+    const defaultValues = new Array(indicators.length).fill(0);
+
+    const result = tagData.equipments.parts.map(part => {
+      const values = [...defaultValues];
+      const indicatorIndex = indicators.findIndex(ind => ind.id === part.feature_id);
+
+      console.log('Processing part:', {
+        partName: part.part_name,
+        featureId: part.feature_id,
+        value: part.values,
+        indicatorIndex
+      });
+
+      if (indicatorIndex !== -1) {
+        values[indicatorIndex] = part.values || 0;
       }
-    ];
 
+      return {
+        value: values,
+        name: part.part_name
+      };
+    });
 
-    return data;
+    console.log('Final result:', result);
+    return result;
   }, [tagData, indicators]);
 
   if (isLoading)
@@ -67,6 +84,7 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any }) => {
         />
       </div>
     );
+
 
   return (
     <div className="bg-white rounded-3xl p-3 pt-6 sm:p-5 sm:px-12 mx-2 sm:mx-4 border border-gray-200 shadow-xl col-span-1 md:col-span-2">
@@ -111,14 +129,14 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any }) => {
 
         {/* Right Section */}
         <div className="p-4 rounded-lg">
-          <RadarChart
+          {/* <RadarChart
             indicators={indicators}
             data={radarChartData}
             legendData={['Current Value']}
             height='400px'
             className='w-full'
             selectedKeys={selectedKeys}
-          />
+          /> */}
         </div>
       </div>
     </div>

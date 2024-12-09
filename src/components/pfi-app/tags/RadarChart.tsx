@@ -100,8 +100,6 @@ const RadarChart: React.FC<RadarChartProps> = ({
 
   return (
     <div className={className}>
-      {data.length}
-
       <ReactECharts
         option={option}
         style={{ height }}
