@@ -17,6 +17,7 @@ import {
 import { useGetEquipmentRP } from "@/lib/APIs/reliability-predict/useGetEquipmentRP";
 import { useGetMTBF } from "@/lib/APIs/reliability-predict/useGetMTBF";
 import { useGetDistribution } from "@/lib/APIs/reliability-predict/useGetDistributions";
+import DistributionChart from "@/components/reliability-app/DistributionChart";
 const Page = ({ params }: { params: { id: string } }) => {
   const [selectedOption1, setSelectedOption1] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,32 +25,49 @@ const Page = ({ params }: { params: { id: string } }) => {
   const openModal = () => setIsModalOpen(true);
   const options = ["Option 1", "Option 2", "Option 3"];
   const { data: session } = useSession();
-  const { data: mdtvalue, isLoading: mdtloading } = useGetMDT(
-    id,
-    session?.user.access_token
-  );
-
-  const { data: mttrvalue, isLoading: mttrloading } = useGetMTTR(
-    id,
-    session?.user.access_token
-  );
-  const { data: mtbfvalue, isLoading: mtbfloading } = useGetMTBF(
-    id,
-    session?.user.access_token
-  );
-  const { data: failureRatevalue, isLoading: failureRateloading } =
-    useGetFailureRate(id, session?.user.access_token);
-  const { data: reliabilityCurrentvalue, isLoading: reliabilityloading } =
-    useGetReliabilityCurrent(id, session?.user.access_token);
-  const { data: equipmentData, isLoading: equipmentloading } =
-    useGetEquipmentRP(id, session?.user.access_token);
-  const { data: distributionData, isLoading: distributionloading } =
-    useGetDistribution(id, session?.user.access_token);
-  console.log(distributionData, "distributionData");
-  const { data: reliabilityData, isLoading: reliabilityPlotloading } =
-    useGetReliabilityPlot(id, session?.user.access_token);
-  console.log(reliabilityData, "reliabilityData");
-
+  const {
+    data: mdtvalue,
+    isLoading: mdtloading,
+    error: mdterror,
+  } = useGetMDT(id, session?.user.access_token);
+  const {
+    data: mttrvalue,
+    isLoading: mttrloading,
+    error: mttrerror,
+  } = useGetMTTR(id, session?.user.access_token);
+  console.log("mttrvalue", mttrvalue);
+  const {
+    data: mtbfvalue,
+    isLoading: mtbfloading,
+    error: mtbferror,
+  } = useGetMTBF(id, session?.user.access_token);
+  console.log("mtbferror", mtbferror);
+  const {
+    data: failureRatevalue,
+    isLoading: failureRateloading,
+    error: failureerror,
+  } = useGetFailureRate(id, session?.user.access_token);
+  const {
+    data: reliabilityCurrentvalue,
+    isLoading: reliabilityloading,
+    error: reliabilityerror,
+  } = useGetReliabilityCurrent(id, session?.user.access_token);
+  const {
+    data: equipmentData,
+    isLoading: equipmentloading,
+    error: equipmenterror,
+  } = useGetEquipmentRP(id, session?.user.access_token);
+  console.log("equipmentData", equipmentData);
+  const {
+    data: distributionData,
+    isLoading: distributionloading,
+    error: distributionerror,
+  } = useGetDistribution(id, session?.user.access_token);
+  const {
+    data: reliabilityData,
+    isLoading: reliabilityPlotloading,
+    error: reliabilityPloterror,
+  } = useGetReliabilityPlot(id, session?.user.access_token);
   const failureRate = failureRatevalue?.failure_rate
     ? `${failureRatevalue.failure_rate.toFixed(2)}`
     : "None";
@@ -72,9 +90,12 @@ const Page = ({ params }: { params: { id: string } }) => {
   if (
     mdtloading ||
     mttrloading ||
+    mtbfloading ||
     failureRateloading ||
     reliabilityloading ||
-    equipmentloading
+    equipmentloading ||
+    distributionloading ||
+    reliabilityPlotloading
   ) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
@@ -118,7 +139,7 @@ const Page = ({ params }: { params: { id: string } }) => {
                       </div>
                     </div>
                   </div>
-                  <p className="text-[11px] text-[#918E8E] sm:max-w-[22dvw] mt-4 w-full">
+                  <p className="text-[11px] text-[#393333] sm:max-w-[22dvw] mt-4 w-full">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                     do eiusmod tempor incididunt ut labore
                   </p>
@@ -139,6 +160,10 @@ const Page = ({ params }: { params: { id: string } }) => {
                       }
                       return null; // Do nothing if no value exists for the param
                     })}
+                    <div className="flex flex-row gap-2">
+                      <div className="font-bold ">Age : </div>
+                      <div>{equipment?.age.toFixed(2)}</div>
+                    </div>
                   </div>
                 </div>
 
@@ -163,9 +188,31 @@ const Page = ({ params }: { params: { id: string } }) => {
                 <div className="text-medium font-bold">
                   Distribution Profile
                 </div>
+                <div className="flex justify-center items-center h-full text-sm text-[#918E8E]">
+                  {distributionData?.message ? (
+                    <div>{distributionData.message}</div>
+                  ) : (
+                    <DistributionChart
+                      X={distributionData?.results.x}
+                      Y={distributionData?.results.y}
+                      current={distributionData?.current_day}
+                    ></DistributionChart>
+                  )}
+                </div>
               </div>
               <div className="flex-1 flex flex-col justify-start w-full">
                 <div className="text-medium font-bold">Reliability Profile</div>
+                <div className="flex justify-center items-center h-full text-sm text-[#918E8E]">
+                  {reliabilityData?.message ? (
+                    <div>{reliabilityData.message}</div>
+                  ) : (
+                    <DistributionChart
+                      X={reliabilityData?.results.x}
+                      Y={reliabilityData?.results.y}
+                      current={reliabilityData?.current_day}
+                    ></DistributionChart>
+                  )}
+                </div>
               </div>
             </div>
 

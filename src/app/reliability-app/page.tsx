@@ -44,7 +44,7 @@ const Page = () => {
         <div className="bg-white rounded-3xl p-6 sm:px-12 sm:py-9 border border-gray-200 shadow-xl w-full lg:w-1/3">
           <p className="text-[10px] text-gray-400">Unit TJB #3</p>
           <h1 className="text-xs sm:text-sm font-semibold text-[#303030] mb-6">
-            Potential Failure
+            Number of Failure
           </h1>
           <ul className="flex gap-3 flex-col">
             {assetsFailures.map((item, index) => (
@@ -78,7 +78,7 @@ const Page = () => {
         <div className="bg-white rounded-3xl p-6 sm:px-12 sm:py-9 border border-gray-200 shadow-xl w-full lg:w-1/3">
           <p className="text-[10px] text-gray-400">Unit TJB #3</p>
           <h1 className="text-xs sm:text-sm font-semibold text-[#303030] mb-6">
-            Worst Reliability
+            Top 10 Worst Reliability
           </h1>
           <ul className="flex gap-3 flex-col">
             {assetsReliability.map((reliability, index) => (

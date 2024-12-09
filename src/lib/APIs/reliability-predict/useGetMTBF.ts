@@ -4,7 +4,8 @@ import { useApiFetch } from "../useApiFetch";
 
 export interface MTBF {
   location_tag: string;
-  hours: number;
+  hours: number | null;
+  message: string;
 }
 
 export function useGetMTBF(
