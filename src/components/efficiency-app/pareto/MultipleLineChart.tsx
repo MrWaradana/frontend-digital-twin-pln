@@ -245,7 +245,7 @@ export default function MultipleLineChart({
               ) : (
                 <>
                   <p className="text-sm font-semibold mb-2">
-                    Nilai Losses (kWh/kCal)
+                    Nilai Losses (kCal/kWh)
                   </p>
                   <p
                     className={`border-l-4 border-blue-400 pl-4 text-3xl font-bold`}
@@ -253,7 +253,7 @@ export default function MultipleLineChart({
                     {formattedNumber(summaryData.total_nilai.toFixed(2))}
                   </p>
                   <small className={`text-xs pl-6 text-neutral-400`}>
-                    kWh/kCal
+                    kCal/kWh
                   </small>
                 </>
               )}

@@ -64,20 +64,20 @@ export default function EfficiencyTrending() {
               name: data?.name || "",
               periode: data?.periode || "",
             },
-            total_nilai: data?.pareto?.total_nilai || 0,
+            total_nilai: data?.total_nilai_loss || 0,
           };
 
           // Safely handle pareto_result mapping
-          if (data?.pareto.pareto_result) {
-            Object.entries(data.pareto.pareto_result).forEach(([_, pareto]) => {
-              if (
-                pareto?.category &&
-                typeof pareto.total_nilai_losses !== "undefined"
-              ) {
-                transformedData[pareto.category] = pareto;
-              }
-            });
-          }
+          // if (data) {
+          //   Object.entries(data.pareto.pareto_result).forEach(([_, pareto]) => {
+          //     if (
+          //       pareto?.category &&
+          //       typeof pareto.total_nilai_losses !== "undefined"
+          //     ) {
+          //       transformedData[pareto.category] = pareto;
+          //     }
+          //   });
+          // }
 
           return transformedData;
         } catch (error) {
@@ -189,14 +189,14 @@ export default function EfficiencyTrending() {
             value={periodValue}
             size="sm"
           />
-          <Button
+          {/* <Button
             variant={`solid`}
             size={`sm`}
             className="w-full bg-[#1C9EB6] text-white"
             onClick={onDetailedAnalysisClicked}
           >
             Open Detailed per Category
-          </Button>
+          </Button> */}
         </div>
 
         {isLoadingParetoTrending || isValidating ? (

@@ -75,37 +75,45 @@ export default function EChartsStackedLine({
     return Array.from(categories);
   }, [chartData]);
 
-  // Enhanced series data with larger line width and area for better clickability
+  // Create a lookup map for IDs based on the period
+  const idMap = useMemo(() => {
+    const map = new Map();
+    chartData.forEach((point) => {
+      map.set(point.data.periode, point.data.id);
+    });
+    return map;
+  }, [chartData]);
+
+  // Transform the series data keeping the original format
   const seriesData = listCategories
-    .map((item: any, index) => {
+    .map((item, index) => {
       return {
         name: item,
         type: "line",
         smooth: true,
-        data: chartData.map((pareto) => pareto[item]),
+        data: chartData.map((point) => point[item].toFixed(2)),
         lineStyle: {
-          width: 3, // Thicker line for better visibility
+          width: 2,
           color: mainChartColors[index % mainChartColors.length],
         },
         itemStyle: {
           color: mainChartColors[index % mainChartColors.length],
+          borderWidth: 2,
+          borderColor: "#fff",
         },
-        triggerLineEvent: true, // Added this line to enhance line click events
-
+        symbol: "circle",
+        symbolSize: 8,
+        showSymbol: true,
         emphasis: {
-          focus: "series",
-          lineStyle: {
-            width: 4, // Even thicker on hover
+          scale: true,
+          itemStyle: {
+            borderWidth: 2,
+            borderColor: "#fff",
           },
-        },
-        // Add a subtle area below the line to increase clickable area
-        areaStyle: {
-          opacity: 0.1,
-          color: mainChartColors[index % mainChartColors.length],
         },
       };
     })
-    .filter((item: any) => item.name === "total_nilai");
+    .filter((item) => item.name === "total_nilai");
 
   const summaryData = data ?? [];
   const paretoData: any = data?.pareto_result ?? [];
@@ -161,26 +169,24 @@ export default function EChartsStackedLine({
 
   // Event handler for chart clicks
   const onChartClick = (params) => {
-    // Get the index of the clicked point
-    // const clickedSeriesName = params.seriesName;
+    // Get the period from the x-axis
+    console.log(params, "params");
+    const period = periode[params.dataIndex];
 
-    // Prepare data for all categories at this point
-    // const allSeriesData = listCategories
-    //   .map((category) => ({
-    //     name: category,
-    //     data: chartData.map((point, index) => ({
-    //       period: periode[index],
-    //       value: point[category].total_nilai_losses,
-    //     })),
-    //     isClickedSeries: category === clickedSeriesName,
-    //   }))
-    //   .filter((item: any) => item.name != "total_nilai");
-    // console.log(clickedSeriesName);
-    setSelectedPareto(true);
-    // setSelectedSeries({
-    //   clickedName: clickedSeriesName,
-    //   allSeries: allSeriesData,
-    // });
+    // Look up the ID using the period
+    const id = idMap.get(period);
+
+    console.log("Clicked data:", {
+      seriesName: params.seriesName,
+      value: params.value,
+      period: period,
+      id: id,
+    });
+
+    if (id) {
+      setDataId(id);
+      setSelectedPareto(true);
+    }
   };
 
   const onModalChartClick = (params) => {
@@ -361,6 +367,7 @@ export default function EChartsStackedLine({
         trigger: "axis",
         axisPointer: {
           type: "cross",
+          snap: true, // Snaps to nearest data point
         },
         backgroundColor: "rgba(255, 255, 255, 0.95)",
         borderColor: "#ccc",

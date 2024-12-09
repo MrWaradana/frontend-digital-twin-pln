@@ -10,8 +10,8 @@ export interface ParetoTrendingResultDataList {
   id: string;
   name: string;
   periode: string;
-  statas: string;
-  pareto: ParetoResultDataList;
+  total_nilai_loss: number;
+  // pareto: ParetoResultDataList;
 }
 
 export function useGetDataParetoTrending(

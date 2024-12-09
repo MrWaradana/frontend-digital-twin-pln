@@ -559,7 +559,7 @@ export default function TableParetoHeatlossNPHR({
           >
             <div className="text-center flex flex-row gap-1">
               <p>
-                Nilai Losses <br /> (kWh/kCal)
+                Nilai Losses <br /> (kCal/kWh)
               </p>
               <CircleHelp size={12} />
             </div>

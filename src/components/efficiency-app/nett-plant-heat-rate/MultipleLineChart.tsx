@@ -195,6 +195,7 @@ export default function MultipleLineChart({
                 fill="#42C023"
                 className="hover:cursor-pointer"
                 barSize={20}
+                yAxisId={"persenLosses"}
                 onClick={(e) => handleBarClick(e)}
               />
 
