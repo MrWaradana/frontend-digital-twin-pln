@@ -493,6 +493,7 @@ export default function TablePerformanceTest({
         </TableHeader>
         <TableBody
           emptyContent={"No data found"}
+          isLoading={isLoading}
           loadingContent={
             <>
               <Spinner color="primary" label="loading..." />

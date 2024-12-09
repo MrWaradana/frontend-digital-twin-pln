@@ -7,7 +7,11 @@ import { formattedNumber } from "@/lib/formattedNumber";
 import { offsetPositive } from "recharts/types/util/ChartUtils";
 import { useRouter } from "next/navigation";
 
-export default function EChartsBar({ data, selectedLabel }) {
+export default function EChartsBar({
+  data,
+  selectedLabel,
+  isLoadingPerformanceGroup,
+}) {
   const router = useRouter();
   // Define fixed performance weight categories
   const fixedCategories = [40, 50, 60, 70, 80, 90, 95];
@@ -209,6 +213,41 @@ export default function EChartsBar({ data, selectedLabel }) {
   useEffect(() => {
     setEchartsTheme(theme === "dark" ? "dark" : "light");
   }, [theme]);
+
+  if (!data || data.length === 0) {
+    return (
+      <Card className="w-full">
+        <CardContent>
+          <div className="w-full h-[67dvh] bg-card rounded-2xl flex items-center justify-center">
+            <div className="text-center">
+              <h3 className="text-lg font-semibold mb-2">No Data Available</h3>
+              <p className="text-muted-foreground">
+                No performance test results found
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Show loading or empty state if needed
+  if (isLoadingPerformanceGroup) {
+    return (
+      <Card className="w-full">
+        <CardContent>
+          <div className="w-full h-[67dvh] bg-card rounded-2xl flex items-center justify-center">
+            <div className="flex flex-col items-center gap-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <p className="text-muted-foreground">
+                Loading performance data...
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full">

@@ -24,7 +24,7 @@ import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css"; //if using mantine date picker features
 import "mantine-react-table/styles.css"; //make sure MRT styles were imported in your app root (once)
 
-const timeout = 6_000_000; // 10 minutes in milliseconds
+const timeout = 900_000; // 15 minutes in milliseconds
 // const timeout = 80_000; // 10 minutes in milliseconds
 const promptBeforeIdle = 120_000; // 3 minutes in milliseconds
 // const promptBeforeIdle = 70_000; // 3 minutes in milliseconds

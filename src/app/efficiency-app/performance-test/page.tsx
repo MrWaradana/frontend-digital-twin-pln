@@ -110,21 +110,24 @@ export default function Page() {
               }),
             }}
           />
-          {isLoadingPerformanceGroup ? (
+          {/* {chartDataPerformance && chartDataPerformance.length === 0 ? (
+            <div className={` text-center text-neutral-400`}>No data found</div>
+          ) : isLoadingPerformanceGroup ? (
             <div className={`w-full flex justify-center items-center`}>
               <Spinner label={`Loading...`} />
             </div>
-          ) : (
-            <EChartsStackedBar
-              data={chartDataPerformance}
-              selectedLabel={selectedLabel}
-            />
-          )}
+          ) : ( */}
+          <EChartsStackedBar
+            data={chartDataPerformance}
+            selectedLabel={selectedLabel}
+            isLoadingPerformanceGroup={isLoadingPerformanceGroup}
+          />
+          {/* )} */}
         </section>
         {/* <section>
           <MultipleLineChart data={chartData} />
         </section> */}
-        <section className={`h-full overflow-x-auto`}>
+        <section className={`w-full xl:w-1/2 h-full overflow-x-auto`}>
           <TablePerformanceTest
             tableData={performanceData}
             isLoading={isLoading}
