@@ -4,7 +4,7 @@ import { useApiFetch } from "./useApiFetch";
 
 export function useGetDataPerformanceGroup(
   token: string | undefined,
-  data_id: string | undefined
+  data_id: string | undefined | null
 ): HookReply<any> {
   return useApiFetch(
     `${EFFICIENCY_API_URL}/data/charts/performance/${data_id}`,

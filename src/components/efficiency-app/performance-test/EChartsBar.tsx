@@ -222,7 +222,7 @@ export default function EChartsBar({
             <div className="text-center">
               <h3 className="text-lg font-semibold mb-2">No Data Available</h3>
               <p className="text-muted-foreground">
-                No performance test results found
+                Try selecting another performance group
               </p>
             </div>
           </div>

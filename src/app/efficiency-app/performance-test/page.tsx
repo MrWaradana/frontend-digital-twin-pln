@@ -47,11 +47,11 @@ export default function Page() {
   const selectPerformanceData = dataPerformance ?? [];
   const chartDataPerformance = dataPerformanceGroup ?? [];
 
-  useEffect(() => {
-    if (selectPerformanceData.length > 0) {
-      setDataId(selectPerformanceData[0]?.id);
-    }
-  }, [selectPerformanceData]);
+  // useEffect(() => {
+  //   if (selectPerformanceData.length > 0) {
+  //     setDataId(selectPerformanceData[0]?.id);
+  //   }
+  // }, [selectPerformanceData]);
 
   const PerformanceDataOptions = selectPerformanceData.map((item) => {
     return {
@@ -95,7 +95,7 @@ export default function Page() {
             isLoading={isLoadingPerformance}
             onChange={(e) => {
               //@ts-ignore
-              const newValue = e?.value ?? null;
+              const newValue = e?.value ?? "";
               const newLabel = e?.label ?? "";
               setDataId(newValue);
               setSelectedLabel(newLabel);

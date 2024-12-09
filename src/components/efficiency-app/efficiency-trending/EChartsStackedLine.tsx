@@ -624,6 +624,8 @@ export default function EChartsStackedLine({
     }
   }, [theme]);
 
+  
+  
   return (
     <Card>
       <CardBody>
