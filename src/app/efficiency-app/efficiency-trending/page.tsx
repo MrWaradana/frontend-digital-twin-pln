@@ -92,7 +92,7 @@ export default function EfficiencyTrending() {
     const categories = new Set<string>();
     paretoTrendingChart.forEach((pareto: any) => {
       Object.keys(pareto).forEach((key) => {
-        if (key !== "data") {
+        if (key !== "data" && key !== "total_nilai") {
           categories.add(key);
         }
       });
@@ -109,16 +109,24 @@ export default function EfficiencyTrending() {
     // Get the index of the clicked point
     const clickedSeriesName = "Total Nilai Heatloss";
 
+    console.log(listCategories, "categories");
+    console.log(paretoTrendingChart, "chart trending");
+
     // Prepare data for all categories at this point
     const allSeriesData = listCategories
-      .map((category) => ({
-        name: category,
-        data: paretoTrendingChart.map((point: any, index: any) => ({
-          period: periode[index],
-          value: point[category].total_nilai_losses,
-        })),
-        isClickedSeries: category === clickedSeriesName,
-      }))
+      .map((category) => {
+        console.log(category, "map category");
+        return {
+          name: category,
+          data: paretoTrendingChart.map((point: any, index: any) => {
+            return {
+              period: periode[index],
+              value: point[category]?.total_nilai_losses || 0,
+            };
+          }),
+          isClickedSeries: category === clickedSeriesName,
+        };
+      })
       .filter((item: any) => item.name != "total_nilai");
 
     setSelectedSeries({

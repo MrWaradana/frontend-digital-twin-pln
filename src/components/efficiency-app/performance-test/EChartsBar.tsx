@@ -5,8 +5,10 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useTheme } from "next-themes";
 import { formattedNumber } from "@/lib/formattedNumber";
 import { offsetPositive } from "recharts/types/util/ChartUtils";
+import { useRouter } from "next/navigation";
 
 export default function EChartsBar({ data, selectedLabel }) {
+  const router = useRouter();
   // Define fixed performance weight categories
   const fixedCategories = [40, 50, 60, 70, 80, 90, 95];
 
@@ -18,12 +20,33 @@ export default function EChartsBar({ data, selectedLabel }) {
   // Create complete dataset with zeros for missing categories
   const completeData = fixedCategories.map((weight) => {
     const value = dataMap.get(weight);
-    // Convert 0 or undefined to null so ECharts will break the line
+    const originalDataPoint = data.find(
+      (item) => item.performance_weight === weight
+    );
     return {
       performance_weight: weight,
       total_nilai_losses: !value || value === 0 ? null : value,
+      id: originalDataPoint?.id, // Store the id from original data
     };
   });
+
+  const handleChartClick = (params) => {
+    const dataIndex = params.dataIndex;
+    const clickedPoint = completeData[dataIndex];
+
+    if (clickedPoint && clickedPoint.id) {
+      // Navigate to the dynamic route with the data id
+      router.push(
+        `/efficiency-app/${clickedPoint.id}/pareto?percent-threshold=${clickedPoint.performance_weight}&potential-timeframe=1`
+      );
+    }
+  };
+
+  const onChartReady = (echarts) => {
+    echarts.getZr().on("click", (params) => {
+      handleChartClick(params);
+    });
+  };
 
   const colors = [
     "#60A5FA", // blue-400
@@ -42,6 +65,7 @@ export default function EChartsBar({ data, selectedLabel }) {
     data: completeData.map((item: any) => item.total_nilai_losses),
     itemStyle: {
       borderRadius: [4, 4, 0, 0],
+      cursor: "pointer", // Add pointer cursor to indicate clickable
     },
     lineStyle: {
       color: "#5470C6",
@@ -88,9 +112,8 @@ export default function EChartsBar({ data, selectedLabel }) {
   const option = {
     title: {
       text: `${selectedLabel} Performance Test Results`,
-      subtext: "Parameter Comparison Across Load Levels",
       left: "center",
-      top: "20px",
+      top: "26px",
       textStyle: {
         fontSize: 24,
         fontWeight: "normal",
@@ -141,7 +164,7 @@ export default function EChartsBar({ data, selectedLabel }) {
       type: "value",
       name: "Nilai Loss (kCal/kWh)",
       nameLocation: "middle",
-      nameGap: 50,
+      nameGap: 40,
       axisLabel: {
         formatter: `{value}`,
         fontSize: 12,
@@ -166,10 +189,9 @@ export default function EChartsBar({ data, selectedLabel }) {
           title: {
             line: "Switch to Line",
             bar: "Switch to Bar",
-            stack: "Stack",
             tiled: "Tiled",
           },
-          type: ["line", "bar", "stack", "tiled"],
+          type: ["line", "bar", "tiled"],
         },
       },
       top: "top",
@@ -189,14 +211,17 @@ export default function EChartsBar({ data, selectedLabel }) {
   }, [theme]);
 
   return (
-    <Card className="w-full shadow-lg">
+    <Card className="w-full">
       <CardContent>
-        <div className="w-full h-[720px] bg-card rounded-2xl">
+        <div className="w-full h-[67dvh] bg-card rounded-2xl">
           <ReactECharts
             option={option}
             theme={echartsTheme}
             style={{ height: "100%", width: "100%" }}
-            className="p-4"
+            onEvents={{
+              click: handleChartClick,
+            }}
+            onChartReady={onChartReady}
           />
         </div>
       </CardContent>

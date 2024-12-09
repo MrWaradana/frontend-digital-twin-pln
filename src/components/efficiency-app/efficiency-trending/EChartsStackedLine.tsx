@@ -30,7 +30,7 @@ export default function EChartsStackedLine({
     error,
   } = useGetDataNPHR(session?.user.access_token, dataId);
 
-  console.log(selectedSeries, "selected series");
+  // console.log(selectedSeries, "selected series");
 
   // Custom color palettes
   const mainChartColors = [
@@ -162,20 +162,20 @@ export default function EChartsStackedLine({
   // Event handler for chart clicks
   const onChartClick = (params) => {
     // Get the index of the clicked point
-    const clickedSeriesName = params.seriesName;
+    // const clickedSeriesName = params.seriesName;
 
     // Prepare data for all categories at this point
-    const allSeriesData = listCategories
-      .map((category) => ({
-        name: category,
-        data: chartData.map((point, index) => ({
-          period: periode[index],
-          value: point[category].total_nilai_losses,
-        })),
-        isClickedSeries: category === clickedSeriesName,
-      }))
-      .filter((item: any) => item.name != "total_nilai");
-
+    // const allSeriesData = listCategories
+    //   .map((category) => ({
+    //     name: category,
+    //     data: chartData.map((point, index) => ({
+    //       period: periode[index],
+    //       value: point[category].total_nilai_losses,
+    //     })),
+    //     isClickedSeries: category === clickedSeriesName,
+    //   }))
+    //   .filter((item: any) => item.name != "total_nilai");
+    // console.log(clickedSeriesName);
     setSelectedPareto(true);
     // setSelectedSeries({
     //   clickedName: clickedSeriesName,

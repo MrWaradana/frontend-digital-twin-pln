@@ -79,42 +79,44 @@ export default function Page() {
 
   return (
     <EfficiencyContentLayout title="Performance Test">
-      <div className="flex flex-col gap-8">
-        <AsyncSelect
-          className="z-20 dark:text-black rounded-full max-w-xs"
-          isClearable={true}
-          placeholder={`Select Data...`}
-          isSearchable={true}
-          loadOptions={loadOptions}
-          defaultValue={dataId ? { value: dataId, label: selectedLabel } : null}
-          defaultOptions={PerformanceDataOptions} // Optional: Show default options initially
-          cacheOptions // Caches the loaded options
-          isLoading={isLoadingPerformance}
-          onChange={(e) => {
-            //@ts-ignore
-            const newValue = e?.value ?? null;
-            const newLabel = e?.label ?? "";
-            setDataId(newValue);
-            setSelectedLabel(newLabel);
-          }}
-          name="efficiencyData"
-          styles={{
-            control: (baseStyles, state) => ({
-              ...baseStyles,
-              borderRadius: 10,
-              height: 33,
-              backgroundColor: "#f3f4f6",
-            }),
-          }}
-        />
-        <section>
+      <div className="flex flex-col xl:flex-row gap-8">
+        <section className="w-full xl:w-1/2 bg-white shadow-xl rounded-2xl p-6">
+          <AsyncSelect
+            className="z-20 dark:text-black rounded-full max-w-xs pb-4"
+            isClearable={true}
+            placeholder={`Select Data...`}
+            isSearchable={true}
+            loadOptions={loadOptions}
+            defaultValue={
+              dataId ? { value: dataId, label: selectedLabel } : null
+            }
+            defaultOptions={PerformanceDataOptions} // Optional: Show default options initially
+            cacheOptions // Caches the loaded options
+            isLoading={isLoadingPerformance}
+            onChange={(e) => {
+              //@ts-ignore
+              const newValue = e?.value ?? null;
+              const newLabel = e?.label ?? "";
+              setDataId(newValue);
+              setSelectedLabel(newLabel);
+            }}
+            name="efficiencyData"
+            styles={{
+              control: (baseStyles, state) => ({
+                ...baseStyles,
+                borderRadius: 10,
+                height: 33,
+                backgroundColor: "#f3f4f6",
+              }),
+            }}
+          />
           {isLoadingPerformanceGroup ? (
             <div className={`w-full flex justify-center items-center`}>
               <Spinner label={`Loading...`} />
             </div>
           ) : (
             <EChartsStackedBar
-              data={dataPerformanceGroup}
+              data={chartDataPerformance}
               selectedLabel={selectedLabel}
             />
           )}
@@ -122,13 +124,12 @@ export default function Page() {
         {/* <section>
           <MultipleLineChart data={chartData} />
         </section> */}
-        <section>
+        <section className={`h-full overflow-x-auto`}>
           <TablePerformanceTest
             tableData={performanceData}
             isLoading={isLoading}
             isValidating={isValidating}
             thermoStatus={thermoStatus}
-            addNewUrl="/efficiency-app/performance-test/input"
             PerformanceDataOptions={PerformanceDataOptions}
           />
         </section>

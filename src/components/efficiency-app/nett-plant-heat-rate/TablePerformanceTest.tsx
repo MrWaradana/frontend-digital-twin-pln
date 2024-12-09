@@ -59,7 +59,6 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 export default function TablePerformanceTest({
   tableData,
-  addNewUrl = "#",
   mutate,
   isLoading,
   isValidating,
@@ -67,7 +66,6 @@ export default function TablePerformanceTest({
   PerformanceDataOptions,
 }: {
   tableData: any;
-  addNewUrl?: string;
   mutate?: any;
   isLoading: any;
   isValidating?: any;
@@ -210,7 +208,7 @@ export default function TablePerformanceTest({
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[rowData.jenis_parameter.toLowerCase()]}
+              color={statusColorMap[rowData.jenis_parameter]}
               size="sm"
               variant="flat"
             >
@@ -472,14 +470,14 @@ export default function TablePerformanceTest({
         aria-label="Efficiency Data Table"
         isHeaderSticky
         bottomContent={bottomContent}
-        bottomContentPlacement="outside"
+        bottomContentPlacement="inside"
         classNames={{
-          wrapper: "max-h-[382px]",
+          wrapper: "max-h-[80dvh]",
         }}
         color="primary"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
-        topContentPlacement="outside"
+        topContentPlacement="inside"
         onSortChange={setSortDescriptor}
       >
         <TableHeader columns={headerColumns}>
@@ -495,7 +493,6 @@ export default function TablePerformanceTest({
         </TableHeader>
         <TableBody
           emptyContent={"No data found"}
-          isLoading={isLoading}
           loadingContent={
             <>
               <Spinner color="primary" label="loading..." />
