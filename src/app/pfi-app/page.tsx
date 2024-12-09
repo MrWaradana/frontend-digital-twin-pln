@@ -3,7 +3,7 @@
 import ListEquipment from "@/components/pfi-app/ListEquipment";
 import PowerPlant from "@/components/pfi-app/PowerPlant";
 import { PFIContentLayout } from "@/containers/PFIContentLayout";
-import { useGetEquipmentByParams } from "@/lib/APIs/useGetEquipments";
+import { useGetEquipments } from "@/lib/APIs/useGetEquipments";
 import { CircularProgress } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -16,7 +16,7 @@ const Page = () => {
     isLoading,
     isValidating,
     mutate
-  } = useGetEquipmentByParams(session?.user.access_token, "TJB 3");
+  } = useGetEquipments(session?.user.access_token);
 
   const equipments = equipmentsData?.equipments ?? [];
   const data = React.useMemo(() => {

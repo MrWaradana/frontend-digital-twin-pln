@@ -1,54 +1,71 @@
 "use client";
 
-import TableEquipment from "@/components/pfi-app/TableEquipment";
+import NotSelected from "@/components/pfi-app/equipments/NotSelected";
+import ListTag from "@/components/pfi-app/ListTag";
+import Analytics from "@/components/pfi-app/tags/Analytics";
 import { PFIContentLayout } from "@/containers/PFIContentLayout";
-import { useGetCategories } from "@/lib/APIs/useGetCategoryPfi";
-import { useGetEqTrees } from "@/lib/APIs/useGetEqTree";
 import { useGetEquipments } from "@/lib/APIs/useGetEquipments";
+import { useSelectedPaginationTagsStore } from "@/store/iPFI/setPaginationTags";
 import { useSession } from "next-auth/react";
+import React, { useEffect } from "react";
 
-export default function Page() {
+const Page = () => {
   const { data: session } = useSession();
+  const [selectedKeys, setSelectedKeys]: any = React.useState(null);
+
+  const selectedPaginationTags = useSelectedPaginationTagsStore(
+    (state) => state.selectedPaginationTagState
+  )
+  const limitPaginationTags = useSelectedPaginationTagsStore(
+    (state) => state.limitPaginationTagState
+  )
+
+  const [page, setPage] = React.useState(selectedPaginationTags);
+  const [limit, setLimit] = React.useState(limitPaginationTags);
+
+  useEffect(() => {
+    setPage(selectedPaginationTags);
+    setLimit(limitPaginationTags);
+  }, [selectedPaginationTags, limitPaginationTags]);
 
   const {
-    data: equipmentsData,
-    isValidating,
+    data: tagData,
+    isLoading,
     mutate,
-  } = useGetEquipments(session?.user.access_token);
+  } = useGetEquipments(session?.user?.access_token, page, limit)
 
-  const { data: categoriesData } = useGetCategories(session?.user.access_token);
-  const { data: eqTreesData } = useGetEqTrees(session?.user.access_token);
+  const tags = tagData?.equipments ?? [];
+  const pagination = tagData?.pagination ?? {};
 
-  const equipments = equipmentsData?.equipments ?? [];
-  const categories = categoriesData ?? [];
-  const eqTrees = eqTreesData ?? [];
+  const data = React.useMemo(() => {
+    return tags.map(((item, index) => {
+      return { ...item, index: index + 1 }
+    }))
+  }, [tags]);
 
   return (
-    <PFIContentLayout title="Intelligent P-F Interval Equipments">
-      <div className="flex flex-col items-center justify-center mt-8">
-        {/* Content */}
-        <div className="flex flex-col gap-8 justify-center items-center w-full">
-          <div className="w-full text-left">
-            <h1 className="text-3xl font-bold text-gray-800">
-              Equipment Lists
-            </h1>
-            <p className="text-sm text-gray-600 mt-2">
-              Manage your equipment efficiently by viewing the list below.
-            </p>
-          </div>
+    <PFIContentLayout title="i-PFI App">
+      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-1">
+        <ListTag
+          selectedKeys={selectedKeys}
+          setSelectedKeys={setSelectedKeys}
+          dataRow={data}
+          mutate={mutate}
+          pagination={pagination}
+          isLoading={isLoading} />
 
-          {/* Table disini */}
-          <TableEquipment
-            dataRow={equipments}
-            categories={categories}
-            eqTrees={eqTrees}
-            mutate={mutate}
-            isValidating={isValidating}
-            parent_id={null}
-            isCreated={false}
-          />
-        </div>
+
+        {
+          selectedKeys === null || selectedKeys.size == 0 ? (
+            <div className="bg-white rounded-3xl p-3 pt-6 sm:p-5 sm:px-12 mx-2 sm:mx-4 border border-gray-200 shadow-xl col-span-1 md:col-span-2">
+              <NotSelected />
+            </div>) : (
+            <Analytics selectedKeys={selectedKeys} />
+          )
+        }
       </div>
     </PFIContentLayout>
   );
 }
+
+export default Page

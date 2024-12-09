@@ -42,7 +42,7 @@ export function useGetDataTag(
   limit: number
 ): HookReply<DataList> {
   return useApiFetch(
-    `${PFI_API_URL}/equipment?level=3&page=${page}&limit=${limit}`,
+    `${PFI_API_URL}/equipments?page=${page}&limit=${limit}`,
     !!token,
     token,
   )

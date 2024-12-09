@@ -51,17 +51,10 @@ export function getMenuList(pathname: string): Group[] {
           submenus: [],
         },
         {
-          href: "/pfi-app/tags",
-          label: "Tags",
-          active: pathname === "/pfi-app/tags" ? true : false,
-          icon: Book,
-          submenus: [],
-        },
-        {
           href: "/pfi-app/equipments",
           label: "Equipment Lists",
           active: pathname === "/pfi-app/equipments" ? true : false,
-          icon: Briefcase,
+          icon: Book,
           submenus: [],
         },
       ],

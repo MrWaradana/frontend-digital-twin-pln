@@ -46,10 +46,12 @@ export interface DataList {
 }
 
 export function useGetEquipments(
-  token: string | undefined
+  token: string | undefined,
+  page: number = 1,
+  limit: number = 100
 ): HookReply<DataList> {
   return useApiFetch(
-    `${PFI_API_URL}/equipments?page=1&limit=100`,
+    `${PFI_API_URL}/equipments?page=${page}&limit=${limit}`,
     !!token,
     token
   );

@@ -40,10 +40,10 @@ const ListEquipment = ({
         case "name":
           return (
             <Link
-              href={`/pfi-app/${rowData.id}`}
-              className="text-[#918E8E] break-words w-52 block"
+              href={`/pfi-app/equipments`}
+              className="text-[#918E8E] break-words w-52 block capitalize"
             >
-              {cellValue}
+              {cellValue.toLowerCase()}
             </Link>
 
           );
