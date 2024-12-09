@@ -5,6 +5,7 @@ import { useApiFetch } from "../useApiFetch";
 export interface feature {
   id: string,
   name: string,
+  category: string,
   updated_at: string
   created_at: string
 }

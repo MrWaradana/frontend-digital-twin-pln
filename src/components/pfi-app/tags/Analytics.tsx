@@ -1,10 +1,10 @@
 import RadarChart from "@/components/pfi-app/tags/RadarChart";
 import { useSingleDataTag } from "@/lib/APIs/useGetDataTag";
+import { useGetFeatures } from "@/lib/APIs/i-PFI/useGetFeature";
 import { CircularProgress } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import React from "react";
-import { encrypt } from "@/lib/utils";
 
 const ShowPredict = dynamic(
   () =>
@@ -14,7 +14,7 @@ const ShowPredict = dynamic(
   { ssr: false }
 );
 
-const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
+const Analytics = ({ selectedKeys }: { selectedKeys: any }) => {
   const { data: session } = useSession();
 
   const {
@@ -22,9 +22,41 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
     isLoading,
   } = useSingleDataTag(session?.user?.access_token, selectedKeys?.anchorKey ?? null);
 
+  const {
+    data: featureData,
+  } = useGetFeatures(session?.user?.access_token);
+
   const tag = React.useMemo(() => {
     return tagData?.equipments ?? ({} as { name?: string });
   }, [tagData]);
+
+  const indicators = React.useMemo(() => {
+    if (!featureData?.features) return [];
+
+    return featureData.features.map((feature) => ({
+      id: feature.id,
+      name: feature.name,
+      max: 100, // atau nilai maksimum yang sesuai
+    }));
+  }, [featureData]);
+
+  const radarChartData = React.useMemo(() => {
+    if (!tagData?.equipments?.parts) return [];
+
+    const data = [
+      {
+        value: [80, 0, 0, 0, 0, 0, 0, 0], // Nilai sesuai dengan jumlah indicators
+        name: "BRG TEMP 1"
+      },
+      {
+        value: [10, 60, 20, 40, 21, 20, 20, 40], // Nilai sesuai dengan jumlah indicators
+        name: "BRG TEMP 2"
+      }
+    ];
+
+
+    return data;
+  }, [tagData, indicators]);
 
   if (isLoading)
     return (
@@ -35,37 +67,6 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
         />
       </div>
     );
-
-  const radarChartData: { id: string; subject: string; A: number; B: number; fullMark: number }[] = [
-    {
-      id: "5765a11a-2f89-45dc-a37b-46d384a1ff9e",
-      subject: 'Feature 1', A: 120, B: 110, fullMark: 150
-    },
-    {
-      id: "8baab334-6e63-487d-91ea-cf8cd7f8b88d",
-      subject: 'Feature 2', A: 98, B: 130, fullMark: 150
-    },
-    {
-      id: "9b0b9845-e59b-4b85-9ba3-66ff9cb826b8",
-      subject: 'Feature 3', A: 86, B: 130, fullMark: 150
-    },
-    {
-      id: "a94a2f9a-d798-4e54-8373-ff68f486f266",
-      subject: 'Feature 4', A: 86, B: 130, fullMark: 150
-    },
-    {
-      id: "88a07a75-1f84-4436-bcf0-12739900bf4a",
-      subject: 'Feature 5', A: 86, B: 130, fullMark: 150
-    },
-    {
-      id: "c0e9494d-443e-4515-ba2a-34a15400c551",
-      subject: 'Feature 6', A: 86, B: 130, fullMark: 150
-    },
-    {
-      id: "5cf62522-a140-4b26-bbfb-d76e4ae10a81",
-      subject: 'Feature 7', A: 86, B: 130, fullMark: 150
-    },
-  ]
 
   return (
     <div className="bg-white rounded-3xl p-3 pt-6 sm:p-5 sm:px-12 mx-2 sm:mx-4 border border-gray-200 shadow-xl col-span-1 md:col-span-2">
@@ -110,20 +111,19 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any, }) => {
 
         {/* Right Section */}
         <div className="p-4 rounded-lg">
-          {/* <div className="absolute z-20 top-20 right-0 left-92 m-auto bg-[#1C9EB6] rounded-lg w-60 py-4 sm:top-8 md:top-14 px-3">
-            <div className="flex">
-              <span className="text-white text-sm me-auto">Sensor A</span>
-              <span className="text-white text-sm">12.021</span>
-            </div>
-            <Link href={`/pfi-app/tags/${encodeURIComponent(encryptedKey)}`} className="text-sm text-neutral-200 pt-5 ">
-              see details {">"}</Link>
-          </div> */}
-          <RadarChart dataRow={radarChartData} selectedKeys={selectedKeys?.anchorKey} />
+          <RadarChart
+            indicators={indicators}
+            data={radarChartData}
+            legendData={['Current Value']}
+            height='400px'
+            className='w-full'
+            selectedKeys={selectedKeys}
+          />
         </div>
       </div>
     </div>
 
   )
-}
+};
 
 export default Analytics

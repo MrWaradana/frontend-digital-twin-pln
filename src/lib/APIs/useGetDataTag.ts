@@ -2,6 +2,18 @@ import { PFI_API_URL } from "../api-url";
 import { HookReply } from "./types";
 import { useApiFetch } from "./useApiFetch";
 
+export interface Part {
+  id: string,
+  equipment_id: string,
+  location_tag: string,
+  type_id: string,
+  web_id: string,
+  values: number,
+  part_name: string,
+  created_at: string,
+  updated_at: string
+}
+
 export interface equipment {
   assetnum: string,
   category_id: string,
@@ -11,6 +23,7 @@ export interface equipment {
     level_no: number,
     name: string
   },
+  parts: Part[],
   childrens: equipment[],
   equipment_tree_id: string,
   id: string,

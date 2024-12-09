@@ -11,3 +11,13 @@
   opacity: 0.5;
   border-radius: 4px;
 }
+
+.pfi-custom-tooltip {
+  background: transparent !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+.pfi-custom-tooltip .echarts-tooltip-arrow {
+  display: none;
+}
