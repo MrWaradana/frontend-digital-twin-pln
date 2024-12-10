@@ -1,24 +1,22 @@
 "use client";
 
 import TimeDownChart from "@/components/pfi-app/tags/TimeDownChart";
+import PredictChart2 from "@/components/pfi-app/tags/PredictChart2";
 import { PFIContentLayout } from "@/containers/PFIContentLayout";
-import { useSingleDataTag } from "@/lib/APIs/useGetDataTag";
 import { useGetEquipmentValues } from "@/lib/APIs/i-PFI/useGetEquipmentValues";
-import { CircularProgress, Divider } from "@nextui-org/react";
+import { useGetFeature } from "@/lib/APIs/i-PFI/useGetFeature";
+import { useGetPart } from "@/lib/APIs/i-PFI/useGetParts";
+import { Card, CircularProgress, Divider } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import PredictChart2 from "@/components/pfi-app/tags/PredictChart2";
-import React from "react";
-import { Card, CardHeader, CardBody } from "@nextui-org/react";
-import TemporalSelect from "@/components/pfi-app/tags/TemporalSelect";
-import { useGetFeature, useGetFeatures } from "@/lib/APIs/i-PFI/useGetFeature";
 
 const Page = ({ params }: { params: { slug: string } }) => {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const features_id = searchParams.get("features_id");
   const information = [
     {
       name: "Predicted Time to Failure",
@@ -47,50 +45,19 @@ const Page = ({ params }: { params: { slug: string } }) => {
     }
   ]
 
-  const equipments = [
-    {
-      id: "b538d5d4-7e3c-46ac-b3f0-c35136317557",
-      name: "TJB3.PAF B BRG VIB MONITOR(MOTOR SIDE)",
-    },
-    {
-      id: "990fb37b-33c4-44f4-b6a8-cf4b9d3b9c74",
-      name: "TJB3.PAF A BRG VIB MONITOR(FREE SIDE)",
-    },
-    {
-      id: "2462c395-95ee-49b3-8abb-dc8dd67276bc",
-      name: "TJB3.PAF A BRG VIB MONITOR(MOTOR SIDE)",
-    },
-    {
-      id: "8294f761-cfd1-44d9-966a-613ab1b89fe9",
-      name: "TJB3.PAF B BRG VIB MONITOR(FREE SIDE)",
-    }
-  ]
-
-  const features_id = searchParams.get("features_id");
-  const sensor_id = searchParams.get("sensor_id");
-
-  const [sensor, setSensor] = React.useState(sensor_id);
-  const [feature, setFeature] = React.useState(features_id);
-
   const {
-    data: tagData,
+    data: partData,
     isLoading,
-  } = useSingleDataTag(session?.user?.access_token, params.slug);
+  } = useGetPart(session?.user?.access_token, params.slug);
 
   const {
     data: featureData,
   } = useGetFeature(session?.user?.access_token, features_id ?? '');
 
   const {
-    data: featuresData,
-  } = useGetFeatures(session?.user?.access_token);
-
-  const {
     data: equipmentValues,
     isLoading: isLoadingEquipment,
-  } = useGetEquipmentValues(session?.user?.access_token, sensor_id ?? '', features_id ?? '');
-
-
+  } = useGetEquipmentValues(session?.user?.access_token, params.slug ?? '', features_id ?? '');
 
   // const equipment = React.useMemo(() => {
   //   return tagData?.equipments ?? ({} as { name?: string });
@@ -118,8 +85,8 @@ const Page = ({ params }: { params: { slug: string } }) => {
             <ChevronLeftIcon size={24} />
           </button>
 
-          <h1 className="text-base md:text-xl font-semibold me-auto flex items-center">
-            {/* {sensorData.name} - {featureData?.feature.name} */}
+          <h1 className="text-base md:text-xl font-semibold me-auto flex items-center capitalize">
+            {partData?.part?.part_name.toLocaleLowerCase()} - {featureData?.feature?.name.toLocaleLowerCase()} value
           </h1>
 
           <button
@@ -129,14 +96,6 @@ const Page = ({ params }: { params: { slug: string } }) => {
             Download Result
           </button>
         </div>
-
-        {sensor} {feature}
-        <div className="w-full grid grid-cols-4 sm:grid-cols-5 gap-3 p-3 md:p-5 lg:p-8 my-5">
-          <TemporalSelect selectItems={equipments} title={"Select Sensor"} setSelectedKey={setSensor} selectedKey={sensor_id} />
-          <TemporalSelect selectItems={featuresData?.features} title={"Select Feature"} setSelectedKey={setFeature} selectedKey={features_id} />
-        </div>
-
-
 
         {/* Responsive Grid */}
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3 p-3 md:p-5 lg:p-8 my-5">

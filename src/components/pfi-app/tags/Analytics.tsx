@@ -24,13 +24,17 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any }) => {
   const indicators = React.useMemo(() => {
     if (!featureData?.features) return [];
 
-    return featureData.features.map((feature, index) => ({
-      index: index,
-      length: featureData.features.length,
-      id: feature.id,
-      name: feature.name,
-      max: 100, // atau nilai maksimum yang sesuai
-    }));
+    return featureData.features.map((feature, index) => {
+      const maxValue = feature.category === 'Vibration' ? 10000 : 100;
+
+      return {
+        index: index,
+        length: featureData.features.length,
+        id: feature.id,
+        name: feature.name,
+        max: maxValue,
+      }
+    });
   }, [featureData]);
 
   const arrayGenerator = (index: string | number, length: number, value: any) => {
@@ -62,8 +66,6 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any }) => {
     const data = variable.map((item) => {
       return item[0]
     })
-
-    console.log("data: ", data);
 
     return data;
   }, [tagData, indicators]);

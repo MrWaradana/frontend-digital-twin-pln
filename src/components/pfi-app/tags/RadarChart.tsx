@@ -110,7 +110,7 @@ const RadarChartComponent: React.FC<RadarChartProps> = ({
               <span class="text-white text-sm me-2 truncate max-w-[70%]">${formattedName}</span>
               <span class="text-white text-sm ms-auto">${value.filter((item: number) => item != 0)}</span>
             </div>
-            <a href="/pfi-app/equipments/${selectedKeys}?features_id=${features_id}&sensor_id=${sensor_id}" 
+            <a href="/pfi-app/equipments/${sensor_id}?features_id=${features_id}" 
                class="text-sm text-neutral-200 pt-5 block hover:text-white">
               see details >
             </a>
