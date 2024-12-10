@@ -45,15 +45,15 @@ export function getMenuList(pathname: string): Group[] {
       menus: [
         {
           href: "/optimum-oh-app",
-          label: "Optimum Overhaul",
+          label: "Dashboard",
           active: pathname === "/optimum-oh-app" ? true : false,
           icon: LayoutDashboard,
           submenus: [],
         },
         {
-          href: "/optimum-oh-app",
-          label: "Optimum Overhaul",
-          active: pathname === "/optimum-oh-app" ? true : false,
+          href: "/optimum-oh-app/chart",
+          label: "Optimum Overhaul Chart",
+          active: pathname === "/optimum-oh-app/chart" ? true : false,
           icon: CalendarClock,
           submenus: [],
         },
@@ -66,7 +66,7 @@ export function getMenuList(pathname: string): Group[] {
         },
         {
           href: "/optimum-oh-app/budget-constraint",
-          label: "Nett Plant Heat Rate",
+          label: "Budget Constraint",
           active:
             pathname === "/optimum-oh-app/budget-constraint" ? true : false,
           icon: Calculator,

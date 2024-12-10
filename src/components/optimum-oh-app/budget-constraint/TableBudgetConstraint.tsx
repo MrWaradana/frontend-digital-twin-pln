@@ -45,9 +45,9 @@ import { capitalize } from "@/lib/utils";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { useGetThermoStatus } from "@/lib/APIs/useGetThermoStatus";
 import { useSession } from "next-auth/react";
-import { useSelectedEfficiencyDataStore } from "../../store/selectedEfficiencyData";
+import { useSelectedEfficiencyDataStore } from "@/store/selectedEfficiencyData";
 import toast from "react-hot-toast";
-import { useStatusThermoflowStore } from "../../store/statusThermoflow";
+import { useStatusThermoflowStore } from "@/store/statusThermoflow";
 import { getLocalTimeZone, today, parseDate } from "@internationalized/date";
 import { useRouter } from "next/navigation";
 import { RangeValue } from "@react-types/shared";
@@ -200,14 +200,6 @@ export default function TableScope({
         item.master_equipment.name
           .toLowerCase()
           .includes(filterValue.toLowerCase())
-      );
-    }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredData = filteredData.filter((item) =>
-        Array.from(statusFilter).includes(item.status)
       );
     }
     // filter non performance data
@@ -434,6 +426,7 @@ export default function TableScope({
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
+        <h3 className="text-2xl font-semibold">Budget Constraint</h3>
         <Select
           labelPlacement={`outside-left`}
           disallowEmptySelection
@@ -458,8 +451,9 @@ export default function TableScope({
             classNames={{
               mainWrapper: ["!rounded-full"],
             }}
-            placeholder="Search by asset name..."
-            startContent={<MagnifyingGlassIcon />}
+            label={`Input Budget`}
+            startContent={`Rp.`}
+            labelPlacement={`outside`}
             value={filterValue}
             onClear={() => onClear()}
             onValueChange={(value) => {

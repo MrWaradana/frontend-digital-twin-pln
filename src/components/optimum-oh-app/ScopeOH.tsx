@@ -55,7 +55,7 @@ export default function ScopeOH() {
     if (data) {
       setPage(data?.page);
     }
-  }, [data]);
+  }, [data, page]);
 
   return (
     <div>

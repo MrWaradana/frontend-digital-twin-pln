@@ -17,32 +17,41 @@ export default function Engine({ engineData, isLoading }: any) {
 
   const positions = {
     // Top row - turbines
-    EG: { name: "Output Generator", top: "14%", left: "93%" },
-    LPT: { name: "Efficiency", top: "12%", left: "76%" },
-    IPT: { name: "Efficiency", top: "14%", left: "53%" },
-    HPT: { name: "Efficiency", top: "15%", left: "29.8%" },
+    EG: { top: "14%", left: "93%" },
+    LPT: { top: "12%", left: "76%" },
+    IPT: { top: "14%", left: "53%" },
+    HPT: { top: "15%", left: "29.8%" },
 
     //Boiler
-    boiler: { name: "Boiler", top: "65%", left: "7%" },
+    boiler: { top: "65%", left: "7%" },
 
     // Bottom row - RH components
-    RH7: { name: "TTD", top: "74%", left: "28%" },
-    RH6: { name: "TTD", top: "74%", left: "36%" },
-    RH5: { name: "TTD", top: "74%", left: "45.5%" },
-    RH3: { name: "TTD", top: "74%", left: "62.3%" },
-    RH2: { name: "TTD", top: "74%", left: "71.5%" },
-    RH1: { name: "TTD", top: "74%", left: "81%" },
+    HPH7: { top: "74%", left: "28%" },
+    HPH6: { top: "74%", left: "36%" },
+    HPH5: { top: "74%", left: "45.5%" },
+    HPH3: { top: "74%", left: "62.3%" },
+    HPH2: { top: "74%", left: "71.5%" },
+    HPH1: { top: "74%", left: "81%" },
 
     // Condensor
     Condensor_Value: {
-      name: "Pressure:",
       top: "65%",
       left: "92%",
+    },
+    Denerator: {
+      top: "65%",
+      left: "52%",
     },
   };
 
   if (isLoading) {
-    return <div className={`animate-pulse`}>Loading...</div>;
+    return (
+      <div
+        className={`animate-pulse w-full flex items-center text-center justify-center h-full`}
+      >
+        Loading...
+      </div>
+    );
   }
 
   return (

@@ -1,10 +1,10 @@
 import OverviewContainer from "@/components/containers/OverviewContainer";
-import TargetReliabilityContainer from "@/components/optimum-oh-app/TargetReliabilityContainer";
+import ChartContainer from "@/components/optimum-oh-app/chart/ChartContainer";
 
 export default function Page() {
   return (
     <OverviewContainer navbarTitle={`Optimum Overhaul`}>
-      <TargetReliabilityContainer />
+      <ChartContainer />
     </OverviewContainer>
   );
 }

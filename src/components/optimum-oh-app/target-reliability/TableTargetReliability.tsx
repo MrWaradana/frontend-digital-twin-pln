@@ -45,9 +45,9 @@ import { capitalize } from "@/lib/utils";
 import { EFFICIENCY_API_URL } from "@/lib/api-url";
 import { useGetThermoStatus } from "@/lib/APIs/useGetThermoStatus";
 import { useSession } from "next-auth/react";
-import { useSelectedEfficiencyDataStore } from "../../store/selectedEfficiencyData";
+import { useSelectedEfficiencyDataStore } from "@/store/selectedEfficiencyData";
 import toast from "react-hot-toast";
-import { useStatusThermoflowStore } from "../../store/statusThermoflow";
+import { useStatusThermoflowStore } from "@/store/statusThermoflow";
 import { getLocalTimeZone, today, parseDate } from "@internationalized/date";
 import { useRouter } from "next/navigation";
 import { RangeValue } from "@react-types/shared";
@@ -57,6 +57,7 @@ import ModalInputData from "@/components/efficiency-app/ModalInputData";
 import { debounce } from "lodash";
 import { formattedNumber } from "@/lib/formattedNumber";
 import AddNewAssetModal from "@/components/optimum-oh-app/AddNewAssetModal";
+import CalculateOH from "../CalculateOH";
 
 const scopeOptions = [
   { name: "A", uid: "A" },
@@ -88,7 +89,7 @@ const INITIAL_VISIBLE_COLUMNS = [
 const INITIAL_VISIBLE_PARAMETER = ["current", "periodic"];
 const INITIAL_VISIBLE_STATUS = ["Done", "Pending", "Processing"];
 
-export default function TableScope({
+export default function TableTargetReliability({
   tableData,
   addNewUrl = "#",
   mutate,
@@ -120,6 +121,8 @@ export default function TableScope({
   const session = useSession();
   let formatter = useDateFormatter({ dateStyle: "long" });
 
+  console.log(page, " page");
+
   //state modal input data
   const [showVariables, setShowVariables] = useState(false);
 
@@ -148,9 +151,9 @@ export default function TableScope({
     { name: "NO", uid: "no", sortable: false },
     { name: "ID", uid: "id", sortable: true },
     { name: "LOCATION TAG", uid: "location_tag", sortable: true },
-    { name: "DURATION OH", uid: "duration_oh", sortable: true },
-    { name: "RESOURCE (CREW)", uid: "crew", sortable: true },
-    { name: "COST OH (Rp.)", uid: "total_cost", sortable: true },
+    // { name: "DURATION OH", uid: "duration_oh", sortable: true },
+    // { name: "RESOURCE (CREW)", uid: "crew", sortable: true },
+    // { name: "COST OH (Rp.)", uid: "total_cost", sortable: true },
     { name: "DESCRIPTION", uid: "master_equipment", sortable: true },
     { name: "ACTIONS", uid: "actions" },
   ];
@@ -434,23 +437,6 @@ export default function TableScope({
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
-        <Select
-          labelPlacement={`outside-left`}
-          disallowEmptySelection
-          size="sm"
-          label="Scope"
-          className="max-w-xs items-center"
-          onChange={(e) => {
-            const newValue = e.target.value;
-            setScopeFilter(newValue);
-            setFilterScope(newValue);
-          }}
-          defaultSelectedKeys={["A"]}
-        >
-          {scopeOptions.map((scope) => (
-            <SelectItem key={scope.uid}>{scope.name}</SelectItem>
-          ))}
-        </Select>
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
@@ -458,7 +444,7 @@ export default function TableScope({
             classNames={{
               mainWrapper: ["!rounded-full"],
             }}
-            placeholder="Search by asset name..."
+            placeholder="Search by unit name..."
             startContent={<MagnifyingGlassIcon />}
             value={filterValue}
             onClear={() => onClear()}
@@ -468,7 +454,7 @@ export default function TableScope({
             }}
           />
           <div className="flex gap-3">
-            <AddNewAssetModal filterScope={filterScope} />
+            <CalculateOH title={`Menu`} size={`md`} />
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -585,6 +571,8 @@ export default function TableScope({
 
   const classNames = React.useMemo(
     () => ({
+      base: ["min-h-full"],
+      emptyWrapper: ["!min-h-[40dvh]"],
       wrapper: ["min-h-full"],
       th: ["bg-transparent", "text-default-500", "border-b", "border-divider"],
       thead: [
@@ -643,7 +631,7 @@ export default function TableScope({
         </TableHeader>
         <TableBody
           emptyContent={`No data found`}
-          loadingState={loadingState}
+          // loadingState={loadingState}
           loadingContent={
             <>
               <Spinner color="primary" label="loading..." />
