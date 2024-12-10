@@ -3,16 +3,7 @@ import { useSingleDataTag } from "@/lib/APIs/useGetDataTag";
 import { useGetFeatures } from "@/lib/APIs/i-PFI/useGetFeature";
 import { CircularProgress } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
-import dynamic from "next/dynamic";
 import React from "react";
-
-const ShowPredict = dynamic(
-  () =>
-    import(
-      "@/components/pfi-app/tags/PredictChart"
-    ),
-  { ssr: false }
-);
 
 const Analytics = ({ selectedKeys }: { selectedKeys: any }) => {
   const { data: session } = useSession();
@@ -35,44 +26,46 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any }) => {
 
     return featureData.features.map((feature, index) => ({
       index: index,
+      length: featureData.features.length,
       id: feature.id,
       name: feature.name,
       max: 100, // atau nilai maksimum yang sesuai
     }));
   }, [featureData]);
 
+  const arrayGenerator = (index: string | number, length: number, value: any) => {
+    const result = Array(length).fill(0);
+
+    result[index] = value;
+    return result;
+  }
+
   const radarChartData = React.useMemo(() => {
-    if (!tagData?.equipments?.parts) return [];
-    if (!indicators.length) return [];
+    if (!tagData?.equipments) return [];
 
-    console.log('Parts:', tagData.equipments.parts);
-    console.log('Indicators:', indicators);
+    const parts = tagData.equipments.parts ?? [];
 
-    const defaultValues = new Array(indicators.length).fill(0);
-
-    const result = tagData.equipments.parts.map(part => {
-      const values = [...defaultValues];
-      const indicatorIndex = indicators.findIndex(ind => ind.id === part.feature_id);
-
-      console.log('Processing part:', {
-        partName: part.part_name,
-        featureId: part.feature_id,
-        value: part.values,
-        indicatorIndex
-      });
-
-      if (indicatorIndex !== -1) {
-        values[indicatorIndex] = part.values || 0;
-      }
-
-      return {
-        value: values,
-        name: part.part_name
-      };
+    const variable = parts.map((part) => {
+      return part.values.filter((value: { features_id: string; }) => indicators.some((indicator) => indicator.id === value.features_id)).map((value: { features_id: string; value: any; part_id: string }) => {
+        const matched = indicators.find((indicator) => indicator.id === value.features_id);
+        if (matched) {
+          return {
+            name: part.part_name,
+            value: arrayGenerator(matched.index, matched.length, value.value),
+            detail: arrayGenerator(matched.index, matched.length, { features_id: value.features_id, sensor_id: value.part_id })
+          }
+        }
+        return null;
+      })
     });
 
-    console.log('Final result:', result);
-    return result;
+    const data = variable.map((item) => {
+      return item[0]
+    })
+
+    console.log("data: ", data);
+
+    return data;
   }, [tagData, indicators]);
 
   if (isLoading)
@@ -129,14 +122,14 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any }) => {
 
         {/* Right Section */}
         <div className="p-4 rounded-lg">
-          {/* <RadarChart
+          <RadarChart
             indicators={indicators}
             data={radarChartData}
             legendData={['Current Value']}
             height='400px'
             className='w-full'
-            selectedKeys={selectedKeys}
-          /> */}
+            selectedKeys={selectedKeys?.anchorKey ?? null}
+          />
         </div>
       </div>
     </div>

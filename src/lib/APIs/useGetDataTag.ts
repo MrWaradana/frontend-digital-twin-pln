@@ -2,13 +2,32 @@ import { PFI_API_URL } from "../api-url";
 import { HookReply } from "./types";
 import { useApiFetch } from "./useApiFetch";
 
+export interface Value {
+  filter(arg0: (value: { features_id: string; }) => boolean): any;
+  map(arg0: (value: any) => any): any;
+  length: number;
+  id: string,
+  value: number,
+  part_id: string,
+  date_time: string,
+  feature: {
+    id: string,
+    name: string,
+    created_at: string,
+    updated_at: string
+    category: string
+  }
+  created_at: string,
+  updated_at: string
+}
+
 export interface Part {
   id: string,
   equipment_id: string,
   location_tag: string,
   type_id: string,
   web_id: string,
-  values: number,
+  values: Value,
   feature_id: string,
   part_name: string,
   created_at: string,
