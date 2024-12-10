@@ -57,6 +57,7 @@ import ModalInputData from "@/components/efficiency-app/ModalInputData";
 import { debounce } from "lodash";
 import { formattedNumber } from "@/lib/formattedNumber";
 import AddNewAssetModal from "@/components/optimum-oh-app/AddNewAssetModal";
+import CalculateOH from "../CalculateOH";
 
 const scopeOptions = [
   { name: "A", uid: "A" },
@@ -426,7 +427,10 @@ export default function TableScope({
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
-        <h3 className="text-2xl font-semibold">Budget Constraint</h3>
+        <div className="flex flex-row justify-between">
+          <h3 className="text-2xl font-semibold">Budget Constraint</h3>
+          <CalculateOH title={`Menu`} />
+        </div>
         <Select
           labelPlacement={`outside-left`}
           disallowEmptySelection
@@ -461,9 +465,6 @@ export default function TableScope({
               debouncedSetFilterSearch(value);
             }}
           />
-          <div className="flex gap-3">
-            <AddNewAssetModal filterScope={filterScope} />
-          </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">

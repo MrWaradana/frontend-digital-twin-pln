@@ -15,6 +15,7 @@ import {
   SelectItem,
   Spinner,
   select,
+  Link,
 } from "@nextui-org/react";
 import { Cog, LucideCalendarClock, Target, Calculator } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -89,6 +90,8 @@ export default function CalculateOH({
                     >
                       <Target size={138} />
                       <Button
+                        as={Link}
+                        href={`/optimum-oh-app/target-reliability`}
                         size={`sm`}
                         variant={`flat`}
                         className={`text-white`}
@@ -104,6 +107,8 @@ export default function CalculateOH({
                     >
                       <Calculator size={138} />
                       <Button
+                        as={Link}
+                        href={`/optimum-oh-app/budget-constraint`}
                         size={`sm`}
                         variant={`flat`}
                         className={`text-white`}
@@ -137,11 +142,13 @@ export function ModalTimeConstrainsInput(props: ModalTimeConstrainsInputProps) {
   const { data: session } = useSession();
   const { data: timeConstrainParameter, isLoading } =
     useGetCalculationTimeConstrainParameter(session?.user.access_token, isOpen);
-  const { trigger, isLoading: postLoading, data } = usePostNewTimeConstrainParameter(
-    session?.user.access_token
-  );
+  const {
+    trigger,
+    isLoading: postLoading,
+    data,
+  } = usePostNewTimeConstrainParameter(session?.user.access_token);
 
-  const router = useRouter()
+  const router = useRouter();
 
   const [costPerFailure, setCostPerFailure] = useState("");
   const [selectedScope, setSelectedScope] = useState("");
@@ -169,7 +176,7 @@ export function ModalTimeConstrainsInput(props: ModalTimeConstrainsInputProps) {
 
   const handleParameterSubmit = async () => {
     try {
-      await trigger({
+      const result = await trigger({
         token: session?.user.access_token,
         body: {
           overhaulCost: Number(
@@ -182,11 +189,8 @@ export function ModalTimeConstrainsInput(props: ModalTimeConstrainsInputProps) {
         },
       });
 
-      if (data) {
-        setTimeout(() => {
-          router.push(`/chart?calculation_id=${data.data}`);
-        }, 1000)
-
+      if (result?.data) {
+        router.push(`/optimum-oh-app/chart?calculation_id=${result.data}`);
       }
     } catch (error) {
       console.error(error);
@@ -196,7 +200,7 @@ export function ModalTimeConstrainsInput(props: ModalTimeConstrainsInputProps) {
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange} size={`2xl`} radius="lg">
       <ModalContent>
-        {isLoading || postLoading ? (
+        {isLoading ? (
           <div className="flex flex-col justify-between items-center p-6">
             <Spinner></Spinner>
             <p>Loading...</p>

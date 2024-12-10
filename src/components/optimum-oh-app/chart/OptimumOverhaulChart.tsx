@@ -30,7 +30,7 @@ export default function OptimumOverhaulChart({ chartData }: any) {
       data: ["Fake Data"],
     },
     tooltip: {
-      trigger: "none",
+      trigger: "axis",
       axisPointer: {
         type: "cross",
         snap: true,
