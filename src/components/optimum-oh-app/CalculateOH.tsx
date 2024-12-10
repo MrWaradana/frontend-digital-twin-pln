@@ -18,6 +18,7 @@ import {
 } from "@nextui-org/react";
 import { Cog, LucideCalendarClock, Target, Calculator } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 
 export default function CalculateOH({
@@ -136,9 +137,11 @@ export function ModalTimeConstrainsInput(props: ModalTimeConstrainsInputProps) {
   const { data: session } = useSession();
   const { data: timeConstrainParameter, isLoading } =
     useGetCalculationTimeConstrainParameter(session?.user.access_token, isOpen);
-  const { trigger, isLoading: postLoading } = usePostNewTimeConstrainParameter(
+  const { trigger, isLoading: postLoading, data } = usePostNewTimeConstrainParameter(
     session?.user.access_token
   );
+
+  const router = useRouter()
 
   const [costPerFailure, setCostPerFailure] = useState("");
   const [selectedScope, setSelectedScope] = useState("");
@@ -166,7 +169,7 @@ export function ModalTimeConstrainsInput(props: ModalTimeConstrainsInputProps) {
 
   const handleParameterSubmit = async () => {
     try {
-      const result = await trigger({
+      await trigger({
         token: session?.user.access_token,
         body: {
           overhaulCost: Number(
@@ -176,14 +179,15 @@ export function ModalTimeConstrainsInput(props: ModalTimeConstrainsInputProps) {
           costPerFailure: Number(
             costPerFailure.replace(/\./g, "").replace(",", ".")
           ),
-          metadata: {
-            calculatedBy: session?.user.name,
-            timestamp: new Date().toISOString(),
-          },
         },
       });
 
-      onOpenChange(false);
+      if (data) {
+        setTimeout(() => {
+          router.push(`/chart?calculation_id=${data.data}`);
+        }, 1000)
+
+      }
     } catch (error) {
       console.error(error);
     }
@@ -192,7 +196,7 @@ export function ModalTimeConstrainsInput(props: ModalTimeConstrainsInputProps) {
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange} size={`2xl`} radius="lg">
       <ModalContent>
-        {isLoading ? (
+        {isLoading || postLoading ? (
           <div className="flex flex-col justify-between items-center p-6">
             <Spinner></Spinner>
             <p>Loading...</p>

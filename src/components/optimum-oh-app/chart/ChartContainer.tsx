@@ -7,13 +7,16 @@ import { useGetTimeConstraintCalculation } from "../../../lib/APIs/useGetTimeCon
 import { Spinner } from "@nextui-org/react";
 import CalculateOH from "../CalculateOH";
 import { Checkbox, Link, cn, Button } from "@nextui-org/react";
+import { useSearchParams } from "next/navigation";
 
 export default function ChartContainer() {
   const [isSelected, setIsSelected] = useState(false);
   const { data: session } = useSession();
+  const query = useSearchParams()
+  let calculation_id = query.get("calculation_id") || ""
 
   const { data, isLoading, isValidating, mutate } =
-    useGetTimeConstraintCalculation(session?.user.access_token);
+    useGetTimeConstraintCalculation(session?.user.access_token, calculation_id);
 
   const chartData = data?.results ?? [];
 
