@@ -67,7 +67,7 @@ const Page = () => {
                       </div>
                     </div>
                     <div className="bg-red-600 text-white rounded-[100px] flex justify-end items-center text-[9px] px-2 py-1">
-                      {item.failure_count} unit
+                      {item.failure_count.toLocaleString()} unit
                     </div>
                   </div>
                 </a>
@@ -145,7 +145,7 @@ const Page = () => {
                       </div>
                       <div className="text-sm text-gray-300">|</div> */}
                         <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-2 py-1">
-                          {mttr.mttr_hours} hours
+                          {mttr.mttr_hours.toLocaleString()} hours
                         </div>
                       </div>
                     </div>
@@ -187,7 +187,7 @@ const Page = () => {
                       </div>
                       <div className="text-sm text-gray-300">|</div> */}
                         <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-2 py-1">
-                          {mdt.mdt_hours} hours
+                          {mdt.mdt_hours.toLocaleString()} hours
                         </div>
                       </div>
                     </div>

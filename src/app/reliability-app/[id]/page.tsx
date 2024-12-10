@@ -72,7 +72,7 @@ const Page = ({ params }: { params: { id: string } }) => {
     ? `${failureRatevalue.failure_rate.toFixed(2)}`
     : "None";
   const reliabilityCurrent = reliabilityCurrentvalue?.reliability_value
-    ? `${(reliabilityCurrentvalue.reliability_value * 100).toFixed(2)}%`
+    ? `${(reliabilityCurrentvalue.reliability_value * 100).toFixed(2)}`
     : "None";
   const mttr = mttrvalue?.hours ?? 0;
   const mdt = mdtvalue?.hours ?? 0;
@@ -115,7 +115,7 @@ const Page = ({ params }: { params: { id: string } }) => {
               options={options}
             />
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 mt-2">
             <div className="flex justify-center flex-row w-full flex-wrap md:gap-0 gap-5">
               <div className="flex-1 flex flex-col gap-5 w-full h-full">
                 <div className="flex flex-col pr-4 mt-2">
@@ -140,8 +140,8 @@ const Page = ({ params }: { params: { id: string } }) => {
                     </div>
                   </div>
                   <p className="text-[11px] text-[#393333] sm:max-w-[22dvw] mt-4 w-full">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore
+                    Current dolor sit amet, consectetur adipiscing elit, sed do
+                    eiusmod tempor incididunt ut labore
                   </p>
                   <div className="flex flex-col gap-[0.5px] pt-2 text-xs text-[#918E8E]">
                     <div className="flex flex-row gap-2">
@@ -220,7 +220,7 @@ const Page = ({ params }: { params: { id: string } }) => {
               <div className="flex-1 flex flex-col gap-4 justify-between  shadow-xl bg-white rounded-3xl p-6">
                 <div className="flex flex-col">
                   <div className="flex flex-row items-center justify-between">
-                    <p className="text-[10px] text-[#918E8E]">Lorem ipsum</p>
+                    <p className="text-[10px] text-[#918E8E]">Current</p>
                     <CircleAlert
                       fill="red"
                       color="#ffffff"
@@ -232,20 +232,17 @@ const Page = ({ params }: { params: { id: string } }) => {
                 <div className="flex flex-row">
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">{mdt}</div>
+                    <div className="text-4xl font-bold">
+                      {mdt.toLocaleString()}
+                    </div>
                     <div className="text-[10px] text-[#918E8E]">Jam</div>
                   </div>
-                  {/* <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-2"></div>
-                  <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">120</div>
-                    <div className="text-[10px] text-[#918E8E]">Hari</div>
-                  </div> */}
                 </div>
               </div>
               <div className="flex-1 flex flex-col gap-4 justify-between  shadow-xl bg-white rounded-3xl p-6">
                 <div className="flex flex-col">
                   <div className="flex flex-row items-center justify-between">
-                    <p className="text-[10px] text-[#918E8E]">Lorem ipsum</p>
+                    <p className="text-[10px] text-[#918E8E]">Current</p>
                     <CircleCheck
                       fill="#009EB5"
                       color="#ffffff"
@@ -257,7 +254,9 @@ const Page = ({ params }: { params: { id: string } }) => {
                 <div className="flex flex-row">
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">{mttr}</div>
+                    <div className="text-4xl font-bold">
+                      {mttr.toLocaleString()}
+                    </div>
                     <div className="text-[10px] text-[#918E8E]">Jam</div>
                   </div>
                   {/* <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-2"></div>
@@ -270,7 +269,7 @@ const Page = ({ params }: { params: { id: string } }) => {
               <div className="flex-1 flex flex-col gap-4 justify-between  shadow-xl bg-white rounded-3xl p-6">
                 <div className="flex flex-col">
                   <div className="flex flex-row items-center justify-between">
-                    <p className="text-[10px] text-[#918E8E]">Lorem ipsum</p>
+                    <p className="text-[10px] text-[#918E8E]">Current</p>
                     <div className="rounded-full bg-[#FFF24A] p-[5px]">
                       <Loader
                         className="w-[10px] h-[10px]"
@@ -287,7 +286,9 @@ const Page = ({ params }: { params: { id: string } }) => {
                 <div className="flex flex-row">
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">{mtbf}</div>
+                    <div className="text-4xl font-bold">
+                      {mtbf.toLocaleString()}
+                    </div>
                     <div className="text-[10px] text-[#918E8E]">Jam</div>
                   </div>
                 </div>
@@ -295,7 +296,7 @@ const Page = ({ params }: { params: { id: string } }) => {
               <div className="flex-1 flex flex-col gap-4 justify-between shadow-xl bg-white rounded-3xl p-6">
                 <div className="flex flex-col">
                   <div className="flex flex-row items-center justify-between">
-                    <p className="text-[10px] text-[#918E8E]">Lorem ipsum</p>
+                    <p className="text-[10px] text-[#918E8E]">Current</p>
                     <CircleAlert
                       fill="red"
                       color="#ffffff"
@@ -307,7 +308,9 @@ const Page = ({ params }: { params: { id: string } }) => {
                 <div className="flex flex-row">
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
-                    <div className="text-4xl font-bold">{failureRate}</div>
+                    <div className="text-4xl font-bold">
+                      {failureRate.toLocaleString()}
+                    </div>
                     <div className="text-[10px] text-[#918E8E]">
                       Failures/year
                     </div>
@@ -317,7 +320,7 @@ const Page = ({ params }: { params: { id: string } }) => {
               <div className="flex-1 flex flex-col gap-4 justify-between shadow-xl bg-white rounded-3xl p-6">
                 <div className="flex flex-col">
                   <div className="flex flex-row items-center justify-between">
-                    <p className="text-[10px] text-[#918E8E]">Lorem ipsum</p>
+                    <p className="text-[10px] text-[#918E8E]">Current</p>
                     <CircleAlert
                       fill="red"
                       color="#ffffff"
@@ -330,7 +333,7 @@ const Page = ({ params }: { params: { id: string } }) => {
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
                     <div className="text-4xl font-bold">
-                      {reliabilityCurrent}
+                      {reliabilityCurrent.toLocaleString()}
                     </div>
                     <div className="text-[10px] text-[#918E8E]">%</div>
                   </div>
