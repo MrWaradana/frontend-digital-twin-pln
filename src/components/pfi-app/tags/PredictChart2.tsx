@@ -62,7 +62,7 @@ const PredictChart2 = ({ dataRow }: { dataRow: any }) => {
           type: "value",
         },
         legend: {
-          data: ["Actual", "Predictions", "Alarm", "Trip"],
+          data: ["Features", "Predictions", "Alarm", "Trip"],
         },
         tooltip: {
           trigger: "axis",

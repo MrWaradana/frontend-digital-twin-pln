@@ -48,12 +48,21 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any }) => {
     if (!tagData?.equipments) return [];
 
     const parts = tagData.equipments.parts ?? [];
+    console.log("parts: ", parts);
+    console.log("indicators: ", indicators);
 
     const variable = parts.map((part) => {
+      const valuesLength = part.values.length;
+
+      // if (valuesLength < 1) {
+      // }
+
       return part.values.filter((value: { features_id: string; }) => indicators.some((indicator) => indicator.id === value.features_id)).map((value: { features_id: string; value: any; part_id: string }) => {
         const matched = indicators.find((indicator) => indicator.id === value.features_id);
+
         if (matched) {
           return {
+            valuesLength: part.values.length,
             name: part.part_name,
             value: arrayGenerator(matched.index, matched.length, value.value),
             detail: arrayGenerator(matched.index, matched.length, { features_id: value.features_id, sensor_id: value.part_id })
@@ -67,6 +76,7 @@ const Analytics = ({ selectedKeys }: { selectedKeys: any }) => {
       return item[0]
     })
 
+    console.log("data: ", data);
     return data;
   }, [tagData, indicators]);
 
