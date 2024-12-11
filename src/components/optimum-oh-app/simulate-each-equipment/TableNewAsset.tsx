@@ -8,7 +8,7 @@ import {
 import { useState } from "react";
 import { Button, JsonInput } from "@mantine/core";
 import { Spinner } from "@nextui-org/react";
-import { usePostNewAsset } from "../../lib/APIs/mutation/usePostNewAsset";
+import { usePostNewAsset } from "@/lib/APIs/mutation/usePostNewAsset";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { classNames } from "primereact/utils";

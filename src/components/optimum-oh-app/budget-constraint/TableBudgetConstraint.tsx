@@ -89,15 +89,13 @@ const INITIAL_VISIBLE_COLUMNS = [
 const INITIAL_VISIBLE_PARAMETER = ["current", "periodic"];
 const INITIAL_VISIBLE_STATUS = ["Done", "Pending", "Processing"];
 
-export default function TableScope({
+export default function TableBudgetConstraint({
   tableData,
   addNewUrl = "#",
   mutate,
   isLoading,
   isValidating,
   thermoStatus,
-  page,
-  setPage,
   rowsPerPage,
   setRowsPerPage,
   pages,
@@ -119,6 +117,7 @@ export default function TableScope({
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const session = useSession();
+  const [page, setPage] = useState(0);
   let formatter = useDateFormatter({ dateStyle: "long" });
 
   //state modal input data

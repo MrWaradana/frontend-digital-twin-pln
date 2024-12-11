@@ -27,12 +27,12 @@ export default function OptimumOverhaulChart({ chartData }: any) {
     },
     legend: {
       top: "bottom",
-      data: ["Fake Data"],
+      data: ["Total Cost", "Overhaul Cost", "Corrective Cost"],
     },
     tooltip: {
       trigger: "axis",
       axisPointer: {
-        type: "cross",
+        type: "none",
         snap: true,
         label: {
           backgroundColor: "#6a7985",
@@ -60,9 +60,6 @@ export default function OptimumOverhaulChart({ chartData }: any) {
         color: "#333",
       },
       padding: 10,
-      position: (point) => {
-        return [point[0], 130];
-      },
     },
     toolbox: {
       right: 20,
@@ -88,6 +85,8 @@ export default function OptimumOverhaulChart({ chartData }: any) {
       },
       type: "value",
       axisPointer: {
+        status: "hide",
+        triggerOn: "none",
         snap: true,
         lineStyle: {
           color: "#7581BD",
@@ -104,6 +103,7 @@ export default function OptimumOverhaulChart({ chartData }: any) {
           margin: 25,
           show: true,
           color: "#7581BD",
+          size: [45, 45],
           formatter: function (params) {
             return `Day ${params.value}`;
           },
@@ -174,6 +174,7 @@ export default function OptimumOverhaulChart({ chartData }: any) {
           color: "#0770FF",
         },
         stack: "a",
+        z: 12,
         // areaStyle: {
         //   color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
         //     {

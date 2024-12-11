@@ -24,3 +24,22 @@ export const formatCurrency = (number: any) => {
   const inMillions = (absNumber / 1_000_000).toFixed(2);
   return sign + new Intl.NumberFormat("id-ID").format(Number(inMillions));
 };
+
+export const formatSplitNumber = (num: number | string) => {
+  // If the input is not a valid number, return empty string or "0"
+  if (num === "" || isNaN(Number(num))) {
+    return "0";
+  }
+
+  // Convert the input number to a string to avoid rounding off decimals
+  const parts = num.toString().split(".");
+  const integerPart = new Intl.NumberFormat("id-ID").format(Number(parts[0]));
+
+  // Return the formatted number with a decimal part if present
+  return parts.length > 1 ? `${integerPart},${parts[1]}` : integerPart;
+};
+
+export const unformatNumber = (formattedValue: string) => {
+  // Remove thousands separators (commas) and replace decimal commas with periods
+  return formattedValue.replace(/\./g, "").replace(",", ".");
+};

@@ -1,7 +1,11 @@
 "use client";
 import { usePostNewTimeConstrainParameter } from "@/lib/APIs/mutation/usePostNewTimeConstrainParameter";
 import { useGetCalculationTimeConstrainParameter } from "@/lib/APIs/useGetCalculationTimeConstrainParameter";
-import { formattedNumber } from "@/lib/formattedNumber";
+import {
+  formatSplitNumber,
+  formattedNumber,
+  unformatNumber,
+} from "@/lib/formattedNumber";
 import {
   Modal,
   ModalContent,
@@ -127,6 +131,8 @@ export default function CalculateOH({
       <ModalTimeConstrainsInput
         isOpen={calculateTimeConstrainsIsOpen}
         onOpenChange={calculateTimeConstrainsOnOpenChange}
+        calculateOhIsOpen={calculateOhIsOpen}
+        calculateOhOnOpenChange={calculateOhOnOpenChange}
       />
     </>
   );
@@ -135,10 +141,13 @@ export default function CalculateOH({
 interface ModalTimeConstrainsInputProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  calculateOhIsOpen: any;
+  calculateOhOnOpenChange: any;
 }
 
 export function ModalTimeConstrainsInput(props: ModalTimeConstrainsInputProps) {
-  const { isOpen, onOpenChange } = props;
+  const { isOpen, onOpenChange, calculateOhIsOpen, calculateOhOnOpenChange } =
+    props;
   const { data: session } = useSession();
   const { data: timeConstrainParameter, isLoading } =
     useGetCalculationTimeConstrainParameter(session?.user.access_token, isOpen);
@@ -270,19 +279,24 @@ export function ModalTimeConstrainsInput(props: ModalTimeConstrainsInputProps) {
                       <div className="col-span-2">
                         <Input
                           size="lg"
-                          value={overhaulCost}
-                          onValueChange={setOverhaulCost}
-                          onBlur={(e) => {
-                            setOverhaulCost(
-                              formattedNumber(
-                                Number(
-                                  overhaulCost
-                                    .replace(/\./g, "")
-                                    .replace(",", ".")
-                                )
-                              )
+                          value={formatSplitNumber(overhaulCost)}
+                          onChange={(e) => {
+                            const unformattedValue = unformatNumber(
+                              e.target.value
                             );
+                            setOverhaulCost(unformattedValue);
                           }}
+                          // onBlur={(e) => {
+                          //   setOverhaulCost(
+                          //     formattedNumber(
+                          //       Number(
+                          //         overhaulCost
+                          //           .replace(/\./g, "")
+                          //           .replace(",", ".")
+                          //       )
+                          //     )
+                          //   );
+                          // }}
                         />
                       </div>
                     </div>
@@ -293,7 +307,11 @@ export function ModalTimeConstrainsInput(props: ModalTimeConstrainsInputProps) {
             <ModalFooter>
               <Button
                 color="primary"
-                onClick={handleParameterSubmit}
+                onClick={() => {
+                  handleParameterSubmit();
+                  onOpenChange(isOpen);
+                  calculateOhOnOpenChange(calculateOhIsOpen);
+                }}
                 isLoading={postLoading}
               >
                 Calculate OH

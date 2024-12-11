@@ -12,8 +12,8 @@ import { useSearchParams } from "next/navigation";
 export default function ChartContainer() {
   const [isSelected, setIsSelected] = useState(false);
   const { data: session } = useSession();
-  const query = useSearchParams()
-  let calculation_id = query.get("calculation_id") || ""
+  const query = useSearchParams();
+  let calculation_id = query.get("calculation_id") || undefined;
 
   const { data, isLoading, isValidating, mutate } =
     useGetTimeConstraintCalculation(session?.user.access_token, calculation_id);
@@ -75,7 +75,7 @@ export default function ChartContainer() {
             as={Link}
             variant={`solid`}
             size={`lg`}
-            href={`#`}
+            href={`/optimum-oh-app/simulate-each-equipment`}
             color={`primary`}
             radius={`sm`}
             className={`text-xs w-1/2`}
