@@ -2,36 +2,46 @@
 
 import { Spinner, useDisclosure } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useGetAvailableEquipment } from "@/lib/APIs/useGetAvailableEquipment";
 import TableNewAsset from "./TableNewAsset";
 import OptimumOverhaulChart from "./OptimumOverhaulChart";
 import { useGetTimeConstraintCalculation } from "@/lib/APIs/useGetTimeConstraintCalculation";
 import CalculateOH from "../CalculateOH";
+import { useGetScopeOH } from "@/lib/APIs/useGetScopeOH";
+import { useSearchParams } from "next/navigation";
+import TableSelectAsset from "./TableSelectAsset";
+import { usePostSelectEquipment } from "@/lib/APIs/mutation/usePostSelectEquipment";
 
 export default function SimulateEachEquipmentContainer() {
+  const query = useSearchParams();
   const { data: session } = useSession();
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 5, // Default page size
-  });
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
+
   const [isSelected, setIsSelected] = useState(false);
+  let calculation_id = query.get("calculation_id") || "";
+  let scope = query.get("scope") || undefined;
 
   const {
+    trigger,
+    isLoading: isLoadingPost,
     data: dataChart,
-    isLoading: isLoadingChart,
-    isValidating: isValidatingChart,
-    mutate: mutateChart,
-  } = useGetTimeConstraintCalculation(session?.user.access_token, undefined);
+  } = usePostSelectEquipment(session?.user.access_token, calculation_id);
 
-  const chartData = dataChart?.results ?? [];
+  const chartData = useMemo(() => {
+    if (!dataChart) {
+      return [];
+    }
 
-  const { data, isLoading, isValidating, mutate } = useGetAvailableEquipment(
+    return dataChart?.data.results;
+  }, [dataChart]);
+
+  const { data, error, isLoading, isValidating, mutate } = useGetScopeOH(
     session?.user.access_token,
-    "A",
-    pagination.pageIndex + 1, // Add 1 since API likely uses 1-based indexing
-    pagination.pageSize
+    scope,
+    page,
+    rowsPerPage
   );
 
   const totalPages = data?.totalPages ?? 0;
@@ -41,12 +51,26 @@ export default function SimulateEachEquipmentContainer() {
 
   return (
     <section className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-      <div className="w-full  h-[78dvh] bg-white rounded-2xl shadow-xl overflow-y-auto p-2">
+      <div className="w-full  h-[78dvh] bg-white rounded-2xl shadow-xl overflow-y-auto p-6">
         <div className={`w-full flex justify-between mb-2`}>
           <h2 className={`text-xl font-semibold`}>List Equipment in Scope A</h2>
           <CalculateOH title={`Menu`} size={`sm`} />
         </div>
-        <TableNewAsset
+        <TableSelectAsset
+          tableData={availableEquipmentData}
+          isLoading={isLoading}
+          isValidating={isValidating}
+          mutate={mutate}
+          page={page}
+          setPage={setPage}
+          rowsPerPage={rowsPerPage}
+          setRowsPerPage={setRowsPerPage}
+          total_items={totalItems}
+          pages={totalPages}
+          calculationId={calculation_id}
+          trigger={trigger}
+        />
+        {/* <TableNewAsset
           dataTable={availableEquipmentData}
           isLoading={isLoading}
           totalPages={totalPages}
@@ -56,7 +80,7 @@ export default function SimulateEachEquipmentContainer() {
           setPagination={setPagination}
           mutate={mutate}
           filterScope={"A"}
-        />
+        /> */}
       </div>
       <div className="w-full  h-[78dvh] bg-white rounded-2xl shadow-xl">
         {isLoading ? (

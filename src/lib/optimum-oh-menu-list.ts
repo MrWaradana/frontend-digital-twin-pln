@@ -60,7 +60,8 @@ export function getMenuList(pathname: string): Group[] {
         {
           href: "/optimum-oh-app/target-reliability",
           label: "Target Reliability",
-          active: pathname === "#" ? true : false,
+          active:
+            pathname === "/optimum-oh-app/target-reliability" ? true : false,
           icon: Target,
           submenus: [],
         },

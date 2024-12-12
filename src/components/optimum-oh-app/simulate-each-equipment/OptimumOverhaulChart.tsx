@@ -32,7 +32,6 @@ export default function OptimumOverhaulChart({ chartData }: any) {
     tooltip: {
       trigger: "axis",
       axisPointer: {
-        type: "none",
         snap: true,
         label: {
           backgroundColor: "#6a7985",
@@ -85,8 +84,6 @@ export default function OptimumOverhaulChart({ chartData }: any) {
       },
       type: "value",
       axisPointer: {
-        status: "hide",
-        triggerOn: "none",
         snap: true,
         lineStyle: {
           color: "#7581BD",
