@@ -23,15 +23,20 @@ export default function TableNewAsset({
   mutate,
   totalItems,
   filterScope,
+  mutateScopeEquipment,
+  onOpenChange,
+  isOpen,
 }: any) {
   const { data: session } = useSession();
   const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({}); //ts type available
+  const [isActionLoading, setIsActionLoading] = useState(false);
 
   const { data, trigger, error, isMutating } = usePostNewAsset(
     session?.user.access_token
   );
 
   const handleSubmitNewAsset = async (values: any) => {
+    setIsActionLoading(true);
     try {
       const result = await trigger({
         token: session?.user.access_token,
@@ -46,10 +51,12 @@ export default function TableNewAsset({
 
       // Success case
       if (result) {
+        // Wait for mutations to complete before closing
         toast.success("Assets added successfully");
-        // Optionally refresh data or clear selection
-        mutate?.();
+        mutateScopeEquipment();
         setRowSelection({});
+        setIsActionLoading(false);
+        onOpenChange(false); // Close modal after data is refreshed
       }
     } catch (err) {
       // Error case
@@ -91,14 +98,22 @@ export default function TableNewAsset({
         pageSize: itemsPerPage,
       },
     },
-    enableSelectAll: false,
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
+    enableColumnFilters: false,
+    mantineTableProps: {
+      withColumnBorders: false,
+      highlightOnHover: false,
+    },
     state: {
       rowSelection,
       isLoading,
       pagination,
+      columnFilters: [], // Reset filters
+      isSaving: isActionLoading,
     },
+    autoResetPageIndex: true, // Force table reset
+    enableSelectAll: false,
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
     mantineSelectCheckboxProps: { color: "red", size: "lg" },
     positionToolbarAlertBanner: "head-overlay",
     manualPagination: true,

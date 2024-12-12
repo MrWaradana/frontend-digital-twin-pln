@@ -50,13 +50,13 @@ export function getMenuList(pathname: string): Group[] {
           icon: LayoutDashboard,
           submenus: [],
         },
-        {
-          href: "/optimum-oh-app/chart",
-          label: "Optimum Overhaul Chart",
-          active: pathname === "/optimum-oh-app/chart" ? true : false,
-          icon: CalendarClock,
-          submenus: [],
-        },
+        // {
+        //   href: "/optimum-oh-app/chart",
+        //   label: "Optimum Overhaul Chart",
+        //   active: pathname === "/optimum-oh-app/chart" ? true : false,
+        //   icon: CalendarClock,
+        //   submenus: [],
+        // },
         {
           href: "/optimum-oh-app/target-reliability",
           label: "Target Reliability",

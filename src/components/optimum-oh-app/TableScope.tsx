@@ -42,7 +42,7 @@ import {
 } from "@radix-ui/react-icons";
 import { parameterOptions, statusOptions } from "@/lib/efficiency-data";
 import { capitalize } from "@/lib/utils";
-import { EFFICIENCY_API_URL } from "@/lib/api-url";
+import { EFFICIENCY_API_URL, OPTIMUM_OH_API_URL } from "@/lib/api-url";
 import { useGetThermoStatus } from "@/lib/APIs/useGetThermoStatus";
 import { useSession } from "next-auth/react";
 import { useSelectedEfficiencyDataStore } from "../../store/selectedEfficiencyData";
@@ -110,6 +110,11 @@ export default function TableScope({
   setScopeFilter,
   filterScope,
   setFilterScope,
+  availableEquipmentData,
+  pagination,
+  setPagination,
+  isLoadingAvailableEquipment,
+  isValidatingAvailableEquipment,
 }: any) {
   const router = useRouter();
   const [tableState, setTableState] = useState(tableData);
@@ -220,7 +225,13 @@ export default function TableScope({
 
   // const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const loadingState = isLoading || isValidating ? "loading" : "idle";
+  const loadingState =
+    isLoading ||
+    isValidating ||
+    isLoadingAvailableEquipment ||
+    isValidatingAvailableEquipment
+      ? "loading"
+      : "idle";
 
   // const items = React.useMemo(() => {
   //   const start = (page - 1) * rowsPerPage;
@@ -270,7 +281,7 @@ export default function TableScope({
     setIsDeleteLoading(true);
     try {
       const response = await fetch(
-        `${EFFICIENCY_API_URL}/data/${selectedRowId}`,
+        `${OPTIMUM_OH_API_URL}/scope-equipments/${selectedRowId}`,
         {
           method: "DELETE",
           headers: {
@@ -375,7 +386,13 @@ export default function TableScope({
                     >
                       Engine Flow
                     </DropdownItem> */}
-                    <DropdownItem href={`#`}>Edit</DropdownItem>
+                    {/* <DropdownItem
+                      onPress={() => {
+                        alert(JSON.stringify(rowData));
+                      }}
+                    >
+                      Edit
+                    </DropdownItem> */}
                     {/* <DropdownItem href="#">Edit</DropdownItem>*/}
                     <DropdownItem
                       onPress={() => {
@@ -468,7 +485,17 @@ export default function TableScope({
             }}
           />
           <div className="flex gap-3">
-            <AddNewAssetModal filterScope={filterScope} />
+            {isLoadingAvailableEquipment || isValidatingAvailableEquipment ? (
+              "Loading..."
+            ) : (
+              <AddNewAssetModal
+                filterScope={filterScope}
+                availableEquipmentData={availableEquipmentData}
+                pagination={pagination}
+                setPagination={setPagination}
+                mutateScopeEquipment={mutate}
+              />
+            )}
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -525,7 +552,7 @@ export default function TableScope({
             mutate();
             setPage(page);
           }}
-          hidden={isValidating}
+          // hidden={isValidating}
           classNames={{
             cursor: "bg-[#1C9EB6]",
           }}
@@ -572,7 +599,7 @@ export default function TableScope({
               <Button
                 color="danger"
                 isLoading={isDeleteLoading}
-                // onPress={handleDelete}
+                onPress={handleDelete}
               >
                 Delete
               </Button>

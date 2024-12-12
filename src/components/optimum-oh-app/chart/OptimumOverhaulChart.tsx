@@ -86,6 +86,7 @@ export default function OptimumOverhaulChart({ chartData }: any) {
         padding: [3, 10, 3, 10],
         borderRadius: 4,
       },
+      min: 1,
       type: "value",
       axisPointer: {
         snap: true,

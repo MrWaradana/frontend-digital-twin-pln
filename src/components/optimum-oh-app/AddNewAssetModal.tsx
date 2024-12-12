@@ -8,31 +8,27 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
+  Spinner,
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import TableNewAsset from "@/components/optimum-oh-app/TableNewAsset";
 import { useGetAvailableEquipment } from "@/lib/APIs/useGetAvailableEquipment";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-export default function AddNewAssetModal({ filterScope }: any) {
+export default function AddNewAssetModal({
+  availableEquipmentData,
+  filterScope,
+  pagination,
+  setPagination,
+  mutateScopeEquipment,
+}: any) {
   const { data: session } = useSession();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 10, // Default page size
-  });
 
-  const { data, isLoading, isValidating, mutate } = useGetAvailableEquipment(
-    session?.user.access_token,
-    filterScope,
-    pagination.pageIndex + 1, // Add 1 since API likely uses 1-based indexing
-    pagination.pageSize
-  );
-
-  const totalPages = data?.totalPages ?? 0;
-  const totalItems = data?.total ?? 0;
-  const itemsPerPage = data?.itemsPerPage ?? 10;
-  const availableEquipmentData = data?.items ?? [];
+  const totalPages = availableEquipmentData?.totalPages ?? 0;
+  const totalItems = availableEquipmentData?.total ?? 0;
+  const itemsPerPage = availableEquipmentData?.itemsPerPage ?? 10;
+  const availableData = availableEquipmentData?.items ?? [];
 
   return (
     <>
@@ -41,7 +37,10 @@ export default function AddNewAssetModal({ filterScope }: any) {
         className={`bg-[#1C9EB6] text-white ${
           session?.user.user.role === "Management" ? "hidden" : ""
         } `}
-        onPress={onOpen}
+        onPress={() => {
+          // mutateScopeEquipment();
+          onOpen();
+        }}
       >
         Add New Asset
       </Button>
@@ -62,15 +61,17 @@ export default function AddNewAssetModal({ filterScope }: any) {
               <p>List assets can be added to: Scope {filterScope}</p>
               <div className={`overflow-y-auto`}>
                 <TableNewAsset
-                  dataTable={availableEquipmentData}
-                  isLoading={isLoading}
+                  dataTable={availableData}
+                  isLoading={false}
                   totalPages={totalPages}
                   totalItems={totalItems}
                   itemsPerPage={itemsPerPage}
                   pagination={pagination}
                   setPagination={setPagination}
-                  mutate={mutate}
+                  mutateScopeEquipment={mutateScopeEquipment}
                   filterScope={filterScope}
+                  onOpenChange={onOpenChange}
+                  isOpen={isOpen}
                 />
               </div>
             </ModalBody>

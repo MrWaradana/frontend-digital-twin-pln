@@ -15,6 +15,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useGetScopeOH } from "@/lib/APIs/useGetScopeOH";
 import { useSession } from "next-auth/react";
 import { isValid } from "date-fns";
+import { useGetAvailableEquipment } from "@/lib/APIs/useGetAvailableEquipment";
 
 export default function ScopeOH() {
   const { data: session } = useSession();
@@ -25,6 +26,11 @@ export default function ScopeOH() {
   const [filterParameter, setFilterParameter] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterScope, setFilterScope] = useState("A");
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10, // Default page size
+  });
+
   const [statusFilter, setStatusFilter] = useState<Selection>(
     // new Set(INITIAL_VISIBLE_STATUS)
     "all"
@@ -41,15 +47,39 @@ export default function ScopeOH() {
 
   const { data, error, isLoading, isValidating, mutate } = useGetScopeOH(
     session?.user.access_token,
-    scopeValue,
+    filterScope,
     page,
     rowsPerPage
   );
+
+  const {
+    data: dataAvailableEquipment,
+    isLoading: isLoadingAvailableEquipment,
+    isValidating: isValidatingAvailableEquipment,
+    mutate: mutateAvailableEquipment,
+  } = useGetAvailableEquipment(
+    session?.user.access_token,
+    filterScope,
+    pagination.pageIndex + 1, // Add 1 since API likely uses 1-based indexing
+    pagination.pageSize
+  );
+
+  const availableData = useMemo(() => {
+    if (!dataAvailableEquipment) {
+      return [];
+    }
+    return dataAvailableEquipment;
+  }, [dataAvailableEquipment]);
 
   const totalPages = data?.totalPages ?? 1;
   const totalItems = data?.total ?? 1;
   const currentPage = data?.page;
   const tableData = data?.items ?? [];
+
+  const allMutate = () => {
+    mutate();
+    mutateAvailableEquipment();
+  };
 
   useEffect(() => {
     if (data) {
@@ -81,32 +111,44 @@ export default function ScopeOH() {
                 Scope OH
               </ModalHeader>
               <ModalBody>
-                <TableScope
-                  tableData={tableData}
-                  thermoStatus={false}
-                  addNewUrl={`/efficiency-app/input`}
-                  isLoading={isLoading}
-                  isValidating={isValidating}
-                  page={currentPage}
-                  setPage={setPage}
-                  rowsPerPage={rowsPerPage}
-                  setRowsPerPage={setRowsPerPage}
-                  pages={totalPages}
-                  total_items={totalItems}
-                  // filterSearch
-                  setFilterSearch={setFilterSearch}
-                  // filterParameter
-                  setFilterParameter={setFilterParameter}
-                  // filterStatus
-                  setFilterStatus={setFilterStatus}
-                  statusFilter={statusFilter}
-                  setStatusFilter={setStatusFilter}
-                  scopeFilter={scopeFilter}
-                  setScopeFilter={setScopeFilter}
-                  filterScope={filterScope}
-                  setFilterScope={setFilterScope}
-                  mutate={mutate}
-                />
+                {isLoadingAvailableEquipment ||
+                isValidatingAvailableEquipment ? (
+                  "Loading..."
+                ) : (
+                  <TableScope
+                    tableData={tableData}
+                    availableEquipmentData={availableData}
+                    pagination={pagination}
+                    setPagination={setPagination}
+                    thermoStatus={false}
+                    addNewUrl={`/efficiency-app/input`}
+                    isLoading={isLoading}
+                    isValidating={isValidating}
+                    page={currentPage}
+                    setPage={setPage}
+                    rowsPerPage={rowsPerPage}
+                    setRowsPerPage={setRowsPerPage}
+                    pages={totalPages}
+                    total_items={totalItems}
+                    // filterSearch
+                    setFilterSearch={setFilterSearch}
+                    // filterParameter
+                    setFilterParameter={setFilterParameter}
+                    // filterStatus
+                    setFilterStatus={setFilterStatus}
+                    statusFilter={statusFilter}
+                    setStatusFilter={setStatusFilter}
+                    scopeFilter={scopeFilter}
+                    setScopeFilter={setScopeFilter}
+                    filterScope={filterScope}
+                    setFilterScope={setFilterScope}
+                    mutate={allMutate}
+                    isLoadingAvailableEquipment={isLoadingAvailableEquipment}
+                    isValidatingAvailableEquipment={
+                      isValidatingAvailableEquipment
+                    }
+                  />
+                )}
               </ModalBody>
               <ModalFooter></ModalFooter>
             </>
