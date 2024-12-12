@@ -19,6 +19,7 @@ export interface ReliabilityPlot {
   location_tag: string;
   results: Result;
   message: string;
+  yCurrent: number;
 }
 export interface ReliabilityCurrent {
   location_tag: string;

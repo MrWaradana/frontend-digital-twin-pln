@@ -16,10 +16,38 @@ export interface Equipment {
   equipment_tree: EquipmentTree[];
   equipment_name: string;
   mdt_hours: number;
+  failure_count: number | undefined;
+  mttr_hours: number | undefined;
+  reliability: number | undefined;
 }
-export interface DataList {
+export interface MDT {
   equipment: Equipment[];
 }
-export function useGetWorstMDT(token: string | undefined): HookReply<DataList> {
-  return useApiFetch(`${RELIABILITY_API_URL}/assets/mdt`, !!token, token);
+export function useGetWorstMDT(
+  token: string | undefined,
+  isFetched: boolean = false
+): HookReply<MDT> {
+  return useApiFetch(
+    `${RELIABILITY_API_URL}/assets/mdt`,
+    !!token && !isFetched,
+    token,
+    {
+      shouldRetryOnError: false,
+      errorRetryInterval: 60000,
+      onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+        // Never retry on 404.
+        //@ts-ignore
+        if (error.status === 404) return;
+
+        // Never retry for a specific key.
+        if (key === "/api/user") return;
+
+        // Only retry up to 10 times.
+        if (retryCount >= 10) return;
+
+        // Retry after 5 seconds.
+        setTimeout(() => revalidate({ retryCount }), 5000);
+      },
+    }
+  );
 }

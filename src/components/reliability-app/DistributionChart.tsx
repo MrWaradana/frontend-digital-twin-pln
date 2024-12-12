@@ -25,8 +25,15 @@ ChartJS.register(
   annotationPlugin
 );
 
-const DistributionChart = ({ X, Y, current, theme = "light" }) => {
-  if (X.length !== Y.length || X.length < 2) {
+const DistributionChart = ({ X, Y, current, yCurrent, theme = "light" }) => {
+  // Insert yCurrent into the Y array at the current index
+  const YWithCurrent = [...Y];
+  const currentIndex = X.indexOf(current);
+  if (currentIndex !== -1) {
+    YWithCurrent[currentIndex] = yCurrent; // Update the Y array with yCurrent at the current index
+  }
+
+  if (X.length !== YWithCurrent.length || X.length < 2) {
     return (
       <div className="text-red-500 font-semibold text-center">
         Error: X and Y must contain at least 2 points each with matching
@@ -41,8 +48,8 @@ const DistributionChart = ({ X, Y, current, theme = "light" }) => {
   };
 
   const straightLineY = [
-    { x: X[0], y: Y[0] },
-    { x: X[X.length - 1], y: Y[Y.length - 1] },
+    { x: X[0], y: YWithCurrent[0] },
+    { x: X[X.length - 1], y: YWithCurrent[YWithCurrent.length - 1] },
   ];
 
   const data = {
@@ -50,7 +57,7 @@ const DistributionChart = ({ X, Y, current, theme = "light" }) => {
     datasets: [
       {
         label: "Instant Probability of Failure",
-        data: Y,
+        data: YWithCurrent,
         fill: false,
         borderColor: theme === "dark" ? "#1C9EB6" : "#1C9EB6",
         tension: 0.6,
@@ -81,22 +88,29 @@ const DistributionChart = ({ X, Y, current, theme = "light" }) => {
         titleColor: tooltipStyle.color,
         bodyColor: tooltipStyle.color,
         callbacks: {
-          title: (tooltipItem) => `Time: ${tooltipItem[0]?.label}`,
-          label: (tooltipItem) =>
-            `Probability: ${Number(tooltipItem.raw).toFixed(2)}`,
+          title: (tooltipItem) => {
+            const label = tooltipItem[0]?.label;
+            return `Time: ${
+              label && !isNaN(label) ? Number(label).toFixed(2) : label
+            }`;
+          },
+          label: (tooltipItem) => {
+            const value = tooltipItem.raw;
+            return `Probability: ${Number(value).toExponential(2)}`;
+          },
         },
       },
       annotation: {
         annotations: [
           {
-            type: "line", // Explicitly set to "line"
+            type: "line",
             xMin: current,
             xMax: current,
             borderColor: "rgba(255, 99, 132, 1)",
             borderWidth: 2,
           },
           {
-            type: "label", // Explicitly set to "label"
+            type: "label",
             position: "center",
             xValue: current,
             content: `Current: ${current.toFixed(2)}`,
@@ -110,6 +124,21 @@ const DistributionChart = ({ X, Y, current, theme = "light" }) => {
             borderRadius: 8,
             padding: 8,
             yAdjust: -100,
+          },
+          {
+            type: "label",
+            position: "center",
+            xValue: current,
+            yValue: yCurrent,
+            content: `Y = ${yCurrent}`,
+            color: theme === "dark" ? "#fff" : "#333",
+            font: {
+              weight: "bold",
+              size: 12,
+              family: "Arial, sans-serif",
+            },
+            borderRadius: 8,
+            padding: 8,
           },
         ],
       },
@@ -135,6 +164,18 @@ const DistributionChart = ({ X, Y, current, theme = "light" }) => {
         },
       },
       y: {
+        ticks: {
+          callback: (value) => {
+            const valueStr = value.toString();
+            const decimalIndex = valueStr.indexOf(".");
+
+            if (decimalIndex !== -1 && valueStr.length - decimalIndex - 1 > 2) {
+              return value.toExponential(2);
+            }
+
+            return value.toFixed(2);
+          },
+        },
         title: {
           display: true,
           text: "Instant probability of failure",
@@ -147,7 +188,7 @@ const DistributionChart = ({ X, Y, current, theme = "light" }) => {
   };
 
   return (
-    <div className="flex justify-center items-start w-full pt-4">
+    <div className="flex flex-col justify-center items-center w-full pt-4">
       <Line data={data} options={options} height={280} />
     </div>
   );

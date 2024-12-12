@@ -16,12 +16,39 @@ export interface Equipment {
   equipment_tree: EquipmentTree[];
   failure_count: number;
   name: string;
+  equipment_name: string | undefined;
+  mdt_hours: number | undefined;
+  mttr_hours: number | undefined;
+  reliability: number | undefined;
 }
-export interface FailuresList {
+export interface AssetFailure {
   equipment: Equipment[];
 }
 export function useGetWorstFailures(
-  token: string | undefined
-): HookReply<FailuresList> {
-  return useApiFetch(`${RELIABILITY_API_URL}/assets/failures`, !!token, token);
+  token: string | undefined,
+  isFetched: boolean = false
+): HookReply<AssetFailure> {
+  return useApiFetch(
+    `${RELIABILITY_API_URL}/assets/failures`,
+    !!token && !isFetched,
+    token,
+    {
+      shouldRetryOnError: false,
+      errorRetryInterval: 60000,
+      onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+        // Never retry on 404.
+        //@ts-ignore
+        if (error.status === 404) return;
+
+        // Never retry for a specific key.
+        if (key === "/api/user") return;
+
+        // Only retry up to 10 times.
+        if (retryCount >= 10) return;
+
+        // Retry after 5 seconds.
+        setTimeout(() => revalidate({ retryCount }), 5000);
+      },
+    }
+  );
 }

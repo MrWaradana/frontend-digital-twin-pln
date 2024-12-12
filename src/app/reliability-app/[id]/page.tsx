@@ -74,9 +74,9 @@ const Page = ({ params }: { params: { id: string } }) => {
   const reliabilityCurrent = reliabilityCurrentvalue?.reliability_value
     ? `${(reliabilityCurrentvalue.reliability_value * 100).toFixed(2)}`
     : "None";
-  const mttr = mttrvalue?.hours ?? 0;
-  const mdt = mdtvalue?.hours ?? 0;
-  const mtbf = mtbfvalue?.hours ?? 0;
+  const mttr = mttrvalue?.hours ?? "None";
+  const mdt = mdtvalue?.hours ?? "None";
+  const mtbf = mtbfvalue?.hours ?? "None";
   const equipment = equipmentData?.equipment;
   const parameters = equipment?.params;
   const paramLabels = {
@@ -85,6 +85,8 @@ const Page = ({ params }: { params: { id: string } }) => {
     beta: "Beta",
     gamma: "Gamma",
     lambda: "Lambda",
+    sigma: "Sigma",
+    mu: "mu",
   };
 
   if (
@@ -98,9 +100,8 @@ const Page = ({ params }: { params: { id: string } }) => {
     reliabilityPlotloading
   ) {
     return (
-      <div className="w-full h-screen flex justify-center items-center">
-        <CircularProgress color="secondary" />
-        Loading ...
+      <div className="w-full h-screen flex flex-col justify-center items-center">
+        <CircularProgress color="primary" /> <div>Loading ...</div>
       </div>
     );
   }
@@ -196,6 +197,7 @@ const Page = ({ params }: { params: { id: string } }) => {
                       X={distributionData?.results.x}
                       Y={distributionData?.results.y}
                       current={distributionData?.current_day}
+                      yCurrent={distributionData?.yCurrent}
                     ></DistributionChart>
                   )}
                 </div>
@@ -210,6 +212,7 @@ const Page = ({ params }: { params: { id: string } }) => {
                       X={reliabilityData?.results.x}
                       Y={reliabilityData?.results.y}
                       current={reliabilityData?.current_day}
+                      yCurrent={reliabilityData?.yCurrent}
                     ></DistributionChart>
                   )}
                 </div>
@@ -217,7 +220,7 @@ const Page = ({ params }: { params: { id: string } }) => {
             </div>
 
             <div className="flex flex-row w-full gap-4 flex-wrap">
-              <div className="flex-1 flex flex-col gap-4 justify-between  shadow-xl bg-white rounded-3xl p-6">
+              <div className="flex-1 flex flex-col gap-1 justify-between  shadow-xl bg-white rounded-3xl p-6">
                 <div className="flex flex-col">
                   <div className="flex flex-row items-center justify-between">
                     <p className="text-[10px] text-[#918E8E]">Current</p>
@@ -239,7 +242,7 @@ const Page = ({ params }: { params: { id: string } }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex-1 flex flex-col gap-4 justify-between  shadow-xl bg-white rounded-3xl p-6">
+              <div className="flex-1 flex flex-col gap-1 justify-between  shadow-xl bg-white rounded-3xl p-6">
                 <div className="flex flex-col">
                   <div className="flex flex-row items-center justify-between">
                     <p className="text-[10px] text-[#918E8E]">Current</p>
@@ -266,7 +269,7 @@ const Page = ({ params }: { params: { id: string } }) => {
                   </div> */}
                 </div>
               </div>
-              <div className="flex-1 flex flex-col gap-4 justify-between  shadow-xl bg-white rounded-3xl p-6">
+              <div className="flex-1 flex flex-col gap-1 justify-between  shadow-xl bg-white rounded-3xl p-6">
                 <div className="flex flex-col">
                   <div className="flex flex-row items-center justify-between">
                     <p className="text-[10px] text-[#918E8E]">Current</p>
@@ -293,7 +296,7 @@ const Page = ({ params }: { params: { id: string } }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex-1 flex flex-col gap-4 justify-between shadow-xl bg-white rounded-3xl p-6">
+              <div className="flex-1 flex flex-col gap-1 justify-between shadow-xl bg-white rounded-3xl p-6">
                 <div className="flex flex-col">
                   <div className="flex flex-row items-center justify-between">
                     <p className="text-[10px] text-[#918E8E]">Current</p>
@@ -317,7 +320,7 @@ const Page = ({ params }: { params: { id: string } }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex-1 flex flex-col gap-4 justify-between shadow-xl bg-white rounded-3xl p-6">
+              <div className="flex-1 flex flex-col gap-1 justify-between shadow-xl bg-white rounded-3xl p-6">
                 <div className="flex flex-col">
                   <div className="flex flex-row items-center justify-between">
                     <p className="text-[10px] text-[#918E8E]">Current</p>

@@ -5,36 +5,80 @@ import { useGetWorstFailures } from "@/lib/APIs/reliability-predict/useGetWorstF
 import { useGetWorstMDT } from "@/lib/APIs/reliability-predict/useGetWorstMDT";
 import { useGetWorstMTTR } from "@/lib/APIs/reliability-predict/useGetWorstMTTR";
 import { useGetWorstReliability } from "@/lib/APIs/reliability-predict/useGetWorstReliability";
+import { setDashboard } from "@/store/reliability-predict/setDashboard";
 import { CircularProgress } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 const Page = () => {
   const { data: session } = useSession();
-  const { data: assetsFailuresData, isLoading: assetsFailuresLoading } =
-    useGetWorstFailures(session?.user.access_token);
-  const { data: assetsMTTRData, isLoading: mttrloading } = useGetWorstMTTR(
-    session?.user.access_token
+
+  // Get assets state from the Zustand store
+  const AssetsFailures = setDashboard((state) => state.assetsFailures || []);
+  const AssetsMTTR = setDashboard((state) => state.assetsMTTR || []);
+  const AssetsMDT = setDashboard((state) => state.assetsMDT || []);
+  const AssetsReliability = setDashboard(
+    (state) => state.assetsReliability || []
   );
-  const { data: assetsMDTData, isLoading: mdtloading } = useGetWorstMDT(
-    session?.user.access_token
+
+  // Fetch data
+  const { data: assetsFailuresData, isValidating: assetsFailuresLoading } =
+    useGetWorstFailures(session?.user.access_token, AssetsFailures.length > 0);
+
+  const { data: assetsMTTRData, isValidating: mttrLoading } = useGetWorstMTTR(
+    session?.user.access_token,
+    AssetsMTTR.length > 0
   );
-  const { data: assetsReliabilityData, isLoading: reliabilityloading } =
-    useGetWorstReliability(session?.user.access_token);
+  const { data: assetsMDTData, isValidating: mdtLoading } = useGetWorstMDT(
+    session?.user.access_token,
+    AssetsMDT.length > 0
+  );
+  const { data: assetsReliabilityData, isValidating: reliabilityLoading } =
+    useGetWorstReliability(
+      session?.user.access_token,
+      AssetsReliability.length > 0
+    );
+
+  // Convert fetched data into assets
   const assetsFailures = assetsFailuresData?.equipment ?? [];
   const assetsMTTR = assetsMTTRData?.equipment ?? [];
   const assetsMDT = assetsMDTData?.equipment ?? [];
   const assetsReliability = assetsReliabilityData?.equipment ?? [];
 
+  // Update Zustand store when data is fetched
+  useEffect(() => {
+    if (AssetsFailures.length === 0 && assetsFailures.length > 0) {
+      setDashboard.getState().setFailures(assetsFailures);
+    }
+  }, [assetsFailures, AssetsFailures.length]);
+
+  useEffect(() => {
+    if (AssetsMTTR.length === 0 && assetsMTTR.length > 0) {
+      setDashboard.getState().setMTTR(assetsMTTR);
+    }
+  }, [assetsMTTR, AssetsMTTR.length]);
+
+  useEffect(() => {
+    if (AssetsMDT.length === 0 && assetsMDT.length > 0) {
+      setDashboard.getState().setMDT(assetsMDT);
+    }
+  }, [assetsMDT, AssetsMDT.length]);
+
+  useEffect(() => {
+    if (AssetsReliability.length === 0 && assetsReliability.length > 0) {
+      setDashboard.getState().setReliability(assetsReliability);
+    }
+  }, [assetsReliability, AssetsReliability.length]);
+
   if (
-    assetsFailuresLoading ||
-    mttrloading ||
-    mdtloading ||
-    reliabilityloading
+    AssetsFailures.length == 0 &&
+    AssetsMDT.length == 0 &&
+    AssetsMTTR.length == 0 &&
+    AssetsReliability.length == 0
   ) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
-        <CircularProgress color="secondary" />
-        Loading ...
+        <CircularProgress color="primary" /> Loading ...
       </div>
     );
   }
@@ -47,7 +91,7 @@ const Page = () => {
             Number of Failure
           </h1>
           <ul className="flex gap-3 flex-col">
-            {assetsFailures.map((item, index) => (
+            {AssetsFailures.map((item, index) => (
               <li key={index}>
                 <a
                   href={`/reliability-app/${item.location_tag}`}
@@ -81,7 +125,7 @@ const Page = () => {
             Top 10 Worst Reliability
           </h1>
           <ul className="flex gap-3 flex-col">
-            {assetsReliability.map((reliability, index) => (
+            {AssetsReliability.map((reliability, index) => (
               <li key={reliability.id}>
                 <a
                   href={`/reliability-app/${reliability.location_tag}`}
@@ -102,8 +146,8 @@ const Page = () => {
                         </span>
                       </div>
                     </div>
-                    <div className=" bg-red-600 text-white rounded-[100px] flex justify-end items-center text-[9px] px-2 py-1">
-                      {`${(reliability.reliability * 100).toFixed(2)}%`}
+                    <div className="bg-red-600 text-white rounded-[100px] flex justify-end items-center text-[9px] px-2 py-1">
+                      {`${(reliability.reliability * 100).toExponential(2)}%`}
                     </div>
                   </div>
                 </a>
@@ -118,17 +162,17 @@ const Page = () => {
               Mean Time to Repair
             </h1>
             <ul className="flex gap-3 flex-col">
-              {assetsMTTR.map((mttr, index) => (
+              {AssetsMTTR.map((mttr, index) => (
                 <li key={index}>
                   <a
                     href={`/reliability-app/${mttr.location_tag}`}
                     className="flex flex-row items-center"
                   >
                     <div className="w-full flex flex-row gap-2 justify-between">
-                      <div className=" text-[12px] text-gray-500 relative group">
+                      <div className="text-[12px] text-gray-500 relative group">
                         <span className="w-4">{index + 1}. </span>
                         <span
-                          className="md:truncate md:max-w-[400px] inline-block align-middle"
+                          className="md:truncate md:max-w-[350px] inline-block align-middle"
                           title={mttr.equipment_name}
                         >
                           {mttr.equipment_name}
@@ -140,10 +184,6 @@ const Page = () => {
                         </div>
                       </div>
                       <div className=" flex flex-row gap-1 justify-end">
-                        {/* <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-2 py-1">
-                        {mttr.mttr_days} hours
-                      </div>
-                      <div className="text-sm text-gray-300">|</div> */}
                         <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-2 py-1">
                           {mttr.mttr_hours.toLocaleString()} hours
                         </div>
@@ -160,17 +200,17 @@ const Page = () => {
               Mean Down Time
             </h1>
             <ul className="flex gap-3 flex-col">
-              {assetsMDT.map((mdt, index) => (
+              {AssetsMDT.map((mdt, index) => (
                 <li key={index}>
                   <a
                     href={`/reliability-app/${mdt.location_tag}`}
                     className="flex flex-row items-center"
                   >
                     <div className="w-full flex flex-row gap-2 justify-between">
-                      <div className=" text-[12px] text-gray-500 relative group">
+                      <div className="text-[12px] text-gray-500 relative group">
                         <span className="w-4">{index + 1}. </span>
                         <span
-                          className="md:truncate md:max-w-[400px] inline-block align-middle"
+                          className="md:truncate md:max-w-[350px] inline-block align-middle"
                           title={mdt.equipment_name}
                         >
                           {mdt.equipment_name}

@@ -21,7 +21,9 @@ export interface Distribution {
   parameters: Parameters;
   results: Result;
   message: string;
+  yCurrent: number;
 }
+
 export function useGetDistribution(
   id: string | undefined,
   token: string | undefined

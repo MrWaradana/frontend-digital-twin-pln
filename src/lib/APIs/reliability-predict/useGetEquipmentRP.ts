@@ -19,6 +19,8 @@ export interface Params {
   beta: number;
   gamma: number;
   Lambda: number;
+  sigma: number;
+  mu: number;
 }
 export interface Equipment {
   id: string;
