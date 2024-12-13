@@ -83,7 +83,7 @@ export default function ChartContainer() {
             as={Link}
             variant={`solid`}
             size={`lg`}
-            href={`/optimum-oh-app/simulate-each-equipment?scope=${scope}`}
+            href={`/optimum-oh-app/simulate-each-equipment?scope=${scope}&calculation_id=${calculation_id}`}
             color={`primary`}
             radius={`sm`}
             className={`text-xs w-1/2`}
