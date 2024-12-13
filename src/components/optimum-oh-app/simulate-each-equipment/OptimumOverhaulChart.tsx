@@ -30,7 +30,7 @@ export default function OptimumOverhaulChart({ chartData }: any) {
       data: ["Total Cost", "Overhaul Cost", "Corrective Cost"],
     },
     tooltip: {
-      trigger: "axis",
+      triggerOn: "none",
       axisPointer: {
         snap: true,
         label: {

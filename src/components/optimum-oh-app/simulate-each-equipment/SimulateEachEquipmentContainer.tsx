@@ -30,11 +30,12 @@ export default function SimulateEachEquipmentContainer() {
   } = usePostSelectEquipment(session?.user.access_token, calculation_id);
 
   const chartData = useMemo(() => {
-    if (!dataChart) {
+    let results = dataChart?.data?.results;
+    if (!dataChart || !results) {
       return [];
     }
 
-    return dataChart?.data.results;
+    return dataChart?.data?.results;
   }, [dataChart]);
 
   const { data, error, isLoading, isValidating, mutate } = useGetScopeOH(

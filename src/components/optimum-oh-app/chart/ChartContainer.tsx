@@ -30,7 +30,7 @@ export default function ChartContainer() {
         {isLoading ? (
           <Spinner />
         ) : (
-          <OptimumOverhaulChart chartData={chartData} />
+          <OptimumOverhaulChart chartData={chartData} days={optimumData.days} />
         )}
       </div>
       <div className={`col-span-1 flex flex-col gap-2 pr-12 py-6`}>

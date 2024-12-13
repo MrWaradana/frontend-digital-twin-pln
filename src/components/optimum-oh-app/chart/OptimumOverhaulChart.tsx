@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState, useMemo } from "react";
 import * as echarts from "echarts";
 import ReactECharts from "echarts-for-react";
 
-export default function OptimumOverhaulChart({ chartData }: any) {
+export default function OptimumOverhaulChart({ chartData, days }: any) {
   const chartRef = useRef<HTMLDivElement>(null);
   const [echartsTheme, setEchartsTheme] = useState("light");
   const [markLinePosition, setMarkLinePosition] = useState("");
@@ -30,9 +30,9 @@ export default function OptimumOverhaulChart({ chartData }: any) {
       data: ["Fake Data"],
     },
     tooltip: {
-      trigger: "axis",
+      triggerOn: "none",
       axisPointer: {
-        type: "cross",
+        type: "axis",
         snap: true,
         label: {
           backgroundColor: "#6a7985",
@@ -89,6 +89,7 @@ export default function OptimumOverhaulChart({ chartData }: any) {
       min: 1,
       type: "value",
       axisPointer: {
+        value: `${days}`,
         snap: true,
         lineStyle: {
           color: "#7581BD",

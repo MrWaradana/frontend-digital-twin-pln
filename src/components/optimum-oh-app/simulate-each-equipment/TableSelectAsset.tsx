@@ -498,7 +498,7 @@ export default function TableSelectAsset({
             const rowIndex =
               sortedItems?.findIndex((row) => row.id === item.id) ?? 0;
             return (
-              <TableRow key={item.id}>
+              <TableRow key={item.assetnum}>
                 {(columnKey) => (
                   <TableCell>{renderCell(item, columnKey, rowIndex)}</TableCell>
                 )}
