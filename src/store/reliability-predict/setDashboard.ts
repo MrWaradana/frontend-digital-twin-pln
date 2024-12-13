@@ -1,3 +1,4 @@
+import { set } from "lodash";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -13,6 +14,7 @@ interface Equipment {
 }
 
 interface EquipmentState {
+  lastFetched: String | null;
   assetsFailures: Array<Equipment>;
   assetsMTTR: Array<Equipment>;
   assetsMDT: Array<Equipment>;
@@ -25,6 +27,7 @@ interface EquipmentState {
   setMDT: (mdts: Array<Equipment>) => void;
   addReliability: (reliability: Equipment) => void;
   setReliability: (reliabilities: Array<Equipment>) => void;
+  setLastFetched: (timestamp: String) => void;
 }
 
 // Create the Zustand store
@@ -35,6 +38,7 @@ export const setDashboard = create<EquipmentState>()(
       assetsMTTR: [],
       assetsMDT: [],
       assetsReliability: [],
+      lastFetched: null,
 
       addFailure: (failure) =>
         set((state) => ({
@@ -57,6 +61,7 @@ export const setDashboard = create<EquipmentState>()(
         })),
       setReliability: (reliabilities) =>
         set(() => ({ assetsReliability: reliabilities })),
+      setLastFetched: (timestamp) => set({ lastFetched: timestamp }),
     }),
     {
       name: "equipment-storage", // name of the storage item

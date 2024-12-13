@@ -15,7 +15,6 @@ export interface Equipment {
   equipment_id: string;
   equipment_tree: EquipmentTree[];
   failure_count: number;
-  name: string;
   equipment_name: string | undefined;
   mdt_hours: number | undefined;
   mttr_hours: number | undefined;

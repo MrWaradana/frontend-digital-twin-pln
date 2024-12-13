@@ -1,7 +1,8 @@
 import { useState } from "react";
 import DropdownEquipmentLevel from "./DropdownEquipmentLevel";
 import DropdownPredictionType from "./DropdownPredictionType";
-
+import { useGetEquipmentAll } from "@/lib/APIs/reliability-predict/useGetEquipmentRP";
+import { useSession } from "next-auth/react";
 type PredictionCalculatorProps = {
   isModalOpen: boolean;
   setIsModalOpen: (value: boolean) => void;
@@ -13,6 +14,7 @@ export function PredictionCalculator({
 }: PredictionCalculatorProps) {
   const closeModal = () => setIsModalOpen(false);
   const [selectedOption, setSelectedOption] = useState("");
+  const { data: session } = useSession();
 
   const openModal = () => setIsModalOpen(true);
 

@@ -14,7 +14,10 @@ import {
   useGetReliabilityCurrent,
   useGetReliabilityPlot,
 } from "@/lib/APIs/reliability-predict/useGetReliability";
-import { useGetEquipmentRP } from "@/lib/APIs/reliability-predict/useGetEquipmentRP";
+import {
+  useGetEquipmentAll,
+  useGetEquipmentRP,
+} from "@/lib/APIs/reliability-predict/useGetEquipmentRP";
 import { useGetMTBF } from "@/lib/APIs/reliability-predict/useGetMTBF";
 import { useGetDistribution } from "@/lib/APIs/reliability-predict/useGetDistributions";
 import DistributionChart from "@/components/reliability-app/DistributionChart";
@@ -23,51 +26,38 @@ const Page = ({ params }: { params: { id: string } }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const id = params.id;
   const openModal = () => setIsModalOpen(true);
-  const options = ["Option 1", "Option 2", "Option 3"];
+
   const { data: session } = useSession();
-  const {
-    data: mdtvalue,
-    isLoading: mdtloading,
-    error: mdterror,
-  } = useGetMDT(id, session?.user.access_token);
-  const {
-    data: mttrvalue,
-    isLoading: mttrloading,
-    error: mttrerror,
-  } = useGetMTTR(id, session?.user.access_token);
-  console.log("mttrvalue", mttrvalue);
-  const {
-    data: mtbfvalue,
-    isLoading: mtbfloading,
-    error: mtbferror,
-  } = useGetMTBF(id, session?.user.access_token);
-  console.log("mtbferror", mtbferror);
-  const {
-    data: failureRatevalue,
-    isLoading: failureRateloading,
-    error: failureerror,
-  } = useGetFailureRate(id, session?.user.access_token);
-  const {
-    data: reliabilityCurrentvalue,
-    isLoading: reliabilityloading,
-    error: reliabilityerror,
-  } = useGetReliabilityCurrent(id, session?.user.access_token);
-  const {
-    data: equipmentData,
-    isLoading: equipmentloading,
-    error: equipmenterror,
-  } = useGetEquipmentRP(id, session?.user.access_token);
-  console.log("equipmentData", equipmentData);
-  const {
-    data: distributionData,
-    isLoading: distributionloading,
-    error: distributionerror,
-  } = useGetDistribution(id, session?.user.access_token);
-  const {
-    data: reliabilityData,
-    isLoading: reliabilityPlotloading,
-    error: reliabilityPloterror,
-  } = useGetReliabilityPlot(id, session?.user.access_token);
+  const { data: equipmentList, isLoading: equipmentLoading } =
+    useGetEquipmentAll(session?.user.access_token);
+  const options = equipmentList?.equipment
+    .map((item: any) => ({
+      name: item.name,
+      location_tag: item.location_tag,
+    }))
+    .filter((item: any) => item.location_tag != null);
+  const { data: mdtvalue, isLoading: mdtloading } = useGetMDT(
+    id,
+    session?.user.access_token
+  );
+  const { data: mttrvalue, isLoading: mttrloading } = useGetMTTR(
+    id,
+    session?.user.access_token
+  );
+  const { data: mtbfvalue, isLoading: mtbfloading } = useGetMTBF(
+    id,
+    session?.user.access_token
+  );
+  const { data: failureRatevalue, isLoading: failureRateloading } =
+    useGetFailureRate(id, session?.user.access_token);
+  const { data: reliabilityCurrentvalue, isLoading: reliabilityloading } =
+    useGetReliabilityCurrent(id, session?.user.access_token);
+  const { data: equipmentData, isLoading: equipmentloading } =
+    useGetEquipmentRP(id, session?.user.access_token);
+  const { data: distributionData, isLoading: distributionloading } =
+    useGetDistribution(id, session?.user.access_token);
+  const { data: reliabilityData, isLoading: reliabilityPlotloading } =
+    useGetReliabilityPlot(id, session?.user.access_token);
   const failureRate = failureRatevalue?.failure_rate
     ? `${failureRatevalue.failure_rate.toFixed(2)}`
     : "None";

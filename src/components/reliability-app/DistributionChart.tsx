@@ -26,14 +26,7 @@ ChartJS.register(
 );
 
 const DistributionChart = ({ X, Y, current, yCurrent, theme = "light" }) => {
-  // Insert yCurrent into the Y array at the current index
-  const YWithCurrent = [...Y];
-  const currentIndex = X.indexOf(current);
-  if (currentIndex !== -1) {
-    YWithCurrent[currentIndex] = yCurrent; // Update the Y array with yCurrent at the current index
-  }
-
-  if (X.length !== YWithCurrent.length || X.length < 2) {
+  if (X.length !== Y.length || X.length < 2) {
     return (
       <div className="text-red-500 font-semibold text-center">
         Error: X and Y must contain at least 2 points each with matching
@@ -48,16 +41,36 @@ const DistributionChart = ({ X, Y, current, yCurrent, theme = "light" }) => {
   };
 
   const straightLineY = [
-    { x: X[0], y: YWithCurrent[0] },
-    { x: X[X.length - 1], y: YWithCurrent[YWithCurrent.length - 1] },
+    { x: X[0], y: Y[0] },
+    {
+      x: X[X.length - 1],
+      y: Y[Y.length - 1],
+    },
   ];
+
+  // Add a point for the current and yCurrent values
+  const currentPoint = {
+    x: current,
+    y: yCurrent,
+    pointRadius: 5,
+    pointBackgroundColor: "#FF6F61", // Highlight color for the current point
+  };
 
   const data = {
     labels: X,
     datasets: [
       {
+        label: "Current Probability of Failure",
+        data: [currentPoint],
+        fill: false,
+        borderColor: "#FF6F61", // Highlight the current line in red
+        borderWidth: 2,
+        pointRadius: 5,
+        pointBackgroundColor: "#FF6F61", // Highlight color for the current point
+      },
+      {
         label: "Instant Probability of Failure",
-        data: YWithCurrent,
+        data: Y,
         fill: false,
         borderColor: theme === "dark" ? "#1C9EB6" : "#1C9EB6",
         tension: 0.6,
@@ -95,7 +108,7 @@ const DistributionChart = ({ X, Y, current, yCurrent, theme = "light" }) => {
             }`;
           },
           label: (tooltipItem) => {
-            const value = tooltipItem.raw;
+            const value = tooltipItem.parsed.y;
             return `Probability: ${Number(value).toExponential(2)}`;
           },
         },
@@ -125,21 +138,21 @@ const DistributionChart = ({ X, Y, current, yCurrent, theme = "light" }) => {
             padding: 8,
             yAdjust: -100,
           },
-          {
-            type: "label",
-            position: "center",
-            xValue: current,
-            yValue: yCurrent,
-            content: `Y = ${yCurrent}`,
-            color: theme === "dark" ? "#fff" : "#333",
-            font: {
-              weight: "bold",
-              size: 12,
-              family: "Arial, sans-serif",
-            },
-            borderRadius: 8,
-            padding: 8,
-          },
+          // {
+          //   type: "label",
+          //   position: "center",
+          //   xValue: current,
+          //   yValue: yCurrent,
+          //   content: `Y = ${yCurrent}`,
+          //   color: theme === "dark" ? "#fff" : "#333",
+          //   font: {
+          //     weight: "bold",
+          //     size: 12,
+          //     family: "Arial, sans-serif",
+          //   },
+          //   borderRadius: 8,
+          //   padding: 8,
+          // },
         ],
       },
     },

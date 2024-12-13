@@ -39,15 +39,24 @@ export interface Equipment {
   location_tag: string;
   parent: Parent;
 }
-export interface FailuresList {
+export interface EquipmentList {
   equipment: Equipment;
 }
 export function useGetEquipmentRP(
   id: string | undefined,
   token: string | undefined
-): HookReply<FailuresList> {
+): HookReply<EquipmentList> {
   return useApiFetch(
     `${RELIABILITY_API_URL}/main/equipment_master/${id}`,
+    !!token,
+    token
+  );
+}
+export function useGetEquipmentAll(
+  token: string | undefined
+): HookReply<EquipmentList> {
+  return useApiFetch(
+    `${RELIABILITY_API_URL}/main/equipment_master`,
     !!token,
     token
   );

@@ -8,10 +8,11 @@ import { useGetWorstReliability } from "@/lib/APIs/reliability-predict/useGetWor
 import { setDashboard } from "@/store/reliability-predict/setDashboard";
 import { CircularProgress } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 const Page = () => {
   const { data: session } = useSession();
+  const today = new Date().toDateString();
 
   // Get assets state from the Zustand store
   const AssetsFailures = setDashboard((state) => state.assetsFailures || []);
@@ -20,65 +21,76 @@ const Page = () => {
   const AssetsReliability = setDashboard(
     (state) => state.assetsReliability || []
   );
-
-  // Fetch data
+  const lastFetched = setDashboard((state) => state.lastFetched || null);
   const { data: assetsFailuresData, isValidating: assetsFailuresLoading } =
-    useGetWorstFailures(session?.user.access_token, AssetsFailures.length > 0);
+    useGetWorstFailures(session?.user.access_token, lastFetched === today);
 
   const { data: assetsMTTRData, isValidating: mttrLoading } = useGetWorstMTTR(
     session?.user.access_token,
-    AssetsMTTR.length > 0
+    lastFetched === today
   );
   const { data: assetsMDTData, isValidating: mdtLoading } = useGetWorstMDT(
     session?.user.access_token,
-    AssetsMDT.length > 0
+    lastFetched === today
   );
   const { data: assetsReliabilityData, isValidating: reliabilityLoading } =
-    useGetWorstReliability(
-      session?.user.access_token,
-      AssetsReliability.length > 0
-    );
+    useGetWorstReliability(session?.user.access_token, lastFetched === today);
 
-  // Convert fetched data into assets
-  const assetsFailures = assetsFailuresData?.equipment ?? [];
-  const assetsMTTR = assetsMTTRData?.equipment ?? [];
-  const assetsMDT = assetsMDTData?.equipment ?? [];
-  const assetsReliability = assetsReliabilityData?.equipment ?? [];
+  const assetsFailures = useMemo(
+    () => assetsFailuresData?.equipment ?? [],
+    [assetsFailuresData]
+  );
+  const assetsMTTR = useMemo(
+    () => assetsMTTRData?.equipment ?? [],
+    [assetsMTTRData]
+  );
+  const assetsMDT = useMemo(
+    () => assetsMDTData?.equipment ?? [],
+    [assetsMDTData]
+  );
+  const assetsReliability = useMemo(
+    () => assetsReliabilityData?.equipment ?? [],
+    [assetsReliabilityData]
+  );
 
-  // Update Zustand store when data is fetched
   useEffect(() => {
-    if (AssetsFailures.length === 0 && assetsFailures.length > 0) {
+    if (lastFetched === null || lastFetched !== today) {
+      console.log("Data is being fetched for the new day...");
       setDashboard.getState().setFailures(assetsFailures);
-    }
-  }, [assetsFailures, AssetsFailures.length]);
-
-  useEffect(() => {
-    if (AssetsMTTR.length === 0 && assetsMTTR.length > 0) {
       setDashboard.getState().setMTTR(assetsMTTR);
-    }
-  }, [assetsMTTR, AssetsMTTR.length]);
-
-  useEffect(() => {
-    if (AssetsMDT.length === 0 && assetsMDT.length > 0) {
       setDashboard.getState().setMDT(assetsMDT);
-    }
-  }, [assetsMDT, AssetsMDT.length]);
-
-  useEffect(() => {
-    if (AssetsReliability.length === 0 && assetsReliability.length > 0) {
       setDashboard.getState().setReliability(assetsReliability);
     }
-  }, [assetsReliability, AssetsReliability.length]);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    lastFetched,
+    today,
+    mttrLoading,
+    reliabilityLoading,
+    mdtLoading,
+    assetsFailuresLoading,
+    today,
+  ]);
+  // Set lastFetched only after assets data has been successfully fetched
+  useEffect(() => {
+    if (
+      assetsFailures.length > 0 &&
+      assetsMTTR.length > 0 &&
+      assetsMDT.length > 0 &&
+      assetsReliability.length > 0
+    ) {
+      setDashboard.getState().setLastFetched(today);
+    }
+  }, [assetsFailures, assetsMTTR, assetsMDT, assetsReliability, today]);
   if (
-    AssetsFailures.length == 0 &&
-    AssetsMDT.length == 0 &&
-    AssetsMTTR.length == 0 &&
-    AssetsReliability.length == 0
+    mttrLoading ||
+    reliabilityLoading ||
+    mdtLoading ||
+    assetsFailuresLoading
   ) {
     return (
-      <div className="w-full h-screen flex justify-center items-center">
-        <CircularProgress color="primary" /> Loading ...
+      <div className="w-full h-screen flex flex-col justify-center items-center">
+        <CircularProgress color="primary" /> <div>Loading ...</div>
       </div>
     );
   }
@@ -101,7 +113,7 @@ const Page = () => {
                     <div className="text-[12px] text-gray-500 relative group">
                       <span className="w-4">{index + 1}. </span>
                       <span
-                        className="md:truncate md:max-w-[200px] inline-block align-middle"
+                        className="md:truncate lg:max-w-[200px] inline-block align-middle"
                         title={item.name}
                       >
                         {item.name}
@@ -111,7 +123,8 @@ const Page = () => {
                       </div>
                     </div>
                     <div className="bg-red-600 text-white rounded-[100px] flex justify-end items-center text-[9px] px-2 py-1">
-                      {item.failure_count.toLocaleString()} unit
+                      {`${item.failure_count?.toLocaleString() ?? "0"} unit`}
+                      unit
                     </div>
                   </div>
                 </a>
@@ -135,7 +148,7 @@ const Page = () => {
                     <div className="text-[12px] text-gray-500 relative group">
                       <span className="w-4">{index + 1}. </span>
                       <span
-                        className="md:truncate md:max-w-[200px] inline-block align-middle"
+                        className="md:truncate lg:max-w-[200px] inline-block align-middle"
                         title={reliability.equipment_name}
                       >
                         {reliability.equipment_name}
@@ -147,7 +160,9 @@ const Page = () => {
                       </div>
                     </div>
                     <div className="bg-red-600 text-white rounded-[100px] flex justify-end items-center text-[9px] px-2 py-1">
-                      {`${(reliability.reliability * 100).toExponential(2)}%`}
+                      {`${((reliability?.reliability ?? 0) * 100).toExponential(
+                        2
+                      )}%`}
                     </div>
                   </div>
                 </a>
@@ -172,7 +187,7 @@ const Page = () => {
                       <div className="text-[12px] text-gray-500 relative group">
                         <span className="w-4">{index + 1}. </span>
                         <span
-                          className="md:truncate md:max-w-[350px] inline-block align-middle"
+                          className="md:truncate lg:max-w-[350px] inline-block align-middle"
                           title={mttr.equipment_name}
                         >
                           {mttr.equipment_name}
@@ -185,7 +200,7 @@ const Page = () => {
                       </div>
                       <div className=" flex flex-row gap-1 justify-end">
                         <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-2 py-1">
-                          {mttr.mttr_hours.toLocaleString()} hours
+                          {`${mttr.mttr_hours?.toLocaleString() ?? "0"} hours`}
                         </div>
                       </div>
                     </div>
@@ -210,7 +225,7 @@ const Page = () => {
                       <div className="text-[12px] text-gray-500 relative group">
                         <span className="w-4">{index + 1}. </span>
                         <span
-                          className="md:truncate md:max-w-[350px] inline-block align-middle"
+                          className="md:truncate lg:max-w-[350px] inline-block align-middle"
                           title={mdt.equipment_name}
                         >
                           {mdt.equipment_name}
@@ -227,7 +242,7 @@ const Page = () => {
                       </div>
                       <div className="text-sm text-gray-300">|</div> */}
                         <div className="rounded-[100px] bg-red-600 text-white flex justify-center items-center text-[9px] px-2 py-1">
-                          {mdt.mdt_hours.toLocaleString()} hours
+                          {`${mdt.mdt_hours?.toLocaleString() ?? "0"} hours`}
                         </div>
                       </div>
                     </div>
