@@ -84,7 +84,7 @@ export default function Page() {
           <AsyncSelect
             className="z-20 dark:text-black rounded-full max-w-xs pb-4"
             isClearable={true}
-            placeholder={`Select Data...`}
+            placeholder={`Select Group Data...`}
             isSearchable={true}
             loadOptions={loadOptions}
             defaultValue={

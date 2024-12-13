@@ -197,6 +197,13 @@ export default function Page() {
   );
   const engineFlowData = engineFlow ?? {};
 
+  useEffect(() => {
+    if (engineFlow?.id && engineFlow?.name) {
+      setDataId(engineFlow.id);
+      setSelectedLabel(engineFlow.name);
+    }
+  }, [engineFlow]);
+
   const positions = {
     // Top row - turbines
     EG: { name: "Output Generator", top: "14%", left: "91%", unit: "MW" },
@@ -547,6 +554,11 @@ export default function Page() {
                     loadOptions={loadOptions}
                     defaultValue={
                       dataId ? { value: dataId, label: selectedLabel } : null
+                    }
+                    value={
+                      dataId && selectedLabel
+                        ? { value: dataId, label: selectedLabel }
+                        : null
                     }
                     defaultOptions={EfficiencyDataOptions} // Optional: Show default options initially
                     cacheOptions // Caches the loaded options

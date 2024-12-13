@@ -168,6 +168,8 @@ export default function BarChartNPHR({
                     loadOptions={loadOptions}
                     placeholder={`Select Data...`}
                     defaultOptions={EfficiencyDataOptions} // Optional: Show default options initially
+                    defaultValue={{ value: data?.id, label: data?.name }}
+                    value={{ value: data?.id, label: data?.name }}
                     cacheOptions // Caches the loaded options
                     isLoading={isLoadingEfficiencyData}
                     onChange={(e: any) => {

@@ -91,6 +91,7 @@ export default function EChartsStackedLine({
         name: item,
         type: "line",
         smooth: true,
+        yAxisIndex: item === "generator_gross_output" ? 1 : 0,
         data: chartData.map((point) => point[item].toFixed(2)),
         lineStyle: {
           width: 2,
@@ -113,7 +114,11 @@ export default function EChartsStackedLine({
         },
       };
     })
-    .filter((item) => item.name === "total_nilai");
+    .filter(
+      (item) =>
+        item.name === "total_nilai_losses" ||
+        item.name === "generator_gross_output"
+    );
 
   const summaryData = data ?? [];
   const paretoData: any = data?.pareto_result ?? [];
@@ -432,6 +437,13 @@ export default function EChartsStackedLine({
       ],
       toolbox: {
         feature: {
+          magicType: {
+            type: ["line", "bar"],
+            title: {
+              line: "Switch to Line Chart",
+              bar: "Switch to Bar Chart",
+            },
+          },
           dataZoom: {
             yAxisIndex: "none",
           },
@@ -505,6 +517,13 @@ export default function EChartsStackedLine({
       },
       toolbox: {
         feature: {
+          magicType: {
+            type: ["line", "bar"],
+            title: {
+              line: "Switch to Line Chart",
+              bar: "Switch to Bar Chart",
+            },
+          },
           dataZoom: {
             yAxisIndex: "none",
           },
@@ -554,14 +573,22 @@ export default function EChartsStackedLine({
     },
     legend: {
       type: "scroll",
-      orient: "vertical",
+      orient: "horizontal", // Changed from vertical to horizontal
       align: "auto",
-      right: -4,
-      top: 62,
+      top: 25, // Position from top
+      left: "center", // Center horizontally
       formatter: function (name) {
         return name;
       },
       data: listCategories,
+      textStyle: {
+        fontSize: 12,
+        overflow: "truncate",
+      },
+      pageButtonPosition: "end", // Position of scroll buttons
+      pageButtonGap: 5, // Gap between scroll buttons
+      pageButtonItemGap: 5, // Gap between button and text
+      padding: [5, 10], // Add some padding [vertical, horizontal]
     },
     grid: {
       left: "3%",
@@ -571,26 +598,81 @@ export default function EChartsStackedLine({
     },
     toolbox: {
       feature: {
+        magicType: {
+          type: ["line", "bar"],
+          title: {
+            line: "Switch to Line Chart",
+            bar: "Switch to Bar Chart",
+          },
+        },
         saveAsImage: {},
       },
     },
     xAxis: {
       type: "category",
       name: "Period",
-      boundaryGap: false,
+      nameLocation: "middle", // 'start', 'middle' or 'end'
+      nameGap: 55, // Adjust the gap between name and axis
+      nameTextStyle: {
+        fontSize: 14,
+        fontWeight: "bold",
+        padding: [15, 0, 0, 0], // Add padding [top, right, bottom, left]
+      },
+      boundaryGap: true, // true for bar charts, false for line charts
       data: periode,
+      axisLabel: {
+        rotate: 45,
+        interval: 0,
+        margin: 15, // Distance between axis labels and axis line
+      },
+      axisTick: {
+        alignWithLabel: true, // Align ticks with labels
+      },
     },
-    yAxis: {
-      type: "value",
-      name: "Nilai Heat Loss",
-    },
+    yAxis: [
+      {
+        type: "value",
+        name: "Total Nilai Losses",
+        position: "left",
+        axisLine: {
+          show: true,
+          lineStyle: {
+            color: mainChartColors[0], // Color for total_nilai_losses axis
+          },
+        },
+        axisLabel: {
+          formatter: "{value} kCal/kWh",
+        },
+      },
+      {
+        type: "value",
+        name: "Generator Gross Output",
+        position: "right",
+        axisLine: {
+          show: true,
+          lineStyle: {
+            color: mainChartColors[1], // Color for generator_gross_output axis
+          },
+        },
+        axisLabel: {
+          formatter: "{value} MW",
+        },
+      },
+    ],
     dataZoom: [
       {
         type: "inside",
         start: 0,
+        end: 100,
+        xAxisIndex: 0,
       },
       {
+        type: "slider",
         start: 0,
+        end: 100,
+        bottom: 60, // Adjust this value to move dataZoom up
+        height: 20, // Control the height of the slider
+        borderColor: "transparent",
       },
     ],
     graphic: [
@@ -624,8 +706,6 @@ export default function EChartsStackedLine({
     }
   }, [theme]);
 
-  
-  
   return (
     <Card>
       <CardBody>

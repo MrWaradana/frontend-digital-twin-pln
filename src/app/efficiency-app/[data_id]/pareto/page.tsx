@@ -176,6 +176,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
             summaryData={summaryData}
             totalPersen={summaryData.total_persen}
             isLoading={isLoading}
+            potentialTimeframe={potentialTimeframe}
             isValidating={isValidating}
           />
         </div>

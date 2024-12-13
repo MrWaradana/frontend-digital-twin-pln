@@ -62,6 +62,7 @@ export default function MultipleLineChart({
   summaryData,
   isValidating,
   isLoading,
+  potentialTimeframe,
 }: any) {
   const [sliderValue, setSliderValue] = useState<SliderValue>(thresholdNumber);
   const [internalSliderValue, setInternalSliderValue] =
@@ -266,7 +267,7 @@ export default function MultipleLineChart({
               ) : (
                 <>
                   <p className="text-sm font-semibold mb-2">
-                    Potential Benefit (Jt)
+                    Potential Benefit (Jt/ {potentialTimeframe} Jam)
                   </p>
                   <p
                     className={`border-l-4 border-blue-400 pl-4 text-3xl font-bold`}

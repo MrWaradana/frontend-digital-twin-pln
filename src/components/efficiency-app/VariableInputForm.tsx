@@ -307,14 +307,6 @@ export default function VariableInputForm({
               />
             </div>
             <hr />
-            {/* <p>Date PI Data</p>
-            <AsyncSelect
-              cacheOptions
-              loadOptions={loadOptions}
-              defaultOptions
-              isDisabled={true}
-            />
-            <hr /> */}
             <h2 className="font-bold text-lg sticky top-16 bg-white p-1 rounded-md dark:bg-black ">
               Input Variables
             </h2>

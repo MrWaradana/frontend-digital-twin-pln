@@ -1221,16 +1221,21 @@ export default function TableParetoHeatloss({
       <div className="flex justify-between gap-2">
         <div className={`flex gap-3 w-full`}>
           <AsyncSelect
-            className="z-50"
+            className="z-50 min-w-72"
             classNamePrefix="select"
             isClearable={true}
             placeholder={`Select Reference Data...`}
             isSearchable={true}
             loadOptions={loadOptions}
             defaultOptions={EfficiencyDataOptions} // Optional: Show default options initially
-            defaultValue={
-              dataId ? { value: dataId, label: selectedLabel } : null
-            }
+            // defaultValue={
+            //   dataId
+            //     ? { value: dataId, label: selectedLabel }
+            //     : {
+            //         value: "",
+            //         label: "",
+            //       }
+            // }
             cacheOptions // Caches the loaded options
             isLoading={isValidating}
             onChange={(e: any) => {

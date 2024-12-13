@@ -16,7 +16,8 @@ export default function CostBenefitContainer() {
   const [inputValueTimeframe, setInputValueTimeframe]: any = useState(1);
   const { data: session } = useSession();
   const [costThreshold, setCostThreshold] = useState("");
-  const [dataId, setDataId] = useState("");
+  const [dataId, setDataId]: any = useState("");
+  const [selectedLabel, setSelectedLabel]: any = useState("");
 
   const { data, error, mutate, isLoading, isValidating } =
     useGetDataCostBenefit(
@@ -36,6 +37,8 @@ export default function CostBenefitContainer() {
 
   const [costInitialThreshold, setInitialCostThreshold] = useState("");
 
+  const costId = data?.id ?? null;
+  const costName = data?.name ?? null;
   const costData = data?.cost_benefit_result ?? [];
   const selectedEfficiencyData = efficiencyData?.transactions ?? [];
   const costThresholdData = data?.cost_threshold ?? 0;
@@ -52,6 +55,13 @@ export default function CostBenefitContainer() {
         label: item.name,
       };
     });
+
+  useEffect(() => {
+    if (data?.id && data?.name) {
+      setDataId(data.id);
+      setSelectedLabel(data.name);
+    }
+  }, [data]);
 
   // Update potentialTimeframe when data changes
   useEffect(() => {
@@ -134,11 +144,24 @@ export default function CostBenefitContainer() {
               isSearchable={true}
               loadOptions={loadOptions}
               defaultOptions={EfficiencyDataOptions} // Optional: Show default options initially
+              defaultValue={
+                dataId && selectedLabel
+                  ? { value: dataId, label: selectedLabel }
+                  : null
+              }
+              value={
+                dataId && selectedLabel
+                  ? { value: dataId, label: selectedLabel }
+                  : null
+              }
               cacheOptions // Caches the loaded options
-              isLoading={isLoadingEfficiencyData}
+              isLoading={isLoading || isLoadingEfficiencyData}
               onChange={(e) => {
                 //@ts-ignore
-                setDataId(e?.value ?? "new");
+                const newValue = e?.value ?? null;
+                const newLabel = e?.label ?? "";
+                setDataId(newValue);
+                setSelectedLabel(newLabel);
               }}
               name="efficiencyData"
               styles={{

@@ -236,6 +236,9 @@ export default function TableParetoTop({
       },
       {
         header: "UOM",
+        meta: {
+          className: "text-left",
+        },
         // Access the correct UOM value for each row or sub-row
         accessorFn: (row: any) =>
           row.depth === 0 ? null : row.variable?.satuan || "",
@@ -245,7 +248,7 @@ export default function TableParetoTop({
             style={{
               paddingLeft: `${props.cell.row.depth * 1}rem`,
             }}
-            className="text-center"
+            className="text-left"
           >
             <span className="rounded-full px-4 py-1 bg-[#1C9EB6] text-white">
               {props.getValue() != "NaN" ? props.getValue() : ""}

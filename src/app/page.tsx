@@ -1,160 +1,141 @@
-import Navbar from "@/components/Navbar";
-import { Card, CardBody, CardHeader, Divider, Link } from "@nextui-org/react";
+"use client";
+
 import Image from "next/image";
-import { Fragment } from "react";
-import BGAllApps from "../../public/bg-all-apps.jpg";
+import PlnLogo from "../../public/Logo_PLN.png";
+import { Button, Link } from "@nextui-org/react";
 
-import newAhmLogo from "../../public/icons/new_AHM.png";
-import newEfficiencyLogo from "../../public/icons/new_efficiency.png";
-import newPfiLogo from "../../public/icons/new_iPFI.png";
-import newIrfcaLogo from "../../public/icons/new_iRCFA.png";
-import newLccLogo from "../../public/icons/new_LCCA.png";
-import newOhLogo from "../../public/icons/new_optimum_oh.png";
-import newRbdLogo from "../../public/icons/new_rbd.png";
-import newReliableLogo from "../../public/icons/new_reliability_predict.png";
-import newRiskLogo from "../../public/icons/new_risk_matrix.png";
+// Import BG Images
+import bg1 from "../../public/bg-images/bg1.jpg";
+import bg2 from "../../public/bg-images/bg2.jpg";
+import bg3 from "../../public/bg-images/bg3.jpg";
+import bg4 from "../../public/bg-images/bg4.png";
+import bg5 from "../../public/bg-images/bg5.jpg";
+import bg6 from "../../public/bg-images/bg6.jpg";
 
-export default async function Home() {
-  const appList = [
+// Import Swiper React components
+import { Swiper, SwiperSlide } from "swiper/react";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+
+// import required modules
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
+
+export default function Home() {
+  const bgImages = [bg1, bg2, bg3, bg4, bg5, bg6];
+  const Unit = [
     {
-      name: "Efficiency & Heat Loss App",
-      url: "/landing/efficiency-app",
-      bgColor: "bg-gradient-to-b from-yellow-400 to-[#FFC429]",
-      textColor: "text-black",
-      icon: (
-        <Image
-          src={newEfficiencyLogo}
-          alt="Efficiency & Heat Loss App Logo"
-          width={100}
-          height={100}
-        />
-      ),
+      name: "Unit 1",
+      href: "#",
+      bgColor: "bg-violet-400",
     },
     {
-      name: "i-PFI App",
-      url: "/pfi-app",
-      bgColor: "bg-gradient-to-b from-[#F05A2C] to-[#C33232]",
-      textColor: "text-white",
-      icon: <Image src={newPfiLogo} alt="i-PFI App" width={100} height={100} />,
+      name: "Unit 2",
+      href: "#",
+      bgColor: "bg-green-400",
     },
     {
-      name: "Reliability Predicts App",
-      url: "/reliability-app",
-      bgColor: "bg-gradient-to-b from-[#FFA201] to-[#EE6E01]",
-      textColor: "text-white",
-      icon: (
-        <Image
-          src={newReliableLogo}
-          alt="Reliability Predicts Logo App"
-          width={100}
-          height={100}
-        />
-      ),
+      name: "Unit 3",
+      href: "unit-3",
+      bgColor: "bg-blue-400",
     },
     {
-      name: "Risk Matrix App",
-      url: "/risk-matrix-app",
-      bgColor: "bg-gradient-to-b from-[#E714D8] to-[#AF01D3]",
-      textColor: "text-white",
-      icon: (
-        <Image
-          src={newRiskLogo}
-          alt="Risk Matrix App"
-          width={100}
-          height={100}
-        />
-      ),
-    },
-    {
-      name: "RBD App",
-      url: "/landing/rbd-app",
-      bgColor: "bg-gradient-to-b from-[#8919FA] to-[#63389E]",
-      textColor: "text-white",
-      icon: <Image src={newRbdLogo} alt="RBD App" width={100} height={100} />,
-    },
-    {
-      name: "LCCA App",
-      url: "/lcca-app",
-      bgColor: "bg-gradient-to-b from-[#42509F] to-[#272363]",
-      textColor: "text-white",
-      icon: <Image src={newLccLogo} alt="LCCA App" width={100} height={100} />,
-    },
-    {
-      name: "Optimum OH App",
-      url: "/landing/optimum-oh-app",
-      bgColor: "bg-gradient-to-b from-[#1D9DB6] to-[#2276AD]",
-      textColor: "text-white",
-      icon: (
-        <Image src={newOhLogo} alt="Optimum OH App" width={100} height={100} />
-      ),
-    },
-    {
-      name: "i-RCFA App",
-      url: "/#",
-      bgColor: "bg-gradient-to-b from-[#589289] to-[#05584D]",
-      textColor: "text-white",
-      icon: (
-        <Image src={newIrfcaLogo} alt="i-RCFA App" width={100} height={100} />
-      ),
-    },
-    {
-      name: "AHM App",
-      url: "/#",
-      bgColor: "bg-gradient-to-b from-[#75AB63] to-[#066D2A]",
-      textColor: "text-white",
-      icon: <Image src={newAhmLogo} alt="AHM App" width={100} height={100} />,
+      name: "Unit 4",
+      href: "#",
+      bgColor: "bg-yellow-400",
     },
   ];
-
   return (
-    <div className="bg-gradient-to-b from-[#065970] to-[#0099AD] min-h-[100dvh]">
-      <Navbar />
-      <div className="flex justify-center items-start relative min-h-[90dvh]">
-        {/* <div className="absolute w-full h-full overflow-hidden -top-10 left-0">
+    <div className="grid grid-cols-1 min-h-[100dvh] relative">
+      <div className={`h-full relative`}>
+        <Swiper
+          spaceBetween={0}
+          centeredSlides={true}
+          loop={true}
+          autoplay={{
+            delay: 5000,
+            disableOnInteraction: false,
+          }}
+          pagination={{
+            clickable: true,
+            type: "bullets",
+          }}
+          navigation={false}
+          modules={[Autoplay, Pagination, Navigation]}
+          className={`custom-swiper w-full h-full`}
+        >
+          {bgImages.map((item, index) => {
+            return (
+              <SwiperSlide className="relative" key={`${item}-${index}`}>
+                <Image
+                  src={item}
+                  alt={`login-background`}
+                  className="absolute w-full top-0 left-0 h-full -z-10"
+                />
+                <div className="absolute inset-0 w-full h-full bg-black/30 -z-10"></div>
+              </SwiperSlide>
+            );
+          })}
+          <style jsx global>{`
+            .custom-swiper .swiper-pagination-bullet {
+              width: 40px;
+              height: 4px;
+              border-radius: 0;
+              background: white;
+              opacity: 0.5;
+              transition: all 0.3s ease;
+            }
+
+            .custom-swiper .swiper-pagination-bullet-active {
+              background: #ffd700;
+              opacity: 1;
+            }
+          `}</style>
+        </Swiper>
+      </div>
+      <div className="w-full max-w-md space-y-2 py-4 absolute m-auto left-0 right-0 z-10 flex flex-col justify-end items-center">
+        <div className="space-y-2 text-center items-center flex flex-col gap-4">
           <Image
-            src={BGAllApps}
-            alt={`background-all-apps`}
-            className={`w-full h-full object-cover`}
+            src={PlnLogo}
+            alt="Logo PLN"
+            width={80}
+            className={`p-2 rounded-sm`}
           />
-        </div> */}
-        <Card className="w-full h-auto sm:h-[100dvh] rounded-none bg-transparent overflow-hidden p-0">
-          <CardBody className="flex flex-wrap overflow-hidden justify-center w-full h-full items-center p-0">
-            <section className="grid grid-cols-1 sm:grid-cols-3 place-items-center place-content-center gap-4">
-              {appList.map((item, index) => (
-                <Link
-                  key={`${item}-${index}`}
-                  href={`${item.url}`}
-                  className={`
-                            w-[220px]
-                            h-[195px]
-                            hover:scale-105
-                            inline-flex
-                            duration
-                            ease-in-out
-                            ${item.bgColor}
-                            ${item.textColor}
-                            transition
-                            border-transparent
-                            px-6
-                            py-4
-                            rounded-2xl
-                            border
-                            flex
-                            flex-col
-                            gap-6
-                            justify-between
-                            items-start
-                          `}
+        </div>
+        <div className="bg-white/80 backdrop-blue-xl rounded-xl py-8 px-10">
+          <h1 className="text-xl font-bold tracking-tight dark:text-black sm:text-2xl text-center">
+            Welcome to Digital Twin!
+          </h1>
+          <p className={`text-xs italic text-gray-600 text-center mb-4`}>
+            Click link below to go to unit apps!
+          </p>
+          <div className={`flex flex-col gap-4`}>
+            {Unit.map((item, index) => {
+              return (
+                <Button
+                  key={`${index}`}
+                  as={Link}
+                  href={item.href}
+                  className={`${item.bgColor} font-semibold text-xl text-neutral-800                  
+                  group
+                  relative
+                  h-14
+                  transition-all
+                  duration-300
+                  transform
+                  hover:scale-105
+                  hover:shadow-lg
+                  rounded-lg
+                  overflow-hidden`}
                 >
-                  <p className="text-lg font-semibold leading-tight">
-                    {item.name}
-                  </p>
-                  <span className="flex w-full justify-end">{item.icon}</span>
-                </Link>
-              ))}
-            </section>
-          </CardBody>
-        </Card>
+                  {item.name}
+                </Button>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

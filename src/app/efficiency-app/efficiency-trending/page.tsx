@@ -64,7 +64,8 @@ export default function EfficiencyTrending() {
               name: data?.name || "",
               periode: data?.periode || "",
             },
-            total_nilai: data?.total_nilai_loss || 0,
+            total_nilai_losses: data?.total_nilai_loss || 0,
+            generator_gross_output: data?.generator_gross_output || 0,
           };
 
           // Safely handle pareto_result mapping

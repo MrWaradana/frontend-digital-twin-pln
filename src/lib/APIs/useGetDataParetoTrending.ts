@@ -11,6 +11,7 @@ export interface ParetoTrendingResultDataList {
   name: string;
   periode: string;
   total_nilai_loss: number;
+  generator_gross_output: number;
   // pareto: ParetoResultDataList;
 }
 
