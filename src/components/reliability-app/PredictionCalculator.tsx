@@ -1,8 +1,6 @@
 import { useState } from "react";
-import DropdownEquipmentLevel from "./DropdownEquipmentLevel";
-import DropdownPredictionType from "./DropdownPredictionType";
-import { useGetEquipmentAll } from "@/lib/APIs/reliability-predict/useGetEquipmentRP";
-import { useSession } from "next-auth/react";
+import { CircleAlert, CircleCheck, Loader } from "lucide-react";
+import PredictionCalendar from "./PredictionCalendar";
 type PredictionCalculatorProps = {
   isModalOpen: boolean;
   setIsModalOpen: (value: boolean) => void;
@@ -13,18 +11,52 @@ export function PredictionCalculator({
   setIsModalOpen,
 }: PredictionCalculatorProps) {
   const closeModal = () => setIsModalOpen(false);
-  const [selectedOption, setSelectedOption] = useState("");
-  const { data: session } = useSession();
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
-  const openModal = () => setIsModalOpen(true);
-
-  const options = ["Option 1", "Option 2", "Option 3"];
+  // Function to handle selected date from PredictionCalendar
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+  };
+  const formattedDay =
+    selectedDate && !isNaN(selectedDate.getDate())
+      ? selectedDate.getDate()
+      : "";
+  const formattedMonth =
+    selectedDate && !isNaN(selectedDate.getMonth())
+      ? selectedDate.getMonth() + 1
+      : "";
+  const formattedYear =
+    selectedDate && !isNaN(selectedDate.getFullYear())
+      ? selectedDate.getFullYear()
+      : "";
 
   if (!isModalOpen) return null;
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: "day" | "month" | "year"
+  ) => {
+    const value = e.target.value;
+    let newDate = selectedDate ? new Date(selectedDate) : new Date();
+    if (value === "") {
+      setSelectedDate(undefined); // Reset the selected date when input is empty
+      return;
+    }
+    if (type === "day") {
+      newDate.setDate(Number(value));
+    } else if (type === "month") {
+      newDate.setMonth(Number(value) - 1); // Set month correctly (0-11 range)
+    } else if (type === "year") {
+      newDate.setFullYear(Number(value));
+    }
+
+    if (!isNaN(newDate.getTime())) {
+      setSelectedDate(newDate);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="relative bg-white rounded-[40px] shadow-lg sm:p-10 p-7 sm:w-[70%] w-[90%]">
+      <div className="relative bg-white rounded-[40px] shadow-lg sm:p-10 p-7 sm:w-[85%] w-[90%]">
         <button
           onClick={closeModal}
           className="text-gray-500 hover:text-gray-700 text-lg font-bold absolute top-4 right-6"
@@ -38,110 +70,264 @@ export function PredictionCalculator({
             </div>
             <h2 className="text-2xl font-semibold">Prediction Calculator</h2>
           </div>
-          <DropdownPredictionType
-            selectedOption={selectedOption}
-            onSelect={setSelectedOption}
-            options={options}
-          />
         </div>
 
         {/* Modal Content */}
-        <div className="flex lg:flex-row flex-col justify-center mt-10">
-          <div className="w-full">tes aja</div>
+        <div className="flex lg:flex-row flex-col justify-center mt-10 gap-8">
+          <div className="max-w-md">
+            <div className="flex flex-row justify-center gap-2 flex-wrap">
+              <div className="flex-1">
+                <label className="text-[10px] text-[#918E8E]" htmlFor="hour">
+                  Hour
+                </label>
+                <input
+                  id="hour"
+                  name="hour"
+                  type="text"
+                  className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[10px] text-[#918E8E]" htmlFor="day">
+                  Day
+                </label>
+                <input
+                  id="day"
+                  name="day"
+                  type="text"
+                  value={formattedDay} // Set the value to the selected day
+                  onChange={(e) => handleInputChange(e, "day")} // Handle input change
+                  className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[10px] text-[#918E8E]" htmlFor="month">
+                  Month
+                </label>
+                <input
+                  id="month"
+                  name="month"
+                  type="text"
+                  value={formattedMonth} // Set the value to the selected month
+                  onChange={(e) => handleInputChange(e, "month")} // Handle input change
+                  className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[10px] text-[#918E8E]" htmlFor="year">
+                  Year
+                </label>
+                <input
+                  id="year"
+                  name="year"
+                  type="text"
+                  value={formattedYear} // Set the value to the selected year
+                  onChange={(e) => handleInputChange(e, "year")} // Handle input change
+                  className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
+                />
+              </div>
+            </div>
+            <div className="py-6">
+              <PredictionCalendar
+                onDateSelect={handleDateSelect}
+                selected={selectedDate}
+              />
+            </div>
+          </div>
           <div className="w-full">
             <div className="flex flex-col gap-4">
-              <div className="flex flex-row justify-center gap-2 flex-wrap">
-                <div className="flex-1">
-                  <label
-                    className="text-[10px] text-[#918E8E]"
-                    htmlFor="first-name"
-                  >
-                    Hour
-                  </label>
-                  <input
-                    id="first-name"
-                    name="first-name"
-                    type="text"
-                    className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label
-                    className="text-[10px] text-[#918E8E]"
-                    htmlFor="first-name"
-                  >
-                    Day
-                  </label>
-                  <input
-                    id="first-name"
-                    name="first-name"
-                    type="text"
-                    className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label
-                    className="text-[10px] text-[#918E8E]"
-                    htmlFor="first-name"
-                  >
-                    Month
-                  </label>
-                  <input
-                    id="first-name"
-                    name="first-name"
-                    type="text"
-                    className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label
-                    className="text-[10px] text-[#918E8E]"
-                    htmlFor="first-name"
-                  >
-                    Year
-                  </label>
-                  <input
-                    id="first-name"
-                    name="first-name"
-                    type="text"
-                    className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col gap-1">
-                <div className="text-[10px] text-[#918E8E]">
-                  Prediction Rate Result
-                </div>
-                <div className="flex-1 flex flex-row md:gap-12 gap-4 md:items-center items-start justify-start flex-wrap shadow-xl bg-white rounded-3xl p-5">
-                  <div className="flex-1 flex flex-col justify-center">
-                    <div className="text-[10px] text-[#1C9EB6]">Time</div>
-                    <div className="text-[12px] font-semibold">00.00 AM</div>
+              <div className="flex flex-row items-center justify-center gap-2">
+                <div className="flex flex-row md:items-center gap-4 items-start justify-between flex-wrap shadow-xl bg-white rounded-3xl p-5 w-full">
+                  <div className="text-[10px] text-[#918E8E]">
+                    Prediction Date Result
                   </div>
-                  <div className="flex-1 flex flex-col justify-center">
-                    <div className="text-[10px] text-[#1C9EB6]">Day</div>
-                    <div className="text-[12px] font-semibold">Sunday</div>
-                  </div>
-                  <div className="flex-1 flex flex-col justify-center">
-                    <div className="text-[10px] text-[#1C9EB6]">Date</div>
-                    <div className="text-[12px] font-semibold">
-                      January 24, 2027
+                  <div className="flex flex-row md:gap-12 gap-2 md:items-center">
+                    <div className=" flex flex-col justify-center">
+                      <div className="text-[10px] text-[#1C9EB6]">Time</div>
+                      <div className="text-[12px] font-semibold">00.00 AM</div>
+                    </div>
+                    <div className="flex flex-col justify-center">
+                      <div className="text-[10px] text-[#1C9EB6]">Day</div>
+                      <div className="text-[12px] font-semibold">
+                        {selectedDate
+                          ? selectedDate.toLocaleDateString("en-US", {
+                              weekday: "long",
+                            })
+                          : ""}
+                      </div>
+                    </div>
+                    <div className=" flex flex-col justify-center">
+                      <div className="text-[10px] text-[#1C9EB6]">Date</div>
+                      <div className="text-[12px] font-semibold">
+                        {selectedDate
+                          ? selectedDate.toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })
+                          : ""}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex flex-row justify-start gap-4">
-                <div className="flex flex-row justify-center items-center bg-[#1C9EB6] hover:bg-[#e58c2d] rounded-[100px] py-2 px-5 text-white text-sm w-fit text-[13px] cursor-pointer">
-                  <div className="text-[12px] ">Calculate</div>
+                <div className="flex flex-col gap-2">
+                  <div className="flex flex-row justify-center items-center hover:text-white text-[#1C9EB6] border border-[#1C9EB6] hover:bg-[#14788E] rounded-[100px] py-1 px-6 text-sm w-fit h-fit text-[13px] cursor-pointer">
+                    <div className="text-[12px]  ">Download Result</div>
+                  </div>
+                  <div className="flex flex-row justify-center items-center bg-[#1C9EB6] hover:bg-[#14788E] rounded-[100px] py-3 px-12 text-white text-sm h-fit text-[13px] cursor-pointer">
+                    <div className="text-[12px] ">Calculate</div>
+                  </div>
                 </div>
-                <div className="flex flex-row justify-center items-center hover:text-white text-[#1C9EB6] border border-[#1C9EB6] hover:bg-[#e58c2d] rounded-[100px] py-2 px-5 text-sm w-fit text-[13px] cursor-pointer">
-                  <div className="text-[12px]  ">Download Result</div>
-                </div>
               </div>
-              <div className="flex flex-col w-full bg-[#D93832] rounded-[15px] shadow-xl text-white p-7 gap-4">
-                <div>Failure Rate Prediction Result</div>
-                <div className="flex flex-row justify-between items-end">
-                  <div className="font-bold text-6xl">1.287</div>
-                  <div>Unit</div>
+              <div className="flex flex-row flex-wrap justify-center gap-6">
+                <div className="flex flex-col shadow-lg bg-[#1C9EB6] text-white text-[14px] rounded-[40px] justify-start items-start w-40 h-40 p-5">
+                  <div>Calculation</div>
+                  <div>Result</div>
+                </div>
+                <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
+                  <div className="flex flex-col w-full">
+                    <div className="flex flex-row items-center justify-between w-full">
+                      <p>Failure</p>
+                      <CircleAlert
+                        fill="#D93832"
+                        color="#ffffff"
+                        absoluteStrokeWidth
+                      />
+                    </div>
+                    <p>Prediction</p>
+                  </div>
+                  <div className="flex flex-row">
+                    <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
+                    <div className="flex flex-col justify-start items-start w-full">
+                      <div className="text-4xl font-bold">125</div>
+                      <div className="text-[10px] text-[#B2B2B2]">Failures</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
+                  <div className="flex flex-col w-full">
+                    <div className="flex flex-row items-center justify-between w-full">
+                      <p>Reliability</p>
+                      <CircleCheck
+                        fill="#28C840"
+                        color="#ffffff"
+                        absoluteStrokeWidth
+                      />
+                    </div>
+                    <p>Prediction</p>
+                  </div>
+                  <div className="flex flex-row">
+                    <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
+                    <div className="flex flex-col justify-start items-start w-full">
+                      <div className="text-4xl font-bold">125</div>
+                      <div className="text-[10px] text-[#B2B2B2]">%</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
+                  <div className="flex flex-col w-full">
+                    <div className="flex flex-row items-center justify-between w-full">
+                      <p>MTBF</p>
+                      <CircleAlert
+                        fill="#D93832"
+                        color="#ffffff"
+                        absoluteStrokeWidth
+                      />
+                    </div>
+                    <p>Prediction</p>
+                  </div>
+                  <div className="flex flex-row">
+                    <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
+                    <div className="flex flex-col justify-start items-start w-full">
+                      <div className="text-4xl font-bold">125</div>
+                      <div className="text-[10px] text-[#B2B2B2]">Jam</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
+                  <div className="flex flex-col w-full">
+                    <div className="flex flex-row items-center justify-between w-full">
+                      <p>MDT</p>
+                      <div className="rounded-full bg-[#F49C38] p-[5px]">
+                        <Loader
+                          className="w-[10px] h-[10px]"
+                          fill="white"
+                          color="white"
+                          absoluteStrokeWidth
+                        />
+                      </div>
+                    </div>
+                    <p>Prediction</p>
+                  </div>
+                  <div className="flex flex-row">
+                    <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
+                    <div className="flex flex-col justify-start items-start w-full">
+                      <div className="text-4xl font-bold">125</div>
+                      <div className="text-[10px] text-[#B2B2B2]">Jam</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
+                  <div className="flex flex-col w-full">
+                    <div className="flex flex-row items-center justify-between w-full">
+                      <p>MTTR</p>
+                      <CircleCheck
+                        fill="#28C840"
+                        color="#ffffff"
+                        absoluteStrokeWidth
+                      />
+                    </div>
+                    <p>Prediction</p>
+                  </div>
+                  <div className="flex flex-row">
+                    <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
+                    <div className="flex flex-col justify-start items-start w-full">
+                      <div className="text-4xl font-bold">125</div>
+                      <div className="text-[10px] text-[#B2B2B2]">Jam</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
+                  <div className="flex flex-col w-full">
+                    <div className="flex flex-row items-center justify-between w-full">
+                      <p>Failure Rate</p>
+                      <CircleCheck
+                        fill="#28C840"
+                        color="#ffffff"
+                        absoluteStrokeWidth
+                      />
+                    </div>
+                    <p>Prediction</p>
+                  </div>
+                  <div className="flex flex-row">
+                    <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
+                    <div className="flex flex-col justify-start items-start w-full">
+                      <div className="text-4xl font-bold">125</div>
+                      <div className="text-[10px] text-[#B2B2B2]">
+                        Failures / year
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
+                  <div className="flex flex-col w-full">
+                    <div className="flex flex-row items-center justify-between w-full">
+                      <p>Probability</p>
+                      <CircleCheck
+                        fill="#28C840"
+                        color="#ffffff"
+                        absoluteStrokeWidth
+                      />
+                    </div>
+                    <p>Prediction</p>
+                  </div>
+                  <div className="flex flex-row">
+                    <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
+                    <div className="flex flex-col justify-start items-start w-full">
+                      <div className="text-4xl font-bold">125</div>
+                      <div className="text-[10px] text-[#B2B2B2]">Unit</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

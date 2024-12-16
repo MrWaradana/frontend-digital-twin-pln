@@ -5,7 +5,7 @@ import { ChevronDown, Search } from "lucide-react";
 const DropdownPredictionType = ({ selectedOption, onSelect, options }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {

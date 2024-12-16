@@ -25,7 +25,14 @@ ChartJS.register(
   annotationPlugin
 );
 
-const DistributionChart = ({ X, Y, current, yCurrent, theme = "light" }) => {
+const DistributionChart = ({
+  X,
+  Y,
+  current,
+  yCurrent,
+  theme = "light",
+  ylabel,
+}) => {
   if (X.length !== Y.length || X.length < 2) {
     return (
       <div className="text-red-500 font-semibold text-center">
@@ -69,7 +76,7 @@ const DistributionChart = ({ X, Y, current, yCurrent, theme = "light" }) => {
         pointBackgroundColor: "#FF6F61", // Highlight color for the current point
       },
       {
-        label: "Instant Probability of Failure",
+        label: ylabel,
         data: Y,
         fill: false,
         borderColor: theme === "dark" ? "#1C9EB6" : "#1C9EB6",
@@ -80,12 +87,12 @@ const DistributionChart = ({ X, Y, current, yCurrent, theme = "light" }) => {
         hoverBackgroundColor: theme === "dark" ? "#FF6F61" : "#FF5733",
         hoverRadius: 4,
       },
-      {
-        data: straightLineY,
-        fill: false,
-        borderColor: "#B3B3B3",
-        borderWidth: 2,
-      },
+      // {
+      //   data: straightLineY,
+      //   fill: false,
+      //   borderColor: "#B3B3B3",
+      //   borderWidth: 2,
+      // },
     ],
   };
 
@@ -191,7 +198,7 @@ const DistributionChart = ({ X, Y, current, yCurrent, theme = "light" }) => {
         },
         title: {
           display: true,
-          text: "Instant probability of failure",
+          text: ylabel,
         },
         grid: {
           display: true,

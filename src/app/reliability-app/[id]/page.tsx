@@ -188,6 +188,7 @@ const Page = ({ params }: { params: { id: string } }) => {
                       Y={distributionData?.results.y}
                       current={distributionData?.current_day}
                       yCurrent={distributionData?.yCurrent}
+                      ylabel={"Instant probability of failure (%)"}
                     ></DistributionChart>
                   )}
                 </div>
@@ -203,6 +204,7 @@ const Page = ({ params }: { params: { id: string } }) => {
                       Y={reliabilityData?.results.y}
                       current={reliabilityData?.current_day}
                       yCurrent={reliabilityData?.yCurrent}
+                      ylabel={"Reability (%)"}
                     ></DistributionChart>
                   )}
                 </div>
