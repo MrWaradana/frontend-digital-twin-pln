@@ -170,6 +170,7 @@ export default function TableParetoTop({
   isValidating,
   data_id,
   setIsMutating,
+  coalPrice,
 }: {
   tableData: any;
   summaryData?: any;
@@ -177,6 +178,7 @@ export default function TableParetoTop({
   isValidating?: any;
   data_id?: string;
   setIsMutating?: any;
+  coalPrice?: any;
 }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [data, setData] = React.useState(tableData);
@@ -568,6 +570,12 @@ export default function TableParetoTop({
           {/* Initial Table Body for expanding row works */}
           {/* <TableBody table={table} /> */}
         </table>
+        <p className={`text-base font-medium py-4`}>
+          Coal Price:{" "}
+          <span className={`bg-gray-200 px-2 py-1 rounded-full`}>
+            Rp. {formatIDNumber(coalPrice)}
+          </span>
+        </p>
       </div>
     </>
   );

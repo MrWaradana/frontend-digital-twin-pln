@@ -11,6 +11,8 @@ export interface ParetoResultDataList {
   total_nilai: number;
   total_persen: number;
   percent_threshold: number;
+  commision: any;
+  coal_price: number;
 }
 
 export interface DataParetoList {

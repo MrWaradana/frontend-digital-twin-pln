@@ -335,6 +335,7 @@ export default function TableParetoHeatloss({
   const [inputValueTimeframe, setInputValueTimeframe] = useState(
     String(potentialTimeframe)
   );
+  const [searchFilter, setSearchFilter] = useState("");
   const [selectecModalId, setSelectedModalId] = React.useState<any>({
     variableId: "",
     detailId: "",
@@ -350,8 +351,8 @@ export default function TableParetoHeatloss({
     session?.user.access_token,
     0,
     1,
-    20,
-    "",
+    50,
+    searchFilter,
     new Set(["current", "commision"]),
     ""
   );
@@ -994,6 +995,14 @@ export default function TableParetoHeatloss({
   );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSetSearchFilter = useCallback(
+    debounce((value) => {
+      setSearchFilter(value);
+    }, 1000), // 500ms delay
+    [] // Empty dependency array since we don't want to recreate the debounced function
+  );
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSetTimeframe = useCallback(
     debounce((value) => {
       setPotentialTimeframe(value);
@@ -1172,6 +1181,7 @@ export default function TableParetoHeatloss({
     inputValue: string,
     callback: (options: any) => void
   ) => {
+    debouncedSetSearchFilter(inputValue);
     setTimeout(() => {
       callback(filterEfficiencyData(inputValue));
     }, 1000); // Simulating a delay for async data fetching
@@ -1228,14 +1238,16 @@ export default function TableParetoHeatloss({
             isSearchable={true}
             loadOptions={loadOptions}
             defaultOptions={EfficiencyDataOptions} // Optional: Show default options initially
-            // defaultValue={
-            //   dataId
-            //     ? { value: dataId, label: selectedLabel }
-            //     : {
-            //         value: "",
-            //         label: "",
-            //       }
-            // }
+            defaultValue={
+              dataId && selectedLabel
+                ? { value: dataId, label: selectedLabel }
+                : null
+            }
+            value={
+              dataId && selectedLabel
+                ? { value: dataId, label: selectedLabel }
+                : null
+            }
             cacheOptions // Caches the loaded options
             isLoading={isValidating}
             onChange={(e: any) => {

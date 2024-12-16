@@ -48,12 +48,20 @@ export default function Page({ params }: { params: { data_id: string } }) {
     dataId
   );
 
+  useEffect(() => {
+    if (data?.commision.id && data?.commision.name) {
+      setDataId(data.commision.id);
+      setSelectedLabel(data.commision.name);
+    }
+  }, [data]);
+
   // console.log(data?.pareto_result, "table data pareto");
 
   const tableData = data?.pareto_result ?? [];
   const efficiencyData = data?.data ?? [];
   const paretoTopData = data?.pareto_uncategorized_result ?? [];
   const paretoBottomData = tableData.filter((item) => item.category != null);
+  const coalPrice = data?.coal_price;
 
   // const tableIsPareto = filter flag is Pareto Hari Senen
   const chartRawData = data?.chart_result ?? [];
@@ -201,6 +209,7 @@ export default function Page({ params }: { params: { data_id: string } }) {
                 <TableParetoTop
                   tableData={paretoTopData}
                   summaryData={summaryData}
+                  coalPrice={coalPrice}
                 />
                 <Divider className="h-1 bg-neutral-500 rounded-xl" />
                 <TableParetoHeatloss

@@ -8,6 +8,7 @@ import { Smokum } from "next/font/google";
 import MultipleLineChart from "@/components/efficiency-app/nett-plant-heat-rate/MultipleLineChart";
 import { useGetDataNPHR } from "@/lib/APIs/useGetDataNPHR";
 import { useSession } from "next-auth/react";
+import { formattedNumber } from "../../../lib/formattedNumber";
 
 export default function EChartsStackedLine({
   chartData,
@@ -570,6 +571,35 @@ export default function EChartsStackedLine({
     },
     tooltip: {
       trigger: "axis",
+      formatter: function (params) {
+        // Get the x-axis value from the first parameter
+        const xAxisLabel = params[0].axisValue;
+
+        // Create tooltip content with x-axis label as header
+        let content = `${xAxisLabel}<br/>`;
+
+        // Add each series data with their respective colors
+        params.forEach((param) => {
+          // Create colored dot using the series color
+          const colorSpan = `<span style="display:inline-block;margin-right:5px;border-radius:50%;width:10px;height:10px;background-color:${param.color}"></span>`;
+
+          // Add series name and value with unit
+          content += `${colorSpan}${param.seriesName}: ${
+            param.seriesName == "total_nilai_losses"
+              ? param.value
+              : formattedNumber(Number(param.value / 1000))
+          }${
+            param.seriesName == "total_nilai_losses" ? ` kCal/kWh` : ` MW`
+          }<br/>`;
+
+          // For other units you could use:
+          // Currency: ${param.value.toFixed(2)}$
+          // Temperature: ${param.value}°C
+          // Weight: ${param.value}kg
+        });
+
+        return content;
+      },
     },
     legend: {
       type: "scroll",
@@ -620,11 +650,11 @@ export default function EChartsStackedLine({
       },
       boundaryGap: true, // true for bar charts, false for line charts
       data: periode,
-      axisLabel: {
-        rotate: 45,
-        interval: 0,
-        margin: 15, // Distance between axis labels and axis line
-      },
+      // axisLabel: {
+      //   rotate: 45,
+      //   interval: 0,
+      //   margin: 15, // Distance between axis labels and axis line
+      // },
       axisTick: {
         alignWithLabel: true, // Align ticks with labels
       },
@@ -655,7 +685,9 @@ export default function EChartsStackedLine({
           },
         },
         axisLabel: {
-          formatter: "{value} MW",
+          formatter: (e) => {
+            return `${formattedNumber(Number(e) / 1000)} MW`;
+          },
         },
       },
     ],
