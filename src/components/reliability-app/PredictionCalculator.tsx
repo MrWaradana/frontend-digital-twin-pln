@@ -29,6 +29,44 @@ export function PredictionCalculator({
     selectedDate && !isNaN(selectedDate.getFullYear())
       ? selectedDate.getFullYear()
       : "";
+  const [hour, setHour] = useState<string>("");
+
+  // Fungsi untuk mengonversi hour ke format 12 jam dengan AM/PM
+  const formatTime = (hourValue: string): string => {
+    // Ganti koma dengan titik dua
+    const cleanedValue = hourValue.replace(",", ":");
+    const [hourPart, minutePart] = cleanedValue
+      .split(":")
+      .map((part) => parseInt(part, 10));
+
+    // Validasi jam dan menit
+    if (
+      isNaN(hourPart) ||
+      hourPart < 0 ||
+      hourPart > 23 ||
+      (minutePart !== undefined &&
+        (isNaN(minutePart) || minutePart < 0 || minutePart > 59))
+    ) {
+      return "Invalid hour";
+    }
+
+    // Konversi ke format 12 jam
+    const period = hourPart >= 12 ? "PM" : "AM";
+    const formattedHour = hourPart % 12 === 0 ? 12 : hourPart % 12;
+    const formattedMinute =
+      minutePart !== undefined ? minutePart.toString().padStart(2, "0") : "00";
+
+    return `${formattedHour
+      .toString()
+      .padStart(2, "0")}:${formattedMinute} ${period}`;
+  };
+
+  // Event handler untuk input hour
+  const handleHourChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const cleanedValue = value.replace(",", ":"); // Ganti koma dengan titik dua
+    setHour(cleanedValue);
+  };
 
   if (!isModalOpen) return null;
   const handleInputChange = (
@@ -53,7 +91,31 @@ export function PredictionCalculator({
       setSelectedDate(newDate);
     }
   };
+  const formatISOWithMicroseconds = (date: Date) => {
+    const pad = (n: number, digits = 2) => n.toString().padStart(digits, "0");
+    const microseconds = `${pad(date.getMilliseconds(), 3)}656`; // Mocked microseconds
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+      date.getDate()
+    )} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(
+      date.getSeconds()
+    )}.${microseconds}`;
+  };
+  const handleCalculate = () => {
+    if (!selectedDate || hour === "") {
+      alert("Please enter date and hour");
+      return;
+    }
 
+    const [inputHour, inputMinute] = hour.split(":").map(Number);
+    const updatedDate = new Date(selectedDate);
+    updatedDate.setHours(inputHour || 0, inputMinute || 0, 0, 0);
+
+    const formattedTime = formatISOWithMicroseconds(updatedDate);
+
+    // Simulate API call
+    console.log("Sending to API:", formattedTime);
+    alert(`Formatted Time: ${formattedTime}`);
+  };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="relative bg-white rounded-[40px] shadow-lg sm:p-10 p-7 sm:w-[85%] w-[90%]">
@@ -84,6 +146,8 @@ export function PredictionCalculator({
                   id="hour"
                   name="hour"
                   type="text"
+                  value={hour}
+                  onChange={handleHourChange}
                   className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
                 />
               </div>
@@ -144,7 +208,9 @@ export function PredictionCalculator({
                   <div className="flex flex-row md:gap-12 gap-2 md:items-center">
                     <div className=" flex flex-col justify-center">
                       <div className="text-[10px] text-[#1C9EB6]">Time</div>
-                      <div className="text-[12px] font-semibold">00.00 AM</div>
+                      <div className="text-[12px] font-semibold">
+                        {formatTime(hour)}
+                      </div>
                     </div>
                     <div className="flex flex-col justify-center">
                       <div className="text-[10px] text-[#1C9EB6]">Day</div>
@@ -175,7 +241,9 @@ export function PredictionCalculator({
                     <div className="text-[12px]  ">Download Result</div>
                   </div>
                   <div className="flex flex-row justify-center items-center bg-[#1C9EB6] hover:bg-[#14788E] rounded-[100px] py-3 px-12 text-white text-sm h-fit text-[13px] cursor-pointer">
-                    <div className="text-[12px] ">Calculate</div>
+                    <button className="text-[12px] " onClick={handleCalculate}>
+                      Calculate
+                    </button>
                   </div>
                 </div>
               </div>
