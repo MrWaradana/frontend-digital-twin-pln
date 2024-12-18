@@ -23,11 +23,10 @@ import {
 } from "@/components/ui/pagination";
 
 export default function Page() {
-
   return (
     <OverviewContainer
       containerClassName="main-container"
-      navbarTitle="LCCA App"
+      navbarTitle="Life Cycle Cost Analysis"
     >
       <div className="flex justify-between">
         <div className="bg-white w-full px-8 py-7 shadow-lg rounded-lg">
@@ -186,7 +185,10 @@ function TreeExample(props: TreeExample) {
           <i className={filterIconClasssName}></i>
         </div>
         {/* @ts-ignore */}
-        <Input {...filterInput}></Input>
+        <Input
+          placeholder="Search by equipment name..."
+          {...filterInput}
+        ></Input>
       </div>
     );
   }
@@ -258,8 +260,16 @@ function TreeExample(props: TreeExample) {
       return (
         <a
           // href={`/lcca-app/${formatTextToUrl(node.data)}`}
-          href={`/lcca-app/${node.assetnum}`}
-          className="text-blue-600 hover:text-blue-800 hover:underline"
+          href={
+            node.data == "ABSORBER AGITATOR A"
+              ? `/lcca-app/${node.assetnum}`
+              : "#"
+          }
+          className={
+            node.data == "ABSORBER AGITATOR A"
+              ? `text-blue-600 hover:text-blue-800 hover:underline`
+              : `cursor-not-allowed`
+          }
           onClick={(e) => {
             e.stopPropagation(); // Prevent tree node toggle
           }}

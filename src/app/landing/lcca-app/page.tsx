@@ -5,7 +5,7 @@ export default function Page() {
   return (
     <main>
       <LandingPage
-        title={`LCCA App`}
+        title={`Life Cycle Cost Analysis`}
         img={LCCALogo}
         bg={`bg-[url('/lcca-app/landing.png')]`}
         description={`Lorem, ipsum dolor sit amet consectetur adipisicing elit. Animi

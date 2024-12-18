@@ -9,6 +9,18 @@ export function useGetDataEquipmentById(
   return useApiFetch(
     `${LCCA_API_URL}/equipment/${equipment_id}`,
     !!equipment_id && !!token,
-    token
+    token,
+    {
+      keepPreviousData: true,
+      // refreshInterval: 7200000,
+      revalidateOnFocus: false,
+      // revalidateOnReconnect: false,
+      // refreshWhenHidden: false,
+      // refreshWhenOffline: false,
+      // errorRetryInterval: 60000,
+      // shouldRetryOnError: false,
+      revalidateIfStale: false,
+      // revalidateOnMount: false,
+    }
   );
 }

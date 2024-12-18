@@ -110,7 +110,7 @@ export default function Page({ params }: { params: { asset: string } }) {
   return (
     <OverviewContainer
       containerClassName="main-container"
-      navbarTitle="LCCA App"
+      navbarTitle="Life Cycle Cost Analytics"
     >
       <div className="flex justify-between">
         <div className="bg-white w-full px-8 py-7 shadow-lg rounded-lg">
@@ -123,7 +123,7 @@ export default function Page({ params }: { params: { asset: string } }) {
             </div>
             <Input
               isClearable
-              className="w-full sm:max-w-[44%] bg-white rounded-full"
+              className="w-full sm:max-w-[44%] bg-white rounded-full hidden"
               classNames={{
                 mainWrapper: ["!rounded-full"],
               }}
@@ -148,7 +148,11 @@ export default function Page({ params }: { params: { asset: string } }) {
               </Skeleton>
             ))}
           </div>
-          <ChartLineBar chartData={chartData} minSeq={minSeq} />
+          <ChartLineBar
+            chartData={chartData}
+            minSeq={minSeq}
+            assetName={assetName}
+          />
         </div>
       </div>
     </OverviewContainer>

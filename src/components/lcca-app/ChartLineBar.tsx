@@ -1,7 +1,20 @@
 import { color } from "echarts";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+} from "@nextui-org/react";
 import ReactECharts from "echarts-for-react";
+import { useState } from "react";
+import AssetTablePerYear from "./AssetTablePerYear";
 
-export default function ChartLinebar({ chartData, minSeq }: any) {
+export default function ChartLinebar({ chartData, minSeq, assetName }: any) {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [selectedData, setSelectedData] = useState(null);
   const xAxisData = chartData.map((item) => {
     return item.tahun;
   });
@@ -137,6 +150,12 @@ export default function ChartLinebar({ chartData, minSeq }: any) {
     //     },
     //   ],
     // },
+    dataZoom: [
+      {
+        type: "inside",
+        throttle: 50,
+      },
+    ],
     series: [
       {
         name: "Annualized O&M Cost",
@@ -298,10 +317,52 @@ export default function ChartLinebar({ chartData, minSeq }: any) {
     ],
   };
 
+  const tableData =
+    chartData.filter((item) => item.tahun == selectedData) ?? [];
+
+  // Event handler for chart clicks
+  const onChartClick = (params) => {
+    console.log(params.name);
+    setSelectedData(params.name);
+    if (selectedData) {
+      onOpenChange();
+    }
+  };
+
+  const onEvents = {
+    click: onChartClick,
+  };
+
   return (
-    <ReactECharts
-      option={chartOption}
-      style={{ minHeight: "50dvh" }}
-    ></ReactECharts>
+    <>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        size="5xl"
+        isDismissable={false}
+        scrollBehavior="inside"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                {assetName} Life Cycle Cost in {selectedData}
+              </ModalHeader>
+              <ModalBody>
+                <div className={`overflow-y-auto`}>
+                  <AssetTablePerYear data={tableData} />
+                </div>
+              </ModalBody>
+              <ModalFooter></ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <ReactECharts
+        option={chartOption}
+        style={{ minHeight: "50dvh" }}
+        onEvents={onEvents}
+      ></ReactECharts>
+    </>
   );
 }
