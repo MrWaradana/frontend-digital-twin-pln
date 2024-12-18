@@ -41,7 +41,25 @@ const DistributionChart = ({
       </div>
     );
   }
-
+  const toSuperscript = (str) => {
+    const superscriptMap = {
+      "0": "⁰",
+      "1": "¹",
+      "2": "²",
+      "3": "³",
+      "4": "⁴",
+      "5": "⁵",
+      "6": "⁶",
+      "7": "⁷",
+      "8": "⁸",
+      "9": "⁹",
+      "-": "⁻",
+    };
+    return str
+      .split("")
+      .map((char) => superscriptMap[char] || char)
+      .join("");
+  };
   const tooltipStyle = {
     backgroundColor: theme === "dark" ? "#333" : "#fff",
     color: theme === "dark" ? "#fff" : "#000",
@@ -83,7 +101,7 @@ const DistributionChart = ({
         tension: 0.6,
         pointRadius: 0,
         pointBackgroundColor: theme === "dark" ? "#1C9EB6" : "#1C9EB6",
-        borderWidth: 2,
+        borderWidth: 4,
         hoverBackgroundColor: theme === "dark" ? "#FF6F61" : "#FF5733",
         hoverRadius: 4,
       },
@@ -116,7 +134,8 @@ const DistributionChart = ({
           },
           label: (tooltipItem) => {
             const value = tooltipItem.parsed.y;
-            return `Probability: ${Number(value).toExponential(2)}`;
+            const [base, exponent] = Number(value).toExponential(2).split("e");
+            return `Probability: ${base}e${toSuperscript(exponent)}`;
           },
         },
       },
@@ -190,7 +209,9 @@ const DistributionChart = ({
             const decimalIndex = valueStr.indexOf(".");
 
             if (decimalIndex !== -1 && valueStr.length - decimalIndex - 1 > 2) {
-              return value.toExponential(2);
+              const exponentialValue = value.toExponential(2);
+              const [base, exponent] = exponentialValue.split("e");
+              return `${base}e${toSuperscript(exponent)}`;
             }
 
             return value.toFixed(2);

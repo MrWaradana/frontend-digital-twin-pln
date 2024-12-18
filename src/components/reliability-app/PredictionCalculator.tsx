@@ -1,17 +1,93 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import { CircleAlert, CircleCheck, Loader } from "lucide-react";
 import PredictionCalendar from "./PredictionCalendar";
+import {
+  useGetCalculateFailureRate,
+  useGetCalculateFailures,
+  useGetCalculateMDT,
+  useGetCalculateMTBF,
+  useGetCalculateMTTR,
+  useGetCalculateProbability,
+  useGetCalculateReliability,
+} from "@/lib/APIs/reliability-predict/useGetCalculate";
 type PredictionCalculatorProps = {
   isModalOpen: boolean;
   setIsModalOpen: (value: boolean) => void;
+  location: string;
+  session: any;
 };
 
 export function PredictionCalculator({
   isModalOpen,
   setIsModalOpen,
+  location,
+  session,
 }: PredictionCalculatorProps) {
   const closeModal = () => setIsModalOpen(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [formattedTime, setFormattedTime] = useState<string | undefined>(
+    undefined
+  );
+  const { data: failuresvalue, isLoading: failuresLoading } =
+    useGetCalculateFailures(
+      session?.access_token,
+      location,
+      formattedTime,
+      formattedTime === undefined
+    );
+  const { data: failureratevalue, isLoading: failurerateLoading } =
+    useGetCalculateFailureRate(
+      session?.access_token,
+      location,
+      formattedTime,
+      formattedTime === undefined
+    );
+  const { data: mdtvalue, isLoading: mdtloading } = useGetCalculateMDT(
+    session?.access_token,
+    location,
+    formattedTime,
+    formattedTime === undefined
+  );
+  const { data: mttrvalue, isLoading: mttrloading } = useGetCalculateMTTR(
+    session?.access_token,
+    location,
+    formattedTime,
+    formattedTime === undefined
+  );
+  const { data: mtbfvalue, isLoading: mtbfloading } = useGetCalculateMTBF(
+    session?.access_token,
+    location,
+    formattedTime,
+    formattedTime === undefined
+  );
+  const { data: reliabilityvalue, isLoading: reliabilityloading } =
+    useGetCalculateReliability(
+      session?.access_token,
+      location,
+      formattedTime,
+      formattedTime === undefined
+    );
+  const { data: probabilityvalue, isLoading: probabilityloading } =
+    useGetCalculateProbability(
+      session?.access_token,
+      location,
+      formattedTime,
+      formattedTime === undefined
+    );
+  const failures = failuresvalue?.value ?? "";
+  const reliability = reliabilityvalue?.value
+    ? (reliabilityvalue.value * 100).toExponential(2)
+    : "";
+
+  const probability = probabilityvalue?.value
+    ? `${probabilityvalue.value.toFixed(2)}`
+    : "";
+  const failureRate = failureratevalue?.value
+    ? `${failureratevalue.value.toFixed(2)}`
+    : "";
+  const mttr = mttrvalue?.value ?? "";
+  const mdt = mdtvalue?.value ?? "";
+  const mtbf = mtbfvalue?.value ?? "";
 
   // Function to handle selected date from PredictionCalendar
   const handleDateSelect = (date: Date | undefined) => {
@@ -33,7 +109,9 @@ export function PredictionCalculator({
 
   // Fungsi untuk mengonversi hour ke format 12 jam dengan AM/PM
   const formatTime = (hourValue: string): string => {
-    // Ganti koma dengan titik dua
+    if (!hourValue && selectedDate) {
+      return "Now";
+    }
     const cleanedValue = hourValue.replace(",", ":");
     const [hourPart, minutePart] = cleanedValue
       .split(":")
@@ -41,7 +119,6 @@ export function PredictionCalculator({
 
     // Validasi jam dan menit
     if (
-      isNaN(hourPart) ||
       hourPart < 0 ||
       hourPart > 23 ||
       (minutePart !== undefined &&
@@ -49,7 +126,7 @@ export function PredictionCalculator({
     ) {
       return "Invalid hour";
     }
-
+    if (isNaN(hourPart)) return "";
     // Konversi ke format 12 jam
     const period = hourPart >= 12 ? "PM" : "AM";
     const formattedHour = hourPart % 12 === 0 ? 12 : hourPart % 12;
@@ -101,21 +178,36 @@ export function PredictionCalculator({
     )}.${microseconds}`;
   };
   const handleCalculate = () => {
-    if (!selectedDate || hour === "") {
-      alert("Please enter date and hour");
+    if (!selectedDate) {
+      alert("Please enter a date");
       return;
     }
 
-    const [inputHour, inputMinute] = hour.split(":").map(Number);
+    let inputHour = 0;
+    let inputMinute = 0;
+
+    if (hour.trim() === "") {
+      // If hour is empty, use the current time
+      const now = new Date();
+      inputHour = now.getHours();
+      inputMinute = now.getMinutes();
+    } else {
+      // If hour is available, use the input value
+      [inputHour, inputMinute] = hour.split(":").map(Number);
+    }
+
     const updatedDate = new Date(selectedDate);
     updatedDate.setHours(inputHour || 0, inputMinute || 0, 0, 0);
 
-    const formattedTime = formatISOWithMicroseconds(updatedDate);
+    // Set the formatted time state
+    const newFormattedTime = String(formatISOWithMicroseconds(updatedDate));
+    setFormattedTime(newFormattedTime);
 
     // Simulate API call
-    console.log("Sending to API:", formattedTime);
-    alert(`Formatted Time: ${formattedTime}`);
+    console.log("Sending to API:", newFormattedTime);
+    alert(`Formatted Time: ${newFormattedTime}`);
   };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="relative bg-white rounded-[40px] shadow-lg sm:p-10 p-7 sm:w-[85%] w-[90%]">
@@ -267,7 +359,9 @@ export function PredictionCalculator({
                   <div className="flex flex-row">
                     <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
                     <div className="flex flex-col justify-start items-start w-full">
-                      <div className="text-4xl font-bold">125</div>
+                      <div className="text-3xl font-bold">
+                        {failures.toLocaleString()}
+                      </div>
                       <div className="text-[10px] text-[#B2B2B2]">Failures</div>
                     </div>
                   </div>
@@ -287,7 +381,17 @@ export function PredictionCalculator({
                   <div className="flex flex-row">
                     <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
                     <div className="flex flex-col justify-start items-start w-full">
-                      <div className="text-4xl font-bold">125</div>
+                      <div className="text-3xl font-bold">
+                        {reliability ? (
+                          <span>
+                            {reliability.split("e")[0]}e
+                            <sup>{reliability.split("e")[1]}</sup>
+                          </span>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+
                       <div className="text-[10px] text-[#B2B2B2]">%</div>
                     </div>
                   </div>
@@ -307,7 +411,9 @@ export function PredictionCalculator({
                   <div className="flex flex-row">
                     <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
                     <div className="flex flex-col justify-start items-start w-full">
-                      <div className="text-4xl font-bold">125</div>
+                      <div className="text-3xl font-bold">
+                        {mtbf.toLocaleString()}
+                      </div>
                       <div className="text-[10px] text-[#B2B2B2]">Jam</div>
                     </div>
                   </div>
@@ -330,7 +436,9 @@ export function PredictionCalculator({
                   <div className="flex flex-row">
                     <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
                     <div className="flex flex-col justify-start items-start w-full">
-                      <div className="text-4xl font-bold">125</div>
+                      <div className="text-3xl font-bold">
+                        {mdt.toLocaleString()}
+                      </div>
                       <div className="text-[10px] text-[#B2B2B2]">Jam</div>
                     </div>
                   </div>
@@ -350,7 +458,9 @@ export function PredictionCalculator({
                   <div className="flex flex-row">
                     <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
                     <div className="flex flex-col justify-start items-start w-full">
-                      <div className="text-4xl font-bold">125</div>
+                      <div className="text-3xl font-bold">
+                        {mttr.toLocaleString()}
+                      </div>
                       <div className="text-[10px] text-[#B2B2B2]">Jam</div>
                     </div>
                   </div>
@@ -370,7 +480,7 @@ export function PredictionCalculator({
                   <div className="flex flex-row">
                     <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
                     <div className="flex flex-col justify-start items-start w-full">
-                      <div className="text-4xl font-bold">125</div>
+                      <div className="text-3xl font-bold">{failureRate}</div>
                       <div className="text-[10px] text-[#B2B2B2]">
                         Failures / year
                       </div>
@@ -392,7 +502,7 @@ export function PredictionCalculator({
                   <div className="flex flex-row">
                     <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
                     <div className="flex flex-col justify-start items-start w-full">
-                      <div className="text-4xl font-bold">125</div>
+                      <div className="text-3xl font-bold">{probability}</div>
                       <div className="text-[10px] text-[#B2B2B2]">Unit</div>
                     </div>
                   </div>

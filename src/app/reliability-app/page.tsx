@@ -13,7 +13,6 @@ import { useEffect, useMemo } from "react";
 const Page = () => {
   const { data: session } = useSession();
   const today = new Date().toDateString();
-
   // Get assets state from the Zustand store
   const AssetsFailures = setDashboard((state) => state.assetsFailures || []);
   const AssetsMTTR = setDashboard((state) => state.assetsMTTR || []);
@@ -114,12 +113,14 @@ const Page = () => {
                       <span className="w-4">{index + 1}. </span>
                       <span
                         className="md:truncate lg:max-w-[200px] inline-block align-middle"
-                        title={item.name}
+                        title={item.equipment_name}
                       >
-                        {item.name}
+                        {item.equipment_name}
                       </span>
                       <div className="absolute left-0 top-full mt-1 hidden group-hover:flex bg-gray-500 text-white text-xs rounded py-1 px-2 z-10 shadow-lg w-auto">
-                        <span className="whitespace-nowrap">{item.name}</span>
+                        <span className="whitespace-nowrap">
+                          {item.equipment_name}
+                        </span>
                       </div>
                     </div>
                     <div className="bg-red-600 text-white rounded-[100px] flex justify-end items-center text-[9px] px-2 py-1">
@@ -160,9 +161,19 @@ const Page = () => {
                       </div>
                     </div>
                     <div className="bg-red-600 text-white rounded-[100px] flex justify-end items-center text-[9px] px-2 py-1">
-                      {`${((reliability?.reliability ?? 0) * 100).toExponential(
-                        2
-                      )}%`}
+                      {`${
+                        ((reliability?.reliability ?? 0) * 100)
+                          .toExponential(2)
+                          .split("e")[0]
+                      }%`}
+                      e
+                      <sup>
+                        {
+                          ((reliability?.reliability ?? 0) * 100)
+                            .toExponential(2)
+                            .split("e")[1]
+                        }
+                      </sup>
                     </div>
                   </div>
                 </a>

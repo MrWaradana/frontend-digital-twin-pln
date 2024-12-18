@@ -56,7 +56,7 @@ export function Navbar({ title }: NavbarProps) {
         </ModalContent>
       </Modal>
       <header className="sticky top-0 z-10 w-full bg-transparent">
-        <div className="mx-4 sm:mx-8 flex items-center h-[16dvh]">
+        <div className="mx-4 sm:mx-8 flex items-center h-[13dvh]">
           <div className="flex items-center space-x-4 lg:space-x-0">
             <SheetMenu />
             <h1 className="font-semibold text-sm md:text-4xl sm:text-xl text-[#1C9EB6]">

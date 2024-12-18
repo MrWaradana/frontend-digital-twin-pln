@@ -26,7 +26,6 @@ const Page = ({ params }: { params: { id: string } }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const id = params.id;
   const openModal = () => setIsModalOpen(true);
-
   const { data: session } = useSession();
   const { data: equipmentList, isLoading: equipmentLoading } =
     useGetEquipmentAll(session?.user.access_token);
@@ -62,8 +61,9 @@ const Page = ({ params }: { params: { id: string } }) => {
     ? `${failureRatevalue.failure_rate.toFixed(2)}`
     : "None";
   const reliabilityCurrent = reliabilityCurrentvalue?.reliability_value
-    ? `${(reliabilityCurrentvalue.reliability_value * 100).toFixed(2)}`
+    ? `${(reliabilityCurrentvalue.reliability_value * 100).toExponential(2)}`
     : "None";
+
   const mttr = mttrvalue?.hours ?? "None";
   const mdt = mdtvalue?.hours ?? "None";
   const mtbf = mtbfvalue?.hours ?? "None";
@@ -173,6 +173,8 @@ const Page = ({ params }: { params: { id: string } }) => {
                 <PredictionCalculator
                   isModalOpen={isModalOpen}
                   setIsModalOpen={setIsModalOpen}
+                  location={id}
+                  session={session?.user}
                 />
               </div>
               <div className="flex-1 flex flex-col justify-start w-full">
@@ -328,7 +330,14 @@ const Page = ({ params }: { params: { id: string } }) => {
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
                     <div className="text-4xl font-bold">
-                      {reliabilityCurrent.toLocaleString()}
+                      {reliabilityCurrent ? (
+                        <span>
+                          {reliabilityCurrent.split("e")[0]}e
+                          <sup>{reliabilityCurrent.split("e")[1]}</sup>
+                        </span>
+                      ) : (
+                        ""
+                      )}
                     </div>
                     <div className="text-[10px] text-[#918E8E]">%</div>
                   </div>
