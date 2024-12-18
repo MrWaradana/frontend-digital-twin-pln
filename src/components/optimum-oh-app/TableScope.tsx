@@ -57,6 +57,7 @@ import ModalInputData from "@/components/efficiency-app/ModalInputData";
 import { debounce } from "lodash";
 import { formattedNumber } from "@/lib/formattedNumber";
 import AddNewAssetModal from "@/components/optimum-oh-app/AddNewAssetModal";
+import ModalEquipmentActivity from "./scope-equipment-activity/ModalEquipmentActivity";
 
 const scopeOptions = [
   { name: "A", uid: "A" },
@@ -122,6 +123,7 @@ export default function TableScope({
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [activitiesModalOpen, setActivitiesModalOpen] = useState(false);
   const session = useSession();
   let formatter = useDateFormatter({ dateStyle: "long" });
 
@@ -227,9 +229,9 @@ export default function TableScope({
 
   const loadingState =
     isLoading ||
-    isValidating ||
-    isLoadingAvailableEquipment ||
-    isValidatingAvailableEquipment
+      isValidating ||
+      isLoadingAvailableEquipment ||
+      isValidatingAvailableEquipment
       ? "loading"
       : "idle";
 
@@ -371,7 +373,7 @@ export default function TableScope({
                       variant="solid"
                       radius="full"
                       className=" bg-[#1C9EB6]"
-                      // isDisabled={!thermoStatus}
+                    // isDisabled={!thermoStatus}
                     >
                       <DotsVerticalIcon className="text-white dark:text-black text-2xl" />
                     </Button>
@@ -394,6 +396,14 @@ export default function TableScope({
                       Edit
                     </DropdownItem> */}
                     {/* <DropdownItem href="#">Edit</DropdownItem>*/}
+                    <DropdownItem
+                      onPress={() => {
+                        setSelectedRowId(rowData.assetnum);
+                        setActivitiesModalOpen(true);
+                      }}
+                    >
+                      Activities
+                    </DropdownItem>
                     <DropdownItem
                       onPress={() => {
                         setSelectedRowId(rowData.id);
@@ -503,9 +513,8 @@ export default function TableScope({
             Showing {filteredItems.length}{" "}
             {filterValue
               ? ""
-              : `item from total of ${
-                  total_items ? total_items : nonPerformanceData.length
-                }${" "}`}
+              : `item from total of ${total_items ? total_items : nonPerformanceData.length
+              }${" "}`}
             {filterValue ? ` for \"${filterValue}\"` : ""}
           </span>
           <label className="flex items-center text-default-400 text-small">
@@ -640,6 +649,7 @@ export default function TableScope({
   return (
     <>
       {deleteConfirmationModal}
+      <ModalEquipmentActivity isOpen={activitiesModalOpen} onOpenChange={setActivitiesModalOpen} selectedRowId={selectedRowId} />
       <Table
         aria-label="Efficiency Data Table"
         isCompact
