@@ -579,6 +579,13 @@ export default function Page() {
                         height: 33,
                         backgroundColor: "#f3f4f6",
                       }),
+                      menu: (baseStyles) => ({
+                        ...baseStyles,
+                        width: "auto",
+                        minWidth: "100%", // Ensures the menu is at least as wide as the control
+                        // You can set a specific width like this:
+                        // width: 250, // This will make the menu 250px wide
+                      }),
                     }}
                   />
                 </>

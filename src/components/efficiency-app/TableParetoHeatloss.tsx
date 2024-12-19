@@ -1264,6 +1264,13 @@ export default function TableParetoHeatloss({
                 borderColor: "rgb(229 229 229)",
                 borderWidth: 2,
               }),
+              menu: (baseStyles) => ({
+                ...baseStyles,
+                width: "auto",
+                minWidth: "100%", // Ensures the menu is at least as wide as the control
+                // You can set a specific width like this:
+                // width: 250, // This will make the menu 250px wide
+              }),
             }}
             name="efficiencyData"
           />
