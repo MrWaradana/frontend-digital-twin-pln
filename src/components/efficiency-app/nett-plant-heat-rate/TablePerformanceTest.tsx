@@ -169,6 +169,7 @@ export default function TablePerformanceTest({
   // Function to delete the selected row
   const handleDelete = async () => {
     if (!selectedRowId) return;
+    setLoading(true);
     setLoadingEfficiency(isValidating);
     try {
       const response = await fetch(
@@ -189,11 +190,14 @@ export default function TablePerformanceTest({
         setLoadingEfficiency(isValidating);
         setTableState(updatedData);
         setDeleteModalOpen(false); // Close the modal
+        setLoading(false);
       } else {
         console.error("Failed to delete");
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error deleting data:", error);
+      setLoading(false);
     }
   };
 
@@ -440,7 +444,7 @@ export default function TablePerformanceTest({
               <Button variant="light" onPress={onClose}>
                 Cancel
               </Button>
-              <Button color="danger" onPress={handleDelete}>
+              <Button color="danger" onPress={handleDelete} isLoading={loading}>
                 Delete
               </Button>
             </ModalFooter>

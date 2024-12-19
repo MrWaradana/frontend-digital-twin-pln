@@ -32,7 +32,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import { useGetVariables, Variable } from "@/lib/APIs/useGetVariables";
@@ -64,6 +64,7 @@ export default function ModalInputData({
   performanceTest,
   PerformanceDataOptions,
 }: any) {
+  const pathname = usePathname();
   const router = useRouter();
   const { data: session, status } = useSession();
 
@@ -212,7 +213,7 @@ export default function ModalInputData({
     // alert(JSON.stringify(values));
     // console.log(inputValues);
     setLoading(true);
-    console.log(values, "ini masuk");
+    // console.log(values, "ini masuk");
 
     // Handle 'data_outputs' event
 
@@ -263,8 +264,15 @@ export default function ModalInputData({
         toast.success("Data input received, wait for the to be processed!");
         setStatusThermoflow(true);
         setLoading(false);
-        setTimeout(() => router.push(`/efficiency-app`), 3000);
-
+        setTimeout(() => {
+          if (pathname.includes("/performance-test")) {
+            router.push(`/efficiency-app/performance-test`);
+          } else if (pathname.includes("/all-data")) {
+            router.push(`/efficiency-app/all-data`);
+          } else {
+            router.push(`/efficiency-app`);
+          }
+        }, 3000);
       } catch (error) {
         // @ts-ignore
         toast.error(`Error: ${error}`);

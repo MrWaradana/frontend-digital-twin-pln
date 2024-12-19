@@ -47,7 +47,7 @@ export function useApiFetch<T, RawT = T>(
             }, redirecting to login...`
           );
           setTimeout(() => {
-            router.replace(`${process.env.NEXT_PUBLIC_AUTH_URL}/login`);
+            // router.replace(`${process.env.NEXT_PUBLIC_AUTH_URL}/login`);
           }, 1000);
 
           return;
