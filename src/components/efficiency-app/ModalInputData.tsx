@@ -682,13 +682,13 @@ export default function ModalInputData({
                 type="button"
                 className="bg-[#1C9EB6] text-white"
                 size="md"
-                isDisabled={
-                  thermoStatusData?.thermo_status ||
-                  process.env.NEXT_PUBLIC_ENVIRONMENT == "development"
-                }
+                // isDisabled={
+                //   thermoStatusData?.thermo_status ||
+                //   process.env.NEXT_PUBLIC_ENVIRONMENT == "development"
+                // }
                 isLoading={loading}
                 onClick={() => {
-                  setConfirmationModalOpen(false);
+                  setConfirmationModalOpen(true);
                 }}
               >
                 Submit
