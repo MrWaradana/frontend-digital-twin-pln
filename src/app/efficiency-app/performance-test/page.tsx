@@ -18,7 +18,7 @@ export default function Page() {
   const [dataId, setDataId]: any = useState("");
   const [selectedLabel, setSelectedLabel]: any = useState("");
 
-  const { data, isLoading, isValidating } = useGetDataPerformance(
+  const { data, isLoading, isValidating, mutate } = useGetDataPerformance(
     session?.user.access_token,
     1,
     undefined,
@@ -142,7 +142,7 @@ export default function Page() {
             isValidating={isValidating}
             thermoStatus={thermoStatus}
             PerformanceDataOptions={PerformanceDataOptions}
-            mutate={mutatePerformance}
+            mutate={mutate}
           />
         </section>
       </div>
