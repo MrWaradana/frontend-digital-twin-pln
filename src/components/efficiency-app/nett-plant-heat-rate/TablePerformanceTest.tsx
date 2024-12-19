@@ -43,16 +43,23 @@ import { useSession } from "next-auth/react";
 import { useSelectedEfficiencyDataStore } from "@/store/selectedEfficiencyData";
 import ModalInputData from "../ModalInputData";
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
+const parameterColorMap: Record<string, ChipProps["color"]> = {
   current: "success",
   kpi: "primary",
   target: "warning",
+};
+
+const statusColorMap: Record<string, ChipProps["color"]> = {
+  Done: "primary",
+  Processing: "warning",
+  Failed: "danger",
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
   "name",
   "jenis_parameter",
   "performance_test_weight",
+  "status",
   "periode",
   "actions",
 ];
@@ -90,6 +97,7 @@ export default function TablePerformanceTest({
     { name: "NAMA", uid: "name", sortable: true },
     { name: "JENIS PARAMETER", uid: "jenis_parameter", sortable: true },
     { name: "BEBAN", uid: "performance_test_weight", sortable: true },
+    { name: "STATUS", uid: "status", sortable: true },
     { name: "PERIODE", uid: "periode", sortable: true },
     { name: "ACTIONS", uid: "actions" },
   ];
@@ -212,11 +220,22 @@ export default function TablePerformanceTest({
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[rowData.jenis_parameter]}
+              color={parameterColorMap[rowData.jenis_parameter]}
               size="sm"
               variant="flat"
             >
               {cellValue}
+            </Chip>
+          );
+        case "status":
+          return (
+            <Chip
+              className="capitalize"
+              color={statusColorMap[rowData.status]}
+              size="sm"
+              variant="flat"
+            >
+              {cellValue ? cellValue : "No Data"}
             </Chip>
           );
         case "performance_test_weight":
