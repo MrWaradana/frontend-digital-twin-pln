@@ -36,6 +36,7 @@ export default function Page() {
     data: dataPerformance,
     isLoading: isLoadingPerformance,
     isValidating: isValidatingPerfomance,
+    mutate: mutatePerformance,
   } = useGetDataPerformanceTest(session?.user.access_token);
 
   const {
@@ -141,6 +142,7 @@ export default function Page() {
             isValidating={isValidating}
             thermoStatus={thermoStatus}
             PerformanceDataOptions={PerformanceDataOptions}
+            mutate={mutatePerformance}
           />
         </section>
       </div>
