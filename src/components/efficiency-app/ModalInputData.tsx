@@ -22,7 +22,7 @@ import {
   RangeValue,
   Input,
 } from "@nextui-org/react";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState, useMemo } from "react";
 import {
   Form,
   FormControl,
@@ -191,8 +191,12 @@ export default function ModalInputData({
     return acc;
   }, {} as Record<string, Variable[]>);
 
-  const defaultInputs = Object.fromEntries(
-    filteredVariableData.map((v: any) => [v.id, v.base_case.toString()])
+  const defaultInputs = useMemo(
+    () =>
+      Object.fromEntries(
+        filteredVariableData.map((v: any) => [v.id, v.base_case.toString()])
+      ),
+    [filteredVariableData] // Dependency array: updates when filteredVariableData changes
   );
 
   // 1. Define your form.
@@ -265,6 +269,7 @@ export default function ModalInputData({
         setStatusThermoflow(true);
         setLoading(false);
         setModalChoosePeriod(false);
+        setConfirmationModalOpen(false);
         toast.success("Redirecting...");
         setTimeout(() => {
           if (pathname.includes("/performance-test")) {
