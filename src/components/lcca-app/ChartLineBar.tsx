@@ -11,6 +11,125 @@ import {
 import ReactECharts from "echarts-for-react";
 import { useState } from "react";
 import AssetTablePerYear from "./AssetTablePerYear";
+import { mkConfig, generateCsv, download } from "export-to-csv";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import Excel from "exceljs";
+import { saveAs } from "file-saver";
+import { formattedNumber } from "@/lib/formattedNumber";
+
+// Configuration for CSV export
+const csvConfig = mkConfig({
+  useKeysAsHeaders: true,
+  filename: "chart-data",
+  fieldSeparator: ",",
+});
+
+export const exportChartData = {
+  // Export to CSV
+  toCsv: (data) => {
+    const formattedData = data.map((item) => ({
+      Year: item.tahun,
+      "Annualized O&M Cost": formattedNumber(item.eac_annual_mnt_cost),
+      "Annualized Acquisition Cost": formattedNumber(item.eac_annual_acq_cost),
+      EAC: formattedNumber(item.eac_eac),
+    }));
+
+    const csv = generateCsv(csvConfig)(formattedData);
+    download(csvConfig)(csv);
+  },
+
+  // Export to PDF
+  toPdf: (data, assetName) => {
+    const doc = new jsPDF();
+
+    // Add title
+    doc.setFontSize(16);
+    doc.text(`${assetName} - Life Cycle Cost Analysis`, 14, 15);
+
+    // Prepare data for table
+    const tableHeaders = [
+      ["Year", "Annualized O&M Cost", "Annualized Acquisition Cost", "EAC"],
+    ];
+    const tableData = data.map((item) => [
+      item.tahun,
+      formattedNumber(item.eac_annual_mnt_cost),
+      formattedNumber(item.eac_annual_acq_cost),
+      formattedNumber(item.eac_eac),
+    ]);
+
+    // Add table
+    autoTable(doc, {
+      head: tableHeaders,
+      body: tableData,
+      startY: 25,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [41, 128, 185] },
+      columnStyles: {
+        0: { cellWidth: 30 },
+        1: { cellWidth: 50 },
+        2: { cellWidth: 50 },
+        3: { cellWidth: 40 },
+      },
+    });
+
+    doc.save(
+      `${assetName.toLowerCase().replace(/\s+/g, "-")}-lifecycle-cost.pdf`
+    );
+  },
+
+  // Export to Excel
+  toExcel: async (data, assetName) => {
+    const workbook = new Excel.Workbook();
+    const worksheet = workbook.addWorksheet("Life Cycle Cost Analysis");
+
+    // Add title
+    worksheet.mergeCells("A1:D1");
+    const titleCell = worksheet.getCell("A1");
+    titleCell.value = `${assetName} - Life Cycle Cost Analysis`;
+    titleCell.font = { size: 14, bold: true };
+    titleCell.alignment = { horizontal: "center" };
+
+    // Define columns
+    worksheet.columns = [
+      { header: "Year", key: "year", width: 15 },
+      { header: "Annualized O&M Cost", key: "omCost", width: 25 },
+      { header: "Annualized Acquisition Cost", key: "acqCost", width: 25 },
+      { header: "EAC", key: "eac", width: 20 },
+    ];
+
+    // Style the header row
+    worksheet.getRow(2).font = { bold: true };
+    worksheet.getRow(2).fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "2980B9" },
+      bgColor: { argb: "2980B9" },
+    };
+
+    // Add data
+    data.forEach((item) => {
+      worksheet.addRow({
+        year: item.tahun,
+        omCost: item.eac_annual_mnt_cost,
+        acqCost: item.eac_annual_acq_cost,
+        eac: item.eac_eac,
+      });
+    });
+
+    // Format number columns
+    worksheet.getColumn("omCost").numFmt = "#,##0.00";
+    worksheet.getColumn("acqCost").numFmt = "#,##0.00";
+    worksheet.getColumn("eac").numFmt = "#,##0.00";
+
+    // Generate and save file
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(
+      new Blob([buffer]),
+      `${assetName.toLowerCase().replace(/\s+/g, "-")}-lifecycle-cost.xlsx`
+    );
+  },
+};
 
 export default function ChartLinebar({ chartData, minSeq, assetName }: any) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -358,6 +477,34 @@ export default function ChartLinebar({ chartData, minSeq, assetName }: any) {
           )}
         </ModalContent>
       </Modal>
+      <section className="w-full flex justify-end">
+        <div className="flex gap-2 mb-4">
+          <Button
+            size="sm"
+            color="primary"
+            variant="flat"
+            onPress={() => exportChartData.toCsv(chartData)}
+          >
+            Export CSV
+          </Button>
+          <Button
+            size="sm"
+            color="primary"
+            variant="flat"
+            onPress={() => exportChartData.toPdf(chartData, assetName)}
+          >
+            Export PDF
+          </Button>
+          <Button
+            size="sm"
+            color="primary"
+            variant="flat"
+            onPress={() => exportChartData.toExcel(chartData, assetName)}
+          >
+            Export Excel
+          </Button>
+        </div>
+      </section>
       <ReactECharts
         option={chartOption}
         style={{ minHeight: "50dvh" }}

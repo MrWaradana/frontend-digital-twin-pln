@@ -161,7 +161,9 @@ export default function EChartsBar({
       nameLocation: "middle",
       nameGap: 25,
       // data: fixedCategories.map((w) => `${w}%`),
-      data: data.map((item: any) => item.performance_weight),
+      data: data
+        .sort((a, b) => a.performance_weight - b.performance_weight)
+        .map((item: any) => item.performance_weight),
       axisLabel: {
         fontSize: 14,
       },
