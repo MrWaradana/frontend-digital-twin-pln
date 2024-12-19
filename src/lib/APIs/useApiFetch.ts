@@ -55,7 +55,7 @@ export function useApiFetch<T, RawT = T>(
           toast.error(`${err.message}`);
           setTimeout(() => {
             // push to previous page
-            router.back();
+            // router.back();
           }, 1000);
         }
       },
