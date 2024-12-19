@@ -34,14 +34,20 @@ export default function Unit3() {
     },
     {
       name: "i-PFI App",
-      url: "/pfi-app",
+      url: `${
+        process.env.NEXT_PUBLIC_ENVIRONMENT === "development" ? "/pfi-app" : "#"
+      }`,
       bgColor: "bg-gradient-to-b from-[#F05A2C] to-[#C33232]",
       textColor: "text-white",
       icon: <Image src={newPfiLogo} alt="i-PFI App" width={100} height={100} />,
     },
     {
       name: "Reliability Predicts App",
-      url: "/reliability-app",
+      url: `${
+        process.env.NEXT_PUBLIC_ENVIRONMENT === "development"
+          ? "/reliability-app"
+          : "#"
+      }`,
       bgColor: "bg-gradient-to-b from-[#FFA201] to-[#EE6E01]",
       textColor: "text-white",
       icon: (
@@ -55,7 +61,11 @@ export default function Unit3() {
     },
     {
       name: "Risk Matrix App",
-      url: "/risk-matrix-app",
+      url: `${
+        process.env.NEXT_PUBLIC_ENVIRONMENT === "development"
+          ? "/risk-matrix-app"
+          : "#"
+      }`,
       bgColor: "bg-gradient-to-b from-[#E714D8] to-[#AF01D3]",
       textColor: "text-white",
       icon: (
@@ -69,21 +79,33 @@ export default function Unit3() {
     },
     {
       name: "RBD App",
-      url: "/landing/rbd-app",
+      url: `${
+        process.env.NEXT_PUBLIC_ENVIRONMENT === "development"
+          ? "/landing/rbd-app"
+          : "#"
+      }`,
       bgColor: "bg-gradient-to-b from-[#8919FA] to-[#63389E]",
       textColor: "text-white",
       icon: <Image src={newRbdLogo} alt="RBD App" width={100} height={100} />,
     },
     {
       name: "LCCA App",
-      url: "/lcca-app",
+      url: `${
+        process.env.NEXT_PUBLIC_ENVIRONMENT === "development"
+          ? "/landing/lcca-app"
+          : "#"
+      }`,
       bgColor: "bg-gradient-to-b from-[#42509F] to-[#272363]",
       textColor: "text-white",
       icon: <Image src={newLccLogo} alt="LCCA App" width={100} height={100} />,
     },
     {
       name: "Optimum OH App",
-      url: "/landing/optimum-oh-app",
+      url: `${
+        process.env.NEXT_PUBLIC_ENVIRONMENT === "development"
+          ? "/landing/optimum-oh-app"
+          : "#"
+      }`,
       bgColor: "bg-gradient-to-b from-[#1D9DB6] to-[#2276AD]",
       textColor: "text-white",
       icon: (
@@ -92,7 +114,9 @@ export default function Unit3() {
     },
     {
       name: "i-RCFA App",
-      url: "/#",
+      url: `${
+        process.env.NEXT_PUBLIC_ENVIRONMENT === "development" ? "#" : "#"
+      }`,
       bgColor: "bg-gradient-to-b from-[#589289] to-[#05584D]",
       textColor: "text-white",
       icon: (
@@ -101,7 +125,9 @@ export default function Unit3() {
     },
     {
       name: "AHM App",
-      url: "/#",
+      url: `${
+        process.env.NEXT_PUBLIC_ENVIRONMENT === "development" ? "#" : "#"
+      }`,
       bgColor: "bg-gradient-to-b from-[#75AB63] to-[#066D2A]",
       textColor: "text-white",
       icon: <Image src={newAhmLogo} alt="AHM App" width={100} height={100} />,
