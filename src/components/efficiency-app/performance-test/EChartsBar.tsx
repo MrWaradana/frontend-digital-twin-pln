@@ -66,7 +66,8 @@ export default function EChartsBar({
     barGap: "10%",
     connectNulls: false, // This ensures the line breaks at null values
     barCategoryGap: "20%",
-    data: completeData.map((item: any) => item.total_nilai_losses),
+    // data: completeData.map((item: any) => item.total_nilai_losses),
+    data: data.map((item: any) => item.total_nilai_losses),
     itemStyle: {
       borderRadius: [4, 4, 0, 0],
       cursor: "pointer", // Add pointer cursor to indicate clickable
@@ -159,7 +160,8 @@ export default function EChartsBar({
       name: "Load Level",
       nameLocation: "middle",
       nameGap: 25,
-      data: fixedCategories.map((w) => `${w}%`),
+      // data: fixedCategories.map((w) => `${w}%`),
+      data: data.map((item: any) => item.performance_weight),
       axisLabel: {
         fontSize: 14,
       },
