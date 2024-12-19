@@ -264,6 +264,8 @@ export default function ModalInputData({
         toast.success("Data input received, wait for the to be processed!");
         setStatusThermoflow(true);
         setLoading(false);
+        setModalChoosePeriod(false);
+        toast.success("Redirecting...");
         setTimeout(() => {
           if (pathname.includes("/performance-test")) {
             router.push(`/efficiency-app/performance-test`);
@@ -686,7 +688,7 @@ export default function ModalInputData({
                 }
                 isLoading={loading}
                 onClick={() => {
-                  setConfirmationModalOpen(true);
+                  setConfirmationModalOpen(false);
                 }}
               >
                 Submit
