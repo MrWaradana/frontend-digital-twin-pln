@@ -196,7 +196,7 @@ const DistributionChart = ({
         max: Math.max(...X),
         title: {
           display: true,
-          text: "Time since last failure (days)",
+          text: "Time since last failure (hours)",
         },
         grid: {
           display: false,

@@ -58,7 +58,9 @@ const Page = ({ params }: { params: { id: string } }) => {
   const { data: reliabilityData, isLoading: reliabilityPlotloading } =
     useGetReliabilityPlot(id, session?.user.access_token);
   const failureRate = failureRatevalue?.failure_rate
-    ? `${failureRatevalue.failure_rate.toFixed(2)}`
+    ? failureRatevalue.failure_rate < 0.01
+      ? `${failureRatevalue.failure_rate.toExponential(2)}`
+      : `${Number(failureRatevalue.failure_rate.toFixed(2))}`
     : "None";
   const reliabilityCurrent = reliabilityCurrentvalue?.reliability_value
     ? `${(reliabilityCurrentvalue.reliability_value * 100).toExponential(2)}`
@@ -306,10 +308,24 @@ const Page = ({ params }: { params: { id: string } }) => {
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
                     <div className="text-4xl font-bold">
-                      {failureRate.toLocaleString()}
+                      {failureRate ? (
+                        <>
+                          {failureRate.includes("e") &&
+                          !failureRate.includes("e-") ? (
+                            <span>
+                              {failureRate.split("e")[0]}e
+                              <sup>{failureRate.split("e")[1]}</sup>
+                            </span>
+                          ) : (
+                            <span>{failureRate}</span>
+                          )}
+                        </>
+                      ) : (
+                        ""
+                      )}
                     </div>
                     <div className="text-[10px] text-[#918E8E]">
-                      Failures/year
+                      Failures/hour
                     </div>
                   </div>
                 </div>
