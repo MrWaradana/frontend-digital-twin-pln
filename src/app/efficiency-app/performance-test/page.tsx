@@ -43,6 +43,7 @@ export default function Page() {
     data: dataPerformanceGroup,
     isLoading: isLoadingPerformanceGroup,
     isValidating: isValidatingPerfomanceGroup,
+    mutate: chartMutate
   } = useGetDataPerformanceGroup(session?.user.access_token, dataId);
 
   const selectPerformanceData = dataPerformance ?? [];
@@ -60,6 +61,38 @@ export default function Page() {
       label: item.name,
     };
   });
+
+  useEffect(() => {
+    const api = `${process.env.NEXT_PUBLIC_EFFICIENCY_APP_URL}/stream`;
+    const es = new EventSource(api);
+    // @ts-ignore
+    es.addEventListener("data_outputs", (e) => {
+      toast.success(`Efficiency data has been processed!`, { duration: 3000 });
+      mutate();
+      chartMutate();
+      // if (pathname === "/efficiency-app") {
+      //   setTimeout(() => window.location.reload(), 3000);
+      // }
+    });
+
+    // @ts-ignore
+    // es.addEventListener("error", (e) => {
+    //   // @ts-ignore
+    //   // toast.error(`Error: ${e}`);
+    //   console.log(e, "DATA STREAM!");
+    //   if (pathname === "/efficiency-app") {
+    //     setTimeout(() => window.location.reload(), 3000);
+    //   }
+    // });
+
+    // // Handle SSE connection errors
+    // es.onerror = (_) => {
+    //   toast.error(`Something went wrong!, ${_}`);
+    //   console.log(_, "Error");
+    //   // Close the SSE connection
+    //   es.close();
+    // };
+  }, []);
 
   // Function to filter efficiency data based on user input
   const filterEfficiencyData = (inputValue: string) => {

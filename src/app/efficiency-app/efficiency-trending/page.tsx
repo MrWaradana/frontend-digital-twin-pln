@@ -11,6 +11,7 @@ import { useGetDataParetoTrending } from "@/lib/APIs/useGetDataParetoTrending";
 import { useSession } from "next-auth/react";
 import DateShortcutPicker from "@/components/efficiency-app/efficiency-trending/DateShortcutPicker";
 import dynamic from "next/dynamic";
+import { subWeeks, format } from 'date-fns';
 
 const EChartsStackedLine = dynamic(
   () =>
@@ -23,7 +24,7 @@ const EChartsStackedLine = dynamic(
 export default function EfficiencyTrending() {
   const [selectedSeries, setSelectedSeries]: any = useState(null);
   const [periodValue, setPeriodValue] = useState<RangeValue<DateValue>>({
-    start: parseDate("2024-09-18"),
+    start: parseDate(format(subWeeks(new Date(), 2), 'yyyy-MM-dd')),
     end: today(getLocalTimeZone()),
   });
 
