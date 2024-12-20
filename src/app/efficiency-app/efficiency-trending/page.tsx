@@ -110,8 +110,8 @@ export default function EfficiencyTrending() {
     // Get the index of the clicked point
     const clickedSeriesName = "Total Nilai Heatloss";
 
-    console.log(listCategories, "categories");
-    console.log(paretoTrendingChart, "chart trending");
+    // console.log(listCategories, "categories");
+    // console.log(paretoTrendingChart, "chart trending");
 
     // Prepare data for all categories at this point
     const allSeriesData = listCategories

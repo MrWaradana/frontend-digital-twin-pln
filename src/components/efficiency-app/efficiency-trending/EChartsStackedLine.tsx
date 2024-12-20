@@ -94,10 +94,10 @@ export default function EChartsStackedLine({
         smooth: true,
         yAxisIndex: item === "generator_gross_output" ? 1 : 0,
         data: chartData.map((point) => point[item].toFixed(2)),
-        lineStyle: {
-          width: 2,
-          color: mainChartColors[index % mainChartColors.length],
-        },
+        // lineStyle: {
+        //   width: 2,
+        //   color: mainChartColors[index % mainChartColors.length],
+        // },
         itemStyle: {
           color: mainChartColors[index % mainChartColors.length],
           borderWidth: 2,
@@ -106,6 +106,7 @@ export default function EChartsStackedLine({
         symbol: "circle",
         symbolSize: 8,
         showSymbol: true,
+        barMaxWidth: 50,
         emphasis: {
           scale: true,
           itemStyle: {
@@ -437,6 +438,7 @@ export default function EChartsStackedLine({
         },
       ],
       toolbox: {
+        show: true,
         feature: {
           magicType: {
             type: ["line", "bar"],
@@ -448,8 +450,8 @@ export default function EChartsStackedLine({
           dataZoom: {
             yAxisIndex: "none",
           },
-          restore: {},
-          saveAsImage: {},
+          restore: { show: true, title: "Restore" },
+          saveAsImage: { show: true, title: "Save Image" },
         },
       },
       series,
@@ -528,7 +530,9 @@ export default function EChartsStackedLine({
           dataZoom: {
             yAxisIndex: "none",
           },
-          restore: {},
+          restore: {
+            show: true,
+          },
           saveAsImage: {},
         },
       },
