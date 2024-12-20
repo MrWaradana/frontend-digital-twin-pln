@@ -229,8 +229,10 @@ export default function ModalInputData({
           excel_id: excels[0].id,
           inputs: values.inputs,
           input_type: selectedParameter,
-          periodic_start_date: periodValue?.start ?? null, // Add null fallback
-          periodic_end_date: periodValue?.end ?? null, // Add null fallback
+          periodic_start_date:
+            selectedParameter === "periodic" ? periodValue?.start : null, // Add null fallback
+          periodic_end_date:
+            selectedParameter === "periodic" ? periodValue?.end : null, // Add null fallback
           coal_price: coalPrice,
         };
 
@@ -268,8 +270,8 @@ export default function ModalInputData({
         toast.success("Data input received, wait for the to be processed!");
         setStatusThermoflow(true);
         setLoading(false);
+        setConfirmationModalOpen(!confirmationModalOpen);
         setModalChoosePeriod(false);
-        setConfirmationModalOpen(false);
         toast.success("Redirecting...");
         setTimeout(() => {
           if (pathname.includes("/performance-test")) {
@@ -687,10 +689,10 @@ export default function ModalInputData({
                 type="button"
                 className="bg-[#1C9EB6] text-white"
                 size="md"
-                // isDisabled={
-                //   thermoStatusData?.thermo_status ||
-                //   process.env.NEXT_PUBLIC_ENVIRONMENT == "development"
-                // }
+                isDisabled={
+                  thermoStatusData?.thermo_status ||
+                  process.env.NEXT_PUBLIC_ENVIRONMENT == "development"
+                }
                 isLoading={loading}
                 onClick={() => {
                   setConfirmationModalOpen(true);
