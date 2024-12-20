@@ -5,7 +5,7 @@ import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { useGetDataPerformance } from "@/lib/APIs/useGetDataPerformance";
 import { useSession } from "next-auth/react";
 import EChartsStackedBar from "@/components/efficiency-app/performance-test/EChartsBar";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { usePathname } from "next/navigation";
 import AsyncSelect from "react-select/async";
@@ -47,7 +47,11 @@ export default function Page() {
   } = useGetDataPerformanceGroup(session?.user.access_token, dataId);
 
   const selectPerformanceData = dataPerformance ?? [];
-  const chartDataPerformance = dataPerformanceGroup ?? [];
+  const chartDataPerformance = useMemo(() => {
+    if (!dataPerformanceGroup) return []
+    return dataPerformanceGroup
+  }, [chartMutate])
+
 
   // useEffect(() => {
   //   if (selectPerformanceData.length > 0) {
