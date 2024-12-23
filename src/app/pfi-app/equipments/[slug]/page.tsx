@@ -11,6 +11,7 @@ import { Card, CircularProgress, Divider } from "@nextui-org/react";
 import { ChevronLeftIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 
 
 const Page = ({ params }: { params: { slug: string } }) => {
@@ -38,6 +39,10 @@ const Page = ({ params }: { params: { slug: string } }) => {
     data: informations,
   } = useGetInformations(session?.user?.access_token, features_id ?? '', params.slug ?? '');
 
+
+  const currentValue = useMemo(() => {
+    return informations?.find((item) => item.name === "Current Value")?.value ?? 0;
+  }, [informations])
 
   // const equipment = React.useMemo(() => {
   //   return tagData?.equipments ?? ({} as { name?: string });
@@ -79,7 +84,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
 
         {/* Responsive Grid */}
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3 p-3 md:p-5 lg:p-8 my-5">
-          <TimeDownChart />
+          <TimeDownChart currentValue={currentValue} />
           <PredictChart2 dataRow={equipmentValues} />
         </div>
 

@@ -1,5 +1,4 @@
-import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 
 const CustomTooltip = ({ active, payload, coordinate }) => {
   if (active && payload && payload.length) {
@@ -8,9 +7,8 @@ const CustomTooltip = ({ active, payload, coordinate }) => {
     const months = 0;
     const years = 0;
 
-    // Calculate tooltip position - adjust these values to position the tooltip
-    const xOffset = 200; // Fixed X position
-    const yOffset = 150; // Fixed Y position
+    const xOffset = 200;
+    const yOffset = 150;
 
     return (
       <div
@@ -48,14 +46,14 @@ const CustomTooltip = ({ active, payload, coordinate }) => {
   return null;
 };
 
-const TimeDownChart = () => {
+const TimeDownChart = ({ currentValue }: { currentValue: number }) => {
   const data = [
     { x: 0, condition: 100 },
-    { x: 100, condition: 100 },
-    { x: 80, condition: 93 },
-    { x: 300, condition: 80 },
-    { x: 400, condition: 60 },
-    { x: 500, condition: 0 },
+    { x: currentValue / 2, condition: 100 },
+    { x: currentValue, condition: 93 },
+    { x: currentValue * 2, condition: 80 },
+    { x: currentValue * 3, condition: 60 },
+    { x: currentValue * 4, condition: 0 },
   ];
 
   return (
@@ -81,6 +79,13 @@ const TimeDownChart = () => {
             content={<CustomTooltip active={undefined} payload={undefined} coordinate={undefined} />}
             position={{ x: 0, y: 0 }}
             wrapperStyle={{ visibility: 'visible' }}
+          />
+          {/* Add Reference Lines */}
+          <ReferenceLine
+            x={currentValue}
+            stroke="#918E8E"
+            strokeDasharray="3 3"
+            label={{ value: 'Current Value', position: 'top' }}
           />
           <Line
             type="monotone"

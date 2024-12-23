@@ -4,7 +4,7 @@ import { useApiFetch } from "../useApiFetch";
 
 export interface Information {
   name: string,
-  value: string,
+  value: any,
   satuan: string
 }
 
