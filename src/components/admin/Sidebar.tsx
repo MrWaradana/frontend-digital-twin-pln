@@ -21,29 +21,32 @@ export default function Sidebar() {
     <aside
       className={cn(
         "fixed top-0 left-0 z-20 h-screen -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300",
-        sidebar?.isOpen === false ? "w-[90px]" : "w-72"
+        // sidebar?.isOpen === false ? "w-[90px]" : "w-72"
+        "w-72",
+        "bg-gradient-to-b from-[#D9E9EE] to-[#FFFFFF] to-[45%]"
       )}
     >
-      <SidebarToggle isOpen={sidebar?.isOpen} setIsOpen={sidebar?.setIsOpen} />
-      <div className="relative h-full flex flex-col px-3 py-4 overflow-y-auto shadow-md dark:shadow-zinc-800">
+      {/* <SidebarToggle isOpen={sidebar?.isOpen} setIsOpen={sidebar?.setIsOpen} /> */}
+      <div className="relative h-full flex flex-col px-3 py-4 overflow-y-auto">
         <Button
           className={cn(
             "transition-transform ease-in-out duration-300 mb-1 p-0",
-            sidebar?.isOpen === false ? "translate-x-1" : "translate-x-0"
+            // sidebar?.isOpen === false ? "translate-x-1" : "translate-x-0"
+            "translate-x-0"
           )}
           variant="link"
           asChild
         >
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src={sidebar?.isOpen ? PlnLogo : PlnLogoVertical}
+              src={PlnLogoVertical}
               alt="Logo PLN"
-              width={188}
-              height={188}
+              width={48}
+              height={48}
             />
           </Link>
         </Button>
-        <Menu isListOpen={sidebar?.isOpen} />
+        <Menu isListOpen={true} />
       </div>
     </aside>
   );

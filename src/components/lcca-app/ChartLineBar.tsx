@@ -471,7 +471,7 @@ export default function ChartLinebar({ chartData, minSeq, assetName }: any) {
               </ModalHeader>
               <ModalBody>
                 <div className={`overflow-y-auto`}>
-                  <AssetTablePerYear data={tableData} />
+                  <AssetTablePerYear data={tableData} assetName={assetName} selectedData={selectedData}/>
                 </div>
               </ModalBody>
               <ModalFooter></ModalFooter>

@@ -79,14 +79,14 @@ export function UserNav() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="relative bg-transparent border-none p-0 rounded-full"
+                  className="relative bg-transparent border-[#1C9EB6] rounded-full"
                 >
-                  <Avatar
+                  {/* <Avatar
                     name={session.data?.user.user.name}
-                    color="primary"
                     isBordered
                     className="uppercase"
-                  />
+                  /> */}
+                  {session.data?.user.user.name}
                 </Button>
               </DropdownMenuTrigger>
             </TooltipTrigger>

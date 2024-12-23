@@ -31,12 +31,13 @@ export interface EquipmentPagination {
 export function useGetDataEquipmentTree(
   token: string | undefined,
   page: number,
-  parent_id?: string | undefined
+  parent_id?: string | undefined,
+  search?: string | undefined
 ): HookReply<EquipmentPagination> {
   return useApiFetch(
     `${LCCA_API_URL}/equipment-master?page=${page}${
       parent_id ? `&parent_id=${parent_id}` : ``
-    }`,
+    }${search ? `${parent_id ? "&" : "?"}search=${search}` : ``}`,
     !!token,
     token
   );

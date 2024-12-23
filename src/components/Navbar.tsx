@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   Avatar,
-  Button,
+  Button as NextButton,
   Navbar as NavbarLinks,
   NavbarBrand,
   NavbarContent,
@@ -26,6 +26,23 @@ import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import { ModeToggle } from "./ModeToggle";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { LayoutGrid, LockIcon, LogOut, User } from "lucide-react";
 
 export default function Navbar() {
   const [isLoading, setIsLoading] = useState(false);
@@ -60,10 +77,10 @@ export default function Navbar() {
                 <p>Are you sure you want to Sign Out?</p>
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <NextButton color="danger" variant="light" onPress={onClose}>
                   Cancel
-                </Button>
-                <Button
+                </NextButton>
+                <NextButton
                   color="primary"
                   onPress={async () => {
                     try {
@@ -78,7 +95,7 @@ export default function Navbar() {
                   isLoading={isLoading}
                 >
                   Yes, Sign Out
-                </Button>
+                </NextButton>
               </ModalFooter>
             </>
           )}
@@ -142,7 +159,7 @@ export default function Navbar() {
         </NavbarContent> */}
         <NavbarContent justify={"end"} className={`flex justify-around`}>
           <NavbarItem>
-            <Button
+            {/* <Button
               variant="bordered"
               as={Link}
               href={session?.user.user.role === "Admin" ? "/admin/users" : "#"}
@@ -153,17 +170,89 @@ export default function Navbar() {
                 : session?.user.user.name.length > 8
                 ? `${session?.user.user.name.slice(0, 8)}...`
                 : session?.user.user.name}
-            </Button>
+            </Button> */}
+            <DropdownMenu>
+              <TooltipProvider disableHoverableContent>
+                <Tooltip delayDuration={100}>
+                  <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="relative bg-transparent border-[#1C9EB6] rounded-full text-white"
+                      >
+                        {/* <Avatar
+                    name={session?.user.user.name}
+                    isBordered
+                    className="uppercase"
+                  /> */}
+                        {session?.user.user.name}
+                      </Button>
+                    </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">Profile</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {session?.user.user.name}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {session?.user.user.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem className="hover:cursor-pointer" asChild>
+                    <Link href="/" className="flex items-center text-black">
+                      <LayoutGrid className="w-4 h-4 mr-3 text-muted-foreground" />
+                      All Apps
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className={`hover:cursor-pointer ${
+                      session?.user.user.role === "Admin" ? "" : "hidden"
+                    }`}
+                    asChild
+                  >
+                    <Link
+                      href="/admin/users"
+                      className="flex items-center text-black"
+                    >
+                      <LockIcon className="w-4 h-4 mr-3 text-muted-foreground" />
+                      Admin Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  {/* <DropdownMenuItem className="hover:cursor-pointer" asChild>
+              <Link href="/account" className="flex items-center">
+                <User className="w-4 h-4 mr-3 text-muted-foreground" />
+                Account
+              </Link>
+            </DropdownMenuItem> */}
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="hover:cursor-pointer"
+                  onClick={onOpen}
+                >
+                  <LogOut className="w-4 h-4 mr-3 text-muted-foreground" />
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </NavbarItem>
           <NavbarItem>
-            <Button
+            <NextButton
               onPress={onOpen}
               color="default"
               className={`rounded-full`}
               variant="solid"
             >
               Sign Out
-            </Button>
+            </NextButton>
           </NavbarItem>
         </NavbarContent>
 

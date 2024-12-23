@@ -1,6 +1,5 @@
 "use client";
 
-
 import {
   useMemo,
   useState,
@@ -427,6 +426,7 @@ export default function RootCauseTable() {
               }
               disabled={!name.trim()}
               loading={isActionLoading}
+              className={`bg-[#1C9EB6]`}
             >
               Submit
             </Button>
@@ -549,7 +549,7 @@ export default function RootCauseTable() {
           style={{ width: "300px" }}
         />
 
-        <Button onClick={openParent}>
+        <Button onClick={openParent} className="bg-[#1C9EB6]">
           <IconPlus />
           Add New Parent Root Cause
         </Button>
@@ -638,6 +638,7 @@ export default function RootCauseTable() {
             color={`blue`}
             disabled={!actionName.trim()}
             loading={isActionLoading}
+            className="bg-[#1C9EB6]"
             onClick={() => {
               handleAddAction(selectedToAddAction);
             }}
@@ -708,7 +709,7 @@ export default function RootCauseTable() {
             // onChange={(_value, option) => setValue(option)}
           />
           <div className={`flex justify-end mt-4`}>
-            <Button color={`green`} type="submit">
+            <Button color={`green`} type="submit" className={`bg-[#1C9EB6]`}>
               Submit
             </Button>
           </div>

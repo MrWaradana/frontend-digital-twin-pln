@@ -113,8 +113,8 @@ export function Menu({ isListOpen }: MenuProps) {
                           <TooltipTrigger asChild>
                             <Button
                               variant={active ? "secondary" : "ghost"}
-                              className={`w-full justify-start h-10 mb-1 ${
-                                active ? "rounded-full shadow-xl" : ""
+                              className={`w-full justify-start h-10 mb-1 hover:bg-white rounded-full hover:shadow-xl ${
+                                active ? "rounded-full shadow-xl bg-white" : ""
                               }`}
                               asChild
                             >

@@ -383,6 +383,8 @@ export default function TableEfficiency({
                       size="sm"
                       variant="solid"
                       color="primary"
+                      className="bg-[#1C9EB6]"
+                      radius={`full`}
                       // isDisabled={!thermoStatus}
                     >
                       <DotsVerticalIcon className="text-white dark:text-black text-2xl" />
@@ -395,7 +397,11 @@ export default function TableEfficiency({
                     <DropdownItem href={`/efficiency-app/${rowData.id}/output`}>
                       View
                     </DropdownItem>
-                    <DropdownItem href={`/admin/commision/input?data_id=${rowData.id}`}>Edit</DropdownItem>
+                    <DropdownItem
+                      href={`/admin/commision/input?data_id=${rowData.id}`}
+                    >
+                      Edit
+                    </DropdownItem>
                     <DropdownItem
                       className={`${
                         session?.data?.user.user.id === rowData.createdBy ||
@@ -560,7 +566,7 @@ export default function TableEfficiency({
               }
               className={`${
                 session?.data?.user.user.role === "Management" ? "hidden" : ""
-              } `}
+              } bg-[#1C9EB6]`}
             >
               Add New
               {/* {!thermoStatus ? "Add New" : "Processing Data..."} */}

@@ -7,10 +7,11 @@ import { useGetDataEquipmentTree } from "@/lib/APIs/lcca-app/useGetDataEquipment
 import { Input } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { Tree, TreeHeaderTemplateOptions } from "primereact/tree";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import HeaderCard from "@/components/lcca-app/HeaderCard";
 import { formatTextToUrl } from "@/lib/format-text";
 import { useGetDataEquipmentById } from "@/lib/APIs/lcca-app/useGetDataEquipmentById";
+import { debounce } from "lodash";
 
 import {
   Pagination,
@@ -158,16 +159,25 @@ interface TreeExample {}
 function TreeExample(props: TreeExample) {
   const [nodes, setNodes] = useState([]);
   const [expandedKeys, setExpandedKeys] = useState({ "0": true, "0-0": true });
+  const [searchFilter, setSearchFilter] = useState("");
 
   const { data: session } = useSession();
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  const debouncedSetFilterSearch = useCallback(
+    debounce((value) => {
+      setSearchFilter(value);
+    }, 500), // 500ms delay
+    [] // Empty dependency array since we don't want to recreate the debounced function
+  );
+
   const { data, isLoading } = useGetDataEquipmentTree(
     session?.user.access_token,
     page,
-    "fcc04e6d-6836-4a28-b567-4a0f0d3a6116"
+    "fcc04e6d-6836-4a28-b567-4a0f0d3a6116",
+    searchFilter
   );
 
   function customHeader({
@@ -188,6 +198,10 @@ function TreeExample(props: TreeExample) {
         <Input
           placeholder="Search by equipment name..."
           {...filterInput}
+          onChange={(e) => {
+            const value = e.target.value;
+            debouncedSetFilterSearch(value);
+          }}
         ></Input>
       </div>
     );
@@ -224,9 +238,9 @@ function TreeExample(props: TreeExample) {
     setTotalPages(data.totalPages);
   }, [data]);
 
-  if (isLoading) {
-    return <SkeletonTable />;
-  }
+  // if (isLoading) {
+  //   return <SkeletonTable />;
+  // }
 
   const expandAll = () => {
     let _expandedKeys = {};

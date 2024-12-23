@@ -201,8 +201,15 @@ export default function TableAdmin({
           <div className="relative flex justify-center items-center gap-2">
             <Dropdown>
               <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="solid" color="primary">
-                  <DotsVerticalIcon className="text-white text-2xl" />
+                <Button
+                  isIconOnly
+                  size="sm"
+                  className={`bg-[#1C9EB6]`}
+                  variant="solid"
+                  radius={`full`}
+                  color="primary"
+                >
+                  <DotsVerticalIcon className="text-white text-2xl " />
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
@@ -415,6 +422,7 @@ export default function TableAdmin({
               as={Link}
               href={addNewUrl}
               color="primary"
+              className="bg-[#1C9EB6]"
               startContent={<PlusIcon />}
             >
               Add New
@@ -495,15 +503,15 @@ export default function TableAdmin({
         aria-label="Example table with custom cells, pagination and sorting"
         isHeaderSticky
         bottomContent={bottomContent}
-        bottomContentPlacement="outside"
+        bottomContentPlacement="inside"
         classNames={{
-          wrapper: "max-h-[382px]",
+          wrapper: "max-h-full",
         }}
         selectedKeys={selectedKeys}
         // selectionMode="multiple"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
-        topContentPlacement="outside"
+        topContentPlacement="inside"
         onSelectionChange={setSelectedKeys}
         onSortChange={setSortDescriptor}
       >
