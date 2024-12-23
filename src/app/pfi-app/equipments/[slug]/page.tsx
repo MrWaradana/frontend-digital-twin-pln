@@ -34,11 +34,6 @@ const Page = ({ params }: { params: { slug: string } }) => {
       satuan: "um"
     },
     {
-      name: "Biaya Untuk Perbaikan",
-      value: "1.4",
-      satuan: "Rp. (milyar)"
-    },
-    {
       name: "Mean Time to Repair",
       value: "30",
       satuan: "hours"
@@ -104,7 +99,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
         </div>
 
 
-        <div className="w-full grid grid-cols-1 sm:grid-cols-5 gap-3 p-3 md:p-5 lg:p-8 my-5">
+        <div className={`w-full grid grid-cols-1 sm:grid-cols-4 gap-3 p-3 md:p-5 lg:p-8 my-5`}>
           {
             information.map((item, index) => (
               <Card className="p-5" key={index}>
