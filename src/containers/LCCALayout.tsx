@@ -3,10 +3,8 @@
 import { cn } from "@/lib/utils";
 import { useStore } from "@/hooks/use-store";
 // import { Footer } from "@/components/efficiency-app/nav-panel/footer";
-import Sidebar from "@/components/efficiency-app/nav/Sidebar";
+import Sidebar from "@/components/lcca-app/nav/Sidebar";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
-
-
 
 export default function LCCALayout({
   children,
@@ -21,7 +19,6 @@ export default function LCCALayout({
 
   return (
     <>
- 
       <Sidebar className={className} />
       <main
         className={cn(

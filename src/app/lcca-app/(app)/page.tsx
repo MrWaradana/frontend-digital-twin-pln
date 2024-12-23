@@ -29,8 +29,8 @@ export default function Page() {
       navbarTitle="Life Cycle Cost Analysis"
     >
       <div className="flex justify-between">
-        <div className="bg-white w-full px-8 py-7 shadow-lg rounded-lg">
-          <h1 className="font-bold text-2xl">TJB UNIT 3</h1>
+        <div className="bg-white dark:bg-neutral-800 w-full px-8 py-7 shadow-lg rounded-lg">
+          <h1 className="font-bold text-2xl dark:text-white">TJB UNIT 3</h1>
           <div className={`flex flex-row gap-3 my-3`}>
             <HeaderCard>
               {/* <div className="pl-[6px] bg-gradient-to-b from-pink-500 to-purple-500">
@@ -42,7 +42,7 @@ export default function Page() {
               <div
                 className={`pl-[5px] bg-gradient-to-b from-[#1C9EB6] to-white flex flex-col`}
               >
-                <div className="bg-white pl-3">
+                <div className="bg-white dark:bg-black pl-3">
                   <h2 className="text-5xl font-bold">5.95</h2>
                   <small className={`text-xs text-neutral-400`}>Triliun</small>
                 </div>
@@ -58,7 +58,7 @@ export default function Page() {
               <div
                 className={`pl-[5px] bg-gradient-to-b from-[#1C9EB6] to-white flex flex-col`}
               >
-                <div className="bg-white pl-3">
+                <div className="bg-white dark:bg-black  pl-3">
                   <h2 className="text-5xl font-bold">30</h2>
                   <small className={`text-xs text-neutral-400`}>Tahun</small>
                 </div>
@@ -66,7 +66,7 @@ export default function Page() {
             </HeaderCard>
             <HeaderCard>
               {/* <div className="pl-[6px] bg-gradient-to-b from-pink-500 to-purple-500">
-                                <div className="bg-white h-full w-full p-4">
+                                <div className="bg-white dark:bg-black h-full w-full p-4">
                                     Content goes here
                                 </div>
                             </div> */}
@@ -74,7 +74,7 @@ export default function Page() {
               <div
                 className={`pl-[5px] bg-gradient-to-b from-[#1C9EB6] to-white flex flex-col`}
               >
-                <div className="bg-white pl-3">
+                <div className="bg-white dark:bg-black  pl-3">
                   <h2 className="text-5xl font-bold">2013</h2>
                   <small className={`text-xs text-neutral-400`}>Tahun</small>
                 </div>
@@ -82,7 +82,7 @@ export default function Page() {
             </HeaderCard>
             <HeaderCard>
               {/* <div className="pl-[6px] bg-gradient-to-b from-pink-500 to-purple-500">
-                                <div className="bg-white h-full w-full p-4">
+                                <div className="bg-white dark:bg-black h-full w-full p-4">
                                     Content goes here
                                 </div>
                             </div> */}
@@ -90,7 +90,7 @@ export default function Page() {
               <div
                 className={`pl-[5px] bg-gradient-to-b from-[#1C9EB6] to-white flex flex-col`}
               >
-                <div className="bg-white pl-3">
+                <div className="bg-white dark:bg-black  pl-3">
                   <h2 className="text-5xl font-bold">615</h2>
                   <small className={`text-xs text-neutral-400`}>MW</small>
                 </div>
@@ -98,7 +98,7 @@ export default function Page() {
             </HeaderCard>
             <HeaderCard>
               {/* <div className="pl-[6px] bg-gradient-to-b from-pink-500 to-purple-500">
-                                <div className="bg-white h-full w-full p-4">
+                                <div className="bg-white dark:bg-black h-full w-full p-4">
                                     Content goes here
                                 </div>
                             </div> */}
@@ -106,7 +106,7 @@ export default function Page() {
               <div
                 className={`pl-[5px] bg-gradient-to-b from-[#1C9EB6] to-white flex flex-col`}
               >
-                <div className="bg-white pl-3">
+                <div className="bg-white dark:bg-black  pl-3">
                   <h2 className="text-5xl font-bold">660</h2>
                   <small className={`text-xs text-neutral-400`}>MW</small>
                 </div>
@@ -114,7 +114,7 @@ export default function Page() {
             </HeaderCard>
             <HeaderCard>
               {/* <div className="pl-[6px] bg-gradient-to-b from-pink-500 to-purple-500">
-                                <div className="bg-white h-full w-full p-4">
+                                <div className="bg-white dark:bg-black h-full w-full p-4">
                                     Content goes here
                                 </div>
                             </div> */}
@@ -122,7 +122,7 @@ export default function Page() {
               <div
                 className={`pl-[5px] bg-gradient-to-b from-[#1C9EB6] to-white flex flex-col`}
               >
-                <div className="bg-white pl-3">
+                <div className="bg-white dark:bg-black  pl-3">
                   <h2 className="text-5xl font-bold">19</h2>
                   <small className={`text-xs text-neutral-400`}>Tahun</small>
                 </div>
@@ -130,7 +130,7 @@ export default function Page() {
             </HeaderCard>
             <HeaderCard>
               {/* <div className="pl-[6px] bg-gradient-to-b from-pink-500 to-purple-500">
-                                <div className="bg-white h-full w-full p-4">
+                                <div className="bg-white dark:bg-black h-full w-full p-4">
                                     Content goes here
                                 </div>
                             </div> */}
@@ -138,7 +138,7 @@ export default function Page() {
               <div
                 className={`pl-[5px] bg-gradient-to-b from-[#1C9EB6] to-white flex flex-col`}
               >
-                <div className="bg-white pl-3">
+                <div className="bg-white dark:bg-black  pl-3">
                   <h2 className="text-5xl font-bold">10</h2>
                   <small className={`text-xs text-neutral-400`}>Tahun</small>
                 </div>

@@ -185,6 +185,7 @@ export default function ChartLinebar({ chartData, minSeq, assetName }: any) {
       show: true,
       feature: {
         saveAsImage: {},
+        restore: {},
       },
     },
     xAxis: {
@@ -193,6 +194,7 @@ export default function ChartLinebar({ chartData, minSeq, assetName }: any) {
       // prettier-ignore
       data: xAxisData,
       axisLabel: {
+        rotate: 45,
         interval: 0,
         formatter: (value, index) => {
           const currentYear = new Date().getFullYear().toString();
@@ -477,6 +479,11 @@ export default function ChartLinebar({ chartData, minSeq, assetName }: any) {
           )}
         </ModalContent>
       </Modal>
+      <ReactECharts
+        option={chartOption}
+        style={{ minHeight: "50dvh" }}
+        onEvents={onEvents}
+      ></ReactECharts>
       <section className="w-full flex justify-end">
         <div className="flex gap-2 mb-4">
           <Button
@@ -505,11 +512,6 @@ export default function ChartLinebar({ chartData, minSeq, assetName }: any) {
           </Button>
         </div>
       </section>
-      <ReactECharts
-        option={chartOption}
-        style={{ minHeight: "50dvh" }}
-        onEvents={onEvents}
-      ></ReactECharts>
     </>
   );
 }

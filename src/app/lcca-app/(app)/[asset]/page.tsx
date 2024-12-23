@@ -73,9 +73,9 @@ export default function Page({ params }: { params: { asset: string } }) {
 
     const getCardStyles = () => {
       if (variant === "green") {
-        return "bg-[#28C840] text-white min-h-[18dvh]";
+        return "bg-[#28C840] text-white min-h-[19dvh] min-w-[10dvw]";
       }
-      return "min-h-[18dvh]";
+      return "min-h-[19dvh]  min-w-[10dvw]";
     };
 
     const getContentStyles = () => {
@@ -87,11 +87,11 @@ export default function Page({ params }: { params: { asset: string } }) {
 
     return (
       <HeaderCard className={getCardStyles()}>
-        <p className="text-sm font-semibold">{title}</p>
+        <p className="text-xs font-semibold">{title}</p>
         {variant === "gradient" ? (
           <div className={getContentStyles()}>
             <div className="bg-white pl-3">
-              <h2 className="text-5xl font-bold">{value}</h2>
+              <h2 className="text-2xl xl:text-3xl  font-bold">{value}</h2>
               {unit && (
                 <small className="text-xs text-neutral-400">{unit}</small>
               )}
@@ -99,7 +99,7 @@ export default function Page({ params }: { params: { asset: string } }) {
           </div>
         ) : (
           <div className={getContentStyles()}>
-            <h2 className="text-5xl font-bold">{value}</h2>
+            <h2 className="text-2xl xl:text-3xl  font-bold">{value}</h2>
             {unit && <small className="text-xs text-white">{unit}</small>}
           </div>
         )}

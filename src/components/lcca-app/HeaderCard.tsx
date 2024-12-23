@@ -17,7 +17,7 @@ export default function HeaderCard(HeaderCardProps) {
   return (
     <Card
       className={cn(
-        "shadow-2xl w-full bg-white rounded-3xl hover:-translate-y-1 transition ease-soft-spring",
+        "shadow-2xl w-full bg-white dark:bg-black rounded-3xl hover:-translate-y-1 transition ease-soft-spring",
         `${className}`
       )}
     >
