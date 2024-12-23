@@ -4,7 +4,7 @@ import TablePerformanceTest from "@/components/efficiency-app/nett-plant-heat-ra
 import { EfficiencyContentLayout } from "@/containers/EfficiencyContentLayout";
 import { useGetDataPerformance } from "@/lib/APIs/useGetDataPerformance";
 import { useSession } from "next-auth/react";
-import EChartsStackedBar from "@/components/efficiency-app/performance-test/EChartsBar";
+import EChartsBar from "@/components/efficiency-app/performance-test/EChartsBar";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { usePathname } from "next/navigation";
@@ -50,7 +50,7 @@ export default function Page() {
   const chartDataPerformance = useMemo(() => {
     if (!dataPerformanceGroup) return []
     return dataPerformanceGroup
-  }, [chartMutate])
+  }, [dataPerformanceGroup])
 
 
   // useEffect(() => {
@@ -162,7 +162,7 @@ export default function Page() {
               <Spinner label={`Loading...`} />
             </div>
           ) : ( */}
-          <EChartsStackedBar
+          <EChartsBar
             data={chartDataPerformance}
             selectedLabel={selectedLabel}
             isLoadingPerformanceGroup={isLoadingPerformanceGroup}

@@ -15,7 +15,6 @@ export default function EChartsBar({
   const router = useRouter();
   // Define fixed performance weight categories
   const fixedCategories = [40, 50, 60, 70, 80, 90, 95];
-
   // Create a map of existing data
   const dataMap = new Map(
     data.map((item) => [item.performance_weight, item.total_nilai_losses])

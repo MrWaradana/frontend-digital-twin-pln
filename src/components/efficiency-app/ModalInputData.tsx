@@ -123,9 +123,7 @@ export default function ModalInputData({
   const [options, setOptions] = useState(promiseOptions);
 
   //form ==========================================================
-  function onError(formError) {
-    console.log(formError);
-  }
+
   const formatNumber = (num: number | string) => {
     // If the input is not a valid number, return empty string or "0"
     if (num === "" || isNaN(Number(num))) {
@@ -191,16 +189,12 @@ export default function ModalInputData({
     return acc;
   }, {} as Record<string, Variable[]>);
 
-  const defaultInputs = useMemo(
-    () =>
-      Object.fromEntries(
-        filteredVariableData.map((v: any) => [v.id, v.base_case.toString()])
-      ),
-    [filteredVariableData] // Dependency array: updates when filteredVariableData changes
+  const defaultInputs = Object.fromEntries(
+    filteredVariableData.map((v: any) => [v.id, v.base_case.toString()])
   );
 
   // 1. Define your form.
-  const formInput = useForm<z.infer<typeof formSchemaInput>>({
+  const formInput = useForm({
     resolver: zodResolver(formSchemaInput),
     mode: "onChange",
     defaultValues: {
@@ -208,6 +202,36 @@ export default function ModalInputData({
       inputs: defaultInputs,
     },
   });
+
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
+
+    if (filteredVariableData.length > 0) {
+      formInput.reset(
+        {
+          name: formInput.getValues().name,
+          inputs: Object.fromEntries(
+            filteredVariableData.map((v: any) => [v.id, v.base_case.toString()])
+          ),
+        },
+        {
+          keepErrors: true, // Preserve any existing errors
+          keepDirty: true, // Preserve dirty fields
+          keepValues: false, // Don't keep existing values
+        }
+      );
+    }
+  }, [variables]);
+
+  function onError(formError) {
+    console.log(formInput);
+    console.log(formError);
+  }
   const formError = formInput.formState.errors;
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchemaInput>) {
@@ -587,7 +611,7 @@ export default function ModalInputData({
                                               onChange={async ({
                                                 target: { value },
                                               }) => {
-                                                // Allow empty string
+                                                // Allow empty string force to fill value
                                                 if (value === "") {
                                                   field.onChange("");
                                                 }
