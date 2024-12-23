@@ -4,6 +4,7 @@ import TimeDownChart from "@/components/pfi-app/tags/TimeDownChart";
 import PredictChart2 from "@/components/pfi-app/tags/PredictChart2";
 import { PFIContentLayout } from "@/containers/PFIContentLayout";
 import { useGetEquipmentValues } from "@/lib/APIs/i-PFI/useGetEquipmentValues";
+import { useGetInformations } from "@/lib/APIs/i-PFI/useGetChartInformation";
 import { useGetFeature } from "@/lib/APIs/i-PFI/useGetFeature";
 import { useGetPart } from "@/lib/APIs/i-PFI/useGetParts";
 import { Card, CircularProgress, Divider } from "@nextui-org/react";
@@ -11,34 +12,13 @@ import { ChevronLeftIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+
 const Page = ({ params }: { params: { slug: string } }) => {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const features_id = searchParams.get("features_id");
-  const information = [
-    {
-      name: "Predicted Time to Failure",
-      value: "19",
-      satuan: "hours"
-    },
-    {
-      name: "Current Condition",
-      value: "12",
-      satuan: "%"
-    },
-    {
-      name: "Current Value",
-      value: "23",
-      satuan: "um"
-    },
-    {
-      name: "Mean Time to Repair",
-      value: "30",
-      satuan: "hours"
-    }
-  ]
 
   const {
     data: partData,
@@ -53,6 +33,11 @@ const Page = ({ params }: { params: { slug: string } }) => {
     data: equipmentValues,
     isLoading: isLoadingEquipment,
   } = useGetEquipmentValues(session?.user?.access_token, params.slug ?? '', features_id ?? '');
+
+  const {
+    data: informations,
+  } = useGetInformations(session?.user?.access_token, features_id ?? '', params.slug ?? '');
+
 
   // const equipment = React.useMemo(() => {
   //   return tagData?.equipments ?? ({} as { name?: string });
@@ -101,7 +86,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
 
         <div className={`w-full grid grid-cols-1 sm:grid-cols-4 gap-3 p-3 md:p-5 lg:p-8 my-5`}>
           {
-            information.map((item, index) => (
+            informations?.map((item, index) => (
               <Card className="p-5" key={index}>
                 <h4 className="font-bold text-sm sm:text-base md:text-md lg:text-lg mb-2">
                   {item.name}
