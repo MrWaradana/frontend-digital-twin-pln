@@ -14,8 +14,8 @@ const CustomTooltip = ({ active, payload, coordinate }) => {
       <div
         className="bg-[#00a5ba] text-white p-4 rounded-lg absolute"
         style={{
-          left: `${xOffset}px`,
-          top: `${yOffset}px`,
+          // left: `${xOffset}px`,
+          // top: `${yOffset}px`,
           width: '200px',
           pointerEvents: 'none',
           zIndex: 10
@@ -47,6 +47,34 @@ const CustomTooltip = ({ active, payload, coordinate }) => {
 };
 
 const TimeDownChart = ({ currentValue }: { currentValue: number }) => {
+  // Temukan nilai y untuk currentValue dengan interpolasi linear
+  const getCurrentY = () => {
+    const data = [
+      { x: 0, condition: 100 },
+      { x: currentValue / 2, condition: 100 },
+      { x: currentValue, condition: 93 },
+      { x: currentValue * 2, condition: 80 },
+      { x: currentValue * 3, condition: 60 },
+      { x: currentValue * 4, condition: 0 },
+    ];
+
+    const point = data.find(d => d.x === currentValue);
+    if (point) return point.condition;
+
+    // Jika tidak ada titik yang tepat, interpolasi linear
+    const before = data.filter(d => d.x < currentValue).slice(-1)[0];
+    const after = data.find(d => d.x > currentValue);
+
+    if (before && after) {
+      const ratio = (currentValue - before.x) / (after.x - before.x);
+      return before.condition + ratio * (after.condition - before.condition);
+    }
+
+    return null;
+  };
+
+  const currentY = getCurrentY();
+
   const data = [
     { x: 0, condition: 100 },
     { x: currentValue / 2, condition: 100 },
@@ -55,6 +83,22 @@ const TimeDownChart = ({ currentValue }: { currentValue: number }) => {
     { x: currentValue * 3, condition: 60 },
     { x: currentValue * 4, condition: 0 },
   ];
+
+  // Custom dot renderer untuk menampilkan dot khusus pada currentValue
+  const CustomDot = (props: any) => {
+    const { cx, cy, payload } = props;
+    if (payload.x === currentValue) {
+      return (
+        <g>
+          {/* Outer circle */}
+          <circle cx={cx} cy={cy} r={8} fill="#ffffff" stroke="#00a5ba" strokeWidth={2} />
+          {/* Inner circle */}
+          <circle cx={cx} cy={cy} r={4} fill="#00a5ba" />
+        </g>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -69,7 +113,10 @@ const TimeDownChart = ({ currentValue }: { currentValue: number }) => {
           margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="x" />
+          <XAxis
+            dataKey="x"
+            tickFormatter={(value) => value.toFixed(0)}
+          />
           <YAxis
             domain={[0, 100]}
             ticks={[0, 20, 40, 60, 80, 100]}
@@ -80,19 +127,36 @@ const TimeDownChart = ({ currentValue }: { currentValue: number }) => {
             position={{ x: 0, y: 0 }}
             wrapperStyle={{ visibility: 'visible' }}
           />
-          {/* Add Reference Lines */}
+          {/* Vertical reference line */}
           <ReferenceLine
             x={currentValue}
             stroke="#918E8E"
             strokeDasharray="3 3"
-            label={{ value: 'Current Value', position: 'top' }}
+            label={{
+              value: `Current Value(${currentValue.toFixed(0)})`,
+              position: 'top',
+              fill: '#918E8E'
+            }}
           />
+          {/* Horizontal reference line for current Y value */}
+          {currentY && (
+            <ReferenceLine
+              y={currentY}
+              stroke="#918E8E"
+              strokeDasharray="3 3"
+              label={{
+                value: `${currentY.toFixed(1)}%`,
+                position: 'right',
+                fill: '#918E8E'
+              }}
+            />
+          )}
           <Line
             type="monotone"
             dataKey="condition"
             stroke="#00a5ba"
             strokeWidth={2}
-            dot={false}
+            dot={<CustomDot />}
             activeDot={{ r: 8, fill: "#00a5ba" }}
           />
         </LineChart>
