@@ -124,7 +124,7 @@ const Page = () => {
                       </div>
                     </div>
                     <div className="bg-red-600 text-white rounded-[100px] flex justify-end items-center text-[9px] px-2 py-1">
-                      {`${item.failure_count?.toLocaleString() ?? "0"} unit`}
+                      {`${item.failure_count?.toLocaleString() ?? "0"} `}
                       unit
                     </div>
                   </div>

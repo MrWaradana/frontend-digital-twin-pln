@@ -10,6 +10,7 @@ import {
   useGetCalculateProbability,
   useGetCalculateReliability,
 } from "@/lib/APIs/reliability-predict/useGetCalculate";
+import { CircularProgress } from "@nextui-org/react";
 type PredictionCalculatorProps = {
   isModalOpen: boolean;
   setIsModalOpen: (value: boolean) => void;
@@ -75,16 +76,33 @@ export function PredictionCalculator({
       formattedTime === undefined
     );
   const failures = failuresvalue?.value ?? "";
-  const reliability = reliabilityvalue?.value
-    ? (reliabilityvalue.value * 100).toExponential(2)
-    : "";
-
-  const probability = probabilityvalue?.value
-    ? `${probabilityvalue.value.toFixed(2)}`
-    : "";
-  const failureRate = failureratevalue?.value
-    ? `${failureratevalue.value.toFixed(2)}`
-    : "";
+  const reliability =
+    reliabilityvalue?.value !== undefined && reliabilityvalue?.value !== null
+      ? reliabilityvalue.value === 0
+        ? "0"
+        : Math.abs(reliabilityvalue.value * 100) < 0.01
+        ? `${(reliabilityvalue.value * 100).toExponential(2)}`
+        : `${(reliabilityvalue.value * 100).toFixed(2)}`
+      : "";
+  console.log(reliability, "reliabilityvalue");
+  const probability =
+    probabilityvalue?.value !== undefined && probabilityvalue?.value !== null
+      ? probabilityvalue?.value === 0
+        ? "0"
+        : Math.abs(probabilityvalue?.value) < 0.01
+        ? `${(probabilityvalue?.value).toExponential(2)}`
+        : `${(probabilityvalue?.value).toFixed(2)}`
+      : "";
+  console.log(probabilityvalue, "probabilityvalue");
+  const failureRate =
+    failureratevalue?.value !== undefined && failureratevalue?.value !== null
+      ? failureratevalue?.value === 0
+        ? "0"
+        : Math.abs(failureratevalue?.value) < 0.01
+        ? `${(failureratevalue?.value).toExponential(2)}`
+        : `${(failureratevalue?.value).toFixed(2)}`
+      : "";
+  console.log(failureratevalue, "failureratevalue");
   const mttr = mttrvalue?.value ?? "";
   const mdt = mdtvalue?.value ?? "";
   const mtbf = mtbfvalue?.value ?? "";
@@ -204,306 +222,507 @@ export function PredictionCalculator({
     setFormattedTime(newFormattedTime);
 
     // Simulate API call
-    console.log("Sending to API:", newFormattedTime);
-    alert(`Formatted Time: ${newFormattedTime}`);
+    // console.log("Sending to API:", newFormattedTime);
+    // alert(`Formatted Time: ${newFormattedTime}`);
   };
+  const isLoading =
+    failurerateLoading ||
+    mttrloading ||
+    mtbfloading ||
+    mdtloading ||
+    reliabilityloading ||
+    failuresLoading ||
+    probabilityloading;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="relative bg-white rounded-[40px] shadow-lg sm:p-10 p-7 sm:w-[85%] w-[90%]">
-        <button
-          onClick={closeModal}
-          className="text-gray-500 hover:text-gray-700 text-lg font-bold absolute top-4 right-6"
-        >
-          ×
-        </button>
-        <div className="flex sm:flex-row flex-col justify-between items-center gap-4">
-          <div className="flex flex-col gap-2 w-full">
-            <div className="bg-[#1C9EB6] rounded-xl py-[0.5px] px-4 text-white text-[10px] w-fit">
-              Equipment Level 3.7
-            </div>
-            <h2 className="text-2xl font-semibold">Prediction Calculator</h2>
+    <div>
+      {/* Overlay Loading */}
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="flex flex-col items-center">
+            <div className="w-16 h-16 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+            <p className="text-white mt-4">Loading...</p>
           </div>
         </div>
+      )}
 
-        {/* Modal Content */}
-        <div className="flex lg:flex-row flex-col justify-center mt-10 gap-8">
-          <div className="max-w-md">
-            <div className="flex flex-row justify-center gap-2 flex-wrap">
-              <div className="flex-1">
-                <label className="text-[10px] text-[#918E8E]" htmlFor="hour">
-                  Hour
-                </label>
-                <input
-                  id="hour"
-                  name="hour"
-                  type="text"
-                  value={hour}
-                  onChange={handleHourChange}
-                  className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="text-[10px] text-[#918E8E]" htmlFor="day">
-                  Day
-                </label>
-                <input
-                  id="day"
-                  name="day"
-                  type="text"
-                  value={formattedDay} // Set the value to the selected day
-                  onChange={(e) => handleInputChange(e, "day")} // Handle input change
-                  className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="text-[10px] text-[#918E8E]" htmlFor="month">
-                  Month
-                </label>
-                <input
-                  id="month"
-                  name="month"
-                  type="text"
-                  value={formattedMonth} // Set the value to the selected month
-                  onChange={(e) => handleInputChange(e, "month")} // Handle input change
-                  className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="text-[10px] text-[#918E8E]" htmlFor="year">
-                  Year
-                </label>
-                <input
-                  id="year"
-                  name="year"
-                  type="text"
-                  value={formattedYear} // Set the value to the selected year
-                  onChange={(e) => handleInputChange(e, "year")} // Handle input change
-                  className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
-                />
+      {/* Modal */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="relative bg-white rounded-[40px] shadow-lg sm:p-10 p-7 sm:w-[85%] w-[90%]">
+          {isLoading && (
+            <div className="">
+              <div className="flex flex-col items-center">
+                <div className="w-16 h-16 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+                <p className="text-white mt-4">Loading...</p>
               </div>
             </div>
-            <div className="py-6">
-              <PredictionCalendar
-                onDateSelect={handleDateSelect}
-                selected={selectedDate}
-              />
+          )}
+          <button
+            onClick={closeModal}
+            className="text-gray-500 hover:text-gray-700 text-lg font-bold absolute top-4 right-6"
+          >
+            ×
+          </button>
+
+          <div className="flex sm:flex-row flex-col justify-between items-center gap-4">
+            <div className="flex flex-col gap-2 w-full">
+              <div className="bg-[#1C9EB6] rounded-xl py-[0.5px] px-4 text-white text-[10px] w-fit">
+                Equipment Level 3.7
+              </div>
+              <h2 className="text-2xl font-semibold">Prediction Calculator</h2>
             </div>
           </div>
-          <div className="w-full">
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-row items-center justify-center gap-2">
-                <div className="flex flex-row md:items-center gap-4 items-start justify-between flex-wrap shadow-xl bg-white rounded-3xl p-5 w-full">
-                  <div className="text-[10px] text-[#918E8E]">
-                    Prediction Date Result
-                  </div>
-                  <div className="flex flex-row md:gap-12 gap-2 md:items-center">
-                    <div className=" flex flex-col justify-center">
-                      <div className="text-[10px] text-[#1C9EB6]">Time</div>
-                      <div className="text-[12px] font-semibold">
-                        {formatTime(hour)}
-                      </div>
-                    </div>
-                    <div className="flex flex-col justify-center">
-                      <div className="text-[10px] text-[#1C9EB6]">Day</div>
-                      <div className="text-[12px] font-semibold">
-                        {selectedDate
-                          ? selectedDate.toLocaleDateString("en-US", {
-                              weekday: "long",
-                            })
-                          : ""}
-                      </div>
-                    </div>
-                    <div className=" flex flex-col justify-center">
-                      <div className="text-[10px] text-[#1C9EB6]">Date</div>
-                      <div className="text-[12px] font-semibold">
-                        {selectedDate
-                          ? selectedDate.toLocaleDateString("en-US", {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            })
-                          : ""}
-                      </div>
-                    </div>
-                  </div>
+
+          {/* Modal Content */}
+          <div className="flex lg:flex-row flex-col justify-center mt-10 gap-8">
+            <div className="max-w-md">
+              <div className="flex flex-row justify-center gap-2 flex-wrap">
+                <div className="flex-1">
+                  <label className="text-[10px] text-[#918E8E]" htmlFor="hour">
+                    Hour
+                  </label>
+                  <input
+                    id="hour"
+                    name="hour"
+                    type="text"
+                    value={hour}
+                    onChange={handleHourChange}
+                    className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
+                  />
                 </div>
-                <div className="flex flex-col gap-2">
-                  <div className="flex flex-row justify-center items-center hover:text-white text-[#1C9EB6] border border-[#1C9EB6] hover:bg-[#14788E] rounded-[100px] py-1 px-6 text-sm w-fit h-fit text-[13px] cursor-pointer">
-                    <div className="text-[12px]  ">Download Result</div>
+                <div className="flex-1">
+                  <label className="text-[10px] text-[#918E8E]" htmlFor="day">
+                    Day
+                  </label>
+                  <input
+                    id="day"
+                    name="day"
+                    type="text"
+                    value={formattedDay} // Set the value to the selected day
+                    onChange={(e) => handleInputChange(e, "day")} // Handle input change
+                    className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="text-[10px] text-[#918E8E]" htmlFor="month">
+                    Month
+                  </label>
+                  <input
+                    id="month"
+                    name="month"
+                    type="text"
+                    value={formattedMonth} // Set the value to the selected month
+                    onChange={(e) => handleInputChange(e, "month")} // Handle input change
+                    className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="text-[10px] text-[#918E8E]" htmlFor="year">
+                    Year
+                  </label>
+                  <input
+                    id="year"
+                    name="year"
+                    type="text"
+                    value={formattedYear} // Set the value to the selected year
+                    onChange={(e) => handleInputChange(e, "year")} // Handle input change
+                    className="mt-1 block w-full px-3 py-2 bg-[#F4F4F4] rounded-[8px] shadow-sm focus:outline-none sm:text-sm"
+                  />
+                </div>
+              </div>
+              <div className="py-6">
+                <PredictionCalendar
+                  onDateSelect={handleDateSelect}
+                  selected={selectedDate}
+                />
+              </div>
+            </div>
+            <div className="w-full">
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-row items-center justify-center gap-2">
+                  <div className="flex flex-row md:items-center gap-4 items-start justify-between flex-wrap shadow-xl bg-white rounded-3xl p-5 w-full">
+                    <div className="text-[10px] text-[#918E8E]">
+                      Prediction Date Result
+                    </div>
+                    <div className="flex flex-row md:gap-12 gap-2 md:items-center">
+                      <div className=" flex flex-col justify-center">
+                        <div className="text-[10px] text-[#1C9EB6]">Time</div>
+                        <div
+                          className={`text-[12px] font-semibold ${
+                            formattedTime ? "text-black" : "text-[#B2B2B2]"
+                          }`}
+                        >
+                          {formatTime(hour)}
+                        </div>
+                      </div>
+                      <div className="flex flex-col justify-center">
+                        <div className="text-[10px] text-[#1C9EB6]">Day</div>
+                        <div
+                          className={`text-[12px] font-semibold ${
+                            formattedTime ? "text-black" : "text-[#B2B2B2]"
+                          }`}
+                        >
+                          {selectedDate
+                            ? selectedDate.toLocaleDateString("en-US", {
+                                weekday: "long",
+                              })
+                            : ""}
+                        </div>
+                      </div>
+                      <div className=" flex flex-col justify-center">
+                        <div className="text-[10px] text-[#1C9EB6]">Date</div>
+                        <div
+                          className={`text-[12px] font-semibold ${
+                            formattedTime ? "text-black" : "text-[#B2B2B2]"
+                          }`}
+                        >
+                          {selectedDate
+                            ? selectedDate.toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              })
+                            : ""}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex flex-row justify-center items-center bg-[#1C9EB6] hover:bg-[#14788E] rounded-[100px] py-3 px-12 text-white text-sm h-fit text-[13px] cursor-pointer">
-                    <button className="text-[12px] " onClick={handleCalculate}>
-                      Calculate
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-row justify-center items-center hover:text-white text-[#1C9EB6] border border-[#1C9EB6] hover:bg-[#14788E] rounded-[100px] py-1 px-6 text-sm w-fit h-fit text-[13px] cursor-pointer">
+                      <div className="text-[12px]  ">Download Result</div>
+                    </div>
+                    <button
+                      onClick={handleCalculate}
+                      className="flex flex-row justify-center items-center bg-[#1C9EB6] hover:bg-[#14788E] rounded-[100px] py-3 px-12 text-white text-sm h-fit text-[13px] cursor-pointer"
+                    >
+                      <div className="text-[12px] ">Calculate</div>
                     </button>
                   </div>
                 </div>
-              </div>
-              <div className="flex flex-row flex-wrap justify-center gap-6">
-                <div className="flex flex-col shadow-lg bg-[#1C9EB6] text-white text-[14px] rounded-[40px] justify-start items-start w-40 h-40 p-5">
-                  <div>Calculation</div>
-                  <div>Result</div>
-                </div>
-                <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
-                  <div className="flex flex-col w-full">
-                    <div className="flex flex-row items-center justify-between w-full">
-                      <p>Failure</p>
-                      <CircleAlert
-                        fill="#D93832"
-                        color="#ffffff"
-                        absoluteStrokeWidth
-                      />
-                    </div>
-                    <p>Prediction</p>
+                <div className="flex flex-row flex-wrap justify-center gap-6">
+                  <div
+                    className={`flex flex-col shadow-lg ${
+                      formattedTime ? "bg-[#1C9EB6]" : "bg-[#2b2d2d40]"
+                    } text-white text-[14px] rounded-[40px] justify-start items-start w-40 h-40 p-5`}
+                  >
+                    <div>Calculation</div>
+                    <div>Result</div>
                   </div>
-                  <div className="flex flex-row">
-                    <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
-                    <div className="flex flex-col justify-start items-start w-full">
-                      <div className="text-3xl font-bold">
-                        {failures.toLocaleString()}
-                      </div>
-                      <div className="text-[10px] text-[#B2B2B2]">Failures</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
-                  <div className="flex flex-col w-full">
-                    <div className="flex flex-row items-center justify-between w-full">
-                      <p>Reliability</p>
-                      <CircleCheck
-                        fill="#28C840"
-                        color="#ffffff"
-                        absoluteStrokeWidth
-                      />
-                    </div>
-                    <p>Prediction</p>
-                  </div>
-                  <div className="flex flex-row">
-                    <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
-                    <div className="flex flex-col justify-start items-start w-full">
-                      <div className="text-3xl font-bold">
-                        {reliability ? (
-                          <span>
-                            {reliability.split("e")[0]}e
-                            <sup>{reliability.split("e")[1]}</sup>
-                          </span>
-                        ) : (
-                          ""
-                        )}
-                      </div>
-
-                      <div className="text-[10px] text-[#B2B2B2]">%</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
-                  <div className="flex flex-col w-full">
-                    <div className="flex flex-row items-center justify-between w-full">
-                      <p>MTBF</p>
-                      <CircleAlert
-                        fill="#D93832"
-                        color="#ffffff"
-                        absoluteStrokeWidth
-                      />
-                    </div>
-                    <p>Prediction</p>
-                  </div>
-                  <div className="flex flex-row">
-                    <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
-                    <div className="flex flex-col justify-start items-start w-full">
-                      <div className="text-3xl font-bold">
-                        {mtbf.toLocaleString()}
-                      </div>
-                      <div className="text-[10px] text-[#B2B2B2]">Jam</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
-                  <div className="flex flex-col w-full">
-                    <div className="flex flex-row items-center justify-between w-full">
-                      <p>MDT</p>
-                      <div className="rounded-full bg-[#F49C38] p-[5px]">
-                        <Loader
-                          className="w-[10px] h-[10px]"
-                          fill="white"
-                          color="white"
+                  <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
+                    <div className="flex flex-col w-full">
+                      <div
+                        className={`flex flex-row items-center justify-between w-full ${
+                          formattedTime ? "text-black" : "text-[#7B7A7A]"
+                        }`}
+                      >
+                        <p>Failure</p>
+                        <CircleAlert
+                          fill="#D93832"
+                          color="#ffffff"
                           absoluteStrokeWidth
                         />
                       </div>
+                      <p
+                        className={`${
+                          formattedTime ? "text-black" : "text-[#7B7A7A]"
+                        }`}
+                      >
+                        Prediction
+                      </p>
                     </div>
-                    <p>Prediction</p>
-                  </div>
-                  <div className="flex flex-row">
-                    <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
-                    <div className="flex flex-col justify-start items-start w-full">
-                      <div className="text-3xl font-bold">
-                        {mdt.toLocaleString()}
-                      </div>
-                      <div className="text-[10px] text-[#B2B2B2]">Jam</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
-                  <div className="flex flex-col w-full">
-                    <div className="flex flex-row items-center justify-between w-full">
-                      <p>MTTR</p>
-                      <CircleCheck
-                        fill="#28C840"
-                        color="#ffffff"
-                        absoluteStrokeWidth
-                      />
-                    </div>
-                    <p>Prediction</p>
-                  </div>
-                  <div className="flex flex-row">
-                    <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
-                    <div className="flex flex-col justify-start items-start w-full">
-                      <div className="text-3xl font-bold">
-                        {mttr.toLocaleString()}
-                      </div>
-                      <div className="text-[10px] text-[#B2B2B2]">Jam</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
-                  <div className="flex flex-col w-full">
-                    <div className="flex flex-row items-center justify-between w-full">
-                      <p>Failure Rate</p>
-                      <CircleCheck
-                        fill="#28C840"
-                        color="#ffffff"
-                        absoluteStrokeWidth
-                      />
-                    </div>
-                    <p>Prediction</p>
-                  </div>
-                  <div className="flex flex-row">
-                    <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
-                    <div className="flex flex-col justify-start items-start w-full">
-                      <div className="text-3xl font-bold">{failureRate}</div>
-                      <div className="text-[10px] text-[#B2B2B2]">
-                        Failures / year
+                    <div className="flex flex-row">
+                      <div
+                        className={`h-full w-[3px] bg-gradient-to-b ${
+                          formattedTime ? "from-[#1C9EB6]" : "from-[#7B7A7A]"
+                        } to-white mr-3`}
+                      ></div>
+                      <div className="flex flex-col justify-start items-start w-full">
+                        <div className="text-3xl font-bold">
+                          {failures ? (
+                            failures.toLocaleString()
+                          ) : (
+                            <div className="h-[6px] w-[15px] bg-[#D9D9D9] my-4">
+                              {" "}
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-[#B2B2B2]">
+                          Failures
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
-                  <div className="flex flex-col w-full">
-                    <div className="flex flex-row items-center justify-between w-full">
-                      <p>Probability</p>
-                      <CircleCheck
-                        fill="#28C840"
-                        color="#ffffff"
-                        absoluteStrokeWidth
-                      />
+                  <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
+                    <div className="flex flex-col w-full">
+                      <div
+                        className={`flex flex-row items-center justify-between w-full ${
+                          formattedTime ? "text-black" : "text-[#7B7A7A]"
+                        }`}
+                      >
+                        <p>Reliability</p>
+                        <CircleCheck
+                          fill="#28C840"
+                          color="#ffffff"
+                          absoluteStrokeWidth
+                        />
+                      </div>
+                      <p
+                        className={`${
+                          formattedTime ? "text-black" : "text-[#7B7A7A]"
+                        }`}
+                      >
+                        Prediction
+                      </p>
                     </div>
-                    <p>Prediction</p>
+                    <div className="flex flex-row">
+                      <div
+                        className={`h-full w-[3px] bg-gradient-to-b ${
+                          formattedTime ? "from-[#1C9EB6]" : "from-[#7B7A7A]"
+                        } to-white mr-3`}
+                      ></div>
+                      <div className="flex flex-col justify-start items-start w-full">
+                        <div className="text-3xl font-bold">
+                          {reliability && reliability.includes("e") ? (
+                            <span>
+                              {reliability.split("e")[0]}e
+                              <sup>{reliability.split("e")[1]}</sup>
+                            </span>
+                          ) : reliability === "0" ? (
+                            <span>0</span>
+                          ) : (
+                            <div className="h-[6px] w-[15px] bg-[#D9D9D9] my-4">
+                              {reliability}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="text-[10px] text-[#B2B2B2]">%</div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex flex-row">
-                    <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-3"></div>
-                    <div className="flex flex-col justify-start items-start w-full">
-                      <div className="text-3xl font-bold">{probability}</div>
-                      <div className="text-[10px] text-[#B2B2B2]">Unit</div>
+                  <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
+                    <div className="flex flex-col w-full">
+                      <div
+                        className={`flex flex-row items-center justify-between w-full ${
+                          formattedTime ? "text-black" : "text-[#7B7A7A]"
+                        }`}
+                      >
+                        <p>MTBF</p>
+                        <CircleAlert
+                          fill="#D93832"
+                          color="#ffffff"
+                          absoluteStrokeWidth
+                        />
+                      </div>
+                      <p
+                        className={`${
+                          formattedTime ? "text-black" : "text-[#7B7A7A]"
+                        }`}
+                      >
+                        Prediction
+                      </p>
+                    </div>
+                    <div className="flex flex-row">
+                      <div
+                        className={`h-full w-[3px] bg-gradient-to-b ${
+                          formattedTime ? "from-[#1C9EB6]" : "from-[#7B7A7A]"
+                        } to-white mr-3`}
+                      ></div>
+                      <div className="flex flex-col justify-start items-start w-full">
+                        <div className="text-3xl font-bold">
+                          {mtbf ? (
+                            mtbf.toLocaleString()
+                          ) : (
+                            <div className="h-[6px] w-[15px] bg-[#D9D9D9] my-4">
+                              {" "}
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-[#B2B2B2]">Jam</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
+                    <div className="flex flex-col w-full">
+                      <div
+                        className={`flex flex-row items-center justify-between w-full ${
+                          formattedTime ? "text-black" : "text-[#7B7A7A]"
+                        }`}
+                      >
+                        <p>MDT</p>
+                        <div className="rounded-full bg-[#F49C38] p-[5px]">
+                          <Loader
+                            className="w-[10px] h-[10px]"
+                            fill="white"
+                            color="white"
+                            absoluteStrokeWidth
+                          />
+                        </div>
+                      </div>
+                      <p
+                        className={`${
+                          formattedTime ? "text-black" : "text-[#7B7A7A]"
+                        }`}
+                      >
+                        Prediction
+                      </p>
+                    </div>
+                    <div className="flex flex-row">
+                      <div
+                        className={`h-full w-[3px] bg-gradient-to-b ${
+                          formattedTime ? "from-[#1C9EB6]" : "from-[#7B7A7A]"
+                        } to-white mr-3`}
+                      ></div>
+                      <div className="flex flex-col justify-start items-start w-full">
+                        <div className="text-3xl font-bold">
+                          {mdt ? (
+                            mdt.toLocaleString()
+                          ) : (
+                            <div className="h-[6px] w-[15px] bg-[#D9D9D9] my-4">
+                              {" "}
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-[#B2B2B2]">Jam</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
+                    <div className="flex flex-col w-full">
+                      <div
+                        className={`flex flex-row items-center justify-between w-full ${
+                          formattedTime ? "text-black" : "text-[#7B7A7A]"
+                        }`}
+                      >
+                        <p>MTTR</p>
+                        <CircleCheck
+                          fill="#28C840"
+                          color="#ffffff"
+                          absoluteStrokeWidth
+                        />
+                      </div>
+                      <p
+                        className={`${
+                          formattedTime ? "text-black" : "text-[#7B7A7A]"
+                        }`}
+                      >
+                        Prediction
+                      </p>
+                    </div>
+                    <div className="flex flex-row">
+                      <div
+                        className={`h-full w-[3px] bg-gradient-to-b ${
+                          formattedTime ? "from-[#1C9EB6]" : "from-[#7B7A7A]"
+                        } to-white mr-3`}
+                      ></div>
+                      <div className="flex flex-col justify-start items-start w-full">
+                        <div className="text-3xl font-bold">
+                          {mttr ? (
+                            mttr.toLocaleString()
+                          ) : (
+                            <div className="h-[6px] w-[15px] bg-[#D9D9D9] my-4">
+                              {" "}
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-[#B2B2B2]">Jam</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
+                    <div className="flex flex-col w-full">
+                      <div
+                        className={`flex flex-row items-center justify-between w-full ${
+                          formattedTime ? "text-black" : "text-[#7B7A7A]"
+                        }`}
+                      >
+                        <p>Failure Rate</p>
+                        <CircleCheck
+                          fill="#28C840"
+                          color="#ffffff"
+                          absoluteStrokeWidth
+                        />
+                      </div>
+                      <p
+                        className={`${
+                          formattedTime ? "text-black" : "text-[#7B7A7A]"
+                        }`}
+                      >
+                        Prediction
+                      </p>
+                    </div>
+                    <div className="flex flex-row">
+                      <div
+                        className={`h-full w-[3px] bg-gradient-to-b ${
+                          formattedTime ? "from-[#1C9EB6]" : "from-[#7B7A7A]"
+                        } to-white mr-3`}
+                      ></div>
+                      <div className="flex flex-col justify-start items-start w-full">
+                        <div className="text-3xl font-bold">
+                          {failureRate && failureRate.includes("e") ? (
+                            <span>
+                              {failureRate.split("e")[0]}e
+                              <sup>{failureRate.split("e")[1]}</sup>
+                            </span>
+                          ) : failureRate === "0" ? (
+                            <span>0</span>
+                          ) : (
+                            <div className="h-[6px] w-[15px] bg-[#D9D9D9] my-4">
+                              {failureRate}
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-[#B2B2B2]">
+                          Failures / hour
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col shadow-lg bg-white font-semibold text-[14px] rounded-[40px] justify-between items-start w-40 h-40 p-5">
+                    <div className="flex flex-col w-full">
+                      <div
+                        className={`flex flex-row items-center justify-between w-full ${
+                          formattedTime ? "text-black" : "text-[#7B7A7A]"
+                        }`}
+                      >
+                        <p>Probability</p>
+                        <CircleCheck
+                          fill="#28C840"
+                          color="#ffffff"
+                          absoluteStrokeWidth
+                        />
+                      </div>
+                      <p
+                        className={`${
+                          formattedTime ? "text-black" : "text-[#7B7A7A]"
+                        }`}
+                      >
+                        Prediction
+                      </p>
+                    </div>
+                    <div className="flex flex-row">
+                      <div
+                        className={`h-full w-[3px] bg-gradient-to-b ${
+                          formattedTime ? "from-[#1C9EB6]" : "from-[#7B7A7A]"
+                        } to-white mr-3`}
+                      ></div>
+                      <div className="flex flex-col justify-start items-start w-full">
+                        <div className="text-3xl font-bold">
+                          {probability && probability.includes("e") ? (
+                            <span>
+                              {probability.split("e")[0]}e
+                              <sup>{probability.split("e")[1]}</sup>
+                            </span>
+                          ) : probability === "0" ? (
+                            <span>0</span>
+                          ) : (
+                            <div className="h-[6px] w-[15px] bg-[#D9D9D9] my-4">
+                              {probability}
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-[#B2B2B2]">Unit</div>
+                      </div>
                     </div>
                   </div>
                 </div>

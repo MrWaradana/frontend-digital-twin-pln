@@ -38,6 +38,7 @@ export interface Equipment {
   params: Params;
   location_tag: string;
   parent: Parent;
+  num_fail: number;
 }
 export interface EquipmentList {
   equipment: Equipment;

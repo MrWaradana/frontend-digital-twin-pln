@@ -208,12 +208,16 @@ const DistributionChart = ({
             const valueStr = value.toString();
             const decimalIndex = valueStr.indexOf(".");
 
-            if (decimalIndex !== -1 && valueStr.length - decimalIndex - 1 > 2) {
-              const exponentialValue = value.toExponential(2);
-              const [base, exponent] = exponentialValue.split("e");
-              return `${base}e${toSuperscript(exponent)}`;
+            // If the number has more than two decimals and is very small, use exponential notation
+            if (
+              decimalIndex !== -1 &&
+              valueStr.length - decimalIndex - 1 > 2 &&
+              valueStr[0] === "0"
+            ) {
+              return value.toExponential(2);
             }
 
+            // Always use two decimal places
             return value.toFixed(2);
           },
         },

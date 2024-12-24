@@ -57,20 +57,37 @@ const Page = ({ params }: { params: { id: string } }) => {
     useGetDistribution(id, session?.user.access_token);
   const { data: reliabilityData, isLoading: reliabilityPlotloading } =
     useGetReliabilityPlot(id, session?.user.access_token);
-  const failureRate = failureRatevalue?.failure_rate
-    ? failureRatevalue.failure_rate < 0.01
-      ? `${failureRatevalue.failure_rate.toExponential(2)}`
-      : `${Number(failureRatevalue.failure_rate.toFixed(2))}`
-    : "None";
-  const reliabilityCurrent = reliabilityCurrentvalue?.reliability_value
-    ? `${(reliabilityCurrentvalue.reliability_value * 100).toExponential(2)}`
-    : "None";
+  const failureRate =
+    failureRatevalue?.failure_rate !== undefined &&
+    failureRatevalue?.failure_rate !== null
+      ? failureRatevalue?.failure_rate === 0
+        ? "0"
+        : Math.abs(failureRatevalue?.failure_rate) < 0.01
+        ? `${(failureRatevalue?.failure_rate).toExponential(2)}`
+        : `${(failureRatevalue?.failure_rate).toFixed(2)}`
+      : "None";
+  console.log(failureRatevalue?.failure_rate);
+  const reliabilityCurrent =
+    reliabilityCurrentvalue?.reliability_value !== undefined &&
+    reliabilityCurrentvalue?.reliability_value !== null
+      ? reliabilityCurrentvalue.reliability_value === 0
+        ? "0"
+        : Math.abs(reliabilityCurrentvalue.reliability_value * 100) < 0.01
+        ? `${(reliabilityCurrentvalue.reliability_value * 100).toExponential(
+            2
+          )}`
+        : `${(reliabilityCurrentvalue.reliability_value * 100).toFixed(2)}`
+      : "None";
 
   const mttr = mttrvalue?.hours ?? "None";
   const mdt = mdtvalue?.hours ?? "None";
   const mtbf = mtbfvalue?.hours ?? "None";
   const equipment = equipmentData?.equipment;
   const parameters = equipment?.params;
+  const yValue =
+    equipment?.status === "R"
+      ? "Number of failures"
+      : "Instant probability of failure (%)";
   const paramLabels = {
     AICc: "AICc",
     alpha: "Alpha",
@@ -138,6 +155,10 @@ const Page = ({ params }: { params: { id: string } }) => {
                   </p>
                   <div className="flex flex-col gap-[0.5px] pt-2 text-xs text-[#918E8E]">
                     <div className="flex flex-row gap-2">
+                      <div className="font-bold ">Location Tag : </div>
+                      <div>{equipment?.location_tag}</div>
+                    </div>
+                    <div className="flex flex-row gap-2">
                       <div className="font-bold ">Distribution Profile : </div>
                       <div>{equipment?.distribution}</div>
                     </div>
@@ -156,6 +177,10 @@ const Page = ({ params }: { params: { id: string } }) => {
                     <div className="flex flex-row gap-2">
                       <div className="font-bold ">Age : </div>
                       <div>{equipment?.age.toFixed(2)}</div>
+                    </div>
+                    <div className="flex flex-row gap-2">
+                      <div className="font-bold ">Number of Failures : </div>
+                      <div>{equipment?.num_fail}</div>
                     </div>
                   </div>
                 </div>
@@ -192,7 +217,7 @@ const Page = ({ params }: { params: { id: string } }) => {
                       Y={distributionData?.results.y}
                       current={distributionData?.current_day}
                       yCurrent={distributionData?.yCurrent}
-                      ylabel={"Instant probability of failure (%)"}
+                      ylabel={yValue}
                     ></DistributionChart>
                   )}
                 </div>
@@ -308,20 +333,15 @@ const Page = ({ params }: { params: { id: string } }) => {
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
                     <div className="text-4xl font-bold">
-                      {failureRate ? (
-                        <>
-                          {failureRate.includes("e") &&
-                          !failureRate.includes("e-") ? (
-                            <span>
-                              {failureRate.split("e")[0]}e
-                              <sup>{failureRate.split("e")[1]}</sup>
-                            </span>
-                          ) : (
-                            <span>{failureRate}</span>
-                          )}
-                        </>
+                      {failureRate && failureRate.includes("e") ? (
+                        <span>
+                          {failureRate.split("e")[0]}e
+                          <sup>{failureRate.split("e")[1]}</sup>
+                        </span>
+                      ) : failureRate === "0" ? (
+                        <span>0</span>
                       ) : (
-                        ""
+                        failureRate
                       )}
                     </div>
                     <div className="text-[10px] text-[#918E8E]">
@@ -346,13 +366,16 @@ const Page = ({ params }: { params: { id: string } }) => {
                   <div className="h-full w-[3px] bg-gradient-to-b from-[#1C9EB6] to-white mr-2"></div>
                   <div className="flex flex-col justify-start items-start w-full">
                     <div className="text-4xl font-bold">
-                      {reliabilityCurrent ? (
+                      {reliabilityCurrent &&
+                      reliabilityCurrent.includes("e") ? (
                         <span>
                           {reliabilityCurrent.split("e")[0]}e
                           <sup>{reliabilityCurrent.split("e")[1]}</sup>
                         </span>
+                      ) : reliabilityCurrent === "0" ? (
+                        <span>0</span>
                       ) : (
-                        ""
+                        reliabilityCurrent
                       )}
                     </div>
                     <div className="text-[10px] text-[#918E8E]">%</div>
