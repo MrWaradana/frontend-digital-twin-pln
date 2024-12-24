@@ -8,6 +8,7 @@ import CalculateOH from "@/components/optimum-oh-app/CalculateOH";
 import { useGetOptimumOH } from "@/lib/APIs/useGetOptimumOH";
 import { useSession } from "next-auth/react";
 import ScheduleOH from "./ScheduleOH";
+import { ModalAddSchedule } from "./ModalAddScheduleOh";
 
 export default function HomeContainer() {
   const { data: session } = useSession();
@@ -57,13 +58,14 @@ export default function HomeContainer() {
               <p className={`text-2xl font-semibold text-black`}>
                 {overviewData.start_date
                   ? new Date(overviewData.start_date).toLocaleDateString("id", {
-                      dateStyle: "long",
-                    })
+                    dateStyle: "long",
+                  })
                   : "-"}
               </p>
             </div>
           </div>
           <div className="flex flex-row gap-4 items-center">
+            <ModalAddSchedule mutate={mutate}/>
             <ScopeOH />
             <CalculateOH />
           </div>
@@ -89,27 +91,31 @@ export default function HomeContainer() {
         <div
           className={`bg-white rounded-3xl shadow-xl w-full h-1/2 p-12 flex flex-col justify-between`}
         >
-          <div className={`flex flex-row items-center`}>
+          <div className={`flex flex-row items-center gap-3`}>
             <p className={`text-xl font-semibold mb-4`}>
               Upcoming OH Schedules:
             </p>
+
             {isLoadingOptimumOH ? (
               <Spinner />
             ) : (
-              <ScheduleOH
-                scheduleData={scheduleData}
-                overviewData={overviewData}
-              />
+              <>
+
+                <ScheduleOH
+                  scheduleData={scheduleData}
+                  overviewData={overviewData}
+                />
+              </>
+
             )}
           </div>
           <div className="flex flex-row justify-between items-end">
             <p className="text-neutral-400">Scope</p>
             <p
-              className={`text-[7rem] ${
-                nextSchedule === "B" ? "text-[#1C9EB6]" : "text-[#F49C38]"
-              } font-semibold mb-0 leading-tight`}
+              className={`text-[7rem] ${overviewData.Overhaul === "B" ? "text-[#1C9EB6]" : "text-[#F49C38]"
+                } font-semibold mb-0 leading-tight`}
             >
-              {nextSchedule}
+              {overviewData.Overhaul}
             </p>
           </div>
         </div>

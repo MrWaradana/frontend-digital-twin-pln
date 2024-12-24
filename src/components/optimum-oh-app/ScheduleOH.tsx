@@ -30,11 +30,11 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 const now = new Date();
 
 export default function ScheduleOH({ scheduleData, overviewData }: any) {
-  const [view, setView] = useState(Views.AGENDA);
-  const [date, setDate] = useState(new Date(2025, 0, 1));
+  const [view, setView] = useState(Views.MONTH);
+  const [date, setDate] = useState(new Date());
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  let scopeASchedule = scheduleData.find((item) => item.Overhaul === "A");
-  let scopeBSchedule = scheduleData.find((item) => item.Overhaul === "B");
+  let scopeASchedule = scheduleData.find((item) => item.scope.scope_name === "A");
+  let scopeBSchedule = scheduleData.find((item) => item.scope.scope_name === "B");
   let [value, setValue] = useState<RangeValue<DateValue>>({
     start: parseDate(overviewData?.start_date),
     // start: today(getLocalTimeZone()),
@@ -48,17 +48,34 @@ export default function ScheduleOH({ scheduleData, overviewData }: any) {
   };
 
   const events = useMemo(() => {
-    return scheduleData.map((schedule, index) => ({
-      id: index,
-      title: `Overhaul ${schedule.Overhaul}`,
-      start: new Date(schedule.date),
-      end: new Date(schedule.date),
-      allDay: true,
-      status: schedule.status,
-      resource: schedule.Overhaul,
-      tooltipContent: `Overhaul ${schedule.Overhaul} - ${schedule.status}
-Date: ${moment(schedule.date).format("MMMM D, YYYY")}`,
-    }));
+    const currentDate = new Date(); // Get current date for comparison
+
+    return scheduleData.map((schedule, index) => {
+      const startDate = new Date(schedule.start_date);
+      const endDate = new Date(schedule.end_date);
+
+      // Determine status based on date comparisons
+      let status;
+      if (currentDate > endDate) {
+        status = "completed";
+      } else if (currentDate < startDate) {
+        status = "upcoming";
+      } else {
+        status = "ongoing";
+      }
+
+      return {
+        id: index,
+        title: `Overhaul ${schedule.scope.scope_name}`,
+        start: startDate,
+        end: endDate,
+        allDay: true,
+        status,
+        resource: schedule.scope.scope_name,
+        tooltipContent: `Overhaul ${schedule.scope.scope_name} - ${status}
+  Date: ${moment(schedule.start_date).format("MMMM D, YYYY")}`,
+      };
+    });
   }, [scheduleData]);
 
   // Custom Agenda accessor to format the time display
